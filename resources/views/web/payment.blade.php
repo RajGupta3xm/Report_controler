@@ -8,7 +8,7 @@
                      <div class="col-12">
                         <div class="heading_innerpages">
                            <h2><strong>Payment</strong></h2>
-                           <a class="d-inline-block btn_main add_card" href="add-new-card.html">Add New Card</a>
+                           <a class="d-inline-block btn_main add_card" href="{{url('add-new-card')}}">Add New Card</a>
                         </div>
                      </div>
                      <div class="col-12 px-lg-5 px-md-4 px-3 py-md-4 py-3">
@@ -21,7 +21,7 @@
                                     <div class="row px-md-5 mt-md-3 mt-2">
                                        <div class="px-md-1 px-3 col-md-6 position-relative mb-md-0 mb-2 cardnumber_input">
                                           <input class="form-control" type="text" id="number" name="number" placeholder="0000 0000 0000 6159">
-                                          <img class="card_img" src="assets/img/Visa.png" alt="">
+                                          <img class="card_img" src="{{asset('assets/web/img/Visa.png')}}" alt="">
                                        </div>
                                        <div class="px-md-1 px-3 position-relative cardname_input">
                                           <input class="form-control text-center px-3" type="text" id="name" name="name" placeholder="Amit Rajora">
@@ -44,7 +44,7 @@
                                     <div class="row px-md-5 mt-md-3 mt-2">
                                        <div class="px-md-1 px-3 col-md-6 position-relative mb-md-0 mb-2 cardnumber_input">
                                           <input class="form-control" type="text" id="number" name="number" placeholder="0000 0000 0000 6159">
-                                          <img class="card_img" src="assets/img/Mastercard.png" alt="">
+                                          <img class="card_img" src="{{asset('assets/web/img/Mastercard.png')}}" alt="">
                                        </div>
                                        <div class="px-md-1 px-3 position-relative cardname_input">
                                           <input class="form-control text-center px-3" type="text" id="name" name="name" placeholder="Amit Rajora">
@@ -67,7 +67,7 @@
                                     <div class="row px-md-5 mt-md-3 mt-2">
                                        <div class="px-md-1 px-3 col-md-6 position-relative mb-md-0 mb-2 cardnumber_input">
                                           <input class="form-control" type="text" id="number" name="number" placeholder="0000 0000 0000 6159">
-                                          <img class="card_img" src="assets/img/Mastercard.png" alt="">
+                                          <img class="card_img" src="{{asset('assets/web/img/Mastercard.png')}}" alt="">
                                        </div>
                                        <div class="px-md-1 px-3 position-relative cardname_input">
                                           <input class="form-control text-center px-3" type="text" id="name" name="name" placeholder="Amit Rajora">

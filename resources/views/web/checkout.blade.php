@@ -34,8 +34,8 @@
                                        </div> 
                                     </div>
                                     <div class="col-md-auto btn_show">
-                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="add-new-address.html">Edit</a>
-                                       <a class="d-md-block d-inline-block btn_main" href="payment.html">Deliver</a>
+                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="{{url('add-new-address')}}">Edit</a>
+                                       <a class="d-md-block d-inline-block btn_main" href="{{url('payment')}}">Deliver</a>
                                     </div>
                                  </div>
                               </label>
@@ -51,8 +51,8 @@
                                        </div> 
                                     </div>
                                     <div class="col-md-auto btn_show">
-                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="add-new-address.html">Edit</a>
-                                       <a class="d-md-block d-inline-block btn_main" href="payment.html">Deliver</a>
+                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="{{url('add-new-address')}}">Edit</a>
+                                       <a class="d-md-block d-inline-block btn_main" href="{{url('payment')}}">Deliver</a>
                                     </div>
                                  </div>
                               </label>
@@ -68,14 +68,14 @@
                                        </div> 
                                     </div>
                                     <div class="col-md-auto btn_show">
-                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="add-new-address.html">Edit</a>
-                                       <a class="d-md-block d-inline-block btn_main" href="payment.html">Deliver</a>
+                                       <a class="d-md-block d-inline-block btn_main2 mb-md-2" href="{{url('add-new-address')}}">Edit</a>
+                                       <a class="d-md-block d-inline-block btn_main" href="{{url('payment')}}">Deliver</a>
                                     </div>
                                  </div>
                               </label>
                            </div> 
                            <div class="form-group col-12 text-end custom_radio pe-5 py-4">
-                              <a class="btn_main" href="add-new-address.html">Add Address</a>
+                              <a class="btn_main" href="{{url('add-new-address')}}">Add Address</a>
                            </div>
                         </form>
                      </div> 

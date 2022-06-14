@@ -15,7 +15,7 @@
                         <form class="row form_design add_cardform" action="">
                             <div class="col-md-4">
                                <div class="addcard_img">
-                                  <img src="assets/img/Card.png" alt="">
+                                  <img src="{{asset('assets/web/img/Card.png')}}" alt="">
                                </div>
                             </div>
                             <div class="col-md-5 mt-md-0 mt-4">
@@ -25,7 +25,7 @@
                                   </div>
                                   <div class="col-12 position-relative cardnumber_input pe-md-1"> 
                                     <input class="form-control" type="text" id="number" name="number" placeholder="0000 0000 0000 6159">
-                                    <img class="card_img" src="assets/img/Visa.png" alt="">
+                                    <img class="card_img" src="{{asset('assets/web/img/Visa.png')}}" alt="">
                                  </div>
                                </div> 
                                <div class="row form-group mb-4">

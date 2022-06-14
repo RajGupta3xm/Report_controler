@@ -13,16 +13,16 @@
                         <div class="banner_tabs">
                            <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
                               <li class="nav-item" role="presentation">
-                                 <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"><img src="assets/img/car_icon.png" alt=""> Car & Truck</button>
+                                 <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"><img src="{{asset('assets/web/img/car_icon.png')}}" alt=""> Car & Truck</button>
                               </li>
                               <li class="nav-item" role="presentation">
-                                 <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false"><img src="assets/img/bike_icon.png" alt="">Motercycle</button>
+                                 <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false"><img src="{{asset('assets/web/img/bike_icon.png')}}" alt="">Motercycle</button>
                               </li>
                               <li class="nav-item" role="presentation">
-                                 <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false"><img src="assets/img/semi_truck_icon.png" alt="">Semi Truck</button>
+                                 <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false"><img src="{{asset('assets/web/img/semi_truck_icon.png')}}" alt="">Semi Truck</button>
                               </li>
                               <li class="nav-item" role="presentation">
-                                 <button class="nav-link" id="contact1-tab" data-bs-toggle="tab" data-bs-target="#contact1" type="button" role="tab" aria-controls="contact1" aria-selected="false"><img src="assets/img/truck_icon.png" alt="">Truck</button>
+                                 <button class="nav-link" id="contact1-tab" data-bs-toggle="tab" data-bs-target="#contact1" type="button" role="tab" aria-controls="contact1" aria-selected="false"><img src="{{asset('assets/web/img/truck_icon.png')}}" alt="">Truck</button>
                               </li>
                            </ul>
                            <div class="tab-content" id="myTabContent">
@@ -207,127 +207,127 @@
                         <div class="product_main_parts commansldier_btn owl-carousel"> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img3.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img3.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img4.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img4.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img5.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img5.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img6.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img6.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img1.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img1.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img2.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img2.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img7.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img8.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img9.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img9.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img10.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img10.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div> 
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img11.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img11.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img12.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img12.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a> 
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a> 
                                 </div>
                              </div> 
                            </div>
                            <div class="slider_box">
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img7.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a>                                      
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a>                                      
                                 </div>
                              </div>
                              <div class="product_parts_box">
-                                <a href="product.html" class="partsproduct_img">
-                                   <img src="assets/img/product_img8.png" alt="Product">
+                                <a href="{{url('product')}}" class="partsproduct_img">
+                                   <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                 </a>
                                 <div class="product_content mt-3 text-center">
-                                              <a href="product.html">Lorem ipsum dolor.</a>                                      
+                                              <a href="{{url('product')}}">Lorem ipsum dolor.</a>                                      
                                 </div>
                              </div> 
                            </div>
@@ -342,38 +342,38 @@
          <div class="container">
             <div class="row">
                <div class="col-md-4">
-                  <div class="custom_informations_box long_img mb-md-0 mb-4" style="background-image:url('assets/img/custom-wheels.png');">
+                  <div class="custom_informations_box long_img mb-md-0 mb-4" style="background-image:url('assets/web/img/custom-wheels.png');">
                     <div class="custom_inner">
                         <h3>Custom Wheels</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div>
                </div>
                <div class="col-md-4">
-                  <div class="custom_informations_box short_img" style="background-image:url('assets/img/seat_cover.png');">
+                  <div class="custom_informations_box short_img" style="background-image:url('assets/web/img/seat_cover.png');">
                     <div class="custom_inner">
                         <h3>Seat Cover</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div>
-                  <div class="custom_informations_box short_img mt-4" style="background-image:url('assets/img/suspension.png');">
+                  <div class="custom_informations_box short_img mt-4" style="background-image:url('assets/web/img/suspension.png');">
                      <div class="custom_inner">
                          <h3>Suspension</h3> 
-                         <a class="common_btn mt-4" href="product.html">
+                         <a class="common_btn mt-4" href="{{url('product')}}">
                             Shop Now
                          </a>
                      </div>
                    </div>
                </div>
                <div class="col-md-4">
-                  <div class="custom_informations_box long_img mt-md-0 mt-4" style="background-image:url('assets/img/lightingimg.png');">
+                  <div class="custom_informations_box long_img mt-md-0 mt-4" style="background-image:url('assets/web/img/lightingimg.png');">
                     <div class="custom_inner">
                         <h3>Lighting</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
@@ -404,11 +404,11 @@
                                <div class="product_main_parts commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img3.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img3.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -427,11 +427,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img4.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img4.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -452,11 +452,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img5.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img5.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -475,11 +475,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img6.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img6.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -500,11 +500,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img1.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img1.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -523,11 +523,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img2.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img2.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -548,11 +548,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -571,11 +571,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -596,11 +596,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img9.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img9.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -619,11 +619,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img10.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img10.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -644,11 +644,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img11.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -667,11 +667,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img12.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img12.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -692,11 +692,11 @@
                                   </div>
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -715,11 +715,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -748,11 +748,11 @@
                                <div class="product_main_parts commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img3.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img3.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -771,11 +771,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img4.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img4.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -796,11 +796,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img5.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img5.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -819,11 +819,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img6.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img6.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -844,11 +844,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img1.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img1.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -867,11 +867,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img2.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img2.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -892,11 +892,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -915,11 +915,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -940,11 +940,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img9.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img9.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -963,11 +963,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img10.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img10.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -988,11 +988,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img11.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1011,11 +1011,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img12.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img12.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1036,11 +1036,11 @@
                                   </div>
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1059,11 +1059,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1092,11 +1092,11 @@
                                <div class="product_main_parts commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img3.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img3.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1115,11 +1115,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img4.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img4.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1140,11 +1140,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img5.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img5.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1163,11 +1163,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img6.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img6.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1188,11 +1188,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img1.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img1.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1211,11 +1211,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img2.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img2.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1236,11 +1236,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1259,11 +1259,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1284,11 +1284,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img9.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img9.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1307,11 +1307,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img10.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img10.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1332,11 +1332,11 @@
                                   </div> 
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img11.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1355,11 +1355,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img12.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img12.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1380,11 +1380,11 @@
                                   </div>
                                   <div class="slider_box">
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img7.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img7.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1403,11 +1403,11 @@
                                        </div>
                                     </div>
                                     <div class="product_parts_box">
-                                       <a href="product.html" class="partsproduct_img">
-                                          <img src="assets/img/product_img8.png" alt="Product">
+                                       <a href="{{url('product')}}" class="partsproduct_img">
+                                          <img src="{{asset('assets/web/img/product_img8.png')}}" alt="Product">
                                        </a>
                                        <div class="product_content mt-3 text-center">
-                                          <a href="product.html">Lorem ipsum dolor.</a>
+                                          <a href="{{url('product')}}">Lorem ipsum dolor.</a>
                                           <div class="rating_box mt-2">
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
                                              <a href="javasript:;"><i class="fas fa-star"></i></a>
@@ -1453,59 +1453,59 @@
                            <div class="col-12">
                                <div class="featured_modal_slider commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
-                                       <a href="product.html" class="comman_flexbox">
-                                          <img src="assets/img/Ford-Logo.png" alt="">
+                                       <a href="{{url('product')}}" class="comman_flexbox">
+                                          <img src="{{asset('assets/web/img/Ford-Logo.png')}}" alt="">
                                        </a>
-                                       <a href="product.html" class="comman_flexbox">
-                                          <img src="assets/img/Tata-Motors-Logo.png" alt="">
+                                       <a href="{{url('product')}}" class="comman_flexbox">
+                                          <img src="{{asset('assets/web/img/Tata-Motors-Logo.png')}}" alt="">
                                        </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/toyota-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/toyota-logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Mercedes-Benz-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Mercedes-Benz-logo.png')}}" alt="">
                                     </a>
                                   </div>  
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/volvo-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/volvo-logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/lexuslogo.png" alt="">
-                                    </a>
-                                 </div> 
-                                 <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Renault_logo.png" alt="">
-                                    </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Kia-Logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/lexuslogo.png')}}" alt="">
                                     </a>
                                  </div> 
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Jeep-Logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Renault_logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Nissan-logo.png" alt="">
-                                    </a>
-                                 </div> 
-                                 <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/honda-logo.png" alt="">
-                                    </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/hyundai-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Kia-Logo.png')}}" alt="">
                                     </a>
                                  </div> 
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/honda-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Jeep-Logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/hyundai-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Nissan-logo.png')}}" alt="">
+                                    </a>
+                                 </div> 
+                                 <div class="slider_box">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/honda-logo.png')}}" alt="">
+                                    </a>
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/hyundai-logo.png')}}" alt="">
+                                    </a>
+                                 </div> 
+                                 <div class="slider_box">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/honda-logo.png')}}" alt="">
+                                    </a>
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/hyundai-logo.png')}}" alt="">
                                     </a>
                                  </div> 
                                </div>
@@ -1517,59 +1517,59 @@
                            <div class="col-12">
                                <div class="featured_modal_slider commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
-                                       <a href="product.html" class="comman_flexbox">
-                                          <img src="assets/img/Ford-Logo.png" alt="">
+                                       <a href="{{url('product')}}" class="comman_flexbox">
+                                          <img src="{{asset('assets/web/img/Ford-Logo.png')}}" alt="">
                                        </a>
-                                       <a href="product.html" class="comman_flexbox">
-                                          <img src="assets/img/Tata-Motors-Logo.png" alt="">
+                                       <a href="{{url('product')}}" class="comman_flexbox">
+                                          <img src="{{asset('assets/web/img/Tata-Motors-Logo.png')}}" alt="">
                                        </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/toyota-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/toyota-logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Mercedes-Benz-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Mercedes-Benz-logo.png')}}" alt="">
                                     </a>
                                   </div>  
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/volvo-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/volvo-logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/lexuslogo.png" alt="">
-                                    </a>
-                                 </div> 
-                                 <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Renault_logo.png" alt="">
-                                    </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Kia-Logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/lexuslogo.png')}}" alt="">
                                     </a>
                                  </div> 
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Jeep-Logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Renault_logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Nissan-logo.png" alt="">
-                                    </a>
-                                 </div> 
-                                 <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/honda-logo.png" alt="">
-                                    </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/hyundai-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Kia-Logo.png')}}" alt="">
                                     </a>
                                  </div> 
                                  <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/honda-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Jeep-Logo.png')}}" alt="">
                                     </a>
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/hyundai-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Nissan-logo.png')}}" alt="">
+                                    </a>
+                                 </div> 
+                                 <div class="slider_box">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/honda-logo.png')}}" alt="">
+                                    </a>
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/hyundai-logo.png')}}" alt="">
+                                    </a>
+                                 </div> 
+                                 <div class="slider_box">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/honda-logo.png')}}" alt="">
+                                    </a>
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/hyundai-logo.png')}}" alt="">
                                     </a>
                                  </div> 
                                </div>
@@ -1596,48 +1596,48 @@
                            <div class="col-12">
                                <div class="featured_modal_slider commansldier_btn owl-carousel"> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/yakima.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/yakima.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Bilstein-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Bilstein-logo.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/kyb.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/kyb.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Pirelli-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Pirelli-logo.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/t5q.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/t5q.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/K&N_Plain_Logo.svg.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/K&N_Plain_Logo.svg.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/Pirelli-logo.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/Pirelli-logo.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/t5q.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/t5q.png')}}" alt="">
                                     </a>
                                   </div> 
                                   <div class="slider_box">
-                                    <a href="product.html" class="comman_flexbox">
-                                       <img src="assets/img/K&N_Plain_Logo.svg.png" alt="">
+                                    <a href="{{url('product')}}" class="comman_flexbox">
+                                       <img src="{{asset('assets/web/img/K&N_Plain_Logo.svg.png')}}" alt="">
                                     </a>
                                   </div> 
                                </div>
@@ -1653,76 +1653,76 @@
          <div class="container">
             <div class="row">
                <div class="col-lg-6">
-                  <div class="custom_informations_box long_imgnew" style="background-image:url('assets/img/Custom-Wheels2.png');">
+                  <div class="custom_informations_box long_imgnew" style="background-image:url('assets/web/img/Custom-Wheels2.png');">
                     <div class="custom_inner">
                         <h3>Custom Wheels</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div>
                </div>
                <div class="col-lg-3 col-md-6 mt-lg-0 mt-md-4 mt-3">
-                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/img/Interior-img.png');">
+                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/web/img/Interior-img.png');">
                     <div class="custom_inner">
                         <h3>Interior</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div>
-                  <div class="custom_informations_box short_imgnew mt-4" style="background-image:url('assets/img/Performance-img.png');">
+                  <div class="custom_informations_box short_imgnew mt-4" style="background-image:url('assets/web/img/Performance-img.png');">
                      <div class="custom_inner">
                          <h3>Performance</h3> 
-                         <a class="common_btn mt-4" href="product.html">
+                         <a class="common_btn mt-4" href="{{url('product')}}">
                             Shop Now
                          </a>
                      </div>
                    </div>
                </div>
                <div class="col-lg-3 col-md-6 mt-lg-0 mt-md-4 mt-3">
-                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/img/Exterior-img.png');">
+                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/web/img/Exterior-img.png');">
                     <div class="custom_inner">
                         <h3>Exterior</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div>
-                  <div class="custom_informations_box short_imgnew mt-4" style="background-image:url('assets/img/headlight2.png');">
+                  <div class="custom_informations_box short_imgnew mt-4" style="background-image:url('assets/web/img/headlight2.png');">
                      <div class="custom_inner">
                          <h3>Headlight</h3> 
-                         <a class="common_btn mt-4" href="product.html">
+                         <a class="common_btn mt-4" href="{{url('product')}}">
                             Shop Now
                          </a>
                      </div>
                    </div>
                </div>
                <div class="col-lg-4 col-md-6 mt-md-4 mt-3">
-                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/img/Steering-img.png');">
+                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/web/img/Steering-img.png');">
                     <div class="custom_inner">
                         <h3>Steering</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div> 
                </div> 
                <div class="col-lg-4 col-md-6 mt-md-4 mt-3">
-                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/img/Speed-Tyres-img.png');">
+                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/web/img/Speed-Tyres-img.png');">
                     <div class="custom_inner">
                         <h3>Speed Tyers</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
                   </div> 
                </div> 
                <div class="col-lg-4 col-md-12 mt-md-4 mt-3">
-                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/img/seat-cover-img.png');">
+                  <div class="custom_informations_box short_imgnew" style="background-image:url('assets/web/img/seat-cover-img.png');">
                     <div class="custom_inner">
                         <h3>Seat Cover</h3> 
-                        <a class="common_btn mt-4" href="product.html">
+                        <a class="common_btn mt-4" href="{{url('product')}}">
                            Shop Now
                         </a>
                     </div>
@@ -1745,7 +1745,7 @@
                         <div class="row align-items-center content_review">
                            <div class="col-auto">
                               <span class="review_img">
-                                 <img src="assets/img/Person1.png" alt="">
+                                 <img src="{{asset('assets/web/img/Person1.png')}}" alt="">
                               </span>
                            </div>
                            <div class="col">
@@ -1775,7 +1775,7 @@
                         <div class="row align-items-center content_review">
                            <div class="col-auto">
                               <span class="review_img">
-                                 <img src="assets/img/Person1.png" alt="">
+                                 <img src="{{asset('assets/web/img/Person1.png')}}" alt="">
                               </span>
                            </div>
                            <div class="col">
@@ -1805,7 +1805,7 @@
                         <div class="row align-items-center content_review">
                            <div class="col-auto">
                               <span class="review_img">
-                                 <img src="assets/img/Person1.png" alt="">
+                                 <img src="{{asset('assets/web/img/Person1.png')}}" alt="">
                               </span>
                            </div>
                            <div class="col">
@@ -1835,7 +1835,7 @@
                         <div class="row align-items-center content_review">
                            <div class="col-auto">
                               <span class="review_img">
-                                 <img src="assets/img/Person1.png" alt="">
+                                 <img src="{{asset('assets/web/img/Person1.png')}}" alt="">
                               </span>
                            </div>
                            <div class="col">

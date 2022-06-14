@@ -528,3 +528,91 @@
    </div>
 </div>
  <!-- Add Vehicle Modal -->
+ <!-- OTP Verification Modal For Payment  --> 
+<div class="modal fade comman_modal_form" id="staticBackdrop5" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-0">
+         <div class="modal-body">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+            <div class="row align-items-center justify-content-center text-center">
+               <div class="col-md-8">
+                  <div class="comman_modal_heading">
+                     <h2>OTP Verification</h2>
+                     <p>Please enter the OTP received on <br> your Email Address</p>
+                  </div>
+                  <form class="forms_modal_content otp_part">
+                     <div class="form-group mb-3 d-flex justify-content-center"> 
+                        <input class="form-control" type="text" maxlength="1" name="number" id="number">
+                        <input class="form-control" type="text" maxlength="1" name="number" id="number">
+                        <input class="form-control" type="text" maxlength="1" name="number" id="number">
+                        <input class="form-control" type="text" maxlength="1" name="number" id="number">
+                     </div>
+                     <div class="form-group my-3">
+                        <div class="time_js"><span>01:34</span></div>
+                     </div>
+                     <div class="form-group mb-4">
+                        <a data-bs-toggle="modal" data-bs-target="#staticBackdrop6" href="javscript:;" class="btn_web">
+                        Submit
+                        </a>
+                     </div>
+                     <div class="form-group mb-0 comman_text">
+                        <span>Didn't receive the OTP? <a href="javascript:;">Resend OTP</a></span>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- OTP Verification Modal For Payment  -->  
+<!-- Payment Sucessfully Modal --> 
+<div class="modal fade comman_modal_form" id="staticBackdrop6" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-0">
+         <div class="modal-body">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+            <div class="row align-items-center justify-content-center text-center">
+               <div class="col-md-8">
+                  <div class="comman_modal_heading payment_resultimg">
+                      <img src="assets/img/successful.png" alt="">
+                     <h2>Payment Successfully</h2>
+                     <p>Thanks for shopping with us. <br>Your Order is #123456</p>
+                  </div>  
+                  <div class="form-group mb-0 mt-4">
+                     <a data-bs-toggle="modal" data-bs-target="#staticBackdrop7" href="javscript:;" class="btn_web d-inline-block">
+                        Go To My Orders
+                     </a>
+                  </div> 
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Payment Sucessfully Modal -->  
+<!-- Payment Failed Modal --> 
+<div class="modal fade comman_modal_form" id="staticBackdrop7" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 rounded-0">
+         <div class="modal-body">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+            <div class="row align-items-center justify-content-center text-center">
+               <div class="col-md-8">
+                  <div class="comman_modal_heading payment_resultimg">
+                      <img src="assets/img/failed.png" alt="">
+                     <h2>Payment Failed !</h2>
+                     <p>Opps... <br> Transaction failed</p>
+                  </div>  
+                  <div class="form-group mb-0 mt-4">
+                     <a href="mycart.html" class="btn_web d-inline-block">
+                     Go To Cart
+                     </a>
+                  </div> 
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- Payment Failed Modal --> 

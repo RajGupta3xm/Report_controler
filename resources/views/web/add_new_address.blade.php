@@ -62,7 +62,7 @@
                            </div>
                            <div class="form-group col-md-12 mt-4">
                               <a class="btn_main2 me-md-4 me-2" href="javascript:;">Cancel</a>
-                              <a class="btn_main" href="payment.html">Use This Address</a>
+                              <a class="btn_main" href="{{url('payment')}}">Use This Address</a>
                            </div>
                         </form>
                      </div> 

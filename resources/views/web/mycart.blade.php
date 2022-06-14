@@ -36,7 +36,7 @@
                                     <div class="row align-items-center flex-lg-wrap flex-md-nowrap flex-wrap">
                                        <div class="col-auto">
                                           <span class="cart_product">
-                                          <img src="assets/img/product_img11.png" alt="">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="">
                                           </span>
                                        </div>
                                        <div class="col">
@@ -73,7 +73,7 @@
                                     <div class="row align-items-center flex-lg-wrap flex-md-nowrap flex-wrap">
                                        <div class="col-auto">
                                           <span class="cart_product">
-                                          <img src="assets/img/product_img11.png" alt="">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="">
                                           </span>
                                        </div>
                                        <div class="col">
@@ -110,7 +110,7 @@
                                     <div class="row align-items-center flex-lg-wrap flex-md-nowrap flex-wrap">
                                        <div class="col-auto">
                                           <span class="cart_product">
-                                          <img src="assets/img/product_img11.png" alt="">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="">
                                           </span>
                                        </div>
                                        <div class="col">
@@ -147,7 +147,7 @@
                                     <div class="row align-items-center flex-nowrap">
                                        <div class="col-auto">
                                           <span class="cart_product">
-                                          <img src="assets/img/product_img11.png" alt="">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="">
                                           </span>
                                        </div>
                                        <div class="col">
@@ -184,7 +184,7 @@
                                     <div class="row align-items-center flex-lg-wrap flex-md-nowrap flex-wrap">
                                        <div class="col-auto">
                                           <span class="cart_product">
-                                          <img src="assets/img/product_img11.png" alt="">
+                                          <img src="{{asset('assets/web/img/product_img11.png')}}" alt="">
                                           </span>
                                        </div>
                                        <div class="col">
@@ -230,7 +230,7 @@
                                     <div class="row">
                                        <div class="col-12">
                                           <span class="pricetext mb-4">  Total: $6008.00</span>
-                                          <a class="btn_main" href="checkout.html">Check Out</a>
+                                          <a class="btn_main" href="{{url('checkout')}}">Check Out</a>
                                        </div>
                                     </div>
                                  </td>
