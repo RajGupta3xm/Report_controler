@@ -20,8 +20,8 @@ class CreateQueryTable extends Migration
             $table->text('email');
             $table->string('subject');
             $table->text('message');
-            $table->text('reply')->nullable();
-            $table->enum('status',['0','1'])->default(0)->comment("0=new,1=read");
+            $table->text('last_reply_id')->nullable();
+            $table->enum('status',['0','1'])->default(0)->comment("0=open,1=closed");
             $table->timestamps();
         });
     }

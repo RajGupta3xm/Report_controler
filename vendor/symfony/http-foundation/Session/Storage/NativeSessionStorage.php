@@ -86,7 +86,7 @@ class NativeSessionStorage implements SessionStorageInterface
      * name, "PHPSESSID"
      * referer_check, ""
      * serialize_handler, "php"
-     * use_strict_mode, "0"
+     * use_strict_mode, "1"
      * use_cookies, "1"
      * use_only_cookies, "1"
      * use_trans_sid, "0"
@@ -150,6 +150,12 @@ class NativeSessionStorage implements SessionStorageInterface
 
         if (filter_var(ini_get('session.use_cookies'), \FILTER_VALIDATE_BOOLEAN) && headers_sent($file, $line)) {
             throw new \RuntimeException(sprintf('Failed to start the session because headers have already been sent by "%s" at line %d.', $file, $line));
+        }
+
+        $sessionId = $_COOKIE[session_name()] ?? null;
+        if ($sessionId && $this->saveHandler instanceof AbstractProxy && 'files' === $this->saveHandler->getSaveHandlerName() && !preg_match('/^[a-zA-Z0-9,-]{22,}$/', $sessionId)) {
+            // the session ID in the header is invalid, create a new one
+            session_id(session_create_id());
         }
 
         // ok to try and start the session

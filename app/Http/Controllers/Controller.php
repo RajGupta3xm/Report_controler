@@ -57,7 +57,7 @@ class Controller extends BaseController {
     }
 
     public function my_random_string($char) {
-        return uniqid('upvade');
+        return uniqid('diety');
     }
 
     public function authfail() {

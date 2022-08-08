@@ -297,6 +297,7 @@
                      <input class="form-control numberOnly" type="text" maxlength="1" name="code3" id="number" data-required="4-digit OTP is required">
                      <input class="form-control numberOnly" type="text" maxlength="1" name="code4" id="number" data-required="4-digit OTP is required">
                   </div>
+                  <p class="error-field" id="otpError"></p>
                   <div class="form-group my-3">
                      <div class="time_js"><span>01:34</span></div>
                   </div>
@@ -304,7 +305,7 @@
                      <!-- <a data-bs-toggle="modal" data-bs-target="#staticBackdrop4" href="javscript:;" class="btn_web">
                         Submit
                      </a> -->
-                     <button type="button" class="btn_web" onclick="verification">Submit</button>
+                     <button type="button" class="btn_web" onclick="verification();">Submit</button>
                   </div>
                   <div class="form-group mb-0 comman_text">
                      <span>Didn't receive the OTP? <a href="javascript:;">Resend OTP</a></span>

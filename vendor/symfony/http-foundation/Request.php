@@ -957,7 +957,7 @@ class Request
     /**
      * Gets the user info.
      *
-     * @return string A user name and, optionally, scheme-specific information about how to gain authorization to access the server
+     * @return string|null A user name if any and, optionally, scheme-specific information about how to gain authorization to access the server
      */
     public function getUserInfo()
     {
@@ -1502,7 +1502,7 @@ class Request
     public function getProtocolVersion()
     {
         if ($this->isFromTrustedProxy()) {
-            preg_match('~^(HTTP/)?([1-9]\.[0-9]) ~', $this->headers->get('Via'), $matches);
+            preg_match('~^(HTTP/)?([1-9]\.[0-9]) ~', $this->headers->get('Via') ?? '', $matches);
 
             if ($matches) {
                 return 'HTTP/'.$matches[2];
@@ -1564,7 +1564,7 @@ class Request
      */
     public function getETags()
     {
-        return preg_split('/\s*,\s*/', $this->headers->get('if_none_match', ''), -1, \PREG_SPLIT_NO_EMPTY);
+        return preg_split('/\s*,\s*/', $this->headers->get('If-None-Match', ''), -1, \PREG_SPLIT_NO_EMPTY);
     }
 
     /**
@@ -1907,7 +1907,7 @@ class Request
             return '/';
         }
 
-        return (string) $pathInfo;
+        return $pathInfo;
     }
 
     /**

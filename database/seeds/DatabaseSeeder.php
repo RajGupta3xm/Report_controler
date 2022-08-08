@@ -11,6 +11,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        $this->call([
+            CountrySeeder::class,
+            DeliverySlotSeeder::class,
+            DietPlanTypesSeeder::class,
+            FitnessGoalsSeeder::class,
+            MealSchedulesSeeder::class,
+            WeekDaysSeeder::class,
+            PlanDeliveryDaysSeeder::class,
+            CalorieRecommendSeeder::class
+        ]);
     }
 }

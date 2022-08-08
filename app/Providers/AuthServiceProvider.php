@@ -28,7 +28,6 @@ class AuthServiceProvider extends ServiceProvider
 
         //
         Passport::routes();
-        Passport::loadKeysFrom('/var/www/html/upvade/storage');
-       // Passport::loadKeysFrom('/opt/lampp/htdocs/upvade/storage');
+       //Passport::loadKeysFrom('/opt/lampp/htdocs/Diety/storage');
     }
 }

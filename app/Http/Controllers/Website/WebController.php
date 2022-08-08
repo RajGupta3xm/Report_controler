@@ -327,8 +327,8 @@ class WebController extends Controller {
         return view('web.myaccount');
     }
 
-    public function set_session_details(){
-        
+    public function set_session_details(Request $request){
+        $sessionArray=['user_id'=>$request->user_id,'token'=>$request->token,'name'=>$request->name,'email'=>$request->email,'image'=>$request->image];
     }
 
 }

@@ -110,6 +110,7 @@
         </script>
         <script>
           var user_id;
+          var security;
           function validator(formid){
             var flag=0;
             $('.error-field').css('display','none');
@@ -157,6 +158,7 @@
                       $("#staticBackdrop").modal('hide');
                       $("#staticBackdrop3").modal('show');
                       user_id=response.data['user_id'];
+                      security=response.data['token'];
                     }
                 }
               });
@@ -165,25 +167,29 @@
 
 
           function verification(){
+            $('#otpError').css('display','none');
             var validation=validator('verificationForm');
             if(validation){
               return false;
             }else{
-              var code=$("#code1").val()+$("#code2").val()+$("#code3").val()+$("#code4").val();
+              var code=$(":input[name=code1]").val()+$(":input[name=code2]").val()+$(":input[name=code3]").val()+$(":input[name=code4]").val();
               if(code){
+
                 $.ajax({
+                  headers:{'Authorization': 'Bearer '+security},
                   url:"{{url('/api/verifyOtp')}}",
                   type:'post',
                   data:'user_id='+user_id+'&otp='+code+'&type=register',
                   success: function(response){
                       if(response.status_code == '200'){
-                        $("#staticBackdrop3").modal('close');
+                        $("#staticBackdrop3").modal('hide');
                         loginUser(response);
                       }
                   }
                 });
               }else{
-                $('#'+$(v).attr('id')+'_error').html($(v).attr('data-required'));
+                $('#otpError').css('display','block');
+                $('#otpError').html('Please enter OTP');
               }
             }
           }
@@ -196,7 +202,7 @@
                   data:userdata,
                   success: function(response){
                       if(response.status_code == '200'){
-                        window.location.href="{{url('home')}}";
+                        //window.location.href="{{url('home')}}";
                       }
                   }
                 });

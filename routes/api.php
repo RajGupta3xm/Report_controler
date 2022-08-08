@@ -14,12 +14,9 @@ use Illuminate\Http\Request;
 */
 Route::post('/registerUser','Auth\ApiController@register');
 Route::post('/verifyOtp','Auth\ApiController@verifyOtp');
-Route::post('/uniqueUsername','Auth\ApiController@uniqueUsername');
 Route::post('/login','Auth\ApiController@login');
-Route::post('/forgotPassword','Auth\ApiController@forgotPassword');
-Route::post('/resetPassword','Auth\ApiController@resetPassword');
-Route::post('/homescreen','Auth\ApiController@homescreen');
-Route::get('/categoryList','Auth\ApiController@categoryList');
+
+Route::get('/countryList','Auth\ApiController@countryList');
 Route::get('/getLogout', 'Auth\ApiController@getLogout');
 Route::get('/authfail', 'Controller@authfail');
 Route::post('/helpSupport','Auth\ApiController@helpSupport');
@@ -30,6 +27,13 @@ Route::get('/termsConditions','Auth\ApiController@termsConditions');
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
 	Route::get('myProfile', 'ApiController@myProfile');
 	Route::post('/editProfile','ApiController@editProfile');
+    Route::get('/homescreen','ApiController@homescreen');
+    Route::get('/fitnessGoals','ApiController@fitnessGoals');
+    Route::get('/dislikes','ApiController@dislikes');
+    Route::get('/dietPlanType','ApiController@dietPlanType');
+    Route::post('/updatePersonalDetails','ApiController@updatePersonalDetails');
+    Route::post('/updateFitnessDetails','ApiController@updateFitnessDetails');
+
 	Route::post('/addVideo','ApiController@addVideo');
 	Route::post('/videoDetail','ApiController@videoDetail');
         Route::post('/myVideos','ApiController@myVideos');

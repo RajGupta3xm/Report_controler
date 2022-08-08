@@ -22,8 +22,8 @@ class CreateAdminTable extends Migration {
 
         DB::table('admin')->insert([
             'name' => 'admin',
-            'email' => 'admin@upvade.com',
-            'password' => '$2y$10$.CESC7ksgWA2iXPnNUZDT.jlzaDA6QEF8koOyHgin6qbAAiNh5Qm6',
+            'email' => 'admin@diety.com',
+            'password' => Hash::make('12345678'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
