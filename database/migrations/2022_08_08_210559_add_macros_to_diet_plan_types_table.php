@@ -14,15 +14,15 @@ class AddMacrosToDietPlanTypesTable extends Migration
     public function up()
     {
         Schema::table('diet_plan_types', function (Blueprint $table) {
-            $table->string('protein')->after('name_ar');
-            $table->string('carbs');
-            $table->string('fat');
-            $table->string('protein_actual');
-            $table->string('carbs_actual');
-            $table->string('fat_actual');
-            $table->string('protein_actual_divisor');
-            $table->string('carbs_actual_divisor');
-            $table->string('fat_actual_divisor');
+            $table->string('protein')->after('name_ar')->nullable();
+            $table->string('carbs')->after('protein')->nullable();
+            $table->string('fat')->after('carbs')->nullable();
+            $table->string('protein_actual')->after('fat')->nullable();
+            $table->string('carbs_actual')->after('protein_actual')->nullable();
+            $table->string('fat_actual')->after('carbs_actual')->nullable();
+            $table->string('protein_actual_divisor')->after('fat_actual')->nullable();
+            $table->string('carbs_actual_divisor')->after('protein_actual_divisor')->nullable();
+            $table->string('fat_actual_divisor')->after('carbs_actual_divisor')->nullable();
         });
     }
 

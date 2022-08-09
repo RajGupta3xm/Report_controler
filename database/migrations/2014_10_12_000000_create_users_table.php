@@ -15,9 +15,9 @@ class CreateUsersTable extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('email',191)->unique();
+            $table->string('email',191);
             $table->string('country_code')->nullable();
-            $table->string('mobile')->nullable();
+            $table->string('mobile')->unique();
             $table->string('country')->nullable();
             $table->text('image')->nullable();
             $table->integer('device_type')->default(1)->comment("1=android,2=ios");

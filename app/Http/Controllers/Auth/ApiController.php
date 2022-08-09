@@ -320,7 +320,7 @@ class ApiController extends Controller {
             $user=UserProfile::updateOrCreate(
                 ['user_id' =>  Auth::guard('api')->id()],
                 [
-                    
+                    'user_id' =>  Auth::guard('api')->id(),
                     'initial_body_weight' => $request->weight,
                     'height'=> $request->height,
                     'dob'=> $request->dob,
@@ -329,10 +329,10 @@ class ApiController extends Controller {
                     'activity_scale'=> $request->activity_scale
                 ]
             );
-            
+            $this->status = true; 
+            $this->message = trans('messages.update_profile_success');
         }
-        $this->status = true; 
-        $this->message = trans('messages.update_profile_success');
+        
         return $this->populateResponse();
     }
 
@@ -345,7 +345,7 @@ class ApiController extends Controller {
             $updates['diet_plan_type_id']=$request->diet_plan_type_id;
         }
         if($updates){
-            $user=UserProfile::where('id',Auth::guard('api')->id())->update($updates);
+            $user=UserProfile::where('user_id',Auth::guard('api')->id())->update($updates);
         }   
         
         $this->status = true; 

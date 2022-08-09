@@ -18,5 +18,7 @@ class OrderController extends Controller {
         DB::enableQueryLog();
     }
 
-    
+    public function mealDetails(Request $request){
+        
+    }
 }
