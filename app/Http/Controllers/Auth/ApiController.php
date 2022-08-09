@@ -15,6 +15,9 @@ use App\Models\UserDislike;
 use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
 use App\Models\SubscriptionPlan;
+use App\Models\Content;
+use App\Models\Query;
+use App\Models\QueryReply;
 
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -25,9 +28,19 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiController extends Controller {
 
-    public function __construct() {
+
+    protected $content;
+
+    public function __construct(Content $content)
+    {
+        $this->content = $content;
+
         DB::enableQueryLog();
     }
+
+    // public function __construct() {
+    //     DB::enableQueryLog();
+    // }
 
     public function register(Request $request) {
         $validatedData = Validator::make($request->all(), [
@@ -203,6 +216,45 @@ class ApiController extends Controller {
             $user->image = url('assets/images/dummy2.jpg');
         }
         return $user;
+    }
+
+    public function aboutUs()
+    {
+        $content = $this->content->fetchtremsData('About Us');
+
+        $response = new \Lib\PopulateResponse(compact('content'));
+
+        $this->data = $response->apiResponse();
+        $this->status   = true;
+        $this->message  = 'about us content';
+        
+        return $this->populateResponse();     
+    }
+
+    public function privacyPolicy()
+    {
+        $content = $this->content->fetchtremsData('Privacy Policy');
+
+        $response = new \Lib\PopulateResponse(compact('content'));
+
+        $this->data = $response->apiResponse();
+        $this->status   = true;
+        $this->message  = 'privacy policy content';
+        
+        return $this->populateResponse();     
+    }
+
+    public function termsConditions()
+    {
+        $content = $this->content->fetchtremsData('Terms and Conditions');
+
+        $response = new \Lib\PopulateResponse(compact('content'));
+
+        $this->data = $response->apiResponse();
+        $this->status   = true;
+        $this->message  = 'content';
+        
+        return $this->populateResponse();     
     }
 
     public function myProfile() {
@@ -515,6 +567,117 @@ class ApiController extends Controller {
 
             
             return $this->populateResponse();
+        }
+
+
+        public function helpSupportListing(Request $request){
+            //  return $id = Auth::guard('api')->id();
+            $queryList = Query::select('*')->where('user_id',Auth::guard('api')->id())->orderBy('id','desc')->get();
+            $myQuery = [];
+             if($queryList){
+                 foreach($queryList as $query){
+                     if($query->status == 1){
+                        $query->status = "Closed"; 
+                     }else{
+                        $query->status = "Open"   ;
+                     }
+                    array_push($myQuery, $query);
+                   
+                 }
+                  $data['query_list'] = $myQuery;
+                  if($data){
+                    $this->status = true;
+                    $this->message = trans('messages.query_list');
+                    $response = new \Lib\PopulateResponse($data);
+                    $this->data = $response->apiResponse();
+                  }else {
+                    $this->status = true;
+                    $this->status_code = 202;
+                    $this->message = trans('messages.server_error');
+                }
+                return $this->populateResponse();
+            }
+           
+        }
+        
+        
+        public function helpSupportFirstReply(Request $request){
+            $validate = Validator::make($request->all(), [
+                'message' => 'required'
+            ], [
+                'message.required' => trans('validation.required', ['attribute' => 'message']),
+            ]);
+            if ($validate->fails()) {
+                $this->status_code = 201;
+                $this->message = $validate->errors();
+            } else {
+                $data=[
+                    "message" => $request->input('message'),
+                    'user_id' => Auth::guard('api')->id(),
+                    'ticket_id'  => strtoupper(str_random(10)),
+                    'type'  =>  'chat',
+                ];
+               
+                $insert = Query::create($data);
+                if($insert){
+                 $response = new \Lib\PopulateResponse($insert);
+                 $this->data = $response->apiResponse();
+                 $this->message = trans('messages.query_sent');
+                }else {
+                    $this->message = trans('messages.server_error');
+                    $this->status_code = 202;
+                }
+                $this->status = true;
+            }
+            return $this->populateResponse();
+        }
+
+
+        public function helpSupportReply(Request $request){
+            $validate = Validator::make($request->all(), [
+                'reply' => 'required'
+            ], [
+                'reply.required' => trans('validation.required', ['attribute' => 'reply']),
+            ]);
+            if ($validate->fails()) {
+                $this->status_code = 201;
+                $this->message = $validate->errors();
+            } else {
+                $id =  $request['query_id'];
+                $data=[
+                  "reply" => $request->input('reply'),
+                  'user_type' => 'user',
+                  'query_id'  =>  $id,
+              ];
+                //  $update = Query::find($id)->update($data);
+                $insert = QueryReply::create($data);
+                if($insert){
+                    $data['last_reply_id'] = $insert->id;
+                    $update = Query::find($id)->update($data);
+                }
+                if($insert){
+                 $response = new \Lib\PopulateResponse($insert);
+                 $this->data = $response->apiResponse();
+                 $this->message = trans('messages.reply_sent');
+                } else {
+                    $this->message = trans('messages.server_error');
+                    $this->status_code = 202;
+                }
+                $this->status = true;
+            }
+            return $this->populateResponse();
+        }  
+        
+        
+        public function helpSupportDetail(Request $request){
+        
+            $query = Query::with('queryreply')->where('id',$request->query_id)->where('user_id',Auth::guard('api')->id())->orderBy('id','asc')->get();
+            $data['query'] = $query;
+            $response = new \Lib\PopulateResponse($data);
+            $this->data = $response->apiResponse();
+            $this->status   = true;
+            $this->message  = trans('messages.myQuery_list');
+            return $this->populateResponse(); 
         }
 
 
