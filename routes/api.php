@@ -71,4 +71,8 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
         Route::get('/switchPushNotification','ApiController@switchPushNotification');
         Route::get('myParticipation/{start}', 'ApiController@myParticipation');
         Route::get('myParticipation', 'ApiController@myParticipation');
+        Route::get('helpSupportListing', 'ApiController@helpSupportListing');
+        Route::post('helpSupportFirstReply', 'ApiController@helpSupportFirstReply');
+        Route::post('helpSupportReply/{query_id}', 'ApiController@helpSupportReply');
+        Route::post('helpSupportDetail/{query_id}', 'ApiController@helpSupportDetail');
 });

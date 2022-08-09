@@ -27,6 +27,9 @@ return [
 	'diet_plan_selection_incomplete'=>'Setup your diet plan type',
 	'dislikes_selection_incomplete'=>'Setup your dislikings for food',
 	'plan_list'=>'Subscription Plan List',
+	'query_list'=>'Fetching query list',
+	'reply_sent'=>'Reply sent successfully.',
+	'myQuery_list'=>'My query reply fetched successfully',
 ];
 
 ?>
