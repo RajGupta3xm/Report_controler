@@ -470,44 +470,44 @@ class ApiController extends Controller {
     }
 
     
-    public function helpSupport(Request $request) {
-        $validatedData = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'subject' => 'required',
-            'message' => 'required'
-        ], [
-            'name.required' => trans('validation.required', ['attribute' => 'name']),
-            'email.required' => trans('validation.required', ['attribute' => 'email']),
-            'email.email' => trans('validation.email', ['attribute' => 'email']),
-            'subject.required' => trans('validation.required', ['attribute' => 'subject']),
-            'message.required' => trans('validation.required', ['attribute' => 'message'])
-        ]);
+    // public function helpSupport(Request $request) {
+    //     $validatedData = Validator::make($request->all(), [
+    //         'name' => 'required',
+    //         'email' => 'required|email',
+    //         'subject' => 'required',
+    //         'message' => 'required'
+    //     ], [
+    //         'name.required' => trans('validation.required', ['attribute' => 'name']),
+    //         'email.required' => trans('validation.required', ['attribute' => 'email']),
+    //         'email.email' => trans('validation.email', ['attribute' => 'email']),
+    //         'subject.required' => trans('validation.required', ['attribute' => 'subject']),
+    //         'message.required' => trans('validation.required', ['attribute' => 'message'])
+    //     ]);
 
-        if ($validatedData->fails()) {
-            $this->status_code = 201;
-            $this->message = $validatedData->errors();
-        } else {
-            $insert = [
-                'user_id' => Auth::guard('api')->id(),
-                'name' => $request->name,
-                'email' => $request->email,
-                'subject' => $request->subject,
-                'message' => $request->message,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $data = Query::insertGetId($insert);
-            if ($data) {
-                $this->message = trans('messages.query_sent');
-            } else {
-                $this->message = trans('messages.server_error');
-                $this->status_code = 202;
-            }
-            $this->status = true;
-        }
-        return $this->populateResponse();
-    }
+    //     if ($validatedData->fails()) {
+    //         $this->status_code = 201;
+    //         $this->message = $validatedData->errors();
+    //     } else {
+    //         $insert = [
+    //             'user_id' => Auth::guard('api')->id(),
+    //             'name' => $request->name,
+    //             'email' => $request->email,
+    //             'subject' => $request->subject,
+    //             'message' => $request->message,
+    //             'created_at' => date('Y-m-d H:i:s'),
+    //             'updated_at' => date('Y-m-d H:i:s'),
+    //         ];
+    //         $data = Query::insertGetId($insert);
+    //         if ($data) {
+    //             $this->message = trans('messages.query_sent');
+    //         } else {
+    //             $this->message = trans('messages.server_error');
+    //             $this->status_code = 202;
+    //         }
+    //         $this->status = true;
+    //     }
+    //     return $this->populateResponse();
+    // }
 
 
     public function notificationList() {
