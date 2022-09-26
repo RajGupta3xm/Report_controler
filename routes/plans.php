@@ -16,6 +16,6 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('subscriptionPlans', 'SubscriptionController@planListing');
     Route::get('calculateCalorie', 'SubscriptionController@calculateCalorie');
     Route::post('macrosCalculator', 'SubscriptionController@macrosCalculator');
-    Route::get('dietPlanDetails/{diet_plan_type_id}', 'SubscriptionController@dietPlanDetails');
+    Route::post('dietPlanDetails/{diet_plan_type_id}', 'SubscriptionController@dietPlanDetails');
     Route::get('mealDetails/{meal_plan_id}', 'SubscriptionController@mealDetails');
 });

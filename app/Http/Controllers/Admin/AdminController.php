@@ -64,21 +64,87 @@ class AdminController extends Controller {
 //            dd('hello');
             return redirect()->intended('admin/login');
         } else {
-            $user_count = 0;
-            $users = Users::where('status', '<>', 99)->orderBy('id', 'DESC')->get();
-            if ($users) {
-                $user_count = count($users);
-                $users = Users::where('status', '<>', 99)->orderBy('id', 'DESC')->limit(5)->get();
-                $data['users'] = $users;
-            } else {
-                $data['users'] = [];
-            }
-            $data['total_count'] = $user_count;
-            $posts = Post::where('status', '1')->get();
-            $data['total_video'] = count($posts);
-            return view('admin.dashboard')->with($data);
+           
+            return view('admin.dashboard');
         }
     }
+
+    public function change_password(Request $request){
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->intended('admin/login');
+        } else {
+            $data['edit_password'] = Admin::where('id',Auth::guard('admin')->id())->first();
+             return view('admin.change-password')->with($data);
+            
+        }
+    }
+
+    public function password_update(Request $request){
+    
+        $this->validate($request, [
+            'old_password'     => 'required',
+            'new_password'     => 'required|min:6',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        $user_id = Auth::guard('admin')->id();    
+        $user_password =Admin:: find($user_id);       
+        if(\Hash::check($request->input('old_password'), $user_password->password))
+        {          
+        //   $user_id = \Auth::User()->id;                       
+          $obj_user = Admin::find($user_id);
+          $data['password'] = \Hash::make($request->input('new_password'));
+         $update = Admin::find($user_id)->update($data);
+         return redirect('admin/change_password')->with('success', 'Password update successfully.');
+        }
+        else
+        {           
+           return redirect()->back()->with('error', 'Please enter correct current password ');
+        } 
+}
+
+public function edit_profile(Request $request){
+    if (!Auth::guard('admin')->check()) {
+        return redirect()->intended('admin/login');
+    } else {
+            $data['edit_admin'] = Admin::where('id',Auth::guard('admin')->id())->first();
+         return view('admin.edit-profile')->with($data);
+        
+    }
+    
+}
+
+
+public function edit_update(Request $request, $id=null){
+    $id = base64_decode($id);
+     $data=[
+        "name" => $request->input('name'),
+    ];
+
+    if(!empty($request->image)){
+        $filename = $request->image->getClientOriginalName();
+        $imageName = time().'.'.$filename;
+        if(env('APP_ENV') == 'local'){
+            $return = $request->image->move(
+            base_path() . '/public/uploads/admin_image/', $imageName);
+        }else{
+            $return = $request->banner_image->move(
+            base_path() . '/../public/uploads/admin_image/', $imageName);
+        }
+        $url = url('/uploads/admin_image/');
+     $data['image'] = $url.'/'. $imageName;
+     
+    }
+
+$update = Admin::find($id)->update($data);
+if($update){
+   return redirect('admin/edit_profile')->with('success', ' update successfully.');
+}
+else {
+   return redirect()->back()->with('error', 'Some error occurred while update ');
+}
+
+}
     
     public function reason_list(Request $request) {
         if (!Auth::guard('admin')->check()) {

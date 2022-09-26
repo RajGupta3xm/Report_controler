@@ -16,8 +16,19 @@ use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
 use App\Models\SubscriptionPlan;
 use App\Models\Content;
+use App\Models\MealRating;
 use App\Models\Query;
 use App\Models\QueryReply;
+use App\Models\UserCard;
+use App\Models\UserAddress;
+use App\Models\DeliverySlot;
+use App\Models\GiftCard;
+use App\Models\UserGiftCard;
+use App\Models\CreditTransaction;
+use App\Models\UserSelectedDaysForAddress;
+use Carbon\Carbon;
+use DateTime;
+
 
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +65,20 @@ class ApiController extends Controller {
             'country_code.required' => trans('validation.required', ['attribute' => 'country_code']),
             'mobile.required' => trans('validation.required', ['attribute' => 'mobile']),
         ]);
+
+        $validatedData->after(function ($validatedData) use ($request) {
+            if($request['mobile']){
+                $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->first();
+                if ($mobile_number) {
+                    $validatedData->errors()->add('mobile_number', 'mobile already registered');
+                }
+            }
+            if($request['email']){
+                $email = User::where('email',$request['email'])->whereNotIn('status',['inactive'])->first();
+            }
+            
+        });
+        
         if ($validatedData->fails()) {
             $this->status_code = 201;
             $this->message = $validatedData->errors();
@@ -141,6 +166,29 @@ class ApiController extends Controller {
         }
         return $this->populateResponse();
     }
+
+     // Resend OTP on email/mobile
+     public function resendOTP(Request $request)    
+     {
+         $user = User::find($request->user_id);
+         if($user){
+             $otpUser['otp']             =   '1234';
+             $otpUser['user_id']         =   $request->user_id;
+             $otp                        =   Otp::create($otpUser);
+             // SMS getway & SMTP integration
+ 
+ 
+             // SMS getway & SMTP integration
+             $data = [];
+             $response = new \Lib\PopulateResponse($data);
+ 
+             $this->data = $response->apiResponse();
+             $this->status   = true;
+             $this->message  = 'OTP resend successfully.';
+         }
+         return $this->populateResponse(); 
+     }
+     // Resend OTP on email/mobile
 
     public function login(request $request) {
         $validate = Validator::make($request->all(), [
@@ -270,12 +318,48 @@ class ApiController extends Controller {
     }
 
     public function editProfile(Request $request) {
+        $validator = \Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'country_code' => 'required',
+            // 'mobile' => 'required|numeric',
+            'mobile' => 'required',
+            'email' => 'required',
+            'image' => 'required',
+            'dob' => 'required',
+            'gender' => 'required',
+
+                ], [
+            'first_name.required' =>    'first_name is required field',
+            'last_name.required' =>    'last_name is required field',
+            'email.required' =>         'email is required field',
+            'image.required' =>          'image is required field',
+            'dob.required' =>           'dob is required field',
+            'gender.required' => 'gender is required field',
+            'mobile.required' => 'Mobile Number is required field',
+            // 'mobile.numeric' => 'Mobile Number should be numeric ',
+       ]);
+
+      $validator->after(function ($validator) use ($request) {
+
+      });
+
+      if ($validator->fails()) {
+       //  return ($validator->errors());
+       $this->status_code = 201;
+       $this->message = $validator->errors();
+      }else{
         $addUser=[];
-        if ($request->name && $request->name!="") {
-            $addUser['name'] = $request->name;
+        $editProfile=[];
+        if ($request->first_name && $request->last_name) {
+            $addUser['name'] = $request->first_name. ' ' .$request->last_name;
         }
-        if ($request->country_id) {
-            $addUser['country'] = $request->country_id;
+       
+        if ($request->country_code) {
+            $addUser['country_code'] = $request->country_code;
+        }
+        if ($request->mobile) {
+            $addUser['mobile'] = $request->mobile;
         }
         if ($request->email) {
             $addUser['email'] = $request['email'];
@@ -291,6 +375,21 @@ class ApiController extends Controller {
             $addUser['image'] = $url . '/' . $imageName;
         }
 
+        // if($request->dob || $request->gender){
+        //     $editProfile = [
+        //         'dob'  => $request->dob,
+        //         'gender'  => $request->gender,
+        //     ]; 
+             
+            UserProfile::where('user_id', Auth::guard('api')->id())
+            ->update([
+                'dob'  => $request->dob,
+                'gender'  => $request->gender,
+
+            ]);
+
+        
+
         if($addUser){
             User::where('id', Auth::guard('api')->id())->update($addUser);
             $data = User::select('id as user_id', 'users.*')->find(Auth::guard('api')->id());
@@ -301,7 +400,7 @@ class ApiController extends Controller {
             $this->message = trans('messages.update_profile_success');
         }
         $this->status = true;
-        
+    }
         return $this->populateResponse();
     }
 
@@ -326,7 +425,7 @@ class ApiController extends Controller {
                 $this->message = trans('messages.dislikes_selection_incomplete');
             }
             if($flag){
-                $data['promo_codes']=PromoCode::select('id','name','description','image')->where(['status'=>'active'])
+                 $data['promo_codes']=PromoCode::select('id','name','description','image')->where(['status'=>'active'])
                 // ->whereRaw("((start_date < ".date('Y-m-d')." OR start_date == ".date('Y-m-d').") AND ((end_date > ".date('Y-m-d')." OR end_date == ".date('Y-m-d').") OR (extended_end_date > ".date('Y-m-d')." OR extended_end_date == ".date('Y-m-d').")))")
                 ->where('end_date','>',"'".date('Y-m-d')."'")
                 ->orWhere('extended_end_date','>',"'".date('Y-m-d')."'")
@@ -369,6 +468,8 @@ class ApiController extends Controller {
         if ($validate->fails()) {
             $this->message = $validate->errors();
         } else {
+            $step = '';
+        if($request->step=='1'){
             $user=UserProfile::updateOrCreate(
                 ['user_id' =>  Auth::guard('api')->id()],
                 [
@@ -381,6 +482,41 @@ class ApiController extends Controller {
                     'activity_scale'=> $request->activity_scale
                 ]
             );
+        }
+        elseif($request->step=='2'){
+            $user=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'fitness_scale_id'=> $request->fitness_scale_id
+                ]
+            );
+
+        }
+        elseif($request->step == '3'){
+             $add_item = json_decode($request->item_id,TRUE);
+            if($add_item){
+              foreach($add_item as $item_id){
+                  $user=UserDislike::updateOrCreate(
+                  ['user_id' =>  Auth::guard('api')->id(),
+                 'item_id'=> $item_id
+                  ],
+                  [
+                    'user_id' =>  Auth::guard('api')->id(),
+                    'item_id'=> $item_id
+                  ]
+                  );
+                } 
+           }
+        }
+        elseif($request->step == '4'){
+            $user=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'diet_plan_type_id'=> $request->diet_plan_type_id
+                ]
+            );
+        }
+     
             $this->status = true; 
             $this->message = trans('messages.update_profile_success');
         }
@@ -679,6 +815,534 @@ class ApiController extends Controller {
             $this->message  = trans('messages.myQuery_list');
             return $this->populateResponse(); 
         }
+
+
+        public function mealRating(Request $request){
+            $validate = Validator::make($request->all(), [
+                'meal_id' => 'required'
+            ], [
+                'meal_id.required' => trans('validation.required', ['attribute' => 'meal id']),
+            ]);
+            if ($validate->fails()) {
+                $this->status_code = 201;
+                $this->message = $validate->errors();
+            } else {
+                $data=[
+                  "meal_id" => $request->input('meal_id'),
+                  "user_id" => Auth::guard('api')->id(),
+                  "rating" => $request->input('rating'),
+              ];
+                $insert = MealRating::create($data);
+                if($insert){
+                 $response = new \Lib\PopulateResponse($insert);
+                 $this->data = $response->apiResponse();
+                 $this->message = trans('messages.rating_message');
+                } else {
+                    $this->message = trans('messages.server_error');
+                    $this->status_code = 202;
+                }
+                $this->status = true;
+            }
+            return $this->populateResponse();
+        }    
+        
+        
+
+        public function addCard(Request $request){
+            $validate = Validator::make($request->all(), [
+                'card_holder_name' => 'required',
+                'card_number' => 'required',
+                'expiry_date' => 'required',
+                'card_type' => 'required'
+
+            ], [
+                'card_holder_name.required' => trans('validation.required', ['attribute' => 'card holder name']),
+                'card_number.required' => trans('validation.required', ['attribute' => 'card_number ']),
+                'expiry_date.required' => trans('validation.required', ['attribute' => 'expiry date ']),
+                'card_type.required' => trans('validation.required', ['attribute' => 'card type  ']),
+            ]);
+            if ($validate->fails()) {
+                $this->status_code = 201;
+                $this->message = $validate->errors();
+            } else {
+                $data=[
+                  "card_holder_name" => $request->input('card_holder_name'),
+                  "user_id" => Auth::guard('api')->id(),
+                  "card_number" => $request->input('card_number'),
+                  "expiry_date" => $request->input('expiry_date'),
+              ];
+
+              if($request->card_type == "credit"){
+                $data['card_type']  =  "credit";
+              }else{
+                $data['card_type']  =  "debit";
+              }
+              
+                $insert = UserCard::create($data);
+                if($insert){
+                 $response = new \Lib\PopulateResponse($insert);
+                 $this->data = $response->apiResponse();
+                 $this->message = trans('messages.card_add');
+                } else {
+                    $this->message = trans('messages.server_error');
+                    $this->status_code = 202;
+                }
+                $this->status = true;
+            }
+            return $this->populateResponse();
+        } 
+
+
+
+public function deleteAddCard(Request $request) {
+    $validator = \Validator::make($request->all(), [
+                'card_id' => 'required'
+                    ], [
+                'card_id.required' => trans('validation.required', ['attribute' => 'card id'])
+    ]);
+    if ($validator->fails()) {
+        $this->status_code = 201;
+        $this->message = $validator->errors();
+    } else {
+        $delete = UserCard::where(['user_id' => Auth::guard('api')->id(), 'id' => $request->card_id])->delete();
+        if ($delete) {
+            $this->message = trans('messages.card_delete');
+        } else {
+            $this->status_code = 202;
+            $this->message =  trans('messages.server_error');
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+}
+
+
+public function addAddress(Request $request){
+    $validate = Validator::make($request->all(), [
+        'area' => 'required',
+        // 'address_type' => 'required',
+        // 'selected_day' => 'required',
+        'building' => 'required',
+        'street' => 'required',
+        'postal_code' => 'required',
+        'delivery_slot_id' => 'required',
+
+
+    ], [
+        'area.required' => trans('validation.required', ['attribute' => 'area']),
+        // 'address_type.required' => trans('validation.required', ['attribute' => 'address type ']),
+        // 'selected_day.required' => trans('validation.required', ['attribute' => 'selected day  ']),
+        'building.required' => trans('validation.required', ['attribute' => 'building ']),
+        'street.required' => trans('validation.required', ['attribute' => 'street ']),
+        'postal_code.required' => trans('validation.required', ['attribute' => 'postal_code']),
+        'delivery_slot_id.required' => trans('validation.required', ['attribute' => 'delivery slot id  ']),
+
+    ]);
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+         $data=[
+          "area" => $request->input('area'),
+          "user_id" => Auth::guard('api')->id(),
+          "building" => $request->input('building'),
+          "street" => $request->input('street'),
+          "postal_code" => $request->input('postal_code'),
+          "delivery_slot_id" => $request->input('delivery_slot_id'),
+          "latitude" => $request->input('latitude'),
+          "longitude" => $request->input('longitude'),
+          "mobile_number" => $request->input('mobile_number'),
+          "instructions" => $request->input('instructions'),
+
+      ];
+
+      if($request->address_type == '0'){
+
+           $data['address_type'] = "home";
+         
+      }elseif($request->address_type == '1'){
+
+         $data['address_type'] = "office";
+
+      }else{
+
+        $data['address_type'] = "other";
+
+      }
+
+      if($request->monday == "1"){
+        $data['monday'] = "1";
+
+      }
+      if($request->tuesday == "1"){
+        $data['tuesday'] = "1";
+
+      } if($request->wednesday == "1"){
+        $data['wednesday'] = "1";
+
+      } if($request->thursday == "1"){
+        $data['thursday'] = "1";
+
+      } if($request->friday == "1"){
+        $data['friday'] = "1";
+
+      } if($request->saturday == "1"){
+        $data['saturday'] = "1";
+
+      } if($request->sunday == "1"){
+        $data['sunday'] = "1";
+
+      }
+
+        $insert = UserAddress::create($data);
+       
+        if($insert){
+         $response = new \Lib\PopulateResponse($insert);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.add_address');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+} 
+
+
+
+public function editAddress(Request $request){
+    $validate = Validator::make($request->all(), [
+        'area' => 'required',
+         'user_address_id' => 'required',
+        // 'address_type' => 'required',
+        'building' => 'required',
+        'street' => 'required',
+        'postal_code' => 'required',
+        'delivery_slot_id' => 'required',
+
+
+    ], [
+        'area.required' => trans('validation.required', ['attribute' => 'area']),
+        'user_address_id.required' => trans('validation.required', ['attribute' => 'user address id']),
+        // 'address_type.required' => trans('validation.required', ['attribute' => 'address type ']),
+        'building.required' => trans('validation.required', ['attribute' => 'building ']),
+        'street.required' => trans('validation.required', ['attribute' => 'street ']),
+        'postal_code.required' => trans('validation.required', ['attribute' => 'postal_code']),
+        'delivery_slot_id.required' => trans('validation.required', ['attribute' => 'delivery slot id  ']),
+
+    ]);
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+           $data=[
+          "area" => $request->input('area'),
+          "user_id" => Auth::guard('api')->id(),
+          "building" => $request->input('building'),
+          "street" => $request->input('street'),
+          "postal_code" => $request->input('postal_code'),
+          "delivery_slot_id" => $request->input('delivery_slot_id'),
+          "latitude" => $request->input('latitude'),
+          "longitude" => $request->input('longitude'),
+          "mobile_number" => $request->input('mobile_number'),
+          "instructions" => $request->input('instructions'),
+
+      ];
+
+      if($request->address_type == '0'){
+
+           $data['address_type'] = "home";
+         
+      }elseif($request->address_type == '1'){
+
+         $data['address_type'] = "office";
+
+      }else{
+
+        $data['address_type'] = "other";
+
+      }
+
+      if($request->monday == "1"){
+         $data['monday'] = "1";
+      }else{
+        $data['monday'] = "0";
+      }
+
+      if($request->tuesday == "1"){
+        $data['tuesday'] = "1";
+      }else{
+        $data['tuesday'] = "0";
+      }
+
+       if($request->wednesday == "1"){
+        $data['wednesday'] = "1";
+      } else{
+        $data['wednesday'] = "0";
+      }
+
+      if($request->thursday == "1"){
+        $data['thursday'] = "1";
+      } else{
+        $data['thursday'] = "0";
+      }
+      if($request->friday == "1"){
+        $data['friday'] = "1";
+      } else{
+        $data['friday'] = "0";
+      }
+
+      if($request->saturday == "1"){
+        $data['saturday'] = "1";
+      } else{
+        $data['saturday'] = "0";
+      }
+
+      if($request->sunday == "1"){
+        $data['sunday'] = "1";
+      }else{
+        $data['sunday'] = "0";
+      }
+
+        $update = UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->update($data);
+       
+        if($update){
+        $data = UserAddress::select('id as user_address_id' ,'user_address.*')->where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->get();
+         $response = new \Lib\PopulateResponse($data);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.update_address');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+} 
+
+
+public function addressListing(Request $request) {
+  
+     $address_data = UserAddress::where('user_address.user_id', Auth::guard('api')->id())->where('user_address.status','active')
+   ->select('user_address.*','delivery_slots.*' )
+   ->join('delivery_slots', 'delivery_slots.id','=','user_address.delivery_slot_id')
+   ->orderBy('user_address.id','Desc')
+   ->limit(3)
+   ->get();
+
+   $data = $address_data;
+   if($data){
+       $this->status = true;
+       $this->message = trans('messages.address_detail');
+       $response = new \Lib\PopulateResponse($data);
+       $this->data = $response->apiResponse();
+
+      }else{
+
+       $this->status = true;
+       $data = [];                
+       $this->message = trans('messages.address_notfound');
+       $response = new \Lib\PopulateResponse($data);
+       $this->data = $response->apiResponse();
+
+      }
+return $this->populateResponse();
+}
+
+
+public function giftCardListing(Request $request) {
+  
+    $gift_card = GiftCard::where('status', 'active')->orderBy('id', 'ASC')->get();
+    $response = new \Lib\PopulateResponse($gift_card);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.card_listing');
+    return $this->populateResponse();
+}
+
+public function mySaveCardListing(Request $request) {
+  
+    $user_card = UserCard::where('user_id', Auth::guard('api')->id())->orderBy('id', 'ASC')->get();
+    $response = new \Lib\PopulateResponse($user_card);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.save_card_listing');
+    return $this->populateResponse();
+}
+
+
+public function addGiftCard(Request $request){
+    $validate = Validator::make($request->all(), [
+        'purchase_type' => 'required',
+       
+    ], [
+        'purchase_type.required' => trans('validation.required', ['attribute' => 'purchase type ']),
+      
+    ]);
+    $validate->after(function ($validate) use ($request) {
+        if ($request['country_code'] &&  $request['receiver_mobile']) {
+            $getBooking = User::where('country_code', $request['country_code'])->where('mobile', $request['receiver_mobile'])->first();
+            if (!$getBooking) {
+                $this->error_code = 201;
+                $validate->errors()->add('purchase_type', "This user is not registered");
+            }
+        }
+    
+    });
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+     if($request->purchase_type == 'gifted'){
+        $identifyUserId = User::select('id')->where('country_code',$request->country_code)->where('mobile',$request->receiver_mobile)->first();
+          $data=[
+          "receiver_name" => $request->input('receiver_name'),
+          "quantity" => $request->input('quantity'),
+          "gift_from_user_id" => Auth::guard('api')->id(),
+          "user_id" => $identifyUserId->id,
+          "receiver_email" => $request->input('receiver_email'),
+          "mobile_number" => $request->input('receiver_mobile'),
+          "purchase_type" => 'gifted',
+          "purchase_amount" => $request->input('purchase_amount'),
+          "occassion" => $request->input('occassion'),
+          "message_for_receiver" => $request->input('message_for_receiver'),
+
+      ];
+    }else{
+
+        $data=[
+            "quantity" => $request->input('quantity'),
+            "user_id" => Auth::guard('api')->id(),
+            "purchase_type" => 'self',
+            "purchase_amount" => $request->input('purchase_amount'),
+  
+        ];
+
+    }
+
+        $insert = UserGiftCard::create($data);
+        if($insert){
+         $response = new \Lib\PopulateResponse($insert);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.purchase_gift_card');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+} 
+
+
+public function availableCredit(Request $request) {
+     $available_credit = UserProfile::select('available_credit')->where('user_id', Auth::guard('api')->id())->get();
+    $response = new \Lib\PopulateResponse($available_credit);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.available_credit');
+    return $this->populateResponse();
+}
+
+
+public function creditTransactionList(Request $request) {
+  
+    $credit_transaction = CreditTransaction::where('user_id', Auth::guard('api')->id())->orderBy('id', 'ASC')->get();
+    $response = new \Lib\PopulateResponse($credit_transaction);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.credit_transaction');
+    return $this->populateResponse();
+}
+
+public function basicInfo(Request $request){
+    $validate = Validator::make($request->all(), [
+        'height' => 'required',
+        'weight' => 'required',
+        'dob' => 'required',
+        'age' => 'required',
+        'gender'=>'required',
+        'activity_scale'=>'required',
+
+    ], [
+        'height.required' => trans('validation.required', ['attribute' => 'height ']),
+        'weight.required' => trans('validation.required', ['attribute' => 'weight']),
+        'dob.required' => trans('validation.required', ['attribute' => 'dob ']),
+        'age.required' => trans('validation.required', ['attribute' => 'age ']),
+        'gender.required' => trans('validation.required', ['attribute' => 'gender']),
+        'activity_scale.required' => trans('validation.required', ['attribute' => 'activity_scale'])
+
+    ]);
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+        $step = '';
+        if($request->step=='1'){
+            $user=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'user_id' =>  Auth::guard('api')->id(),
+                    'initial_body_weight' => $request->weight,
+                    'height'=> $request->height,
+                    'dob'=> $request->dob,
+                    'age'=> $request->age,
+                    'gender'=> $request->gender,
+                    'activity_scale'=> $request->activity_scale
+                ]
+            );
+        }
+        elseif($request->step=='2'){
+            $user=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'fitness_scale_id'=> $request->fitness_scale_id
+                ]
+            );
+
+        }
+        elseif($request->step == '3'){
+             $add_item = json_decode($request->item_id,TRUE); 
+            if($add_item){
+              foreach($add_item as $item_id){
+                  $user=UserDislike::updateOrCreate(
+                  ['user_id' =>  Auth::guard('api')->id(),
+                   'item_id'=> $item_id
+                  ],
+                  [
+                    'user_id' =>  Auth::guard('api')->id(),
+                    'item_id'=> $item_id
+                  ]
+                  );
+                } 
+           }
+        }
+        elseif($request->step == '4'){
+            $user=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'diet_plan_type_id'=> $request->diet_plan_type_id
+                ]
+            );
+        }
+        
+        $this->status = true;
+         $this->message = trans('messages.basic_info');
+       
+    }
+    return $this->populateResponse();
+}  
+
+public function promoCodeListings(Request $request) {
+  
+    $promo_codes = PromoCode::select('id','name','image','description')->orderBy('id', 'ASC')->get();
+    $response = new \Lib\PopulateResponse($promo_codes);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.promo_code');
+    return $this->populateResponse();
+}
 
 
 }

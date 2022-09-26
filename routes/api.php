@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 Route::post('/registerUser','Auth\ApiController@register');
 Route::post('/verifyOtp','Auth\ApiController@verifyOtp');
 Route::post('/login','Auth\ApiController@login');
+Route::post('resendOTP', 'Auth\ApiController@resendOTP');
 
 Route::get('/countryList','Auth\ApiController@countryList');
 Route::get('/getLogout', 'Auth\ApiController@getLogout');
@@ -41,4 +42,23 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('helpSupportFirstReply', 'ApiController@helpSupportFirstReply');
     Route::post('helpSupportReply/{query_id}', 'ApiController@helpSupportReply');
     Route::post('helpSupportDetail/{query_id}', 'ApiController@helpSupportDetail');
+    Route::post('mealRating', 'ApiController@mealRating');
+    Route::post('addCard', 'ApiController@addCard');
+    Route::post('deleteAddCard', 'ApiController@deleteAddCard');
+    Route::get('mySaveCardListing', 'ApiController@mySaveCardListing');
+    Route::post('addAddress', 'ApiController@addAddress');
+    Route::post('editAddress', 'ApiController@editAddress');
+    Route::get('addressListing', 'ApiController@addressListing');
+    Route::get('giftCardListing', 'ApiController@giftCardListing');
+    Route::post('addGiftCard', 'ApiController@addGiftCard');
+    Route::get('availableCredit', 'ApiController@availableCredit');
+    Route::get('creditTransactionList', 'ApiController@creditTransactionList');
+    Route::post('basicInfo', 'ApiController@basicInfo');
+    Route::get('promoCodeListing', 'ApiController@promoCodeListings');
+
+
+
+
+
+
 });

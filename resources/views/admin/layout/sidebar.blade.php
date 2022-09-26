@@ -1,22 +1,55 @@
-<aside class="main-sidebar">
-    <div class="sidebar">
-        <div class="user-panel">
-            <div class="image text-center"><img src="{{asset('assets/images/logo.png')}}" alt="logo"> </div>
-        </div>
-        <ul class="sidebar-menu" data-widget="tree">
-            <li class="<?= Request::segment(2) == 'home' || Request::segment(2) == 'dashboard' ? 'active' : ''; ?>"> <a href="{{url('admin/home')}}">  <img src="{{asset('assets/images/sideimg/dashboard.png')}}"  alt="dashboard"> <span>Dashboard</span></a></li>
-            <li class="<?= Request::segment(2) == 'user-management' || Request::segment(2) == 'user-detail' ? 'active' : ''; ?>"> <a href="{{url('admin/user-management')}}">  <img src="{{asset('assets/images/sideimg/users.png')}}"  alt="User list"> <span>User Management</span></a></li>
-            <li class="<?= Request::segment(2) == 'video-management' || Request::segment(2) == 'video-detail' ? 'active' : ''; ?>"> <a href="{{url('admin/video-management')}}">  <img src="{{asset('assets/images/sideimg/subscription.png')}}"  alt="Video list"> <span>Video Management</span></a></li> 
-            <li class="<?= Request::segment(2) == 'category-management' || Request::segment(2) == 'edit-category' ? 'active' : ''; ?>"> <a href="{{url('admin/category-management')}}">  <img src="{{asset('assets/images/sideimg/quantity.png')}}"  alt="Category list"> <span>Category Management</span></a></li>
-            <li class="<?= Request::segment(2) == 'reason-management' || Request::segment(2) == 'edit-reason' ? 'active' : ''; ?>"> <a href="{{url('admin/reason-management')}}">  <img src="{{asset('assets/images/sideimg/booking.png')}}"  alt="Reason list"> <span>Reason Management</span></a></li>
-            <li class="<?= Request::segment(2) == 'report-management' || Request::segment(2) == 'report-detail' ? 'active' : ''; ?>"> <a href="{{url('admin/report-management')}}">  <img src="{{asset('assets/images/sideimg/service.png')}}"  alt="Report list"> <span>Report Management</span></a></li>  
-            <li class="treeview <?= Request::segment(2) == 'notification-list' || Request::segment(2) == 'compose-notification' ? 'menu-open' : ''; ?>"> <a href="#"> <img src="{{asset('assets/images/sideimg/attributes.png')}}" alt="Notification Management"> <span>Notification Management</span> <span class="pull-right-container"> <i class="fa fa-angle-down pull-right"></i> </span> </a>
-                <ul class="treeview-menu">
-                    <li class="<?= Request::segment(2) == 'notification-list'? 'active' : ''; ?>"><a href="{{url('admin/notification-management')}}"> Notification List</a></li>
-                    <li class="<?= Request::segment(2) == 'compose-notification'? 'active' : ''; ?>"><a href="{{url('admin/custom-notification')}}"> Compose New</a></li>
-                </ul>
-            </li>
-           <li class="<?= Request::segment(2) == 'query-management' || Request::segment(2) == 'query-detail' ? 'active' : ''; ?>"> <a href="{{url('admin/query-management')}}">  <img src="{{asset('assets/images/sideimg/help.png')}}"  alt="Help & Support"> <span>Help & Support</span></a></li> 
-        </ul>
-    </div>
+<aside>
+   <div class="admin_main">
+      <div class="siderbar_section">
+         <div class="siderbar_inner">
+            <div class="sidebar_logo">
+               <a href="javscript:;"><img src="{{asset('assets/img/logo.png')}}" alt="Logo"> </a>
+            </div>
+            <diV class="sidebar_menus">
+               <ul class="list-unstyled ps-1 m-0">
+                  <li><a class="<?= Request::segment(2) == 'dashboard' || Request::segment(2) == 'change_password' || Request::segment(2) == 'edit_profile' || Request::segment(2) == 'dashboard' ? 'active' : ''; ?>" href="{{url('admin/dashboard')}}"  ><i class="fal fa-home"></i>Dashboard</a></li>
+                  <li><a class="" href="user-management.html"><i class="fal fa-user"></i>Users Management</a></li>
+                  <li><a class="" href="order-management.html"><i class="fal fa-box-full"></i>Order Management</a></li>
+                  <li><a class="" href="ingredients-management.html"><i class="fal fa-utensils-alt"></i>Ingredients Management</a></li>
+                  <li><a class="" href="fitness-goal-management.html"><i class="far fa-walking"></i>Fitness Goal Management</a></li>
+                  <li><a class="" href="diet-plan-management.html"><i class="far fa-salad"></i>Diet Plan Management</a></li>
+                  <li><a class="" href="meal-management.html"><i class="fal fa-pizza-slice"></i>Meal Management</a></li>
+                  <li><a class="" href="meal-plan-management.html"><i class="fal fa-lightbulb-on"></i>Meal Plan Management</a></li>
+                  <li><a class="" href="staff-management.html"><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
+                  <li><a class="" href="fleet-management.html"><i class="fal fa-layer-group"></i>Fleet Management</a></li>
+                  <li><a class="" href="promo-code-management.html"><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>
+                  <li><a class="" href="gift-card-management.html"><i class="fad fa-gift-card"></i>Gift Card Management</a></li>
+                  <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
+                  <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li>
+                  <li><a class="" href="report-management.html"><i class="far fa-file-spreadsheet"></i>Report Management</a></li>
+                  <li><a class="" href="content-management.html"><i class="fal fa-user-edit"></i>Content Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'support-management' || Request::segment(2) == '/query/filter' ? 'active' : ''; ?>" href="{{url('admin/support-management')}}" href="help-support.html"><i class="fal fa-hands-heart"></i>Help & Support <span class="alert_box">{{$query_count}}</span></a></li>
+               </ul>
+            </diV>
+         </div>
+      </div>
+   </div>
 </aside>
+
+
+<!-- <aside >
+<div class="admin_main">
+<div class="siderbar_section">
+            <div class="siderbar_inner">
+               <div class="sidebar_logo">
+                  <a href="javscript:;"><img src="{{asset('assets/img/logo.png')}}" alt="Logo"> </a>
+               </div>
+               <diV class="sidebar_menus mt-4">
+                  <ul class="list-unstyled ps-1 m-0">
+                     <li><a class="<?= Request::segment(2) == 'dashboard' || Request::segment(2) == 'user-details' || Request::segment(2) == 'pet-details' || Request::segment(2) == 'dashboard' ? 'active' : ''; ?>" href="{{url('admin/dashboard')}}"><i class="fas fa-home me-3"></i>Dashboard</a></li>
+                     <li><a class="<?= Request::segment(2) == 'user-management' || Request::segment(2) == 'user-detail'|| Request::segment(2) == 'pet-detail' ? 'active' : ''; ?>" href="{{url('admin/user-management')}}"><i class="fas fa-user me-3"></i>User Management</a></li>
+                     <li><a class="<?= Request::segment(2) == 'training-management' || Request::segment(2) == 'upload-request' ? 'active' : ''; ?>" href="{{url('admin/training-management')}}"><i class="fas fa-video me-3"></i>Training Videos</a></li>
+                     <li><a class="<?= Request::segment(2) == 'content-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/content-management')}}"><i class="fab fa-telegram-plane me-3"></i>Content Management</a></li>
+                     <li><a class="<?= Request::segment(2) == 'support-management' || Request::segment(2) == '/query/filter' ? 'active' : ''; ?>" href="{{url('admin/support-management')}}"><i class="fas fa-user-headset me-3"></i>Help & Support</a></li>
+                     <li><a  href="{{url('/admin/logout')}}"><i class="fas fa-sign-out-alt me-3"></i>Logout</a></li>
+                  </ul>
+               </diV>
+            </div>
+         </div>
+         <div>
+</aside> -->

@@ -8,6 +8,16 @@ class UserProfile extends Model
 {
     protected $table="user_profile";
     protected $fillable=[
-            'user_id','height','initial_body_weight','dob','age','gender','activity_scale','fitness_scale_id','diet_plan_type_id'
+            'user_id',
+            'available_credit',
+            'subscription_id',
+            'height',
+            'initial_body_weight',
+            'dob',
+            'age',
+            'gender',
+            'activity_scale',
+            'fitness_scale_id',
+            'diet_plan_type_id'
         ];
 }

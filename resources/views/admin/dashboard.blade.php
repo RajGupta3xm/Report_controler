@@ -1,110 +1,179 @@
 @extends('admin.layout.master')
-
 @section('content')
-<div class="content-wrapper">
-    <div class="content-header sty-one">
-        <h1>Dashboard</h1> 
-    </div>
 
-    <div class="content"> 
-        <div class="row">
-            <div class="col-lg-6 col-xs-6 m-b-3">
-                <div class="card">
-                    <div class="card-body"><span class="info-box-icon bg-green"><i class="icon-user"></i></span>
-                        <div class="info-box-content"> <span class="info-box-number">{{$total_count}}</span> <span class="info-box-text">
-                                Total Users </span> </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-xs-6 m-b-3">
-                <div class="card">
-                    <div class="card-body"><span class="info-box-icon bg-red"><i class="icon-video"></i></span>
-                        <div class="info-box-content"> <span class="info-box-number">{{$total_video}}</span> <span class="info-box-text">
-                                Total Videos </span> </div>
-                    </div>
-                </div>
-            </div>  
-        </div>  
-
-        <div class="card mb-4">
-            <div class="card-header mb-4">
-                <h5 class="card-title">Recent Users</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="example1" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Sr. No.</th>
-                                <th>User Name</th>
-                                <th>Mobile Number</th>
-                                <th>Registration Date</th>  
-                                <th>Country</th> 
-                                <th>Status</th> 
-                                <th>Action</th> 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if($users)
-                            @foreach($users as $k=>$user)
-                            <tr>
-                                <td>{{$k+1}}</td>
-                                <td>{{$user->name}}</td>
-                                <td>+{{$user->country_code}}-{{$user->mobile}}</td>
-                                <td>{{date('d-m-Y',strtotime($user->created_at))}}</td>
-                                <td>{{$user->country}}</td>
-                                <td>
-                                    @if($user->status > 0)
-                                    <div class="mytoggle">
-                                        <label class="switch">
-                                            <input type="checkbox" <?= $user->status == 1 ? 'checked' : '' ?> onchange="changeUserStatus(this,'{{$user->id}}');"> <span class="slider round"> </span> 
-                                        </label>
+      <div class="admin_main">
+         <div class="admin_main_inner">
+            <div class="admin_panel_data height_adjust">
+               <div class="row dashboard_part justify-content-center">
+                  <div class="col-12">
+                     <div class="row ms-3 mb-5 justify-content-center">
+                        <div class="col d-flex align-items-stretch">
+                           <a href="user-management.html" class="row dashboard_box box_design me-3 w-100">
+                              <div class="col-auto px-0">
+                                 <span class="dashboard_icon"><i class="fas fa-user"></i></span>
+                              </div>
+                              <div class="col pe-0">
+                                 <div class="dashboard_boxcontent">
+                                    <h2>Total Users</h2> 
+                                 </div>
+                                 <div class="row total_user_main">
+                                    <div class="col-6 mb-1">
+                                       <h3>Active : <span> 123</span></h3>
                                     </div>
-                                    @else
-                                    Not Active
-                                    @endif
-                                </td> 
-                                <td><a href="{{url('admin/user-detail/'.base64_encode($user->id))}}" class="composemail"><i class="fa fa-eye"></i></a></td> 
-                            </tr>
-                            @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
+                                    <div class="col-6 mb-1">
+                                       <h3>Inactive : <span> 435</span></h3>
+                                    </div>
+                                    <div class="col-6">
+                                       <h3>Paused : <span> 1234</span></h3>
+                                    </div>
+                                    <div class="col-6">
+                                       <h3>Expired : <span> 234</span></h3>
+                                    </div>
+                                 </div>
+                              </div>
+                           </a>
+                        </div>
+                        <div class="col d-flex align-items-stretch">
+                           <a href="order-details.html" class="row dashboard_box box_design me-3 w-100">
+                              <div class="col-auto px-0">
+                                 <span class="dashboard_icon"><i class="fal fa-box-full"></i></span>
+                              </div>
+                              <div class="col pe-0">
+                                 <div class="dashboard_boxcontent">
+                                    <h2>Total Orders</h2>
+                                    <span>20000</span>
+                                 </div>
+                              </div>
+                           </a>
+                        </div>
+                        <div class="col d-flex align-items-stretch pe-0">
+                           <a href="upcoming-deliveries.html" class="row dashboard_box box_design me-0 w-100">
+                              <div class="col-auto px-0">
+                                 <span class="dashboard_icon"><i class="fas fa-biking-mountain"></i></span>
+                              </div>
+                              <div class="col pe-0">
+                                 <div class="dashboard_boxcontent">
+                                    <h2>Upcoming Deliveries</h2>
+                                    <span>23/08/2022</span>
+                                 </div>
+                              </div>
+                           </a>
+                        </div> 
+                     </div>
+                     <div class="row mx-0">
+                        <div class="col-12 design_outter_comman recent_orders shadow">
+                           <div class="row comman_header justify-content-between">
+                              <div class="col-auto">
+                                 <h2>Recent Orders</h2>
+                              </div>
+                              <div class="col-3">
+                                 <form class="form-design" action="">
+                                    <div class="form-group mb-0 position-relative icons_set">
+                                       <input type="text" class="form-control" placeholder="Search Recent Orders" name="name" id="name">
+                                       <i class="far fa-search"></i>
+                                    </div>
+                                 </form>
+                              </div>
+                           </div>
+                           <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" action="">
+                              <div class="form-group mb-0 col-5">
+                                 <label for="">From</label>
+                                 <input type="date" class="form-control">
+                              </div>
+                              <div class="form-group mb-0 col-5">
+                                 <label for="">To</label>
+                                 <input type="date" class="form-control">
+                              </div>
+                              <div class="form-group mb-0 col-auto">
+                                 <button class="comman_btn">Search</button>
+                              </div> 
+                           </form>
+                           <div class="row">
+                              <div class="col-12 comman_table_design px-0">
+                                 <div class="table-responsive">
+                                    <table class="table mb-0">
+                                       <thead>
+                                         <tr>
+                                           <th>S.No.</th>
+                                           <th>User Name</th>
+                                           <th>Mobile Number</th>
+                                           <th>Order Date</th>
+                                           <th>Order ID</th>
+                                           <th>Plan Name</th>
+                                           <th>Duration</th>
+                                           <th>Action</th>
+                                         </tr>
+                                       </thead>
+                                       <tbody>
+                                         <tr>
+                                           <td>1</td>
+                                           <td>John Debey</td>
+                                           <td>9899012312</td>
+                                           <td>01/07/2022</td>
+                                           <td>1001</td>
+                                           <td>Name</td>
+                                           <td>Weekly</td>
+                                           <td>
+                                             <a class="comman_btn table_viewbtn" href="user-details.html">View</a>
+                                          </td>
+                                         </tr>
+                                         <tr>
+                                          <td>2</td>
+                                          <td>John Debey</td>
+                                          <td>9899012312</td>
+                                          <td>01/07/2022</td>
+                                          <td>1002</td>
+                                          <td>Name</td>
+                                          <td>Weekly</td>
+                                          <td>
+                                            <a class="comman_btn table_viewbtn" href="user-details.html">View</a>
+                                         </td>
+                                        </tr>
+                                        <tr>
+                                          <td>3</td>
+                                          <td>John Debey</td>
+                                          <td>9899012312</td>
+                                          <td>01/07/2022</td>
+                                          <td>1003</td>
+                                          <td>Name</td>
+                                          <td>Weekly</td>
+                                          <td>
+                                            <a class="comman_btn table_viewbtn" href="user-details.html">View</a>
+                                         </td>
+                                        </tr>
+                                        <tr>
+                                          <td>4</td>
+                                          <td>John Debey</td>
+                                          <td>9899012312</td>
+                                          <td>01/07/2022</td>
+                                          <td>1004</td>
+                                          <td>Name</td>
+                                          <td>Weekly</td>
+                                          <td>
+                                            <a class="comman_btn table_viewbtn" href="user-details.html">View</a>
+                                         </td>
+                                        </tr>
+                                        <tr>
+                                          <td>5</td>
+                                          <td>John Debey</td>
+                                          <td>9899012312</td>
+                                          <td>01/07/2022</td>
+                                          <td>1005</td>
+                                          <td>Name</td>
+                                          <td>Weekly</td>
+                                          <td>
+                                            <a class="comman_btn table_viewbtn" href="user-details.html">View</a> </td>
+                                        </tr> 
+                                       </tbody>
+                                     </table>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div> 
+                  </div>
+               </div>
             </div>
-        </div>  
-    </div>
-    <script>
-        function changeUserStatus(obj, id) {
-        var confirm_chk = confirm('Are you sure to change user status?');
-        if (confirm_chk) {
-        var checked = $(obj).is(':checked');
-        if (checked == true) {
-        var status = 1;
-        } else {
-        var status = 2;
-        }
-        if (id) {
-        $.ajax({
-        url: "<?= url('admin/user/change_user_status') ?>",
-                type: 'post',
-                data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
-                success: function (data) {
-                if (data.error_code == "200") {
-                alert(data.message);
-                location.reload();
-                } else {
-                alert(data.message);
-                }
-                }
-        });
-        } else {
-        alert("Something went wrong");
-        }
-        } else {
-        return false;
-        }
-        }
-    </script>
-
+         </div>
+      </div>
     @endsection

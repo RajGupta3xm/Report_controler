@@ -15,12 +15,16 @@ class User extends Model {
     protected $fillable = [
         'name',
         'email',
+        'image',
         'country_code',
         'mobile',
         'country',
         'device_token',
         'device_type',
         'remember_token',
+        'is_otp_verified',
+        'mobile_verified_at',
+        'push_notification',
         'status',
     ];
     protected $primaryKey = 'id';

@@ -6,5 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class PromoCode extends Model
 {
-    // protected $fillable=['user_id','post_id','title','description','video','status'];
+    protected $table='promo_codes';
+    protected $fillable = [
+        "name",
+        "name_ar",
+        "description",
+        "description_ar",
+        "image",
+        "duration",
+        "discount",
+        "start_date",
+        "end_date",
+        "is_extended",
+        "extended_end_date",
+        "status"
+
+
+
+    ];
 }

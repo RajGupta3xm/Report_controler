@@ -14,6 +14,14 @@ use App\Models\UserCaloriTarget;
 use App\Models\SubscriptionCosts;
 use App\Models\SubscriptionDietPlan;
 use App\Models\SubscriptionMealGroup;
+use App\Models\Meal;
+use App\Models\Mealschedules;
+use App\Models\DislikeCategory;
+use App\Models\UserDislike;
+use App\Models\DislikeItem;
+use Carbon\Carbon;
+use DateTime;
+
 
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +37,7 @@ class SubscriptionController extends Controller {
     }
 
     public function planListing(Request $request){
+        
         $request->diet_plan_type_id;
         $request->plan_type;
         $request->is_weekend;
@@ -55,7 +64,7 @@ class SubscriptionController extends Controller {
 
                         $meals=[];
                         $meal_des=[];
-                        $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
+                          $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
                         foreach($subscription->meal_groups as $meal){
                             array_push($meals,['id'=>$meal->meal_group->id,'meal_name'=>$meal->meal_group->name]);
                             array_push($meal_des,$meal->meal_group->name);
@@ -96,7 +105,7 @@ class SubscriptionController extends Controller {
 
     public function macrosCalculator(Request $request) {
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
-        $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
+         $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
         
         ///// Calculation /////
 
@@ -129,7 +138,13 @@ class SubscriptionController extends Controller {
 
     public function dietPlanDetails(Request $request){
         $dietPlan=DietPlanType::select('id','name','protein','carbs','fat')->where('id',$request->diet_plan_type_id)->first();
-        $dietPlan->meals=[];
+        // return $meal = Meal::select('name','image')->with('meal_schedule')->get();
+         $meal = Meal::join('meal_schedules','meals.id','=','meal_schedules.id')
+        ->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')
+        ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($request->date)))
+        ->orderBy('meals.created_at', 'Asc')
+        ->get();
+        $dietPlan->meals=$meal;
         $data=$dietPlan;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
@@ -138,7 +153,33 @@ class SubscriptionController extends Controller {
         return $this->populateResponse();
     }
 
+    public function mealDetails(Request $request){
+         $mealDetail=Meal::select('*')->where('id',$request->meal_plan_id)->first();
+        // return $meal = Meal::select('name','image')->with('meal_schedule')->get();
+         $mealDetail = Meal::join('meal_schedules','meals.id','=','meal_schedules.id')
+        ->select('meals.id as meal_id','meals.name as meal_name','image','description','meal_schedules.name')
+        ->where('meals.id',$request->meal_plan_id)
+        ->first();
+
+         $dislikeItem = DislikeItem::select('id','category_id','name')->where('status','active')->get()->each(function($dislikeItem){
+            $dislikeItem->selected=false;
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->id])->first()){
+                $dislikeItem->selected=true;
+            }
+        });
+        $mealDetail->dislike_item = $dislikeItem;
+        $data=$mealDetail;
+        $response = new \Lib\PopulateResponse($data);
+        $this->status = true;
+        $this->data = $response->apiResponse();
+        $this->message = trans('plan_messages.diet_plan_detail');
+        return $this->populateResponse();
+    }
+
+
     public function buySubscriptionPlan(Request $request){
 
     }
+
+    
 }

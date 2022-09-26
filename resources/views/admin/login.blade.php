@@ -1,58 +1,98 @@
-
 @extends('admin.layout.master2')
-
 @section('content')
-<div class="container-fluid  wl-login">
-    <div class="container ml-0 pl-0">
-        <div class="login-box">
-            <div class="form-section">
-                <div class="login-logo">
-                    <img src="{{asset('assets/images/logo.png')}}">
-                </div>
-                <h3>Hi, Welcome Back..!!</h3>
-                <p>Login to your account</p>
-                @if(session()->has('block'))
-                <div class="alert alert-success">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    {{ session()->get('block') }}
-                </div>
-                @endif
-                <form method=post action="{{url('admin/dologin')}}">
-                    {{ csrf_field() }}
-                    <div class="form-group">
-                        <input type="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email">
-                        @if ($errors->has('email'))
-                        <div class="help-block">
-                            <strong class="text-danger text-small">{{ $errors->first('email') }}</strong>
+      <section class="login_page">
+         <div class="container-fluid px-0">
+            <div class="row justify-content-center"> 
+               <div class="col-4">
+                  <div class="login_page_form shadow">
+                     <div class="row">
+                        <div class="col-12 formheader mb-4">
+                           <img src="{{asset('assets/img/logo.png')}}" alt="">
+                           <h1>Login for Admin Panel</h1>
+                           <p>Please enter your email and password</p>
+                           @if (session('block'))
+                             <!-- <div class="alert alert-login-success"> -->
+                                <strong class="alert alert-login-success"> {{ session('block') }}</strong>
+                              <!-- </div> -->
+                          @endif
                         </div>
-                        @endif
-                    </div>
-                    <div class="form-group eyepassword">
-                        <input type="password" name="password" id="password" class="form-control" value="{{old('password')}}" placeholder="Password">
-                        <i class="fa fa-eye" onclick="showPassword(this,'password')"></i>
-                        @if ($errors->has('password'))
-                        <div class="help-block">
-                            <strong class="text-danger text-small">{{ $errors->first('password') }}</strong>
+                        <div class="col-12">
+                           <form class="row form-design" method=post id="addForm" enctype="multipart/form-data" action="{{url('admin/dologin')}}">
+                              @csrf
+                              <div class="form-group col-12 title">
+                                 <label for="">User Name</label>
+                                 <input type="text" class="form-control validate" placeholder="User@gmail.com" name="email" id="name">
+                                 <span class="text-danger errorshift" id="emailError" ></span>
+                                 @if ($errors->has('email'))
+                                 <span class="help-block">
+                                     <strong class="text-danger text-small">{{ $errors->first('email') }}</strong>
+                                  </span>
+                                  @endif
+                              </div>
+                              <div class="form-group col-12 title">
+                                 <label for="">Password</label>
+                                 <input type="text" class="form-control validate" placeholder="**********" name="password" id="name">
+                                 <span class="text-danger errorshift" id="passwordError" ></span>
+                                  @if ($errors->has('password'))
+                                  <span class="help-block">
+                                      <strong class="text-danger text-small">{{ $errors->first('password') }}</strong>
+                                    </span>
+                                   @endif
+                              </div>
+                              <div class="form-group col-12">
+                                 <a class="for_got" href="{{url('admin/forgot')}}">Forgot Password?</a> 
+                              </div>
+                              <div class="form-group col-12">
+                                  <!-- <a class="comman_btn" href="language-selection.html">Submit</a> -->
+                                  <button type="button" onclick="validate(this);" class="comman_btn">Submit</button> 
+                              </div>
+                           </form>
                         </div>
-                        @endif
-                    </div> 
-                    <button type="submit" class="btn btn-primary mybtns-send ">Sign In</button> 
-                </form>
+                     </div>
+                  </div>
+               </div>
             </div>
-        </div>
-    </div>
-</div>
-<script>
-    function showPassword(obj, id) {
-        if ($('#' + id).attr('type') == 'text') {
-            $('#' + id).attr('type', 'password');
-            $(obj).removeClass('fa-eye-slash');
-            $(obj).addClass('fa-eye');
-        } else {
-            $('#' + id).attr('type', 'text');
-            $(obj).removeClass('fa-eye');
-            $(obj).addClass('fa-eye-slash');
+         </div>
+      </section>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script>
+ $(window).load(function(){
+   setTimeout(function(){ $('.alert-login-success').fadeOut('slow') }, 5000);
+});
+  </script>
+      @endsection
+      <style>
+         .title .errorshift { float:left }
+      </style>
+
+
+      
+      <script>
+            function validate(obj) {
+            $(".text-danger").html('');
+            var flag = true;
+            var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            $(formData).each(function () {
+                var element = $(this);
+                var val = element.val();
+                var name = element.attr("name");
+                if (val == "" || val == "0" || val == null) {
+                    
+                $("#" + name + "Error").html("This field is required");
+                flag = false;
+                    
+                    
+                } else {
+
+                }
+            });
+           
+            if (flag) {
+                $("#addForm").submit();
+            } else {
+                return false;
+            }
+
+            
         }
-    }
-</script>
-@endsection
+    </script>

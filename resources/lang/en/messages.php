@@ -2,7 +2,7 @@
 
 return [
 	'register'=>'Registration Successful',
-	'server_error'=>'erver could not get any response. Please try again later.',
+	'server_error'=>'Server could not get any response. Please try again later.',
 	'invalid_otp'=>'invalid OTP',
 	'otp_verified'=>'OTP verified successfully',
 	'account_blocked'=>'This account is blocked by Diety',
@@ -30,6 +30,20 @@ return [
 	'query_list'=>'Fetching query list',
 	'reply_sent'=>'Reply sent successfully.',
 	'myQuery_list'=>'My query reply fetched successfully',
+	'rating_message'=>'Thank you so much for your star review!',
+	'card_add'=>'Thank you so much for adding card!',
+	'card_delete'=>'Card delete successfully',
+	'add_address'=>'Address add successfully',
+	'update_address'=>'Address updated successfully',
+	'address_detail'=>'Address details',
+	'address_notfound'=>'Address not found',
+	'card_listing'=>'Fetching gift card successfully',
+	'purchase_gift_card'=>'Thank you so much for purchasing card!',
+	'available_credit'=>'Fetching available credit successfully',
+	'credit_transaction'=>'Fetching credit transaction list successfully',
+	'basic_info'=>'Basic Information submit successfully',
+	'promo_code'=>'Fetching promo codes successfully',
+	'save_card_listing'=>'Fetching saved card successfully',
 ];
 
 ?>

@@ -61,10 +61,43 @@ Route::get('/admin/login', 'Admin\LoginController@login')->name('login');
 Route::post('/admin/dologin', 'Admin\LoginController@authenticate');
 Route::get('/admin/logout', 'Admin\AdminController@getLogout');
 Route::get('/admin/error', 'Admin\LoginController@error')->name('error');
+Route::get('/admin/forgot', 'Admin\LoginController@forgot');
+Route::post('/admin/forgotten', 'Admin\LoginController@forgotten');
+Route::any('otp/{id}', [
+    'as' => 'otp',
+    'uses' => 'Admin\LoginController@showotp'
+ ]);
+ Route::post('/admin/checkOTP', 'Admin\LoginController@checkOTP');
+ Route::get('/admin/resetPassword/{id}', 'Admin\LoginController@resetPassword')->name('resetPassword');
+ Route::post('/admin/ConfirmPassword', 'Admin\LoginController@ConfirmPassword');
+ Route::post('/admin/resend_otp','Admin\LoginController@resendotp');
+
+
 
 Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'admin'], function () {
     Route::get('/home', 'Admin\AdminController@dashboard')->middleware('admin')->name('home');
     Route::get('/dashboard', 'Admin\AdminController@dashboard')->name('dashboard');
+    Route::get('change_password','Admin\AdminController@change_password');
+    Route::post('/edit_passwordUpdate','Admin\AdminController@password_update');
+    Route::get('/edit_profile','Admin\AdminController@edit_profile');
+    Route::post('/edit_profileUpdate/{id}','Admin\AdminController@edit_update');
+
+
+    /*******Help And Support */
+
+    Route::get('/support-management','Admin\SupportController@index');
+    Route::post('/query/change_status','Admin\SupportController@change_status');
+    Route::post('/query-delete','Admin\SupportController@query_delete');
+    Route::post('/query/filter', [
+        'uses' => 'Admin\SupportController@filter_list',
+        'as' => 'admin.query.filter'
+      ]);
+      Route::any('query/chat', 'Admin\SupportController@queryChat');
+      Route::post('query/reply', 'Admin\SupportController@query_reply');
+
+    /******End Help And Support */
+
+
     Route::get('/user-management', 'Admin\UserController@index');
     Route::get('/user-detail/{id}', 'Admin\UserController@show');
     Route::post('/user-post-filter', ['uses' => 'Admin\UserController@user_post_filter', 'as' => 'admin.user_post.filter']);
@@ -101,12 +134,7 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
         'uses' => 'Admin\UserController@filter_report_list',
         'as' => 'admin.report.filter'
     ]);
-    Route::get('/query-management', 'Admin\UserController@queryList');
-    Route::get('/query-detail/{id}', 'Admin\UserController@queryDetail');
-    Route::post('/query/reply', [
-        'uses' => 'Admin\UserController@query_reply',
-        'as' => 'admin.query.reply'
-    ]);
+   
     
     Route::get('/reason-management', 'Admin\AdminController@reason_list');
     Route::post('reason/store', [

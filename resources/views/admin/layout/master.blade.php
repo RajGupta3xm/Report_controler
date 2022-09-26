@@ -1,55 +1,111 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/x-icon" href="{{asset('assets/images/favicon.png')}}">
-        <title>Upvade : Admin Panel</title> 
-        <meta name="keywords" content="Upvade." />
-        <meta name="author" content="Upvade" />
-        <link href="https://www.upvade.com.com/admin" rel="canonical" />
-        <meta name="Classification" content="Upvade" />
-        <meta name="abstract" content="https://www.upvade.com/admin" />
-        <meta name="audience" content="All" />
-        <meta name="robots" content="index,follow" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content="Upvade Admin Panel" /> 
-        <meta property="og:url" content="https://www.upvade.com/admin" /> 
-        <meta property="og:site_name" content="upvade" />
-        <meta name="googlebot" content="index,follow" />
-        <meta name="distribution" content="Global" />
-        <meta name="Language" content="en-us" />
-        <meta name="doc-type" content="Public" />
-        <meta name="site_name" content="upvade" />
-        <meta name="url" content="https://www.upvade.com/admin" />
-        <link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/css/chosen.min.css')}}">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="{{asset('assets/css/et-line-font/et-line-font.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/css/themify-icons/themify-icons.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/css/simple-lineicon/simple-line-icons.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/plugins/datatables/css/dataTables.bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/css/skins/_all-skins.min.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/plugins/formwizard/jquery-steps.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/plugins/dropify/dropify.min.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/plugins/chartist-js/chartist.min.css')}}">
-        <link rel="stylesheet" href="{{asset('assets/plugins/chartist-js/chartist-plugin-tooltip.css')}}"> 
-        <link rel="stylesheet" href="{{asset('assets/css/font/stylesheet.css')}}">  
-        <link rel="stylesheet" href="{{asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')}}"> 
-        <link rel="stylesheet" href="{{asset('assets/css/chosen.css')}}" />
-        <link rel="stylesheet" href="{{asset('assets/css/chosenImage.css')}}" />
+ 
+    <meta charset="utf-8" />
+      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+      <title>petapp : Admin Panel</title>
+      <meta content="" name="description" />
+      <meta content="" name="keywords" />
+        <link href="{{asset('assets/img/favicon.png')}}" rel="icon" />
+      <link href="{{asset('assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon" />
+      <!-- Vendor CSS Files -->
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      <link href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet"/>
+      <link href="{{asset('assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet" />
+      <link href="{{asset('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet" />
+      <link href="{{asset('assets/vendor/owl/owl.carousel.min.css')}}" rel="stylesheet" />
+      <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css"/>
+      <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" />
+      <!-- <link rel="stylesheet" href="{{asset('assets/admin/css/style.css')}}"> -->
+      
         <style>
+            .loading img {
+    max-width: 174px;
+}
+.loader_inner .text {
+    color: #ffb91d;
+}
+.loader_inner {
+    margin-top: -50px;
+}
+.loading {
+    position: fixed;
+    background: #fff;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    text-align: center;
+}
+.text {
+  color: #A40501;
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: bold;
+}
+.bounceball {
+  position: relative;
+  display: inline-block;
+  height: 37px;
+  width: 15px;
+}
+.bounceball:before {
+  position: absolute;
+  content: "";
+  display: block;
+  top: 0;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #ffb91d;
+  transform-origin: 50%;
+  -webkit-animation: bounce 500ms alternate infinite ease;
+          animation: bounce 500ms alternate infinite ease;
+}
+@-webkit-keyframes bounce {
+  0% {
+    top: 30px;
+    height: 5px;
+    border-radius: 60px 60px 20px 20px;
+    transform: scaleX(2);
+  }
+  35% {
+    height: 15px;
+    border-radius: 50%;
+    transform: scaleX(1);
+  }
+  100% {
+    top: 0;
+  }
+}
+@keyframes bounce {
+  0% {
+    top: 30px;
+    height: 5px;
+    border-radius: 60px 60px 20px 20px;
+    transform: scaleX(2);
+  }
+  35% {
+    height: 15px;
+    border-radius: 50%;
+    transform: scaleX(1);
+  }
+  100% {
+    top: 0;
+  }
+}
             .loader {
                 text-align: center;
                 vertical-align: middle;
                 position: fixed;
                 display: flex;
                 background: #fdfbfb;
-                padding: 150px;
+                padding: 100px;
                 box-shadow: 0px 40px 60px -20px rgba(0, 0, 0, 0.2);
                 width:100%;
                 z-index:500000;
@@ -62,9 +118,10 @@
                 display: block;
                 width: 20px;
                 height: 20px;
-                background: #ec1d38;
+                background: #ffb91d;
                 border-radius: 50%;
                 margin: 0 5px;
+                margin-top: 85px;
                 box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
             }
 
@@ -129,10 +186,10 @@
 
             .loaderDiv{
                 position: fixed;
-                z-index: 5000000000001;
-                text-align: center;
-                top: 30%;
-                left: 38%;
+    z-index: 5000000000001;
+    text-align: center;
+    top: 40%;
+    left: 40%;
             }
 
             .loaderDiv p{
@@ -141,9 +198,20 @@
         </style>
     </head>
     <body class="skin-blue sidebar-mini">
-        <div class="loading loaderDiv">
-            <img class="mb-2" src="{{asset('assets/images/logo.png')}}" alt="logo">
-            <p>Please wait while page is loading..</p>
+        <div id="preloader">
+            <div class="loading">
+               <div class="">
+                    <img class="mb-2" src="{{asset('assets/img/logo.png')}}" alt="logo">
+                   <div class="loader_inner">
+                        <div class="bounceball"></div>
+                        <div class="text">Please wait while page is loading......</div>
+                   </div>
+               </div>
+            </div>
+        </div>
+        <!-- <div class="loading loaderDiv">
+            <img class="mb-2" style="width: 20%; margin-right: 65%;" src="{{asset('assets/admin/images/logo.png')}}" alt="logo">
+            <p style=" margin-right: 65%;">Please wait while page is loading..</p>
         </div>
         <div class="loading loader">
             <span></span>
@@ -151,7 +219,7 @@
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </div> -->
         <div class="wrapper boxed-wrapper">
 
             <!-- Navbar -->
@@ -173,32 +241,26 @@
             <!-- /.content-wrapper -->
 
         </div>
+        <script>
+           
+            $(window).on("load", function () {
+                if ($("#preloader").length) {
+                $("#preloader")  .delay(300) .fadeOut("slow", function () {
+                    $(this).remove();
+                });
+                }
+            });
+        </script>
 
-        <script src="{{asset('assets/js/jquery.min.js')}}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-        <script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
-        <script src="{{asset('assets/js/bizadmin.js')}}"></script>
-        <script src="{{asset('assets/plugins/jquery-sparklines/jquery.sparkline.min.js')}}"></script>
-        <script src="{{asset('assets/plugins/jquery-sparklines/sparkline-int.js')}}"></script>
-        <script src="{{asset('assets/plugins/raphael/raphael-min.js')}}"></script>
-        <script src="{{asset('assets/plugins/morris/morris.js')}}"></script>
-        <script src="{{asset('assets/plugins/functions/dashboard1.js')}}"></script>
-        <script src="{{asset('assets/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-        <script src="{{asset('assets/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
-        <script src="{{asset('assets/js/demo.js')}}"></script>
-        <script src="{{asset('assets/plugins/formwizard/jquery-steps.js')}}"></script>
-        <script src="{{asset('assets/plugins/dropify/dropify.min.js')}}"></script>
-        <script src="{{asset('assets/plugins/chartjs/chart.min.js')}}"></script>
-        <script src="{{asset('assets/plugins/chartjs/chart-int.js')}}"></script>
-        <script src="{{asset('assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js')}}"></script> 
-        <script src="{{asset('assets/plugins/dropzone-master/dropzone.js')}}"></script> 
-        <script src="{{asset('assets/js/chosen.jquery.js')}}" type="text/javascript"></script>
-        <script src="{{asset('assets/js/chosenImage.jquery.js')}}" type="text/javascript"></script>
+       <script src="{{asset('assets/vendor/jquery.min.js')}}"></script>
+       <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+       <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script>
+       <script src="{{asset('assets/js/main.js')}}"></script>
+       <script src="{{asset('assets/admin/js/demo.js')}}"></script>
+     
+        
         <script type="text/javascript">
-$(".chosen").chosen();
+            $(".chosen").chosen();
         </script>
         <script>
             $(".my-select").chosenImage({
