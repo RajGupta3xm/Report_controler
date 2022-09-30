@@ -14,6 +14,7 @@ class GiftCard extends Model
         "description_ar",
         "discount",
         "amount",
+        "image",
         "status",
 
     ];

@@ -10,6 +10,7 @@ class DietPlanType extends Model
         'id',
         'name',
         'name_ar',
-        'status'
+        'description',
+        'status',
     ];
 }

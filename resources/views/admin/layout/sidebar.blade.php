@@ -18,7 +18,7 @@
                   <li><a class="" href="staff-management.html"><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
                   <li><a class="" href="fleet-management.html"><i class="fal fa-layer-group"></i>Fleet Management</a></li>
                   <li><a class="" href="promo-code-management.html"><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>
-                  <li><a class="" href="gift-card-management.html"><i class="fad fa-gift-card"></i>Gift Card Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'gift-card-management' || Request::segment(2) == '' ? 'active' : ''; ?>" href="{{url('admin/gift-card-management')}}" ><i class="fad fa-gift-card"></i>Gift Card Management</a></li>
                   <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
                   <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li>
                   <li><a class="" href="report-management.html"><i class="far fa-file-spreadsheet"></i>Report Management</a></li>

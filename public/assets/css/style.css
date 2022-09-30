@@ -2285,3 +2285,96 @@ input.select2-search__field {
     margin: 0;
     cursor: pointer;
 }
+
+.eventdeatil .breadcrumb li .mytoggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.mytoggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 23px;
+  
+}
+.mytoggle .switch input {
+    display: none;
+}
+
+.mytoggle .switch {
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    color: #fff;
+    font-size: 14px;
+    padding-right: 27px;
+  
+}
+.mytoggle .switch input {
+    display: none;
+}
+.mytoggle input:checked + .slider {
+    background-color: #03bf42;
+}
+.mytoggle .slider.round {
+    border-radius: 34px;
+}
+.mytoggle .slider {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 18px;
+    background-color: #cacaca;
+    border-radius: 10px;
+    transition: 0.5s all;
+}
+.mytoggle .slider:before {
+    position: absolute;
+	content: '';
+	top: 2px;
+	right: 28px;
+	width: 14px;
+	height: 14px;
+	background-color: #ffffff;
+	border-radius: 50px;
+	z-index: 1;
+	transition: 0.5s all;
+}
+.mytoggle .slider.round:before {
+    border-radius: 50%;
+}
+.mytoggle input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.eventdeatil .breadcrumb li .mytoggle{
+    float: right;
+}
+.eventdeatil .breadcrumb li .mytoggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.eventdeatil .breadcrumb li .mytoggle .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 5px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+.info .mytoggle input:checked + .slider {
+    background-color: #58ae5f;
+}

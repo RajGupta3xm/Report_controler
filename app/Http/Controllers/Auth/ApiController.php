@@ -67,21 +67,29 @@ class ApiController extends Controller {
         ]);
 
         $validatedData->after(function ($validatedData) use ($request) {
-            if($request['mobile']){
+            if($request['country_code'] && $request['mobile']){
                 $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->first();
                 if ($mobile_number) {
                     $validatedData->errors()->add('mobile_number', 'mobile already registered');
+                 
+                    
                 }
             }
             if($request['email']){
-                $email = User::where('email',$request['email'])->whereNotIn('status',['inactive'])->first();
+                $email = User::where('email',$request['email'])->whereNotIn('status',['0'])->first();
+                if ($email) {
+                    $validatedData->errors()->add('email', 'email already registered');
+                }
             }
             
         });
         
         if ($validatedData->fails()) {
-            $this->status_code = 201;
-            $this->message = $validatedData->errors();
+            $responseArr['status_code'] = '201';
+            $responseArr['message'] = $validatedData->errors();
+            return response()->json([$responseArr]);
+            // $this->status_code = 201;
+            // $this->message = $validatedData->errors();
         } else {
             $ifMobile = User::where(['country_code' => $request['country_code'],'mobile'=>$request['mobile']])->get()->first();
             if ($ifMobile) {

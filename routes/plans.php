@@ -15,7 +15,8 @@ use Illuminate\Http\Request;
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){    
     Route::post('subscriptionPlans', 'SubscriptionController@planListing');
     Route::get('calculateCalorie', 'SubscriptionController@calculateCalorie');
-    Route::post('macrosCalculator', 'SubscriptionController@macrosCalculator');
+    Route::get('calculateKcal', 'SubscriptionController@calculateKcal');// api for on balance detail page -> calculte calorie in circle
+    Route::post('macrosCalculator', 'SubscriptionController@macrosCalculator'); //api for calculate result page ->target calorie required in a day
     Route::post('dietPlanDetails/{diet_plan_type_id}', 'SubscriptionController@dietPlanDetails');
     Route::get('mealDetails/{meal_plan_id}', 'SubscriptionController@mealDetails');
 });

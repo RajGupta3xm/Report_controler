@@ -95,11 +95,58 @@ class SubscriptionController extends Controller {
 
     public function calculateCalorie(){
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
-        $data=['recommended_colorie'=>1500];
+           $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
+         foreach($caloriRecommended as $calori){
+            $calori->selected=false;
+            if(UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'recommended_result_id'=>$calori->id,'status'=>'ongoing'])->first()){
+                $calori->selected=true;
+            }
+        }
+        // $data=['recommended_colorie'=>1500];
+        $data['recommended_colorie'] = $caloriRecommended;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
         $this->message = trans('plan_messages.calorie_calculation');
+        return $this->populateResponse();
+    }
+
+    public function calculateKcal(){
+        $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        if($user->gender == 'female'){
+            
+              ///// Calculation /////
+            $forWomen = ((10*$user->initial_bode_weight)+(6.253*$user->height)-(5*$user->age)-161);
+            if($user->activity_scale == '1'){
+                $total_calorie = $forWomen*1.2;
+            }elseif($user->activity_scale == '2'){
+                $total_calorie = $forWomen*1.375;
+            }else{
+                $total_calorie = $forWomen*1.55; 
+            }
+           
+              ///// Calculation /////
+
+        }else{
+
+              ///// Calculation /////
+            $forMen = ((10*$user->initial_bode_weight)+(6.253*$user->height)-(5*$user->age)+5);
+            if($user->activity_scale == '1'){
+                $total_calorie = $forMen*1.2;
+            }elseif($user->activity_scale == '2'){
+                $total_calorie = $forMen*1.375;
+            }else{
+                $total_calorie = $forMen*1.55; 
+            }
+              ///// Calculation /////
+
+        }
+        
+        $data['recommended_colorie'] = $total_calorie;
+        $response = new \Lib\PopulateResponse($data);
+        $this->status = true;
+        $this->data = $response->apiResponse();
+        $this->message = trans('plan_messages.kcal_calculation');
         return $this->populateResponse();
     }
 
@@ -112,7 +159,7 @@ class SubscriptionController extends Controller {
         $protien=(($request->total_calorie*$dietPlan->protein_actual)/100)/$dietPlan->protein_actual_divisor;
         $carbs=(($request->total_calorie*$dietPlan->carbs_actual)/100)/$dietPlan->carbs_actual_divisor;
         $fat=(($request->total_calorie*$dietPlan->fat_actual)/100)/$dietPlan->fat_actual_divisor;
-        $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat)];
+        $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat),'description' => $dietPlan->description];
 
         ///// Calculation /////
 
@@ -137,7 +184,7 @@ class SubscriptionController extends Controller {
 
 
     public function dietPlanDetails(Request $request){
-        $dietPlan=DietPlanType::select('id','name','protein','carbs','fat')->where('id',$request->diet_plan_type_id)->first();
+        $dietPlan=DietPlanType::select('id','name','protein','carbs','fat','description')->where('id',$request->diet_plan_type_id)->first();
         // return $meal = Meal::select('name','image')->with('meal_schedule')->get();
          $meal = Meal::join('meal_schedules','meals.id','=','meal_schedules.id')
         ->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')

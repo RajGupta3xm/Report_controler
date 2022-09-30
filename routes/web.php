@@ -98,6 +98,14 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
     /******End Help And Support */
 
 
+    /*****Gift Card Management */
+    Route::get('/gift-card-management', 'Admin\GiftCardController@index');
+    Route::post('/giftCard/change_status', 'Admin\GiftCardController@change_status');
+    Route::post('/giftCard-delete','Admin\GiftCardController@giftCard_delete');
+    Route::post('/giftCard_submit', 'Admin\GiftCardController@giftCard_submit');
+
+    /*****End Gift Card Management */
+
     Route::get('/user-management', 'Admin\UserController@index');
     Route::get('/user-detail/{id}', 'Admin\UserController@show');
     Route::post('/user-post-filter', ['uses' => 'Admin\UserController@user_post_filter', 'as' => 'admin.user_post.filter']);
