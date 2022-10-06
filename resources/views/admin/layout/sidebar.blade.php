@@ -22,7 +22,7 @@
                   <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
                   <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li>
                   <li><a class="" href="report-management.html"><i class="far fa-file-spreadsheet"></i>Report Management</a></li>
-                  <li><a class="" href="content-management.html"><i class="fal fa-user-edit"></i>Content Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'content-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/content-management')}}" ><i class="fal fa-user-edit"></i>Content Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'support-management' || Request::segment(2) == '/query/filter' ? 'active' : ''; ?>" href="{{url('admin/support-management')}}" href="help-support.html"><i class="fal fa-hands-heart"></i>Help & Support <span class="alert_box">{{$query_count}}</span></a></li>
                </ul>
             </diV>

@@ -44,6 +44,8 @@ return [
 	'basic_info'=>'Basic Information submit successfully',
 	'promo_code'=>'Fetching promo codes successfully',
 	'save_card_listing'=>'Fetching saved card successfully',
+	'onboarding_screen'=>'Fetching onboarding screen successfully',
+
 ];
 
 ?>

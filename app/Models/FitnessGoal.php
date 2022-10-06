@@ -10,6 +10,7 @@ class FitnessGoal extends Model {
         'id',
         'name',
         'name_ar',
+        'image',
         'status'
     ];
     public $timestamps = true;

@@ -11,6 +11,7 @@ class DislikeCategory extends Model
         'id',
         'name',
         'name_ar',
+        'image',
         'status'
     ];
 

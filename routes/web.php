@@ -106,6 +106,22 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
 
     /*****End Gift Card Management */
 
+    /****************Content Management */
+    Route::get('/content-management', 'Admin\ContentController@index');
+    Route::post('content/update/{id}', [
+       'uses' => 'Admin\ContentController@update',
+       'as' => 'admin.content.update'
+   ]);
+   Route::post('content/updates/{id}', [
+    'uses' => 'Admin\ContentController@updates',
+    'as' => 'admin.content.updates'
+]);
+Route::post('onboarding/updateOnboarding', 'Admin\ContentController@updateOnboarding');
+Route::post('social_link/update', 'Admin\ContentController@updateSocialLink');
+
+
+    /*********Content Management */
+
     Route::get('/user-management', 'Admin\UserController@index');
     Route::get('/user-detail/{id}', 'Admin\UserController@show');
     Route::post('/user-post-filter', ['uses' => 'Admin\UserController@user_post_filter', 'as' => 'admin.user_post.filter']);

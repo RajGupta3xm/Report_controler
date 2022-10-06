@@ -151,7 +151,7 @@ class SubscriptionController extends Controller {
     }
 
     public function macrosCalculator(Request $request) {
-        $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+          $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
          $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
         
         ///// Calculation /////

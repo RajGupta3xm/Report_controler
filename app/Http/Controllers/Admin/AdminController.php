@@ -12,7 +12,7 @@ use App\Http\Requests\UsersRequest as UpdateRequest;
 use App\Http\Controllers\CrudOverrideController;
 use Illuminate\Http\Request;
 use App\Models\Users;
-use App\Models\Post;
+use App\Models\Order;
 use App\Models\Admin;
 use App\Models\ReportReason;
 use App\Models\AdminNotification;
@@ -64,7 +64,23 @@ class AdminController extends Controller {
 //            dd('hello');
             return redirect()->intended('admin/login');
         } else {
-           
+            // $user_count = 0;
+            // $order_count = 0;
+            // $upcomingDeliveries_count = 0;
+
+            // $user = User::orderBy('id', 'DESC')->get();
+            // $order_count = Order::orderBy('id', 'DESC')->get();
+            // if ($user) {
+            //     $user_count = count($user);
+            //       $users = User::withCount('pets')->orderBy('id', 'DESC')->limit(5)->get();
+            //     // return $users->pets_count;
+            //     $total_pets = Pet::where('status','active')->orderBy('id','desc')->get();
+            //  $data['users'] = $users;
+            // } else {
+            //     $data['users'] = [];
+            // }
+            // $data['total_user'] = $user_count;
+            // $data['total_pet'] = count($total_pets);
             return view('admin.dashboard');
         }
     }

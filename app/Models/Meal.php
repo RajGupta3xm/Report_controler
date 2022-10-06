@@ -15,6 +15,7 @@ class Meal extends Model
     protected $fillable = [
         "id",
         "meal_schedule_id",
+        'diet_plan_type_id',
         "name",
         "name_ar",
         "description",

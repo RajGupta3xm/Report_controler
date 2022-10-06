@@ -7,7 +7,8 @@
                   <div class="col">
                      <a class="sidebar_btn" href="javscript:;"><i class="far fa-bars"></i></a>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-auto  d-flex align-items-center">
+                    <a class="change_language" href="javascript:;"><img src="{{asset('assets/img/united-arab-emirates.png')}}" alt=""> عربى</a>
                       <div class="dropdown Profile_dropdown">
                           <button class="btn btn-secondary" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                              <img src="{{$admin_image->image?$admin_image->image:asset('assets/img/profile.png')}}" alt="">
@@ -24,3 +25,4 @@
        </div>
    </div>
 </header>
+

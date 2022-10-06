@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Content extends Model
 {
    protected $table = "contents";
-   protected $fillable = ['name','content','content_ar','status'];
+   protected $fillable = ['id','name','content','content_ar','status'];
 
    public static function fetchtremsData($data){
       return self::where('name',$data)->first();

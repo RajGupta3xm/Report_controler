@@ -15,10 +15,14 @@ use App\Models\UserDislike;
 use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
 use App\Models\SubscriptionPlan;
+use App\Models\Subscription;
 use App\Models\Content;
 use App\Models\MealRating;
+use App\Models\DeliveryDay;
 use App\Models\Query;
+use App\Models\Meal;
 use App\Models\QueryReply;
+use App\Models\OnboardingScreen;
 use App\Models\UserCard;
 use App\Models\UserAddress;
 use App\Models\DeliverySlot;
@@ -153,6 +157,7 @@ class ApiController extends Controller {
             $this->message = $validate->errors();
         } else {
             $user = User::where('id', $request->user_id)->get()->first();
+             $userProfile = UserProfile::where('user_id', $request->user_id)->get()->first();
            
             $updateUser = User::where('id', $request->user_id)->update(['is_otp_verified' => '1', 'status' => '1']);
             
@@ -165,6 +170,8 @@ class ApiController extends Controller {
                 User::where('id', $user->id)->update($updateArr);
             }
             $user->user_id = $user->id;
+            $user->age = $userProfile->age;
+            $user->gender = $userProfile->gender;
             $user = $this->getToken($user);
             $response = new \Lib\PopulateResponse($user);
             $this->data = $response->apiResponse();
@@ -314,8 +321,11 @@ class ApiController extends Controller {
     }
 
     public function myProfile() {
-        $user = User::select('id as user_id', 'users.*')->where('id', Auth::guard('api')->id())->first();        
+        $user = User::select('id as user_id', 'users.*')->where('id', Auth::guard('api')->id())->first(); 
+         $userProfile = UserProfile::where('user_id', Auth::guard('api')->id())->first();        
         $data = $user;
+        $data->age = $userProfile->age;
+        $data->gender = $userProfile->gender;
         $this->status = true;
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
@@ -433,6 +443,11 @@ class ApiController extends Controller {
                 $this->message = trans('messages.dislikes_selection_incomplete');
             }
             if($flag){
+                   $data['your_subscription'] = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+                   ->select('subscription_plans.name','subscription_plans.description','subscription_plans.image','subscriptions.*')
+                   ->where('user_id',Auth::guard('api')->id())->where('delivery_status','paused')
+                   ->get();
+
                  $data['promo_codes']=PromoCode::select('id','name','description','image')->where(['status'=>'active'])
                 // ->whereRaw("((start_date < ".date('Y-m-d')." OR start_date == ".date('Y-m-d').") AND ((end_date > ".date('Y-m-d')." OR end_date == ".date('Y-m-d').") OR (extended_end_date > ".date('Y-m-d')." OR extended_end_date == ".date('Y-m-d').")))")
                 ->where('end_date','>',"'".date('Y-m-d')."'")
@@ -441,6 +456,55 @@ class ApiController extends Controller {
                 // $data['plan_list']=SubscriptionPlan::where(['duration_type'=>'weekly','status'=>'active'])->get();
                 $data['plan_type_list']=DietPlanType::select('id','name')->where(['status'=>'active'])->get();
                 $data['my_plan']=new \stdClass();
+
+
+                $selectDietPlan = DietPlanType:: select('diet_plan_types.name','diet_plan_types.id')
+                ->get()
+                // ->toArray();
+                
+                ->each(function($dietPlanType) {
+                    $weekly =$dietPlanType->weekly = DeliveryDay::where('type','Weekly')
+                    ->orWhere(function ($query) {
+                        $query->where('including_weekend','Y')
+                              ->where('including_weekend','N');
+                    })
+                    ->select('delivery_days.id','delivery_days.including_weekend','delivery_days.type')->get()->each(function($weekly) use ($dietPlanType){
+                        $weekly->meals=Meal::where('meals.delivery_day_type_id',$weekly->id)->where('meals.diet_plan_type_id',$dietPlanType->id)->get()->toArray(); 
+                    })->toArray();
+                   
+                    // $notWeekly =$dietPlanType->notWeekly = DeliveryDay::where('type','Weekly')->where('including_weekend','N')->select('delivery_days.id','delivery_days.including_weekend','delivery_days.type')->get()->each(function($notWeekly) use ($dietPlanType){
+                    //     $notWeekly->meals=Meal::where('meals.delivery_day_type_id',$notWeekly->id)->where('meals.diet_plan_type_id',$dietPlanType->id)->get()->toArray(); 
+                    // })->toArray();
+                        $monthly =$dietPlanType->monthly = DeliveryDay::where('type','Monthly')
+                        ->orWhere(function ($query) {
+                            $query->where('including_weekend','Y')
+                                  ->where('including_weekend','N');
+                        })
+                        ->select('delivery_days.id','delivery_days.including_weekend','delivery_days.type')->get()->each(function($monthly) use ($dietPlanType){
+                            $monthly->meals=Meal::where('meals.delivery_day_type_id',$monthly->id)->where('meals.diet_plan_type_id',$dietPlanType->id)->get()->toArray(); 
+                })->toArray();
+
+                // $notMonthly =$dietPlanType->notMonthly = DeliveryDay::where('type','Monthly')->where('including_weekend','N')->select('delivery_days.id','delivery_days.including_weekend','delivery_days.type')->get()->each(function($notMonthly) use ($dietPlanType){
+                //     $notMonthly->meals=Meal::where('meals.delivery_day_type_id',$notMonthly->id)->where('meals.diet_plan_type_id',$dietPlanType->id)->get()->toArray(); 
+        // })->toArray();
+            
+                })->toArray();
+
+                $data['select_diet_plan'] = $selectDietPlan;
+                
+        
+                 $dietPlanType = DietPlanType:: select('diet_plan_types.name','diet_plan_types.id')
+                ->get()
+                // ->toArray();
+                ->each(function($dietPlanType) {
+                   $meals= $dietPlanType->meals= Meal::join('meal_schedules','meals.id','=','meal_schedules.id')->where('meals.diet_plan_type_id', $dietPlanType->id)->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')->get()->toArray();
+                
+                            
+                })->toArray(); 
+                $data['our_preview_plan'] = $dietPlanType;
+                // echo '<pre>';print_r($category);
+                // die;
+
                 $this->message = trans('messages.homescreen_success');
                 $response = new \Lib\PopulateResponse($data);
                 $this->data = $response->apiResponse();
@@ -564,7 +628,7 @@ class ApiController extends Controller {
     }
 
     public function dislikes() {
-        $category=DislikeCategory::select('id','name')->with('items')->where('status','active')->get()->each(function($category){
+        $category=DislikeCategory::select('id','name','image')->with('items')->where('status','active')->get()->each(function($category){
             foreach($category->items as $item){
                 $item->selected=false;
                 if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
@@ -1351,6 +1415,45 @@ public function promoCodeListings(Request $request) {
     $this->message = trans('messages.promo_code');
     return $this->populateResponse();
 }
+
+public function onboardingScreen(Request $request) {
+  
+    $onboarding_screen = OnboardingScreen::select('*')->get();
+    $response = new \Lib\PopulateResponse($onboarding_screen);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.onboarding_screen');
+    return $this->populateResponse();
+}
+
+// public function insertImage(Request $request) {
+
+//     if ($request->image) {
+//         $image = $request->image;
+//         $filename = $image->getClientOriginalName();
+//         $filename = str_replace(" ", "", $filename);
+//         $imageName = time() . '.' . $filename;
+//         $return = $image->move(
+//                 base_path() . '/public/uploads/onboarding_screen/', $imageName);
+//         $url = url('/uploads/onboarding_screen/');
+//         $addUser['image'] = $url . '/' . $imageName;
+//     }
+//           $addUser['title'] = 'Get the exact nutrition ';
+//           $addUser['title_ar'] = 'منتجات الألبان';
+
+//     if($addUser){
+//        $data = OnboardingScreen::create($addUser);
+//         //  $data =  OnboardingScreen::where('id','1')->get();
+//         $response = new \Lib\PopulateResponse($data);
+//         $this->data = $response->apiResponse();
+//         $this->message = trans('messages.update_profile_success');
+//     }else{
+//         $this->message = trans('messages.update_profile_success');
+//     }
+//     $this->status = true;
+
+//     return $this->populateResponse();
+// }
 
 
 }
