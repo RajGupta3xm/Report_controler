@@ -1,172 +1,436 @@
 @extends('admin.layout.master')
-
 @section('content')
-<div class="content-wrapper">
-    <div class="content-header sty-one">
-        <h1>User Detail</h1> 
-    </div>
-    <div class="content userdetails">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="box-profile text-white">
-                            <div class="user-flag">
-                                <img class="profile-user-img img-responsive img-circle m-b-1" src="{{$user->image?$user->image:asset('assets/images/user.png')}}" alt="User profile picture">
-                            </div>
-                            <h3 class="profile-username text-center text-black">{{$user->name}}</h3>
-                            <p class="text-small text-muted text-center">&#64;{{$user->username}}</p>
-                            <p class="text-dark text-center mt-2">{{$user->country}}
-                                <!--<div>--> 
-                                <img src="{{url($user->flag)}}" class="flag-icon"> 
-                                <!--</div>-->
-
-                            </p>
-                            <p class="text-small text-center text-dark">Registered on: {{date('d M Y',strtotime($user->created_at))}}</p>
+      <div class="admin_main">
+         <div class="admin_main_inner">
+            <div class="admin_panel_data height_adjust">
+               <div class="row user-details-part justify-content-center">
+                  <div class="col-12">
+                     <div class="row mx-0">
+                        <div class="col-12 design_outter_comman shadow mb-4">
+                           <div class="row comman_header justify-content-between">
+                              <div class="col-auto">
+                                 <h2>User's Information</h2>
+                              </div>
+                           </div>
+                           <div class="row">
+                              <form class="row align-items-center justify-content-center form-design position-relative p-4 py-5">
+                                 <div class="check_toggle">
+                                    <input type="checkbox"  name="check1" id="check1" class="d-none"  onchange="changeStatus(this, '<?= $user->id ?>');" <?= ( $user->status == '1' ? 'checked' : '') ?>>
+                                    <label for="check1"></label>
+                                 </div>
+                                 <div class="col-5">
+                                    <div class="row adjust_margin">
+                                       <div class="form-group col-12 mb-2">
+                                          <div class="userinfor_box text-center">
+                                             <span class="user_imgg">
+                                             <img src="{{$user->image?$user->image:asset('assets/img/profile.png')}}" alt="">
+                                             </span>
+                                             <strong>{{$user->name}}</strong>
+                                          </div>
+                                       </div>
+                                       <div class="form-group col-12 text-center mb-0">
+                                          <label class="mb-0 text-center" for="">Registration Date: {{date('d/m/Y', strtotime($user->created_at))}}</label>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="col-5">
+                                    <div class="row">
+                                       <div class="form-group col-12">
+                                          <label for="">Mobile Number</label>
+                                          <input type="text" class="form-control" value="{{$user->country_code}}&nbsp;&nbsp;{{$user->mobile}}" readonly="true" name="name" id="name">
+                                       </div>
+                                       <div class="form-group col-12 mb-0">
+                                          <label for="">Email Id </label>
+                                          <input type="text" class="form-control" value="{{$user->email}}" name="name" readonly="true" id="name">
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="col-auto"></div>
+                              </form>
+                           </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-lg-4 col-xs-6 m-b-3">
-                <div class="card">
-                    <div class="card-body"><span class="info-box-icon bg-green"><i class="icon-phone"></i></span>
-                        <div class="info-box-content"> <span class="info-box-number f-14">Mobile number</span>  <span class="info-box-text">
-                                (+{{$user->country_code}}) {{$user->mobile}}  </span> 
+                        <div class="col-12 design_outter_comman shadow">
+                           <div class="row">
+                              <div class="col-12 px-0 user-details-tabs">
+                                 <ul class="nav nav-tabs border-bottom" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                       <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Personal Details</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                       <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Order History(08)</button>
+                                    </li>
+                                 </ul>
+                                 <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                                       <div class="row">
+                                          <div class="col-12">
+                                             <form class="row form-design position-relative mx-0 p-4 pb-0 border-bottom">
+                                                <div class="col-12 border-bottom pb-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Body Details</strong>
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Height</label>
+                                                         <input type="text" class="form-control"  value="{{$user_details['height']}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Weight</label>
+                                                         <input type="text" class="form-control" value="{{$user_details['initial_body_weight']}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">DOB</label>
+                                                         <input type="text" class="form-control" value="{{$user_details['dob']}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Age</label>
+                                                         <input type="text" class="form-control" value="{{$user_details['age']}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Gender</label>
+                                                         <input type="text" class="form-control" value="{{$user_details['gender']}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-12 border-bottom pb-4 pt-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Activity Details</strong>
+                                                      </div>
+                                                      <div class="form-group col-6"> 
+                                                        @if($user_details['activity_scale'] == '1')
+                                                         <input type="text" class="form-control" value="Little or no Exercise" readonly="true" name="name" id="name">
+                                                         @elseif($user_details['activity_scale'] == '2')
+                                                         <input type="text" class="form-control" value="1-3 workouts/week" readonly="true" name="name" id="name">
+                                                         @else
+                                                         <input type="text" class="form-control" value="4-5 workouts/week" readonly="true" name="name" id="name">
+                                                         @endif
+                                                      </div> 
+                                                   </div>
+                                                </div>
+                                                <div class="col-12 border-bottom pb-4 pt-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Fitness Goal</strong>
+                                                      </div>
+                                                      <div class="form-group col-6"> 
+                                                         <input type="text" class="form-control" value="{{$user_details['fitness']['name']}}" readonly="true" name="name" id="name">
+                                                      </div> 
+                                                   </div>
+                                                </div>
+                                                <div class="col-12 border-bottom pb-4 pt-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Dislikes</strong>
+                                                      </div>
+                                                      <div class="form-group col-6"> 
+                                                       
+                                                         <input type="text" class="form-control"  <?php foreach($user_dislike as $user_dislikes){ ?> value="{{ $user_dislikes->pluck('name')->implode(',  ') }}"<?php } ?> readonly="true" name="name" id="name">
+                                                        
+                                                      </div> 
+                                                   </div>
+                                                </div>
+                                                <div class="col-12 border-bottom pb-4 pt-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Plan Type</strong>
+                                                      </div>
+                                                      <div class="form-group col-6"> 
+                                                         <input type="text" class="form-control" value="{{$user_details->dietplan['name']}}" readonly="true" name="name" id="name">
+                                                      </div> 
+                                                   </div>
+                                                </div>
+                                                <div class="col-12 border-bottom pb-4 pt-4">
+                                                   <div class="row">
+                                                      <div class="form-group col-12">
+                                                         <strong class="head_details">Target Calories & Macro Nutrients</strong>
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Calories</label>
+                                                         <input type="text" class="form-control" value="{{$userCalorieTargets->calori_per_day}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Protein</label>
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->protein_per_day}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Carbs</label>
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->carbs_per_day}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                      <div class="form-group col-6">
+                                                         <label for="">Fat</label>
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->fat_per_day}}" readonly="true" name="name" id="name">
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </form>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                       <div class="row mx-0 p-4">  
+                                          <div class="col-12 design_outter_comman border mb-4">
+                                             <div class="row comman_header justify-content-between">
+                                                <div class="col">
+                                                   <h2>Current Plan</h2>
+                                                </div> 
+                                             </div> 
+                                             <div class="row">
+                                                <div class="col-12 comman_table_design px-0">
+                                                   <div class="table-responsive">
+                                                      <table class="table mb-0">
+                                                         <thead>
+                                                           <tr>
+                                                             <th>S.No.</th>
+                                                             <th>Plan Name</th>
+                                                             <th>Order ID</th>
+                                                             <th>SAR</th>
+                                                             <th>Purchased On</th>
+                                                             <th>Expired On</th> 
+                                                             <th>Credit Balance</th> 
+                                                             <th>Status</th> 
+                                                             <th>Action</th>
+                                                             <th>Send Invoice</th>
+                                                           </tr>
+                                                         </thead>
+                                                         <tbody>
+                                                           <tr>
+                                                             <td>1</td>   
+                                                             <td>Lorem</td>   
+                                                             <td>1001</td>   
+                                                             <td>500/Week</td>   
+                                                             <td>23/08/2022</td>   
+                                                             <td>23/08/2023</td>   
+                                                             <td>400 SAR</td>   
+                                                             <td>
+                                                               <form class="table_btns d-flex align-items-center"> 
+                                                                  <div class="check_toggle">
+                                                                     <input type="checkbox" name="check2" id="check2" class="d-none">
+                                                                     <label for="check2"></label>
+                                                                  </div>
+                                                               </form>
+                                                             </td>    
+                                                             <td>
+                                                               <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                             </td>
+                                                             <td>
+                                                               <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                             </td>
+                                                           </tr> 
+                                                           <tr>
+                                                            <td>2</td>   
+                                                            <td>Lorem</td>   
+                                                            <td>1002</td>   
+                                                            <td>500/Week</td>   
+                                                            <td>23/08/2022</td>   
+                                                            <td>23/08/2023</td>   
+                                                            <td>400 SAR</td>   
+                                                            <td>
+                                                              <form class="table_btns d-flex align-items-center"> 
+                                                                 <div class="check_toggle">
+                                                                    <input type="checkbox" name="check4" id="check4" class="d-none">
+                                                                    <label for="check4"></label>
+                                                                 </div>
+                                                              </form>
+                                                            </td>    
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                            </td>
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                            </td>
+                                                           </tr>
+                                                           <tr>
+                                                            <td>3</td>   
+                                                            <td>Lorem</td>   
+                                                            <td>1003</td>   
+                                                            <td>500/Week</td>   
+                                                            <td>23/08/2022</td>   
+                                                            <td>23/08/2023</td>   
+                                                            <td>400 SAR</td>   
+                                                            <td>
+                                                              <form class="table_btns d-flex align-items-center"> 
+                                                                 <div class="check_toggle">
+                                                                    <input type="checkbox" name="check5" id="check5" class="d-none">
+                                                                    <label for="check5"></label>
+                                                                 </div>
+                                                              </form>
+                                                            </td>    
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                            </td>
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                            </td>
+                                                           </tr>
+                                                         </tbody>
+                                                       </table>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div> 
+                                          <div class="col-12 design_outter_comman border mb-4">
+                                             <div class="row comman_header justify-content-between">
+                                                <div class="col-auto">
+                                                   <h2>Previous Plans</h2>
+                                                </div>
+                                                <div class="col-auto"> 
+                                                   <button class="comman_btn">Print</button>
+                                                </div>
+                                             </div> 
+                                             <div class="row">
+                                                <div class="col-12 comman_table_design px-0">
+                                                   <div class="table-responsive">
+                                                      <table class="table mb-0">
+                                                         <thead>
+                                                           <tr>
+                                                             <th>S.No.</th>
+                                                             <th>Plan Name</th>
+                                                             <th>Order ID</th>
+                                                             <th>SAR</th>
+                                                             <th>Purchased On</th>
+                                                             <th>Expired On</th> 
+                                                             <th>Credit Balance</th> 
+                                                             <th>Status</th> 
+                                                             <th>Action</th>
+                                                             <th>Send Invoice</th>
+                                                           </tr>
+                                                         </thead>
+                                                         <tbody>
+                                                           <tr>
+                                                             <td>1</td>   
+                                                             <td>Lorem</td>   
+                                                             <td>1001</td>   
+                                                             <td>500/Week</td>   
+                                                             <td>23/08/2022</td>   
+                                                             <td>23/08/2023</td>   
+                                                             <td>400 SAR</td>   
+                                                             <td>
+                                                               <form class="table_btns d-flex align-items-center"> 
+                                                                  <div class="check_toggle">
+                                                                     <input type="checkbox" name="check11" id="check11" class="d-none">
+                                                                     <label for="check11"></label>
+                                                                  </div>
+                                                               </form>
+                                                             </td>    
+                                                             <td>
+                                                               <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                             </td>
+                                                             <td>
+                                                               <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                             </td>
+                                                           </tr> 
+                                                           <tr>
+                                                            <td>2</td>   
+                                                            <td>Lorem</td>   
+                                                            <td>1002</td>   
+                                                            <td>500/Week</td>   
+                                                            <td>23/08/2022</td>   
+                                                            <td>23/08/2023</td>   
+                                                            <td>400 SAR</td>   
+                                                            <td>
+                                                              <form class="table_btns d-flex align-items-center"> 
+                                                                 <div class="check_toggle">
+                                                                    <input type="checkbox" name="check12" id="check12" class="d-none">
+                                                                    <label for="check12"></label>
+                                                                 </div>
+                                                              </form>
+                                                            </td>    
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                            </td>
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                            </td>
+                                                           </tr>
+                                                           <tr>
+                                                            <td>3</td>   
+                                                            <td>Lorem</td>   
+                                                            <td>1003</td>   
+                                                            <td>500/Week</td>   
+                                                            <td>23/08/2022</td>   
+                                                            <td>23/08/2023</td>   
+                                                            <td>400 SAR</td>   
+                                                            <td>
+                                                              <form class="table_btns d-flex align-items-center"> 
+                                                                 <div class="check_toggle">
+                                                                    <input type="checkbox" name="check13" id="check13" class="d-none">
+                                                                    <label for="check13"></label>
+                                                                 </div>
+                                                              </form>
+                                                            </td>    
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                            </td>
+                                                            <td>
+                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                            </td>
+                                                           </tr>
+                                                         </tbody>
+                                                       </table>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
                         </div>
-                    </div>
-                </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-            <div class="col-lg-4 col-xs-6 m-b-3">
-                <div class="card">
-                    <div class="card-body"><span class="info-box-icon bg-red"><i class="icon-envelope"></i></span>
-                        <div class="info-box-content"> <span class="info-box-number f-14">Email Id </span>  <span class="info-box-text">
-                                {{$user->email?$user->email:'N/A'}}</span> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-xs-6 m-b-3">
-                <div class="card">
-                    <div class="card-body"><span class="info-box-icon bg-yellow"><i class="icon-user"></i></span>
-                        <div class="info-box-content"> <span class="info-box-number f-14">Total Fans</span>  <span class="info-box-text">
-                                {{$user->fans?$user->fans:0}}</span> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card mt-4">
-            <div class="card-header mb-4">
-                <h5 class="card-title">Uploaded Videos</h5>
-            </div>
-            <div class="card-body">
-                <form method="post" action="{{route('admin.user_post.filter')}}">
-                    @csrf
-                    <div class="row"> 
-                        <input type="hidden" name="user_id" value="{{$user->id}}">
-                        <div class="col-lg-3 col-xs-6">
-                            <div class="form-group">
-                                <label>From </label>
-                                <input type="date" onchange="$('#start_date').attr('min', $(this).val());" max="<?= date('Y-m-d') ?>"  value="{{isset($start_date)?$start_date:''}}"  name="start_date" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-xs-6">
-                            <div class="form-group">
-                                <label>To </label>
-                                <input type="date" id="start_date" name="end_date" max="<?= date('Y-m-d') ?>" value="{{isset($end_date)?$end_date:''}}" class="form-control">
-                            </div>
-                        </div> 
-                        <div class="col-md-3 col-xs-6 mt-4">
-                            <a href="#filter" onclick="filterList(this)"; class="btn btn-primary pt-2 pb-2 w-100 mt-1">Search</a>
-                        </div> 
-                        <div class="col-md-3 col-xs-6 mt-4">
-                            <a href='<?= url('admin/user-detail/' . base64_encode($user->id)) ?>' class="btn btn-primary pt-2 pb-2 w-100 mt-1">Reset</a>
-                        </div>  
-                        <div class="col-md-12 col-xs-12">
-                            <p id="formError" class="text-danger"></p>
-                        </div>
-                    </div>
+         </div>
+      </div>
+    @endsection
+    <script>
+       function changeStatus(obj, id) {
+            swal({
+                title: "Are you sure?",
+                text: " status will be closed",
+                icon: "warning",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                var status = '1';
+                            } else {
+                                var status = '0';
+                            }
+                            if (id) {
+                                $.ajax({
+                                    url: "<?= url('admin/user/change_user_status') ?>",
+                                    type: 'post',
+                                    data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
+                                    success: function (data) {
+                                    
+                                        swal({
+                                           title: "Success!",
+                                            text : "Status has been Updated ",
+                                            icon : "success",
+                                        })
+                                    }
+                                });
+                            } else {
+                                var data = {message: "Something went wrong"};
+                                errorOccured(data);
+                            }
+                        } else {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                $(obj).prop('checked', false);
+                            } else {
+                                $(obj).prop('checked', true);
+                            }
+                            return false;
+                        }
+                    });
+        }
+    </script>
 
-                    <div class="table-responsive">
-                        <table id="example1" class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Sr. No.</th>
-                                    <th>Video Title</th>
-                                    <th>Video Type</th>
-                                    <th>Category</th>
-                                    <th>Posted On</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if($user->posts)
-                                @foreach($user->posts as $key=>$post)
-                                <tr>
-                                    <td>{{$key+1}}</td>
-                                    <td>{{$post->description}}</td>
-                                    <td>{{$post->video_type == 1?'Standard':'Challenge'}}</td>
-                                    <td>{{$post->category_name?$post->category_name:'none'}}</td>
-                                    <td>{{date('d M Y H:i:s',strtotime($post->created_at))}}</td>  
-                                    <td><a href="{{url('admin/video-detail/'.base64_encode($post->id))}}" class="composemail"><i class="fa fa-eye"></i></a>
-                                        <a style="cursor:default;" onclick="changeVideoStatus(this,{{$post->id}})" class="composemail"><i class="fa fa-trash"></i></a>
-                                    </td> 
-                                </tr> 
-                                @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-            </div>
-        </div>
-    </div>
-<script>
-    function changeVideoStatus(obj, id) {
-    var confirm_chk = confirm('Are you sure to delete this video?');
-    if (confirm_chk) {
 
-    if (id) {
-    $.ajax({
-    url: "<?= url('admin/video/change_video_status') ?>",
-            type: 'post',
-            data: 'id=' + id + '&action=3&_token=<?= csrf_token() ?>',
-            success: function (data) {
-            if (data.error_code == "200") {
-            alert(data.message);
-            location.reload();
-            } else {
-            alert(data.message);
-            }
-            }
-    });
-    } else {
-    alert("Something went wrong");
-    }
-    } else {
-    return false;
-    }
-    }
-
-    function filterList(obj){
-    if ($(':input[name=start_date]').val() == '' && $(':input[name=end_date]').val() == ''){
-    $("#formError").html('Select search attribute');
-    } else{
-
-    if ($(':input[name=start_date]').val() != '' && $(':input[name=end_date]').val() != ''){
-    $('form').submit();
-    } else{
-    if ($(':input[name=start_date]').val() != ''){
-    $("#formError").html('End date is required');
-    } else if ($(':input[name=end_date]').val() != ''){
-    $("#formError").html('Start date is required');
-    } else{
-    $("#formError").html('Select search attribute');
-    }
-    }
-    }
-
-    }
-</script>
-@endsection

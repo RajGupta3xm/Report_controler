@@ -117,7 +117,7 @@
                   @endforeach
                 
                   <div class="col-12 design_outter_comman shadow">
-                   <form id="queryForm" >
+                   <form id="queryForms" >
                         @csrf
                      <div class="row comman_header justify-content-between">
                         <div class="col-auto">
@@ -140,8 +140,7 @@
                                     </div>
                                     <div class="p-image">
                                        <i class="upload-button fas fa-camera"></i> 
-                                       <input id="upload<?= $key+1 ?>" accept="image/*" class="file-upload__input" type="file" name="images[]" onchange="readURL(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
-                                    
+                                       <input  id="upload<?= $key+1 ?>" name="images[]" multiple="true" accept="image/*" class="file-upload__input" type="file" onchange="readURL(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
                                     </div>
                                  </div>
                               </div>
@@ -198,81 +197,74 @@
 
 
 
-
-      
 <script>
-          function sendQuery(obj) {
+    
+ function sendQuery(obj) {
 
-                                        var flag = true;
-                                       //  $(".validate").each(function (i, v) {
-                                       //      var elem = $(this);
-                                       //      var valu = elem.val();
-                                       //      if (valu == null || valu == '' || valu == 0) {
-                                       //          flag = false;
-                                       //          $("#" + elem.attr('name') + 'Error').html('This field is required.');
-                                       //      } else {
-                                       //          $("#" + elem.attr('name') + 'Error').html('');
-                                       //      }
-                                            
-                                       //  });
-                                        if (flag) {
-                                            $.ajax({
-                                                url: '<?= url('admin/onboarding/updateOnboarding/') ?>',
-                                                type: 'POST',
-                                                data: $("#queryForm").serialize() + '&_token=<?= csrf_token() ?>',
-                                                success: function(data){
-                                                swal({
-                                                title: "Success!",
-                                                text : "Onboarding details has been updated \n Click OK to refresh the page",
-                                                icon : "success",
-                                                 }).then(function() {
-                                                location.reload();
-                                            });
-                                        },
-                                    error : function(){
-                                      swal({
-                                           title: 'Opps...',
-                                         text : data.message,
-                                        type : 'error',
-                                       timer : '1500'
-                            })
-                        }
-                                            });
-                                        }
-                                        else {
-              
-                }
-                                    }
-    </script> 
+var flag = true;
+let _token = $('input[name=_token]').val();
+var myForm = $("#queryForms")[0];
+var formData = new FormData(myForm);
+if (flag) {
+    $.ajax({
+        _token: _token,
+        url: '<?= url('admin/onboarding/updateOnboarding/') ?>',
+        type: 'POST',
+        //data: $("#carForm").serialize(),
+        enctype: 'multipart/form-data',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
+</script>
+      
 
 <script>
   function sendReply(obj, id) {
-            if (id) {
+	if (id) {
 
-                if (id) {
-                    $.ajax({
-                        url: "<?= url('admin/content/update/') ?>/" + id,
-                        type: 'post',
-                        data: $("#queryForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
-                      
-                        success: function (data) {
-                            swal({
-                                title: "Success!",
-                                text : "Your content has been updated \n Click OK to refresh the page",
-                                icon : "success",
-                             }).then(function() {
-                                location.reload();
-                            });
-                        }
-                    });
-                } else {
-                    $("#error").html("Message field is required");
-                }
-            } else {
-                var data = {message: "Something went wrong"};
-                errorOccured(data);
-            }
-        }
+		if (id) {
+			$.ajax({
+				url: "<?= url('admin/content/update/') ?>/" + id,
+				type: 'post',
+				data: $("#queryForm_" + id).serialize() + '&_token=<?= csrf_token() ?>',
+
+				success: function(data) {
+					swal({
+						title: "Success!",
+						text: "Your content has been updated",
+						icon: "success",
+                  buttons: false,
+					});
+					setTimeout(function() {
+						location.reload();
+					}, 2000);
+				}
+			});
+		} else {
+			$("#error").html("Message field is required");
+		}
+	} else {
+		var data = {
+			message: "Something went wrong"
+		};
+		errorOccured(data);
+	}
+}
 </script>
 
 <script>

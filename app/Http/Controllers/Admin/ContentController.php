@@ -18,10 +18,6 @@ class ContentController extends Controller
         } else {
              $data['content'] = Content::orderBy('id','asc')->get();
              $data['onboarding_screen'] = OnboardingScreen::select('*')->get();
-            //   $data['facebook'] = SocialLink::where('name','facebook')->select('*')->first();
-            //   $data['linkedin'] = SocialLink::where('name','linkedin')->select('*')->first();
-            //   $data['instagram'] = SocialLink::where('name','instagram')->select('*')->first();
-            //   $data['twiter'] = SocialLink::where('name','twiter')->select('*')->first();
                $data['social_link'] = SocialLink::select('*')->first();
              return view('admin.content.content-list')->with($data);
         }
@@ -56,36 +52,36 @@ class ContentController extends Controller
 
    public function updateOnboarding(Request $request){
     //  $id = $request->input('id');
-     foreach ($request->id as $key=>$ids) {
-  
-                $data['title'] = $request->title[$key];
-                $data['title_ar'] = $request->title_ar[$key];
-
-                // if(!empty($request->image[$key])){
-                //     $filename = $request->image[$key]->getClientOriginalName();
-                //     $imageName = time().'.'.$filename;
-                //     if(env('APP_ENV') == 'local'){
-                //         $return = $request->image[$key]->move(
-                //         base_path() . '/public/uploads/onboarding_screen/', $imageName);
-                //     }else{
-                //         $return = $request->banner_image->move(
-                //         base_path() . '/../public/uploads/onboarding_screen/', $imageName);
-                //     }
-                //     $url = url('/uploads/onboarding_screen/');
-                //     return$data['image'] = $url.'/'. $imageName;
-                 
-                // }
-
-            $insert = OnboardingScreen::where('id', $request->id[$key])->update($data);
-       
-    }
    
+     foreach ($request->id as $key=>$ids) {
+                 $title = $request->title;
+                 $title_ar = $request->title_ar;
+
+                if ($request->images) {
+                    foreach($request->images as $key=>$image){
+                    $filename = $image->getClientOriginalName();
+                    $filename = str_replace(" ", "", $filename);
+                    $imageName = time() . '.' . $filename;
+                    $return = $image->move(
+                            base_path() . '/public/uploads/onboarding_screen/', $imageName);
+                    $url = url('/uploads/onboarding_screen/');
+                    // $image = $url . '/' . $imageName;
+                    // OnboardingScreen::where(['id' => $request->id[$key]])->update(['image' => $url . '/' . $imageName]);
+                
+                    }
+                }
+         $insert = OnboardingScreen::where('id', $request->id[$key])->update(['title' => $title[$key], 'title_ar'=> $title_ar[$key], 'image' => $url . '/' . $imageName]);
+    
+
     if ($insert) {
      return response()->json(['status' => true, 'success_code' => 200, 'message' => 'Onboarding details update successfully']);
  } else {
      return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update details']);
  }
+}
+
  }
+
 
  public function updateSocialLink(Request $request){
           $data =[

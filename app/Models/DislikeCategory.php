@@ -19,4 +19,8 @@ class DislikeCategory extends Model
     function items(){
       return $this->hasMany(DislikeItem::class,'category_id','id');
     }
+
+    public function ingredient(){
+      return $this->hasMany(DislikeItem::class,'category_id','id');
+    }
 }

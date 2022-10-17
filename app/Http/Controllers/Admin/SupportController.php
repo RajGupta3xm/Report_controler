@@ -99,5 +99,13 @@ public function query_reply(Request $request){
         return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while sending reply']);
     }
 }
+
+public function send_mail($email) {
+    $data=['name'=>$email['name'],'query'=>$email['message'],'reply'=>$email['reply']];
+    Mail::send('email', $data, function($message) use ($email) {
+        $message->to($email['to'], $email['name'])->subject('Reply: '.$email['subject']);
+        $message->from('testmail.gropse@gmail.com', 'Upvade Management');
+    });
+}
   
 }

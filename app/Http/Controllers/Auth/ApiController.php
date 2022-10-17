@@ -28,6 +28,7 @@ use App\Models\UserAddress;
 use App\Models\DeliverySlot;
 use App\Models\GiftCard;
 use App\Models\UserGiftCard;
+
 use App\Models\CreditTransaction;
 use App\Models\UserSelectedDaysForAddress;
 use Carbon\Carbon;
@@ -89,11 +90,18 @@ class ApiController extends Controller {
         });
         
         if ($validatedData->fails()) {
-            $responseArr['status_code'] = '201';
-            $responseArr['message'] = $validatedData->errors();
-            return response()->json([$responseArr]);
+            return response()->json([
+                "status" => false,
+                "data"=> [],
+                "message"=>  'User already register',
+                "status_code" =>201,
+             ]);
+            // $responseArr['status_code'] = '201';
+            // $responseArr['message'] = $validatedData->errors();
+
+            // return response()->json([$responseArr]);
             // $this->status_code = 201;
-            // $this->message = $validatedData->errors();
+            // $this->message = 'kkk';
         } else {
             $ifMobile = User::where(['country_code' => $request['country_code'],'mobile'=>$request['mobile']])->get()->first();
             if ($ifMobile) {
@@ -170,8 +178,6 @@ class ApiController extends Controller {
                 User::where('id', $user->id)->update($updateArr);
             }
             $user->user_id = $user->id;
-            $user->age = $userProfile->age;
-            $user->gender = $userProfile->gender;
             $user = $this->getToken($user);
             $response = new \Lib\PopulateResponse($user);
             $this->data = $response->apiResponse();
@@ -231,7 +237,12 @@ class ApiController extends Controller {
         });
 
         if ($validate->fails()) {
-
+            // return response()->json([
+            //     "status" => false,
+            //     "data"=> [],
+            //     "message"=>  $validate->errors(),
+            //     "status_code" =>201,
+            //  ]);
             $this->message = $validate->errors();
         } else {
             $this->status = true;
@@ -326,6 +337,7 @@ class ApiController extends Controller {
         $data = $user;
         $data->age = $userProfile->age;
         $data->gender = $userProfile->gender;
+        $data->dob = $userProfile->dob;
         $this->status = true;
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
@@ -497,7 +509,7 @@ class ApiController extends Controller {
                 ->get()
                 // ->toArray();
                 ->each(function($dietPlanType) {
-                   $meals= $dietPlanType->meals= Meal::join('meal_schedules','meals.id','=','meal_schedules.id')->where('meals.diet_plan_type_id', $dietPlanType->id)->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')->get()->toArray();
+                   $meals= $dietPlanType->meals= Meal::join('meal_schedules','meals.id','=','meal_schedules.id')->whereDate('meals.created_at',date('Y-m-d'))->where('meals.diet_plan_type_id', $dietPlanType->id)->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')->get()->toArray();
                 
                             
                 })->toArray(); 
@@ -511,7 +523,7 @@ class ApiController extends Controller {
             }
             
         }else{
-            $this->status_code=200;
+            $this->status_code=206;
             $this->message = trans('messages.homescreen_without_setup');
         }  
         $this->status = true; 
@@ -1426,34 +1438,55 @@ public function onboardingScreen(Request $request) {
     return $this->populateResponse();
 }
 
-// public function insertImage(Request $request) {
+public function basicInfoDetail(Request $request) {
+    $basicInfo_detail = UserProfile::select('initial_body_weight','height','dob','age','gender','activity_scale')->where('user_id',Auth::guard('api')->id())->get();
+    $response = new \Lib\PopulateResponse($basicInfo_detail);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.onboarding_screen');
+    return $this->populateResponse();
+}
 
-//     if ($request->image) {
-//         $image = $request->image;
-//         $filename = $image->getClientOriginalName();
-//         $filename = str_replace(" ", "", $filename);
-//         $imageName = time() . '.' . $filename;
-//         $return = $image->move(
-//                 base_path() . '/public/uploads/onboarding_screen/', $imageName);
-//         $url = url('/uploads/onboarding_screen/');
-//         $addUser['image'] = $url . '/' . $imageName;
-//     }
+
+
+public function insertImage(Request $request) {
+
+    if ($request->image) {
+        $image = $request->image;
+        $filename = $image->getClientOriginalName();
+        $filename = str_replace(" ", "", $filename);
+        $imageName = time() . '.' . $filename;
+        $return = $image->move(
+                base_path() . '/public/uploads/fitness_goal/', $imageName);
+        $url = url('/uploads/fitness_goal/');
+        $addUser['image'] = $url . '/' . $imageName;
+    }
+    if ($request->image_ar) {
+        $image = $request->image_ar;
+        $filename = $image->getClientOriginalName();
+        $filename = str_replace(" ", "", $filename);
+        $imageName = time() . '.' . $filename;
+        $return = $image->move(
+                base_path() . '/public/uploads/fitness_goal/', $imageName);
+        $url = url('/uploads/fitness_goal/');
+        $addUser['image_ar'] = $url . '/' . $imageName;
+    }
 //           $addUser['title'] = 'Get the exact nutrition ';
 //           $addUser['title_ar'] = 'منتجات الألبان';
 
-//     if($addUser){
-//        $data = OnboardingScreen::create($addUser);
-//         //  $data =  OnboardingScreen::where('id','1')->get();
-//         $response = new \Lib\PopulateResponse($data);
-//         $this->data = $response->apiResponse();
-//         $this->message = trans('messages.update_profile_success');
-//     }else{
-//         $this->message = trans('messages.update_profile_success');
-//     }
-//     $this->status = true;
+    if($addUser){
+       $data = DietPlanType::where('id','2')->update($addUser);
+         $data =  DietPlanType::where('id','1')->get();
+        $response = new \Lib\PopulateResponse($data);
+        $this->data = $response->apiResponse();
+        $this->message = trans('messages.update_profile_success');
+    }else{
+        $this->message = trans('messages.update_profile_success');
+    }
+    $this->status = true;
 
-//     return $this->populateResponse();
-// }
+    return $this->populateResponse();
+}
 
 
 }

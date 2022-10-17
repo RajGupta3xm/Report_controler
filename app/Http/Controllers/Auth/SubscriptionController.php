@@ -114,7 +114,7 @@ class SubscriptionController extends Controller {
     public function calculateKcal(){
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
         if($user->gender == 'female'){
-            
+        
               ///// Calculation /////
             $forWomen = ((10*$user->initial_bode_weight)+(6.253*$user->height)-(5*$user->age)-161);
             if($user->activity_scale == '1'){
@@ -123,6 +123,12 @@ class SubscriptionController extends Controller {
                 $total_calorie = $forWomen*1.375;
             }else{
                 $total_calorie = $forWomen*1.55; 
+            }
+
+            if($user->fitness_scale_id == '1'){
+                $total_recommended_Kcal = $total_calorie-500;
+            }else{
+                $total_recommended_Kcal = $total_calorie ;
             }
            
               ///// Calculation /////
@@ -138,11 +144,17 @@ class SubscriptionController extends Controller {
             }else{
                 $total_calorie = $forMen*1.55; 
             }
+
+            if($user->fitness_scale_id == '1'){
+                $total_recommended_Kcal = $total_calorie-500;
+            }else{
+                $total_recommended_Kcal = $total_calorie ;
+            }
               ///// Calculation /////
 
         }
         
-        $data['recommended_colorie'] = $total_calorie;
+        $data['recommended_colorie'] = $total_recommended_Kcal;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();

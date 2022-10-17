@@ -45,7 +45,9 @@ return [
 	'promo_code'=>'Fetching promo codes successfully',
 	'save_card_listing'=>'Fetching saved card successfully',
 	'onboarding_screen'=>'Fetching onboarding screen successfully',
-
+	'pet_add'=>'Pet is Added to favourite',
+	'pet_add_favourite'=>'Plate is already added to Favourite',
+	'pet_remove_favourite'=>'Plate is UnFavourite from favourite list',
 ];
 
 ?>

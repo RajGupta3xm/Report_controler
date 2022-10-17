@@ -20,4 +20,13 @@ class UserProfile extends Model
             'fitness_scale_id',
             'diet_plan_type_id'
         ];
+
+        public function fitness(){
+            return $this->hasOne(FitnessGoal::class,'id','fitness_scale_id');
+        }
+
+        public function dietplan(){
+            return $this->hasOne(DietPlanType::class,'id','diet_plan_type_id');
+        }
+
 }

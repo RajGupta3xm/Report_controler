@@ -26,7 +26,7 @@ Route::get('/privacyPolicy','Auth\ApiController@privacyPolicy');
 Route::get('/termsConditions','Auth\ApiController@termsConditions');
 Route::get('/onboardingScreen','Auth\ApiController@onboardingScreen');
 
-// Route::post('insertImage', 'Auth\ApiController@insertImage');
+Route::post('insertImage', 'Auth\ApiController@insertImage');
 
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
 	Route::get('myProfile', 'ApiController@myProfile');
@@ -58,6 +58,10 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('creditTransactionList', 'ApiController@creditTransactionList');
     Route::post('basicInfo', 'ApiController@basicInfo');
     Route::get('promoCodeListing', 'ApiController@promoCodeListings');
+    Route::get('basicInfoDetail', 'ApiController@basicInfoDetail');
+  
+
+
     
 
 

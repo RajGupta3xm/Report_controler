@@ -119,17 +119,80 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
 Route::post('onboarding/updateOnboarding', 'Admin\ContentController@updateOnboarding');
 Route::post('social_link/update', 'Admin\ContentController@updateSocialLink');
 
-
     /*********Content Management */
 
+    /*******Ingredient Management */
+    Route::get('/ingredient-management', 'Admin\IngredientController@index');
+    Route::post('/unit_submit','Admin\IngredientController@unit_submit');
+    Route::post('/category/submit','Admin\IngredientController@category_submit');
+    Route::post('/group/submit','Admin\IngredientController@group_submit');
+    Route::post('/group/change_status','Admin\IngredientController@change_status');
+    Route::post('/edit_group/update/{id}', [
+        'uses' => 'Admin\IngredientController@update',
+        'as' => 'admin.edit_group.update'
+    ]);
+    Route::post('/group-delete','Admin\IngredientController@group_delete');
+    Route::post('/ingredient/submit','Admin\IngredientController@ingredient_submit');
+    Route::post('/ingredient/change_status','Admin\IngredientController@change_status_ingredient');
+    Route::post('/edit_ingredient/update/{id}', [
+        'uses' => 'Admin\IngredientController@update_ingredient',
+        'as' => 'admin.edit_ingredient.update_ingredient'
+    ]);
+    Route::post('/ingredient-delete','Admin\IngredientController@ingredient_delete');
+
+    /*******End Ingredient Management */
+
+    /*******Fitness Goal Management */
+    Route::get('/fitnessGoal-management', 'Admin\FitnessGoalController@index');
+    Route::post('/fitness_goal/change_status','Admin\FitnessGoalController@change_status');
+    Route::post('/fitness-goal/submit','Admin\FitnessGoalController@submit');
+
+    /*******End Fitness Goal Management */
+
+    /*******Diet Plan Management */
+    Route::get('/dietPlan-management', 'Admin\dietPlanController@index');
+    Route::post('/diet_plan/change_status','Admin\dietPlanController@change_status');
+    Route::get('/add-diet-plan','Admin\dietPlanController@add_diet_plan');
+    Route::post('/diet-plan/submit','Admin\dietPlanController@submit');
+
+    /*******End Diet Plan Management */
+
+
+/*******User  Management */
     Route::get('/user-management', 'Admin\UserController@index');
-    Route::get('/user-detail/{id}', 'Admin\UserController@show');
+    Route::get('/user-details/{id}', 'Admin\UserController@show');
     Route::post('/user-post-filter', ['uses' => 'Admin\UserController@user_post_filter', 'as' => 'admin.user_post.filter']);
     Route::post('/user/change_user_status', 'Admin\UserController@change_user_status');
     Route::post('/user/filter', [
         'uses' => 'Admin\UserController@filter_list',
         'as' => 'admin.user.filter'
     ]);
+    Route::post('/query/filter', [
+        'uses' => 'Admin\UserController@filter_list',
+        'as' => 'admin.query.filter'
+      ]);
+     /*******End User Management */
+
+
+     /*****Staff Management */
+    Route::get('/staff-management', 'Admin\StaffController@index');
+    Route::get('/add_staff_group','Admin\StaffController@add_staff_group');
+    Route::post('/staff_group_status/change_status','Admin\StaffController@change_status');
+    Route::post('/staff-group-delete','Admin\StaffController@group_delete');
+    Route::post('/staff_group/submit','Admin\StaffController@submit');
+    Route::post('/edit_staff_group/update/{id}', [
+        'uses' => 'Admin\StaffController@update',
+        'as' => 'admin.edit_staff_group.update'
+    ]);
+    Route::post('/staff_member/submit','Admin\StaffController@staff_member_submit');
+    Route::post('/staff_member/change_status','Admin\StaffController@staff_member_change_status');
+    Route::post('/edit_staff_member/update/{id}', [
+        'uses' => 'Admin\StaffController@update_member',
+        'as' => 'admin.edit_staff_member.update'
+    ]);
+     /*****End Staff Management */
+
+
     Route::get('/category-management', 'Admin\CategoryController@index');
     Route::post('category/store', [
         'uses' => 'Admin\CategoryController@store',
