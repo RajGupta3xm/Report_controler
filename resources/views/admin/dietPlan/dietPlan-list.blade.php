@@ -7,8 +7,7 @@
                   <div class="col-12"> 
                      <div class="row mx-0">
                         <div class="col-12 text-end mb-4 pe-0"> 
-                           <a href="<?= url('admin/add-diet-plan')?>" class="comman_btn me-2">Add Plan</a>
-                           <a href="edit-diet-plan.html" class="comman_btn">Edit Plan</a>
+                        <a href="<?= url('admin/add-diet-plan')?>" class="comman_btn me-2">Add Plan</a>
                         </div>
                         <div class="col-12 design_outter_comman shadow mb-4">
                            <div class="row comman_header justify-content-between">
@@ -18,7 +17,7 @@
                               <div class="col-3">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
-                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name" style="margin-top: 12px;">
+                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
@@ -29,32 +28,17 @@
                                  <div class="table-responsive">
                                     <table class="table mb-0">
                                        <thead>
-                                         <tr>
-                                           <th>
-                                             <form class="table_btns d-flex align-items-center justify-content-center"> 
-                                                <div class="check_radio">
-                                                   <input type="checkbox" name="table1"  id="table" onclick="checkAll('table');" class="d-none">
-                                                   <label for="table"></label>
-                                                </div>
-                                             </form>
-                                           </th>
+                                         <tr> 
                                            <th>Media(En)</th>
                                            <th>Media(Ar)</th> 
                                            <th>Items</th> 
                                            <th>Status</th>
+                                           <th>Action</th>
                                          </tr>
                                        </thead>
                                        <tbody>
-                                        @foreach($diet_plan as $key=>$diet_plans)
-                                         <tr>
-                                           <td>
-                                             <form class="table_btns d-flex align-items-center justify-content-center"> 
-                                                <div class="check_radio td_check_radio">
-                                                   <input type="checkbox" name="table1" id="table<?= $key+1 ?>" class="d-none">
-                                                   <label for="table<?= $key+1 ?>"></label>
-                                                </div>
-                                             </form>
-                                           </td>
+                                       @foreach($diet_plan as $key=>$diet_plans)
+                                         <tr> 
                                            <td><img class="table_img" src="{{$diet_plans->image?$diet_plans->image:assets/img/bg-img.jpg}}" alt=""></td>
                                            <td><img class="table_img" src="{{$diet_plans->image_ar?$diet_plans->image_ar:assets/img/bg-img.jpg}}" alt=""></td>
                                            <td>{{$diet_plans->name}}</td>  
@@ -64,9 +48,12 @@
                                                        <input type="checkbox" onchange="changeStatus(this, '<?= $diet_plans->id ?>');" <?= ( $diet_plans->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
                                                     </label>
                                                 </div>
-                                          </td>
+                                           </td>
+                                           <td> 
+                                             <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-dietPlan/' . base64_encode($diet_plans->id)); ?>">Edit</a>
+                                           </td>
                                          </tr> 
-                                         @endforeach
+                                        @endforeach
                                        </tbody>
                                      </table>
                                  </div>
@@ -79,7 +66,9 @@
             </div>
          </div>
       </div>
-      <script>
+  @endsection
+ 
+  <!-- <script>
 function checkAll(checkId) {
   var inputs = document.getElementsByTagName("input");
   for (var i = 0; i < inputs.length; i++) {
@@ -95,8 +84,7 @@ function checkAll(checkId) {
   }
 }
 
-      </script>
-      @endsection
+      </script> -->
 
       <script>
        function changeStatus(obj, id) {

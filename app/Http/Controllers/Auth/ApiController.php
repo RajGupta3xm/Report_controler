@@ -25,6 +25,7 @@ use App\Models\QueryReply;
 use App\Models\OnboardingScreen;
 use App\Models\UserCard;
 use App\Models\UserAddress;
+use App\Models\HomeScreenBanner;
 use App\Models\DeliverySlot;
 use App\Models\GiftCard;
 use App\Models\UserGiftCard;
@@ -1461,22 +1462,22 @@ public function insertImage(Request $request) {
         $url = url('/uploads/fitness_goal/');
         $addUser['image'] = $url . '/' . $imageName;
     }
-    if ($request->image_ar) {
-        $image = $request->image_ar;
-        $filename = $image->getClientOriginalName();
-        $filename = str_replace(" ", "", $filename);
-        $imageName = time() . '.' . $filename;
-        $return = $image->move(
-                base_path() . '/public/uploads/fitness_goal/', $imageName);
-        $url = url('/uploads/fitness_goal/');
-        $addUser['image_ar'] = $url . '/' . $imageName;
-    }
+    // if ($request->image_ar) {
+    //     $image = $request->image_ar;
+    //     $filename = $image->getClientOriginalName();
+    //     $filename = str_replace(" ", "", $filename);
+    //     $imageName = time() . '.' . $filename;
+    //     $return = $image->move(
+    //             base_path() . '/public/uploads/fitness_goal/', $imageName);
+    //     $url = url('/uploads/fitness_goal/');
+    //     $addUser['image_ar'] = $url . '/' . $imageName;
+    // }
 //           $addUser['title'] = 'Get the exact nutrition ';
 //           $addUser['title_ar'] = 'منتجات الألبان';
 
     if($addUser){
-       $data = DietPlanType::where('id','2')->update($addUser);
-         $data =  DietPlanType::where('id','1')->get();
+       $data = HomeScreenBanner::create($addUser);
+         $data =  HomeScreenBanner::where('id','1')->get();
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
         $this->message = trans('messages.update_profile_success');

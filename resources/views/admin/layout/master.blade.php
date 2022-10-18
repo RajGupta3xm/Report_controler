@@ -417,6 +417,13 @@
                 }
             });
         </script>
+
+          <script>
+         $( '.selct_comman' ).select2( {
+            theme: "bootstrap-5", 
+         });
+      </script>
+      
         <script>
             $(document).ready(function () {
                 // Basic

@@ -116,7 +116,7 @@
                   
                   @endforeach
                 
-                  <div class="col-12 design_outter_comman shadow">
+                  <div class="col-12 design_outter_comman shadow mb-5">
                    <form id="queryForms" >
                         @csrf
                      <div class="row comman_header justify-content-between">
@@ -127,9 +127,8 @@
                            <button type="button" onclick="sendQuery(this)" class="comman_btn">Save</button>
                         </div>
                      </div>
-                     <div class="form-design py-5 px-1 row mx-0 align-items-end justify-content-between" action="">
+                     <div class="form-design py-5 px-1 row mx-0 align-items-end justify-content-between" >
                       @foreach($onboarding_screen as $key=>$onboarding_screens)
-
                         <div class="col-md-4" >
                            <div class="row Onboarding_box m-0"> 
                               <span class="head_spann">Onboarding {{$key+1}}</span>
@@ -139,8 +138,9 @@
                                        <img id="blah<?= $key+1 ?>" class="profile-pic"  src="{{$onboarding_screens->image?$onboarding_screens->image:asset('assets/img/sidebar_bg.jpg')}}"> 
                                     </div>
                                     <div class="p-image">
-                                       <i class="upload-button fas fa-camera"></i> 
-                                       <input  id="upload<?= $key+1 ?>" name="images[]" multiple="true" accept="image/*" class="file-upload__input" type="file" onchange="readURL(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
+                                       <label for="upload<?= $key+1 ?>"><i class="upload-button fas fa-camera"></i> </label>
+                                       
+                                       <input  id="upload<?= $key+1 ?>" name="images[]" multiple="true" accept="image/*" class="file-upload__input d-none" type="file" onchange="readURL(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
                                     </div>
                                  </div>
                               </div>
@@ -158,8 +158,44 @@
                         </div>
                         @endforeach
                      </div> 
+                     </form>
                   </div>
-                  </form>
+
+                  <div class="col-12 design_outter_comman shadow ">
+                     <form  id="queryForms1">
+                        @csrf
+                     <div class="row comman_header justify-content-between">
+                        <div class="col-auto">
+                           <h2>Home Screen Banners</h2>
+                        </div> 
+                        <div class="col-auto">
+                           <button type="button" onclick="sendQuery1(this)" class="comman_btn">Save</button>
+                        </div>
+                     </div>
+                     <div class="form-design py-5 px-1 row mx-0 align-items-end justify-content-between" >
+                      @foreach($homeScreen_banner as $key=>$homeScreen_banners)
+                        <div class="col-md-4">
+                           <div class="row Onboarding_box m-0">
+                              <span class="head_spann">Home Screen {{$key+1}}</span>
+                              <div class="form-group col-12">
+                                 <div class="account_profile position-relative">
+                                    <div class="circle">
+                                       <img  id="blah1<?= $key+1 ?>" class="profile-pic" src="{{$homeScreen_banners->image?$homeScreen_banners->image:asset('assets/img/sidebar_bg.jpg')}}"> 
+                                    </div>
+                                    <div class="p-image">
+                                       <label class="d-flex align-items-center justify-content-center m-0" for="upload1<?= $key+1 ?>"><i class="upload-button fas fa-camera"></i> </label>
+                                       <input type="hidden" value="{{$homeScreen_banners->id}}" name="id[]" class="form-control">
+                                       <input  id="upload1<?= $key+1 ?>" name="img[]" multiple="true" accept="image/*" class="file-upload__input d-none" type="file" onchange="readURLs(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
+                                       <!-- <input class="file-upload" name="img[]" type="file" accept="image/*"> -->
+                                    </div>
+                                 </div>
+                              </div> 
+                           </div>
+                        </div>
+                        @endforeach
+                     </div> 
+                     </form>
+                  </div>
                </div>
             </div>
          </div>
@@ -175,6 +211,20 @@
            }
        });
 </script>
+<script>
+         function readURLs(input,count) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah1'+count)
+                        .attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+      </script>
 <script>
          function readURL(input,count) {
             if (input.files && input.files[0]) {
@@ -209,6 +259,41 @@ if (flag) {
     $.ajax({
         _token: _token,
         url: '<?= url('admin/onboarding/updateOnboarding/') ?>',
+        type: 'POST',
+        //data: $("#carForm").serialize(),
+        enctype: 'multipart/form-data',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
+</script>
+
+<script>
+    
+ function sendQuery1(obj) {
+
+var flag = true;
+let _token = $('input[name=_token]').val();
+var myForm = $("#queryForms1")[0];
+var formData = new FormData(myForm);
+if (flag) {
+    $.ajax({
+        _token: _token,
+        url: '<?= url('admin/homeScreen/updateBanners/') ?>',
         type: 'POST',
         //data: $("#carForm").serialize(),
         enctype: 'multipart/form-data',

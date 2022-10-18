@@ -118,6 +118,8 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
 ]);
 Route::post('onboarding/updateOnboarding', 'Admin\ContentController@updateOnboarding');
 Route::post('social_link/update', 'Admin\ContentController@updateSocialLink');
+Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners');
+
 
     /*********Content Management */
 
@@ -154,6 +156,8 @@ Route::post('social_link/update', 'Admin\ContentController@updateSocialLink');
     Route::post('/diet_plan/change_status','Admin\dietPlanController@change_status');
     Route::get('/add-diet-plan','Admin\dietPlanController@add_diet_plan');
     Route::post('/diet-plan/submit','Admin\dietPlanController@submit');
+    Route::any('edit-dietPlan/{id}', 'Admin\dietPlanController@edit_dietPlan');
+    Route::post('/dietPlan/edit_update/{id}','Admin\dietPlanController@edit_update');
 
     /*******End Diet Plan Management */
 
