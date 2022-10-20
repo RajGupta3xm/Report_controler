@@ -138,14 +138,14 @@
                                        <img id="blah<?= $key+1 ?>" class="profile-pic"  src="{{$onboarding_screens->image?$onboarding_screens->image:asset('assets/img/sidebar_bg.jpg')}}"> 
                                     </div>
                                     <div class="p-image">
-                                       <label for="upload<?= $key+1 ?>"><i class="upload-button fas fa-camera"></i> </label>
+                                       <label class="d-flex align-items-center justify-content-center m-0" for="upload<?= $key+1 ?>"><i class="upload-button fas fa-camera"></i> </label>
                                        
                                        <input  id="upload<?= $key+1 ?>" name="images[]" multiple="true" accept="image/*" class="file-upload__input d-none" type="file" onchange="readURL(this, <?= $key+1 ?>);" onchange="setHeightWidth(this);">
                                     </div>
                                  </div>
                               </div>
                               <div class="form-group col-12">
-                                 <label for="">Title (En)</label>
+                                 <label  for="">Title (En)</label>
                                  <input type="text" value="{{$onboarding_screens->title}}" name="title[]" class="form-control">
                                  <input type="hidden" value="{{$onboarding_screens->id}}" name="id[]" class="form-control">
                               </div>  

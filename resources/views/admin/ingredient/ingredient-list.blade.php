@@ -84,7 +84,7 @@
                                                             <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
-                                                                      <input type="text" class="form-control" placeholder="Search" name="name" id="name">
+                                                                      <input type="text" class="form-control" placeholder="Search" name="name" id="name"  style="margin-top: 12px;">
                                                                       <i class="far fa-search"></i>
                                                                    </div>
                                                                 </form>
@@ -162,7 +162,7 @@
                                                             @csrf
                                                             <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" ><p class="text-danger text-small" id="groupError"></p> </div>
                                                             <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" ><p class="text-danger text-small" id="group_arError"></p> </div>
-                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="image" id="upload_video"><p class="text-danger text-small" id="imageError"></p> </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger text-small" id="imageError"></p> </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
@@ -174,7 +174,7 @@
                                                             <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
-                                                                      <input type="text" class="form-control" placeholder="Search" name="name" id="name">
+                                                                      <input type="text" class="form-control" placeholder="Search" name="name" id="name"  style="margin-top: 12px;">
                                                                       <i class="far fa-search"></i>
                                                                    </div>
                                                                 </form>

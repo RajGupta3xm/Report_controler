@@ -19,4 +19,8 @@ class DislikeGroup extends Model
         return $this->hasMany(DislikeItem::class ,'group_id','id');
     }
 
+    function items(){
+        return $this->hasMany(DislikeItem::class,'group_id','id');
+      }
+
 }

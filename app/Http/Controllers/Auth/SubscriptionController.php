@@ -21,7 +21,7 @@ use App\Models\UserDislike;
 use App\Models\DislikeItem;
 use Carbon\Carbon;
 use DateTime;
-
+use Illuminate\Support\Str;
 
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -113,6 +113,7 @@ class SubscriptionController extends Controller {
 
     public function calculateKcal(){
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+      
         if($user->gender == 'female'){
         
               ///// Calculation /////
@@ -153,8 +154,18 @@ class SubscriptionController extends Controller {
               ///// Calculation /////
 
         }
+       $recommended_result=CalorieRecommend::where('min_range','<=',$total_recommended_Kcal)->where('max_range','>=',$total_recommended_Kcal)->first();
+        $update=[
+
+            'user_id'=>Auth::guard('api')->id(),
+            'recommended_result_id'=>$recommended_result->id,
+           
+        ];
+        UserCaloriTarget::updateOrCreate(['user_id'=>Auth::guard('api')->id()],$update);
+  
+     
         
-        $data['recommended_colorie'] = $total_recommended_Kcal;
+        $data['recommended_colorie'] = round($total_recommended_Kcal,2);
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -165,15 +176,30 @@ class SubscriptionController extends Controller {
     public function macrosCalculator(Request $request) {
           $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
          $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
+
+           ///// Calculation /////
+         $protein_min = (($request->total_calorie*$dietPlan->protein_default_min)/100)/$dietPlan->protein_min_divisor;
+         $protein_max = (($request->total_calorie*$dietPlan->protein_default_max)/100)/$dietPlan->protein_max_divisor;
+         $protien = ($protein_min+$protein_max)/2;
+          $carb_min = (($request->total_calorie*$dietPlan->carb_default_min)/100)/$dietPlan->carb_min_divisor;
+          $carb_max = (($request->total_calorie*$dietPlan->carb_default_max)/100)/$dietPlan->carb_max_divisor;
+          $carbs = ($carb_min+$carb_max)/2;
+          $fat_min = (($request->total_calorie*$dietPlan->fat_default_min)/100)/$dietPlan->fat_min_divisor;
+          $fat_max = (($request->total_calorie*$dietPlan->fat_default_max)/100)/$dietPlan->fat_max_divisor;
+          $fat = ($fat_min+$fat_max)/2;
+       
+         $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat),'description' => $dietPlan->description];
+
+        ///// Calculation /////
         
-        ///// Calculation /////
+        ///// Old Calculation /////
 
-        $protien=(($request->total_calorie*$dietPlan->protein_actual)/100)/$dietPlan->protein_actual_divisor;
-        $carbs=(($request->total_calorie*$dietPlan->carbs_actual)/100)/$dietPlan->carbs_actual_divisor;
-        $fat=(($request->total_calorie*$dietPlan->fat_actual)/100)/$dietPlan->fat_actual_divisor;
-        $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat),'description' => $dietPlan->description];
+        // $protien=(($request->total_calorie*$dietPlan->protein_actual)/100)/$dietPlan->protein_actual_divisor;
+        // $carbs=(($request->total_calorie*$dietPlan->carbs_actual)/100)/$dietPlan->carbs_actual_divisor;
+        // $fat=(($request->total_calorie*$dietPlan->fat_actual)/100)/$dietPlan->fat_actual_divisor;
+        // $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat),'description' => $dietPlan->description];
 
-        ///// Calculation /////
+        /////Old  Calculation /////
 
         $recommended_result=CalorieRecommend::where('recommended',$request->total_calorie)->first();
         $update=[

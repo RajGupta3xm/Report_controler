@@ -84,18 +84,18 @@ class IngredientController extends Controller
        "name_ar" => $request->input('group_ar'),
 
      ];
-     if(!empty($request->images)){
-        $filename = $request->images->getClientOriginalName();
+     if(!empty($request->images1)){
+        $filename = $request->images1->getClientOriginalName();
         $imageName = time().'.'.$filename;
         if(env('APP_ENV') == 'local'){
-            $return = $request->images->move(
+            $return = $request->images1->move(
             base_path() . '/public/uploads/group_image/', $imageName);
         }else{
-            $return = $request->images->move(
+            $return = $request->images1->move(
             base_path() . '/../public/uploads/group_image/', $imageName);
         }
         $url = url('/uploads/group_image/');
-     $data['image'] = $url.'/'. $imageName;
+      $data['image'] = $url.'/'. $imageName;
      
     }
 

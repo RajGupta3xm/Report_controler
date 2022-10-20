@@ -46,6 +46,14 @@
                                   <!-- <a class="comman_btn" href="language-selection.html">Submit</a> -->
                                   <button type="button" onclick="validate(this);" class="comman_btn">Submit</button> 
                               </div>
+                              <div class="form-group col-12"> 
+                                 <div class="flag-lists translation-links d-flex "> 
+                                    <a class="arabic shadow" data-lang="Arabic" href="{{url('admin/language_selector')}}">
+                                     <img class="mr-md-2 ml-md-0 ml-1 flag_img" src="{{asset('assets/img/language-logo.jpg')}}">
+                                      <span>Change Language</span>
+                                    </a> 
+                                 </div>
+                              </div>
                            </form>
                         </div>
                      </div>

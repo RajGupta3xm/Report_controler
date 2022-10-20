@@ -69,6 +69,11 @@ class LoginController extends Controller {
         return view('admin.forgot-password');
     }
 
+    public function language(Request $request) {
+      
+        return view('admin.language-selector');
+   }
+
     public function forgotten(Request $request) {
         
         $validator = \Validator::make($request->all(), [

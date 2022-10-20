@@ -71,6 +71,7 @@ Route::any('otp/{id}', [
  Route::get('/admin/resetPassword/{id}', 'Admin\LoginController@resetPassword')->name('resetPassword');
  Route::post('/admin/ConfirmPassword', 'Admin\LoginController@ConfirmPassword');
  Route::post('/admin/resend_otp','Admin\LoginController@resendotp');
+ Route::get('/admin/language_selector', 'Admin\LoginController@language');
 
 
 
@@ -152,12 +153,12 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     /*******End Fitness Goal Management */
 
     /*******Diet Plan Management */
-    Route::get('/dietPlan-management', 'Admin\dietPlanController@index');
-    Route::post('/diet_plan/change_status','Admin\dietPlanController@change_status');
-    Route::get('/add-diet-plan','Admin\dietPlanController@add_diet_plan');
-    Route::post('/diet-plan/submit','Admin\dietPlanController@submit');
-    Route::any('edit-dietPlan/{id}', 'Admin\dietPlanController@edit_dietPlan');
-    Route::post('/dietPlan/edit_update/{id}','Admin\dietPlanController@edit_update');
+    Route::get('/dietPlan-management', 'Admin\DietPlanController@index');
+    Route::post('/diet_plan/change_status','Admin\DietPlanController@change_status');
+    Route::get('/add-diet-plan','Admin\DietPlanController@add_diet_plan');
+    Route::post('/diet-plan/submit','Admin\DietPlanController@submit');
+    Route::any('edit-dietPlan/{id}', 'Admin\DietPlanController@edit_dietPlan');
+    Route::post('/dietPlan/edit_update/{id}','Admin\DietPlanController@edit_update');
 
     /*******End Diet Plan Management */
 

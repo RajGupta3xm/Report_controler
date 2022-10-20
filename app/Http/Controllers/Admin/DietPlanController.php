@@ -76,9 +76,10 @@ public function submit(Request $request){
     "fat_max_divisor" => $request->input('fat_max_divisor'),
    
   ];
-//  $data['protein_actual_divisor'] = round($request->input('actual_protein')/$request->input('total1'),2);
-//  $data['carbs_actual_divisor'] = round($request->input('actual_carb')/$request->input('total2'),2);
-//  $data['fat_actual_divisor'] = round($request->input('actual_fat')/$request->input('total3'),2);
+
+//  $data['protein'] = round($request->input('actual_protein')/$request->input('total1'),2);
+//  $data['carbs'] = round($request->input('actual_carb')/$request->input('total2'),2);
+//  $data['fat'] = round($request->input('actual_fat')/$request->input('total3'),2);
 
   if(!empty($request->image)){
      $filename = $request->image->getClientOriginalName();

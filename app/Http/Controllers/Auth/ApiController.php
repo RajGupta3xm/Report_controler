@@ -14,6 +14,7 @@ use App\Models\UserProfile;
 use App\Models\UserDislike;
 use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
+use App\Models\DislikeGroup;
 use App\Models\SubscriptionPlan;
 use App\Models\Subscription;
 use App\Models\Content;
@@ -76,7 +77,7 @@ class ApiController extends Controller {
             if($request['country_code'] && $request['mobile']){
                 $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->first();
                 if ($mobile_number) {
-                    $validatedData->errors()->add('mobile_number', 'mobile already registered');
+                    $validatedData->errors()->add('mobile_number', 'This number is already exist, Please signup with another number');
                  
                     
                 }
@@ -91,14 +92,14 @@ class ApiController extends Controller {
         });
         
         if ($validatedData->fails()) {
-            return response()->json([
-                "status" => false,
-                "data"=> [],
-                "message"=>  'User already register',
-                "status_code" =>201,
-             ]);
-            // $responseArr['status_code'] = '201';
-            // $responseArr['message'] = $validatedData->errors();
+            // return response()->json([
+            //     "status" => false,
+            //     "data"=> [],
+            //     "message"=>  'User already register',
+            //     "status_code" =>201,
+            //  ]);
+            $this->status_code = 201;
+            $this->message = $validatedData->errors();
 
             // return response()->json([$responseArr]);
             // $this->status_code = 201;
@@ -641,7 +642,7 @@ class ApiController extends Controller {
     }
 
     public function dislikes() {
-        $category=DislikeCategory::select('id','name','image')->with('items')->where('status','active')->get()->each(function($category){
+        $category=DislikeGroup::select('id','name','image')->with('items')->where('status','active')->get()->each(function($category){
             foreach($category->items as $item){
                 $item->selected=false;
                 if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
@@ -1440,7 +1441,7 @@ public function onboardingScreen(Request $request) {
 }
 
 public function basicInfoDetail(Request $request) {
-    $basicInfo_detail = UserProfile::select('initial_body_weight','height','dob','age','gender','activity_scale')->where('user_id',Auth::guard('api')->id())->get();
+    $basicInfo_detail = UserProfile::select('initial_body_weight','height','dob','age','gender','activity_scale')->where('user_id',Auth::guard('api')->id())->first();
     $response = new \Lib\PopulateResponse($basicInfo_detail);
     $this->status = true;
     $this->data = $response->apiResponse();
