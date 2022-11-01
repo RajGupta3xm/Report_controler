@@ -223,7 +223,7 @@
                                                                                 </div>
                                                                                 </td>
                                                                                 <td> 
-                                                                                    <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop08{{$groups->id}}">Edit</a> 
+                                                                                    <a class="comman_btn table_viewbtn " onclick="showmodal(this,'{{$groups->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
                                                                                     <!-- <a class="comman_btn table_viewbtn delete_btn" href="javscript:;">Delete</a> -->
                                                                                     <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$groups->id}}');" href="javscript:;">Delete</a>
                                                                                 </td> 
@@ -298,8 +298,8 @@
         </div>
     </div>
   <!--modal-->
-  @foreach($group as $key=>$groups)
-  <div class="modal fade comman_modal" id="staticBackdrop08{{$groups->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+ 
+  <div class="modal fade comman_modal" id="staticBackdrop08" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0">
         <div class="modal-header">
@@ -308,17 +308,18 @@
         </div>
         <div class="modal-body">
           <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="carForm"> 
-            @csrf
-            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control" value="{{$groups->name}}" name="name" > </div>
-            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control" value="{{$groups->name_ar}}" name="name_ar" > </div>
+         @csrf
+         <input type="hidden" class="form-control"  id="id" name="id" >
+            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  id="group_name" name="group_name" > </div>
+            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  id="group_name_ar" name="group_name_ar" > </div>
            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="image1"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control" id="image1"  name="images" ></div>
-            <div class="form-group mb-0 col-auto"> <button type="button"  onclick="updateCar(this, <?= $groups->id ?>);" name="submit-form"   class="comman_btn">Save</button> </div>
+            <div class="form-group mb-0 col-auto"> <button type="button"  onclick="updateCar(this);" name="submit-form"   class="comman_btn">Save</button> </div>
           </form>
         </div> 
       </div>
     </div>
 </div>
-@endforeach
+
 <!--modal-->
  <!-- Modal -->
 <div class="modal fade reply_modal Import_export" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -424,22 +425,39 @@
 </div>
 @endforeach
 @endsection
+<script>
+   function showmodal(obj,id) {
+    
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_group/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#id').val(data.id);
+          $('#group_name').val(data.name);
+          $('#group_name_ar').val(data.name_ar);
+          $('#staticBackdrop08').modal('show');
+        }
+      });
+   }
 
+</script>
 <script>
     
-    function updateCar(obj, id) {
-
+function updateCar(obj) {
+    
 var flag = true;
-let _token = $('input[name=_token]').val();
-var myForm = $("#carForm")[0];
-var formData = new FormData(myForm);
+let  formData = new FormData($("#carForm")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#id').val();
 if (flag) {
     $.ajax({
-        _token: _token,
+        // _token: _token,
         url: "<?= url('admin/edit_group/update/') ?>/" + id,
         type: 'POST',
-        //data: $("#carForm").serialize(),
         enctype: 'multipart/form-data',
+        // data: $("#carForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
         data: formData,
         processData: false,
         contentType: false,

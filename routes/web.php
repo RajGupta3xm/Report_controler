@@ -134,6 +134,10 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\IngredientController@update',
         'as' => 'admin.edit_group.update'
     ]);
+    Route::get('/get_group/data/{id}', [
+        'uses' => 'Admin\IngredientController@get_data',
+        'as' => 'admin.get_group.data'
+    ]);
     Route::post('/group-delete','Admin\IngredientController@group_delete');
     Route::post('/ingredient/submit','Admin\IngredientController@ingredient_submit');
     Route::post('/ingredient/change_status','Admin\IngredientController@change_status_ingredient');
@@ -141,6 +145,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\IngredientController@update_ingredient',
         'as' => 'admin.edit_ingredient.update_ingredient'
     ]);
+    
     Route::post('/ingredient-delete','Admin\IngredientController@ingredient_delete');
 
     /*******End Ingredient Management */

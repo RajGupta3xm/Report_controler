@@ -72,6 +72,7 @@ return array(
     'App\\Models\\DislikeItem' => $baseDir . '/app/Models/DislikeItem.php',
     'App\\Models\\FitnessGoal' => $baseDir . '/app/Models/FitnessGoal.php',
     'App\\Models\\GiftCard' => $baseDir . '/app/Models/GiftCard.php',
+    'App\\Models\\HomeScreenBanner' => $baseDir . '/app/Models/HomeScreenBanner.php',
     'App\\Models\\Like' => $baseDir . '/app/Models/Like.php',
     'App\\Models\\Meal' => $baseDir . '/app/Models/Meal.php',
     'App\\Models\\MealRating' => $baseDir . '/app/Models/MealRating.php',

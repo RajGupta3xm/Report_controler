@@ -72,19 +72,19 @@
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Height</label>
-                                                         <input type="text" class="form-control"  value="{{$user_details['height']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($user_details) ? $user_details->height : 'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Weight</label>
-                                                         <input type="text" class="form-control" value="{{$user_details['initial_body_weight']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($user_details) ? $user_details->initial_body_weight : 'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">DOB</label>
-                                                         <input type="text" class="form-control" value="{{$user_details['dob']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($user_details) ? $user_details->dob : 'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Age</label>
-                                                         <input type="text" class="form-control" value="{{$user_details['age']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($user_details) ? $user_details->age: 'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Gender</label>
@@ -114,7 +114,7 @@
                                                          <strong class="head_details">Fitness Goal</strong>
                                                       </div>
                                                       <div class="form-group col-6"> 
-                                                         <input type="text" class="form-control" value="{{$user_details['fitness']['name']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($user_details->fitness) ? $user_details->fitness->name : 'N/A'}}" readonly="true" name="name" id="name">
                                                       </div> 
                                                    </div>
                                                 </div>
@@ -124,9 +124,11 @@
                                                          <strong class="head_details">Dislikes</strong>
                                                       </div>
                                                       <div class="form-group col-6"> 
-                                                       
+                                                       @if(!empty($user_dislike))
                                                          <input type="text" class="form-control"  <?php foreach($user_dislike as $user_dislikes){ ?> value="{{ $user_dislikes->pluck('name')->implode(',  ') }}"<?php } ?> readonly="true" name="name" id="name">
-                                                        
+                                                        @else
+                                                        <input type="text" class="form-control"  value="N/A" readonly="true" name="name" id="name">
+                                                        @endif
                                                       </div> 
                                                    </div>
                                                 </div>
@@ -136,7 +138,7 @@
                                                          <strong class="head_details">Plan Type</strong>
                                                       </div>
                                                       <div class="form-group col-6"> 
-                                                         <input type="text" class="form-control" value="{{$user_details->dietplan['name']}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{ !empty($user_details->dietplan) ? $user_details->dietplan->name:'N/A' }}" readonly="true" name="name" id="name">
                                                       </div> 
                                                    </div>
                                                 </div>
@@ -147,19 +149,19 @@
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Calories</label>
-                                                         <input type="text" class="form-control" value="{{$userCalorieTargets->calori_per_day}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->calori_per_day:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Protein</label>
-                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->protein_per_day}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->protein_per_day:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Carbs</label>
-                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->carbs_per_day}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->carbs_per_day:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Fat</label>
-                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->fat_per_day}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->fat_per_day:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                    </div>
                                                 </div>

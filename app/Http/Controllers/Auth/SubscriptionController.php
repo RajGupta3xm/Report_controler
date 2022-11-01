@@ -113,11 +113,12 @@ class SubscriptionController extends Controller {
 
     public function calculateKcal(){
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
-      
+        $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
+
         if($user->gender == 'female'){
         
               ///// Calculation /////
-            $forWomen = ((10*$user->initial_bode_weight)+(6.253*$user->height)-(5*$user->age)-161);
+            $forWomen = ((10*$user->initial_body_weight)+(6.253*$user->height)-(5*$user->age)-161);
             if($user->activity_scale == '1'){
                 $total_calorie = $forWomen*1.2;
             }elseif($user->activity_scale == '2'){
@@ -137,7 +138,7 @@ class SubscriptionController extends Controller {
         }else{
 
               ///// Calculation /////
-            $forMen = ((10*$user->initial_bode_weight)+(6.253*$user->height)-(5*$user->age)+5);
+            $forMen = ((10*$user->initial_body_weight)+(6.253*$user->height)-(5*$user->age)+5);
             if($user->activity_scale == '1'){
                 $total_calorie = $forMen*1.2;
             }elseif($user->activity_scale == '2'){
@@ -154,7 +155,8 @@ class SubscriptionController extends Controller {
               ///// Calculation /////
 
         }
-       $recommended_result=CalorieRecommend::where('min_range','<=',$total_recommended_Kcal)->where('max_range','>=',$total_recommended_Kcal)->first();
+        // return $total_recommended_Kcal;
+        $recommended_result=CalorieRecommend::where('min_range','<=',$total_recommended_Kcal)->where('max_range','>=',$total_recommended_Kcal)->first();
         $update=[
 
             'user_id'=>Auth::guard('api')->id(),
@@ -162,8 +164,24 @@ class SubscriptionController extends Controller {
            
         ];
         UserCaloriTarget::updateOrCreate(['user_id'=>Auth::guard('api')->id()],$update);
-  
-     
+
+
+     /*********Calculation for protein carb and fat */
+     $protein_min = (($recommended_result->recommended*$dietPlan->protein_default_min)/100)/$dietPlan->protein_min_divisor;
+     $protein_max = (($recommended_result->recommended*$dietPlan->protein_default_max)/100)/$dietPlan->protein_max_divisor;
+     $protien = ($protein_min+$protein_max)/2;
+      $carb_min = (($recommended_result->recommended*$dietPlan->carb_default_min)/100)/$dietPlan->carb_min_divisor;
+      $carb_max = (($recommended_result->recommended*$dietPlan->carb_default_max)/100)/$dietPlan->carb_max_divisor;
+      $carbs = ($carb_min+$carb_max)/2;
+      $fat_min = (($recommended_result->recommended*$dietPlan->fat_default_min)/100)/$dietPlan->fat_min_divisor;
+      $fat_max = (($recommended_result->recommended*$dietPlan->fat_default_max)/100)/$dietPlan->fat_max_divisor;
+      $fat = ($fat_min+$fat_max)/2;
+   
+     $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat)];
+
+     /*********End Calculation for protein carb and fat */
+
+        
         
         $data['recommended_colorie'] = round($total_recommended_Kcal,2);
         $response = new \Lib\PopulateResponse($data);
@@ -264,6 +282,91 @@ class SubscriptionController extends Controller {
 
     public function buySubscriptionPlan(Request $request){
 
+    }
+
+
+
+
+    public function targetCalorie(){
+        $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
+         
+       
+        if($user->gender == 'female'){
+        
+              ///// Calculation /////
+            $forWomen = ((10*$user->initial_body_weight)+(6.253*$user->height)-(5*$user->age)-161);
+            if($user->activity_scale == '1'){
+                $total_calorie = $forWomen*1.2;
+            }elseif($user->activity_scale == '2'){
+                $total_calorie = $forWomen*1.375;
+            }else{
+                $total_calorie = $forWomen*1.55; 
+            }
+
+            if($user->fitness_scale_id == '1'){
+                $total_recommended_Kcal = $total_calorie-500;
+            }else{
+                $total_recommended_Kcal = $total_calorie ;
+            }
+           
+              ///// Calculation /////
+
+        }else{
+
+              ///// Calculation /////
+            $forMen = ((10*$user->initial_body_weight)+(6.253*$user->height)-(5*$user->age)+5);
+            if($user->activity_scale == '1'){
+                $total_calorie = $forMen*1.2;
+            }elseif($user->activity_scale == '2'){
+                $total_calorie = $forMen*1.375;
+            }else{
+                $total_calorie = $forMen*1.55; 
+            }
+
+            if($user->fitness_scale_id == '1'){
+                $total_recommended_Kcal = $total_calorie-500;
+            }else{
+                $total_recommended_Kcal = $total_calorie ;
+            }
+              ///// Calculation /////
+
+        }
+//   return round($total_recommended_Kcal,0);
+    if(round($total_recommended_Kcal,0) < 2000){
+         $recommended_result=CalorieRecommend::where('min_range','<=',round($total_recommended_Kcal,0))->where('max_range','>=',round($total_recommended_Kcal,0))->first();
+        $update=[
+
+            'user_id'=>Auth::guard('api')->id(),
+            'recommended_result_id'=>$recommended_result->id,
+           
+        ];
+    }else{
+        $update=[
+
+            'user_id'=>Auth::guard('api')->id(),
+            'recommended_result_id'=>'5',
+           
+        ];
+    }
+   
+        UserCaloriTarget::updateOrCreate(['user_id'=>Auth::guard('api')->id()],$update);
+
+        $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
+        foreach($caloriRecommended as $calori){
+           $calori->selected=false;
+           if(UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'recommended_result_id'=>$calori->id,'status'=>'ongoing'])->first()){
+               $calori->selected=true;
+           }
+       }
+
+        // $data=['recommended_colorie'=>1500];
+        $data['recommended_colorie'] = $caloriRecommended;
+        $response = new \Lib\PopulateResponse($data);
+        $this->status = true;
+        $this->data = $response->apiResponse();
+        $this->message = trans('plan_messages.calorie_calculation');
+        return $this->populateResponse();
     }
 
     

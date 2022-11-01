@@ -166,8 +166,15 @@ class ApiController extends Controller {
             $this->status_code = 201;
             $this->message = $validate->errors();
         } else {
+          
             $user = User::where('id', $request->user_id)->get()->first();
+           
              $userProfile = UserProfile::where('user_id', $request->user_id)->get()->first();
+             if(!empty($userProfile)){
+                $user->detailStatus = 'filled';
+             }else{
+                $user->detailStatus = 'pending';
+             }
            
             $updateUser = User::where('id', $request->user_id)->update(['is_otp_verified' => '1', 'status' => '1']);
             
@@ -289,7 +296,7 @@ class ApiController extends Controller {
         $token->save();
         $user['token'] = $tokenResult->accessToken;
         if ($user->image == null) {
-            $user->image = url('assets/images/dummy2.jpg');
+            // $user->image = url('assets/images/dummy2.jpg');
         }
         return $user;
     }
@@ -579,18 +586,24 @@ class ApiController extends Controller {
 
         }
         elseif($request->step == '3'){
+            UserDislike::where('user_id',Auth::guard('api')->id())->delete();
              $add_item = json_decode($request->item_id,TRUE);
             if($add_item){
               foreach($add_item as $item_id){
-                  $user=UserDislike::updateOrCreate(
-                  ['user_id' =>  Auth::guard('api')->id(),
-                 'item_id'=> $item_id
-                  ],
-                  [
+               
+                $user=UserDislike::create([
                     'user_id' =>  Auth::guard('api')->id(),
                     'item_id'=> $item_id
-                  ]
-                  );
+                ]);
+                //   $user=UserDislike::updateOrCreate(
+                //   ['user_id' =>  Auth::guard('api')->id(),
+                //  'item_id'=> $item_id
+                //   ],
+                //   [
+                //     'user_id' =>  Auth::guard('api')->id(),
+                //     'item_id'=> $item_id
+                //   ]
+                //   );
                 } 
            }
         }
@@ -643,10 +656,10 @@ class ApiController extends Controller {
 
     public function dislikes() {
         $category=DislikeGroup::select('id','name','image')->with('items')->where('status','active')->get()->each(function($category){
-            foreach($category->items as $item){
-                $item->selected=false;
-                if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
-                    $item->selected=true;
+            foreach($category as $item){
+                $category->selected=false;
+                if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$category->id,'status'=>'active'])->first()){
+                    $category->selected=true;
                 }
             }
             
@@ -1389,18 +1402,24 @@ public function basicInfo(Request $request){
 
         }
         elseif($request->step == '3'){
-             $add_item = json_decode($request->item_id,TRUE); 
+            UserDislike::where('user_id',Auth::guard('api')->id())->delete();
+             $add_item = json_decode($request->item_id,TRUE);
             if($add_item){
               foreach($add_item as $item_id){
-                  $user=UserDislike::updateOrCreate(
-                  ['user_id' =>  Auth::guard('api')->id(),
-                   'item_id'=> $item_id
-                  ],
-                  [
+               
+                $user=UserDislike::create([
                     'user_id' =>  Auth::guard('api')->id(),
                     'item_id'=> $item_id
-                  ]
-                  );
+                ]);
+                //   $user=UserDislike::updateOrCreate(
+                //   ['user_id' =>  Auth::guard('api')->id(),
+                //  'item_id'=> $item_id
+                //   ],
+                //   [
+                //     'user_id' =>  Auth::guard('api')->id(),
+                //     'item_id'=> $item_id
+                //   ]
+                //   );
                 } 
            }
         }

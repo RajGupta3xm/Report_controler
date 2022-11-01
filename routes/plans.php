@@ -19,4 +19,5 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('macrosCalculator', 'SubscriptionController@macrosCalculator'); //api for calculate result page ->target calorie required in a day
     Route::post('dietPlanDetails/{diet_plan_type_id}', 'SubscriptionController@dietPlanDetails');
     Route::get('mealDetails/{meal_plan_id}', 'SubscriptionController@mealDetails');
+    Route::any('targetCalorie', 'SubscriptionController@targetCalorie');
 });

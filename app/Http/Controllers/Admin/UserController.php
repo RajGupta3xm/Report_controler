@@ -68,6 +68,7 @@ class UserController extends Controller {
                             $data['user_dislike'] = $user_dislikes;
 
                           }else{
+                            $data['user_dislike'] = '';
 
                           }
                             // array_push($user_dislikes,$user_dislike);

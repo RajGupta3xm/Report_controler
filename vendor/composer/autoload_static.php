@@ -589,6 +589,7 @@ class ComposerStaticInit4dd6f25346a5011cf111d34624ead948
         'App\\Models\\DislikeItem' => __DIR__ . '/../..' . '/app/Models/DislikeItem.php',
         'App\\Models\\FitnessGoal' => __DIR__ . '/../..' . '/app/Models/FitnessGoal.php',
         'App\\Models\\GiftCard' => __DIR__ . '/../..' . '/app/Models/GiftCard.php',
+        'App\\Models\\HomeScreenBanner' => __DIR__ . '/../..' . '/app/Models/HomeScreenBanner.php',
         'App\\Models\\Like' => __DIR__ . '/../..' . '/app/Models/Like.php',
         'App\\Models\\Meal' => __DIR__ . '/../..' . '/app/Models/Meal.php',
         'App\\Models\\MealRating' => __DIR__ . '/../..' . '/app/Models/MealRating.php',

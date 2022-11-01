@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use App\Models\Unit;
 use App\Models\DislikeCategory;
 use App\Models\DislikeGroup;
@@ -129,13 +130,26 @@ public function change_status_ingredient(Request $request){
    }
 }
 
-public function update(Request $request, $id=null){
-     $data=[
-      "name" => $request->input('name'),
-      "name_ar" => $request->input('name_ar'),
+public function get_data(Request $request)
+    {
+        if($request->ajax()){
+            $data = DislikeGroup::Find($request->id);
+            return Response($data);
+        }
+     }
 
-  ];
-  if(!empty($request->images)){
+public function update(Request $request, $id=null){
+
+  $update = DislikeGroup::find($id);
+  $update->name = $request->input('group_name');
+  $update->name_ar = $request->input('group_name_ar');
+
+
+  if($request->hasFile('images')){
+     $path = '/public/uploads/group_image/'.$update->image;
+     if(File::exists($path)){
+        File::delete($path);
+     }
     $filename = $request->images->getClientOriginalName();
     $imageName = time().'.'.$filename;
     if(env('APP_ENV') == 'local'){
@@ -146,10 +160,18 @@ public function update(Request $request, $id=null){
         base_path() . '/../public/uploads/group_image/', $imageName);
     }
     $url = url('/uploads/group_image/');
-   $data['image'] = $url.'/'. $imageName;
- 
+   $update->image = $url.'/'. $imageName;
 }
-    $update = DislikeGroup::find($id)->update($data);
+$update->save();
+   
+//     $update = DislikeGroup::where([ 'id' => $id])->update(
+//         [
+//             'name' => $request->group_name,
+//             'name_ar' => $request->group_name_ar,
+//             // 'image' => $image,
+           
+//         ]
+// );
     if($update){
         return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
     }
