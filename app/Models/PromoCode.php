@@ -15,6 +15,8 @@ class PromoCode extends Model
         "image",
         "duration",
         "discount",
+        "price",
+        "maximum_discount_uses",
         "start_date",
         "end_date",
         "is_extended",

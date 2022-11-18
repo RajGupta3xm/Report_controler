@@ -59,15 +59,17 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('basicInfo', 'ApiController@basicInfo');
     Route::get('promoCodeListing', 'ApiController@promoCodeListings');
     Route::get('basicInfoDetail', 'ApiController@basicInfoDetail');
+    Route::get('cities_listing', 'ApiController@cities_listing');
+    Route::post('select_delivery_location', 'ApiController@select_delivery_location');
+    Route::post('resume_meal_plan', 'ApiController@resume_meal_plan');
+    Route::get('meal_plan_listing/{diet_plan_type_id}', 'ApiController@meal_plan_listing');
+    Route::post('sample_daily_meals', 'ApiController@sample_daily_meals'); 
+    Route::any('updateBasicInfo', 'ApiController@updateBasicInfo'); 
+    Route::get('delivery_slot', 'ApiController@delivery_slot');
+
+
+   
+
   
-
-
-    
-
-
-
-
-
-
 
 });

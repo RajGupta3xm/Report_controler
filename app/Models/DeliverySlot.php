@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliverySlot extends Model
 {
-    protected $table="user_address";
+    protected $table="delivery_slots";
     protected $fillable = [
         "name",
         "name_ar",
@@ -16,4 +16,11 @@ class DeliverySlot extends Model
 
 
     ];
+    // public function user_address(){
+    //     return $this->belongsTo(UserAddress::class);
+    // }
+    public function user_address(){
+        return $this->belongsTo(UserAddress::class,'id','delivery_slot_id')->select(['id']);
+    }
+   
 }

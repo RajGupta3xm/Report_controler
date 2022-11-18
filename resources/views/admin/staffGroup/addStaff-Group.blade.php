@@ -88,8 +88,8 @@
                                                 </div>
                                              </td>
                                              <td> 
-                                                 <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop08{{$staff_groups->id}}">Edit</a> 
-                                                
+                                                 <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop08{{$staff_groups->id}}">Edit</a>  -->
+                                                 <a class="comman_btn table_viewbtn " onclick="showmodal(this,'{{$staff_groups->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
                                                  <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$staff_groups->id}}');" href="javscript:;">Delete</a> 
                                              </td> 
                                          </tr>
@@ -104,8 +104,8 @@
             </div>
          </div>
       </div>
-@foreach($staff_group as $key=>$staff_groups)
-<div class="modal fade comman_modal" id="staticBackdrop08{{$staff_groups->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+
+<div class="modal fade comman_modal" id="staticBackdrop08" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered">
      <div class="modal-content border-0">
        <div class="modal-header">
@@ -115,16 +115,17 @@
        <div class="modal-body">
          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="queryForms"> 
          @csrf
-           <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control" value="{{$staff_groups->name}}" name="name" id="name"> </div>
-           <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control" value="{{$staff_groups->name_ar}}" name="name_ar" id="name"> </div>
+         <input type="text" class="form-control"  id="id" name="id" >
+           <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  name="name" id="namee"> </div>
+           <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  name="name_ar" id="name_ar"> </div>
            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="img1"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control" name="images" id="img1"> </div>
-           <div class="form-group mb-0 col-auto"> <button type="button" onclick="sendReply(this,<?= $staff_groups->id ?>)" class="comman_btn">Save</button> </div>
+           <div class="form-group mb-0 col-auto"> <button type="button" onclick="sendReply(this)" class="comman_btn">Save</button> </div>
          </form>
        </div> 
      </div>
    </div>
 </div>
-@endforeach
+
 @endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script>
@@ -137,17 +138,35 @@
    setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
 });
   </script>
+  <script>
+   function showmodal(obj,id) {
+
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_staff_group/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#id').val(data.id);
+          $('#namee').val(data.name);
+          $('#name_ar').val(data.name_ar);
+          $('#staticBackdrop08').modal('show');
+        }
+      });
+   }
+
+</script>
    <script>
     
-function sendReply(obj, id) {
+function sendReply(obj) {
 
 var flag = true;
-let _token = $('input[name=_token]').val();
-var myForm = $("#queryForms")[0];
-var formData = new FormData(myForm);
+let  formData = new FormData($("#queryForms")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#id').val();
+
 if (flag) {
     $.ajax({
-        _token: _token,
         url: "<?= url('admin/edit_staff_group/update/') ?>/" + id,
         type: 'POST',
         //data: $("#carForm").serialize(),

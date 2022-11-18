@@ -15,11 +15,12 @@
                   <li><a class="<?= Request::segment(2) == 'dietPlan-management' || Request::segment(2) == 'add-diet-plan' || Request::segment(2) == 'edit-dietPlan' ? 'active' : ''; ?>" href="{{url('admin/dietPlan-management')}}" ><i class="far fa-salad"></i>Diet Plan Management</a></li>
                   <!-- <li><a class="" href="meal-management.html"><i class="fal fa-pizza-slice"></i>Meal Management</a></li>
                   <li><a class="" href="meal-plan-management.html"><i class="fal fa-lightbulb-on"></i>Meal Plan Management</a></li> -->
-                  <li><a class="<?= Request::segment(2) == 'staff-management' || Request::segment(2) == 'add_staff_group' ? 'active' : ''; ?>" href="{{url('admin/staff-management')}}"" ><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
-                  <!-- <li><a class="" href="fleet-management.html"><i class="fal fa-layer-group"></i>Fleet Management</a></li>
-                  <li><a class="" href="promo-code-management.html"><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'staff-management' || Request::segment(2) == 'add_staff_group' ? 'active' : ''; ?>" href="{{url('admin/staff-management')}}" ><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
+                  <!-- <li><a class="" href="fleet-management.html"><i class="fal fa-layer-group"></i>Fleet Management</a></li> -->
+                  <li><a class="<?= Request::segment(2) == 'promo-code-management' ? 'active' : ''; ?>" href="{{url('admin/promo-code-management')}}" ><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'gift-card-management' || Request::segment(2) == '' ? 'active' : ''; ?>" href="{{url('admin/gift-card-management')}}" ><i class="fad fa-gift-card"></i>Gift Card Management</a></li>
-                  <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'refer-earn-management' ? 'active' : ''; ?>" href="{{url('admin/refer-earn-management')}}" ><i class="fad fa-coins"></i>Refer & Earn</a></li>
+                  <!-- <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
                   <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li>
                   <li><a class="" href="report-management.html"><i class="far fa-file-spreadsheet"></i>Report Management</a></li> -->
                   <li><a class="<?= Request::segment(2) == 'content-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/content-management')}}" ><i class="fal fa-user-edit"></i>Content Management</a></li>

@@ -194,6 +194,14 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\StaffController@update',
         'as' => 'admin.edit_staff_group.update'
     ]);
+    Route::get('/get_staff_group/data/{id}', [
+        'uses' => 'Admin\StaffController@get_staff_data',
+        'as' => 'admin.get_staff_group.data'
+    ]);
+    Route::get('/get_staff_member/data/{id}', [
+        'uses' => 'Admin\StaffController@get_staff_member_data',
+        'as' => 'admin.get_staff_member.data'
+    ]);
     Route::post('/staff_member/submit','Admin\StaffController@staff_member_submit');
     Route::post('/staff_member/change_status','Admin\StaffController@staff_member_change_status');
     Route::post('/edit_staff_member/update/{id}', [
@@ -201,6 +209,22 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'as' => 'admin.edit_staff_member.update'
     ]);
      /*****End Staff Management */
+
+
+     /*******Promo Code  Management */
+    Route::get('/promo-code-management', 'Admin\PromoController@index');
+    Route::post('/promoCode_submit', 'Admin\PromoController@promoCode_submit');
+    Route::post('/promoCode/change_status', 'Admin\PromoController@change_status');
+    Route::post('/promoCode-delete','Admin\PromoController@promoCode_delete');
+     /*******End Promo Code Management */
+
+     
+     /*******Refer and earn Management */
+    Route::get('/refer-earn-management', 'Admin\ReferAndEarnController@index');
+    Route::post('/refer_earn_submit', 'Admin\ReferAndEarnController@refer_earn_submit');
+    // Route::post('/promoCode/change_status', 'Admin\PromoController@change_status');
+    // Route::post('/promoCode-delete','Admin\PromoController@promoCode_delete');
+     /*******End refer and earn Management */
 
 
     Route::get('/category-management', 'Admin\CategoryController@index');

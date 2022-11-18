@@ -14,11 +14,15 @@
       <!-- Vendor CSS Files -->
       <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
       <link href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet"/>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" /> 
       <link href="{{asset('assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet" />
       <link href="{{asset('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet" />
       <link href="{{asset('assets/vendor/owl/owl.carousel.min.css')}}" rel="stylesheet" />
       <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css"/>
+     
       <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" />
+     
       <!-- <link rel="stylesheet" href="{{asset('assets/admin/css/style.css')}}"> -->
       
         <style>
@@ -241,6 +245,7 @@
             <!-- /.content-wrapper -->
 
         </div>
+        
         <script>
            
             $(window).on("load", function () {
@@ -251,14 +256,55 @@
                 }
             });
         </script>
-
-       <script src="{{asset('assets/vendor/jquery.min.js')}}"></script>
-       <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-       <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script>
+         <script src="{{asset('assets/vendor/jquery.min.js')}}"></script>
+      <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+      <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+      <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script> 
+      <script src="{{asset('assets/js/jquery.multi-select.js')}}"></script>
+      
        <script src="{{asset('assets/js/main.js')}}"></script>
        <script src="{{asset('assets/admin/js/demo.js')}}"></script>
      
         
+      <script type="text/javascript">
+         $(function () {
+               $('#dtpickerdemo').datetimepicker();
+         });
+       </script>
+       <script>
+         var divs = ["Menu1", "Menu2",];
+          var visibleDivId = null;
+          function toggleVisibility(divId) {
+          if(visibleDivId === divId) {
+             //visibleDivId = null;
+          } else {
+             visibleDivId = divId;
+          }
+          hideNonVisibleDivs();
+          }
+          function hideNonVisibleDivs() {
+          var i, divId, div;
+          for(i = 0; i < divs.length; i++) {
+             divId = divs[i];
+             div = document.getElementById(divId);
+             if(visibleDivId === divId) {
+                div.style.display = "block";
+             } else {
+                div.style.display = "none";
+             }
+          }
+          }
+      </script>
+      <script>
+         $( '.multiple-select-custom-field' ).select2( {
+           theme: "bootstrap-5",
+           width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+           placeholder: $( this ).data( 'placeholder' ),
+           closeOnSelect: false,
+           tags: true
+        } );
+     </script>
+     
         <script type="text/javascript">
             $(".chosen").chosen();
         </script>

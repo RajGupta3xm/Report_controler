@@ -528,7 +528,8 @@
                                                 </div>
                                           </td>
                                           <td>
-                                             <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{$staff_members->id}}" class="comman_btn table_viewbtn" href="javscript:;">Edit</a>
+                                             <!-- <a data-bs-toggle="modal" data-bs-target="#staticBackdrop{{$staff_members->id}}" class="comman_btn table_viewbtn" href="javscript:;">Edit</a> -->
+                                             <a class="comman_btn table_viewbtn " onclick="showmodal(this,'{{$staff_members->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
                                              <a class="comman_btn table_viewbtn me-1" href="activity.html">Activity</a>
                                           </td>
                                          </tr> 
@@ -545,9 +546,9 @@
             </div>
          </div>
       </div>
-@foreach($staff_member as $staff_members)
+
  <!--modals-->
-<div class="modal fade comman_modal" id="staticBackdrop{{$staff_members->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade comman_modal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
      <div class="modal-content border-0">
        <div class="modal-header">
@@ -557,6 +558,7 @@
        <div class="modal-body">
          <form class="form-design py-4 px-3 help-support-form row align-items-start justify-content-center"  id="queryForms">
          @csrf
+         <input type="hidden" class="form-control"  id="id" name="id" >
             <div class="form-group col-12 text-center">
                <div class="account_profile d-inline-block position-relative">
                   <div class="circle">
@@ -570,7 +572,7 @@
             </div>
             <div class="form-group col-6">
                <label for="">Staff Name</label>
-               <input type="text" class="form-control" value="{{$staff_members->name}}" name="name" id="name">
+               <input type="text" class="form-control"  name="name" id="namee">
             </div> 
             <div class="form-group col-6">
                <label for="">Staff Group</label>
@@ -582,7 +584,7 @@
             </div> 
             <div class="form-group col-6">
                <label for="">Staff Email</label>
-               <input type="text" class="form-control" value="{{$staff_members->email}}" name="email" id="name">
+               <input type="text" class="form-control"  name="email" id="email">
             </div> 
             <div class="form-group col-6">
                <label for="">Create Password</label>
@@ -602,19 +604,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="check111" name="check11" value="1" {{ ($staff_members->user_mgmt =="1")? "checked" : "" }} >
+                                    <input class="d-none"  type="radio" id="check111" name="check11" value="1"  >
                                     <label for="check111">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="check121" name="check11" value="2" {{ ($staff_members->user_mgmt =="2")? "checked" : "" }} >
+                                    <input class="d-none" type="radio" id="check121" name="check11" value="2"   >
                                     <label for="check121">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="check131" name="check11" value="3" {{ ($staff_members->user_mgmt =="3")? "checked" : "" }} >
+                                    <input class="d-none" type="radio" id="check131" name="check11" value="3"   >
                                     <label for="check131">Admin </label>
                                  </div>
                               </div>
@@ -627,19 +629,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="checkv41" name="checkv4" value="1" {{ ($staff_members->order_mgmt =="1")? "checked" : "" }} >
+                                    <input class="d-none"  type="radio" id="checkv41" name="checkv4" value="1" >
                                     <label for="checkv41">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkv51" name="checkv4" value="2" {{ ($staff_members->order_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="checkv51" name="checkv4" value="2" >
                                     <label for="checkv51">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkv61" name="checkv4" value="3" {{ ($staff_members->order_mgmt =="3")? "checked" : "" }} >
+                                    <input class="d-none" type="radio" id="checkv61" name="checkv4" value="3">
                                     <label for="checkv61">Admin </label>
                                  </div>
                               </div>
@@ -652,19 +654,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkV11" value="1" name="checki1" {{ ($staff_members->ingredient_mgmt =="1")? "checked" : "" }} >
+                                    <input class="d-none" type="radio" id="checkV11" value="1" name="checki1"  >
                                     <label for="checkV11">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkV21" value="2" name="checki1" {{ ($staff_members->ingredient_mgmt =="2")? "checked" : "" }} >
+                                    <input class="d-none" type="radio" id="checkV21" value="2" name="checki1"  >
                                     <label for="checkV21">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="checkV31" value="3" name="checki1" {{ ($staff_members->ingredient_mgmt =="3")? "checked" : "" }} >
+                                    <input class="d-none"  type="radio" id="checkV31" value="3" name="checki1" >
                                     <label for="checkV31">Admin </label>
                                  </div>
                               </div>
@@ -677,19 +679,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="check011" name="check01" value="1" {{ ($staff_members->fitness_goal_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="check011" name="check01" value="1">
                                     <label for="check011">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="check021" name="check01" value="2" {{ ($staff_members->fitness_goal_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="check021" name="check01" value="2">
                                     <label for="check021">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="check031" name="check01" value="3" {{ ($staff_members->fitness_goal_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="check031" name="check01" value="3" >
                                     <label for="check031">Admin </label>
                                  </div>
                               </div>
@@ -702,19 +704,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkk11" name="checkk1" value="1" {{ ($staff_members->diet_plan_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="checkk11" name="checkk1" value="1">
                                     <label for="checkk11">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio"  id="checkk21" name="checkk1" value="2" {{ ($staff_members->diet_plan_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio"  id="checkk21" name="checkk1" value="2" >
                                     <label for="checkk21">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="checkk31" name="checkk1" value="3" {{ ($staff_members->diet_plan_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="checkk31" name="checkk1" value="3" >
                                     <label for="checkk31">Admin </label>
                                  </div>
                               </div>
@@ -731,19 +733,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v111" name="v1" value="1" {{ ($staff_members->meal_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v111" name="v1" value="1" >
                                     <label for="v111">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio"  id="v211" name="v1" value="2" {{ ($staff_members->meal_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio"  id="v211" name="v1" value="2" >
                                     <label for="v211">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v311" name="v1" value="3" {{ ($staff_members->meal_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v311" name="v1" value="3">
                                     <label for="v311">Admin </label>
                                  </div>
                               </div>
@@ -756,19 +758,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v411" name="v2" value="1" {{ ($staff_members->meal_plan_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v411" name="v2" value="1" >
                                     <label for="v411">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v511" name="v2" value="2" {{ ($staff_members->meal_plan_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v511" name="v2" value="2" >
                                     <label for="v511">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v611" name="v2" value="3" {{ ($staff_members->meal_plan_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v611" name="v2" value="3">
                                     <label for="v611">Admin </label>
                                  </div>
                               </div>
@@ -781,19 +783,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v711" name="v3" value="1" {{ ($staff_members->fleet_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v711" name="v3" value="1" >
                                     <label for="v711">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v811" name="v3" value="2" {{ ($staff_members->fleet_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v811" name="v3" value="2" >
                                     <label for="v811">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v911" name="v3" value="3" {{ ($staff_members->fleet_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v911" name="v3" value="3">
                                     <label for="v911">Admin </label>
                                  </div>
                               </div>
@@ -806,19 +808,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v101" name="v4" value="1" {{ ($staff_members->promo_code_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v101" name="v4" value="1">
                                     <label for="v101">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v1111" name="v4" value="2" {{ ($staff_members->promo_code_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v1111" name="v4" value="2" >
                                     <label for="v1111">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v112" name="v4" value="3" {{ ($staff_members->promo_code_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v112" name="v4" value="3">
                                     <label for="v112">Admin </label>
                                  </div>
                               </div>
@@ -831,19 +833,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v131" name="v5" value="1" {{ ($staff_members->gift_card_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v131" name="v5" value="1">
                                     <label for="v131">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v141" name="v5" value="2" {{ ($staff_members->gift_card_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v141" name="v5" value="2" >
                                     <label for="v141">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v151" name="v5" value="3" {{ ($staff_members->gift_card_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v151" name="v5" value="3" >
                                     <label for="v151">Admin </label>
                                  </div>
                               </div>
@@ -860,19 +862,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v161" name="v6" value="1" {{ ($staff_members->notification_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v161" name="v6" value="1" >
                                     <label for="v161">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v171" name="v6" value="2" {{ ($staff_members->notification_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v171" name="v6" value="2" >
                                     <label for="v171">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v181" name="v6" value="3" {{ ($staff_members->notification_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v181" name="v6" value="3">
                                     <label for="v181">Admin </label>
                                  </div>
                               </div>
@@ -885,19 +887,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v1811" name="v7" value="1" {{ ($staff_members->refer_earn_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v1811" name="v7" value="1" >
                                     <label for="v1811">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v191" name="v7" value="2" {{ ($staff_members->refer_earn_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v191" name="v7" value="2" >
                                     <label for="v191">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v201" name="v7" value="3" {{ ($staff_members->refer_earn_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v201" name="v7" value="3" >
                                     <label for="v201">Admin </label>
                                  </div>
                               </div>
@@ -910,19 +912,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v2111" name="v8" value="1" {{ ($staff_members->report_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v2111" name="v8" value="1">
                                     <label for="v2111">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v221" name="v8" value="2" {{ ($staff_members->report_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v221" name="v8" value="2">
                                     <label for="v221">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v231" name="v8" value="3" {{ ($staff_members->report_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v231" name="v8" value="3" >
                                     <label for="v231">Admin </label>
                                  </div>
                               </div>
@@ -935,19 +937,19 @@
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v217" name="v10" value="1" {{ ($staff_members->content_mgmt =="1")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v217" name="v10" value="1">
                                     <label for="v217">Viewer </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none" type="radio" id="v218" name="v10" value="2" {{ ($staff_members->content_mgmt =="2")? "checked" : "" }}>
+                                    <input class="d-none" type="radio" id="v218" name="v10" value="2" >
                                     <label for="v218">Editor </label>
                                  </div>
                               </div>
                               <div class="col-auto">
                                  <div class="action_filter filter_check">
-                                    <input class="d-none"  type="radio" id="v129" name="v10" value="3" {{ ($staff_members->content_mgmt =="3")? "checked" : "" }}>
+                                    <input class="d-none"  type="radio" id="v129" name="v10" value="3" >
                                     <label for="v129">Admin </label>
                                  </div>
                               </div>
@@ -983,27 +985,57 @@
                </div> 
             </div>
             <div class="form-group mb-0 col-12 text-center">
-               <button type="button" onclick="sendReply(this,<?= $staff_members->id ?>)" class="comman_btn">Save</button>
+               <button type="button" onclick="sendReply(this)" class="comman_btn">Save</button>
             </div>
          </form>
        </div> 
      </div>
    </div>
  </div>
- @endforeach
  <!--End modals-->
  @endsection
  <script>
+   function showmodal(obj,id) {
     
-function sendReply(obj, id) {
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_staff_member/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#id').val(data.id);
+          $('#namee').val(data.name);
+          $('#email').val(data.email);
+          $('input[name^="check11"][value="'+data.user_mgmt+'"').prop('checked',true);
+          $('input[name^="checkv4"][value="'+data.order_mgmt+'"').prop('checked',true);
+          $('input[name^="checki1"][value="'+data.ingredient_mgmt+'"').prop('checked',true);
+          $('input[name^="check01"][value="'+data.fitness_goal_mgmt+'"').prop('checked',true);
+          $('input[name^="checkk1"][value="'+data.diet_plan_mgmt+'"').prop('checked',true);
+          $('input[name^="v1"][value="'+data.meal_mgmt+'"').prop('checked',true);
+          $('input[name^="v2"][value="'+data.meal_plan_mgmt+'"').prop('checked',true);
+          $('input[name^="v3"][value="'+data.fleet_mgmt+'"').prop('checked',true);
+          $('input[name^="v4"][value="'+data.promo_code_mgmt+'"').prop('checked',true);
+          $('input[name^="v5"][value="'+data.gift_card_mgmt+'"').prop('checked',true);
+          $('input[name^="v6"][value="'+data.notification_mgmt+'"').prop('checked',true);
+          $('input[name^="v7"][value="'+data.refer_earn_mgmt+'"').prop('checked',true);
+          $('input[name^="v8"][value="'+data.report_mgmt+'"').prop('checked',true);
+          $('input[name^="v10"][value="'+data.content_mgmt+'"').prop('checked',true);
+          $('#staticBackdrop').modal('show');
+        }
+      });
+   }
+
+</script>
+ <script>
+    
+function sendReply(obj) {
 
 var flag = true;
-let _token = $('input[name=_token]').val();
-var myForm = $("#queryForms")[0];
-var formData = new FormData(myForm);
+let  formData = new FormData($("#queryForms")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#id').val();
 if (flag) {
     $.ajax({
-        _token: _token,
         url: "<?= url('admin/edit_staff_member/update/') ?>/" + id,
         type: 'POST',
         //data: $("#carForm").serialize(),

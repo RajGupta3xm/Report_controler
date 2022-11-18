@@ -16,6 +16,7 @@ class CreateContentsTable extends Migration
         Schema::create('contents', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->string('name_ar');
             $table->text('content');
             $table->text('content_ar');
             $table->enum('status',['active','inactive','trahsed']);

@@ -16,5 +16,7 @@ class DeliveryDay extends Model
         'status'
 
     ];
+
+  
    
 }

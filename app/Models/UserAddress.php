@@ -30,4 +30,9 @@ class UserAddress extends Model
 
 
     ];
+
+    // public function delivery_slot(){
+    //     return $this->hasOne(DeliverySlot::class,'id','delivery_slot_id');
+    // }
+  
 }

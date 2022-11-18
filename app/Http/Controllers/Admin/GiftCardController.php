@@ -47,11 +47,13 @@ class GiftCardController extends Controller
 
 
 public function giftCard_submit(Request $request ){
-      $data=[
+       $data=[
         "title" => $request->input('name_en'),
         "title_ar" => $request->input('name_ar'),
         "discount" => $request->input('discount'),
         "amount" => $request->input('price'),
+        "description" => $request->input('description'),
+        "description_ar" => $request->input('description_ar'),
     ];
 
     if(!empty($request->image)){

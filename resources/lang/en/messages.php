@@ -45,9 +45,13 @@ return [
 	'promo_code'=>'Fetching promo codes successfully',
 	'save_card_listing'=>'Fetching saved card successfully',
 	'onboarding_screen'=>'Fetching onboarding screen successfully',
-	'pet_add'=>'Pet is Added to favourite',
-	'pet_add_favourite'=>'Plate is already added to Favourite',
-	'pet_remove_favourite'=>'Plate is UnFavourite from favourite list',
+	'user_delivery_location'=>'Delivery location set successfully',
+	'plan_resume'=>'Your plan resume successfully',
+	'sample_daily_meal'=>'Sample daily meal list',
+	'sample_daily_meal_not'=>'Sample daily meal not found',
+	'buy_plan'=>'Buy plan successfully',
+
+	
 ];
 
 ?>

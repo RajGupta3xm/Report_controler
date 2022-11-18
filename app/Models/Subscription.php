@@ -22,4 +22,10 @@ class Subscription extends Model
    	];
 
 	public $timestamps = true;
+
+	
+	public function subscription_plan(){
+        return $this->belongsTo(SubscriptionPlan::class,'plan_id','id')->select(['id','name']);
+    }
+	
 }

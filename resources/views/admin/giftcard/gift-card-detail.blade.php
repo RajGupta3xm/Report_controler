@@ -44,7 +44,36 @@
                                  <input type="file" class="form-control validate" value="" name="image" id="upload_video">
                                  <p class="text-danger text-small" id="imageError"></p>
                               </div> 
-                              <div class="col form-group position-relative percentage_icons mb-0">
+                              <div class="form-group col-6 description_box">
+                                 <label for="">Description (En) :</label>
+                                 <textarea class="form-control validate" name="description" id=""></textarea>
+                                 <p class="text-danger text-small" id="descriptionError"></p>
+                              </div>
+                              <div class="form-group col-6 description_box">
+                                 <label for="">Description (Ar) :</label>
+                                 <textarea class="form-control validate" name="description_ar" id=""></textarea>
+                                 <p class="text-danger text-small" id="description_arError"></p>
+                              </div>
+                              <div class="col">
+                                 <div class="row align-items-end">
+                                    <div class="col-auto">
+                                       <a class="change_value" onclick="toggleVisibility('Menu1');" href="javascript:;">Discount</a>
+                                       <a class="change_value" onclick="toggleVisibility('Menu2');" href="javascript:;">Price</a>
+                                    </div>
+                                    <div id="Menu1" class="col form-group position-relative percentage_icons mb-0">
+                                       <label for="">Discount %</label>
+                                       <input class="form-control " type="text" value="" name="discount">
+                                       <p class="text-danger text-small" id="discountError"></p>
+                                       <div class="icon">%</div>
+                                    </div>
+                                    <div id="Menu2" class="form-group mb-0 col" style="display: none;">
+                                       <label for="">Price</label>
+                                       <input type="text" class="form-control " value="" name="price" id="price">
+                                       <p class="text-danger text-small" id="priceError"></p>
+                                    </div>
+                                 </div>
+                             </div> 
+                              <!-- <div class="col form-group position-relative percentage_icons mb-0">
                                  <label for="">Discount %</label>
                                  <input class="form-control validate" type="text" value="" name="discount">
                                  <p class="text-danger text-small" id="discountError"></p>
@@ -54,7 +83,7 @@
                                  <label for="">Price</label>
                                  <input type="text" class="form-control validate" value="" name="price" id="price">
                                  <p class="text-danger text-small" id="priceError"></p>
-                              </div> 
+                              </div>  -->
                               <div class="form-group mb-0 col-auto">
                                  <button type="button" class="comman_btn" onclick="validate(this);">Save</button>
                               </div>
@@ -103,11 +132,11 @@
                                         @foreach($giftCards as $key=>$giftCard)
                                          <tr>
                                            <td>{{$key+1}}</td>
-                                           <td>{{$giftCard->title}}</td>
-                                           <td>{{$giftCard->title_ar}}</td>
+                                           <td>{{$giftCard->title ?? 'N/A'}}</td>
+                                           <td>{{$giftCard->title_ar ?? 'N/A'}}</td>
                                            <td><img class="table_img" src="{{$giftCard->image?$giftCard->image:asset('assets/img/bg-img.jpg')}}" alt=""></td>
-                                           <td>{{$giftCard->discount}}</td> 
-                                           <td>{{$giftCard->amount}}</td>  
+                                           <td>{{$giftCard->discount ?? 'N/A'}}</td> 
+                                           <td>{{$giftCard->amount ?? 'N/A'}}</td>  
                                            <td>
                                            <!-- <form class="table_btns d-flex align-items-center"> 
                                                 <div class="check_toggle">
@@ -140,6 +169,30 @@
          </div>
       </div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script>
+        var divs = ["Menu1", "Menu2",];
+         var visibleDivId = null;
+         function toggleVisibility(divId) {
+         if(visibleDivId === divId) {
+            //visibleDivId = null;
+         } else {
+            visibleDivId = divId;
+         }
+         hideNonVisibleDivs();
+         }
+         function hideNonVisibleDivs() {
+         var i, divId, div;
+         for(i = 0; i < divs.length; i++) {
+            divId = divs[i];
+            div = document.getElementById(divId);
+            if(visibleDivId === divId) {
+               div.style.display = "block";
+            } else {
+               div.style.display = "none";
+            }
+         }
+         }
+     </script>
       <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);

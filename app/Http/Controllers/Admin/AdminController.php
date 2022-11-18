@@ -154,7 +154,7 @@ public function edit_update(Request $request, $id=null){
 
 $update = Admin::find($id)->update($data);
 if($update){
-   return redirect('admin/edit_profile')->with('success', ' update successfully.');
+   return redirect('admin/dashboard')->with('success', ' update successfully.');
 }
 else {
    return redirect()->back()->with('error', 'Some error occurred while update ');

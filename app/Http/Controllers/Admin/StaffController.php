@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use App\Models\FitnessGoal;
 use App\Models\StaffGroup;
 use App\Models\StaffMembers;
@@ -86,27 +87,41 @@ public function submit(Request $request){
       }
  }
 
- public function update(Request $request, $id=null){
-    $data=[
-     "name" => $request->input('name'),
-     "name_ar" => $request->input('name_ar'),
+ public function get_staff_data(Request $request)
+    {
+        if($request->ajax()){
+            $data = StaffGroup::Find($request->id);
+            return Response($data);
+        }
+     }
 
- ];
+ public function update(Request $request, $id=null){
+
+    $update = StaffGroup::find($id);
+    $update->name = $request->input('name');
+    $update->name_ar  = $request->input('name_ar');
+
+ 
  if(!empty($request->hasFile('images'))){
+    $path = '/public/uploads/staff_group_image/'.$update->image;
+     if(File::exists($path)){
+        File::delete($path);
+     }
    $filename = $request->images->getClientOriginalName();
    $imageName = time().'.'.$filename;
    if(env('APP_ENV') == 'local'){
        $return = $request->images->move(
-       base_path() . '/public/uploads/group_image/', $imageName);
+       base_path() . '/public/uploads/staff_group_image/', $imageName);
    }else{
        $return = $request->images->move(
-       base_path() . '/../public/uploads/group_image/', $imageName);
+       base_path() . '/../public/uploads/staff_group_image/', $imageName);
    }
-   $url = url('/uploads/group_image/');
-   $data['image'] = $url.'/'. $imageName; 
+   $url = url('/uploads/staff_group_image/');
+   $update->image = $url.'/'. $imageName; 
 
 }
-   $update = StaffGroup::find($id)->update($data);
+   $update->save();
+
    if($update){
        return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
    }
@@ -173,6 +188,13 @@ public function staff_member_submit(Request $request){
    }
 }
 
+public function get_staff_member_data(Request $request){
+      if($request->ajax()){
+        $data = StaffMembers::find($request->id);
+        return Response($data);
+      }
+}
+
 public function update_member(Request $request, $id=null){
      $data=[
         "name" => $request->input('name'),
@@ -219,5 +241,7 @@ public function update_member(Request $request, $id=null){
        return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
    }
 }
+
+
 
 }
