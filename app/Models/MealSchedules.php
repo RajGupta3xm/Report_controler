@@ -19,7 +19,7 @@ class MealSchedules extends Model
         "status",
 
     ];
-    public function meal(){
-        return $this->belongsTo(Meal::class);
-    }
+   
+
+  
 }

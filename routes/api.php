@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+/* Set API Lang */
+\App::setlocale(!empty(request()->header('Lang')) ? request()->header('Lang') : 'en');
+
+
 Route::post('/registerUser','Auth\ApiController@register');
 Route::post('/verifyOtp','Auth\ApiController@verifyOtp');
 Route::post('/login','Auth\ApiController@login');

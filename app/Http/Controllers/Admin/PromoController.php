@@ -71,10 +71,10 @@ class PromoController extends Controller {
          $imageName = time().'.'.$filename;
          if(env('APP_ENV') == 'local'){
              $return = $request->image->move(
-             base_path() . '/public/uploads/giftCard_image/', $imageName);
+             base_path() . '/public/uploads/promo_image/', $imageName);
          }else{
              $return = $request->banner_image->move(
-             base_path() . '/../public/uploads/giftCard_image/', $imageName);
+             base_path() . '/../public/uploads/promo_image/', $imageName);
          }
          $url = url('/uploads/giftCard_image/');
       $data['image'] = $url.'/'. $imageName;

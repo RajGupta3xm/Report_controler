@@ -12,6 +12,7 @@ use Mail;
 //use App\Http\Controllers\CrudOverrideController;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\ReferAndEarnUsed;
 use App\Models\ReferAndEarn;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
@@ -43,7 +44,36 @@ class ReferAndEarnController extends Controller {
             return redirect()->intended('admin/login');
         } else {
            
-            return view('admin.referEarn.refer_earn_list');
+               $registration_count = User::withcount('registration_count')->get();
+                $plan_purchase_count = ReferAndEarnUsed::withcount('user')->where('used_for','plan_purchase')->get();
+          
+                   $refer = User::withcount('user_referral')->with('refers')->get()
+              ->each(function($refer){
+                     $refer->purchase = ReferAndEarnUsed::where(['referral_id'=>$refer->id,'used_for'=>'plan_purchase'])->count(); 
+                     $planPurchase = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('plan_purchase_referral')->first(); 
+                     $refer->plan_referral = $planPurchase['plan_purchase_referral'];  
+                     $refer->plan_purchase_total = $refer->purchase*$refer->plan_referral;
+            
+            // ->each(function($refer){
+                $refer->registration = ReferAndEarnUsed::where(['referral_id'=>$refer->id,'used_for'=>'registration'])->count();
+                $registerReferral = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('register_referral')->first();  
+              $refer->register_referral = $registerReferral['register_referral'];   
+               $refer->registration_total = $refer->registration* $refer->register_referral;
+               $refer->grand_total = $refer->registration_total+$refer->plan_purchase_total;
+
+    //   });
+    });
+//       ->each(function($refer) {
+//         $registerReferral = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('register_referral')->first();  
+//         $refer->register_referral = $registerReferral['register_referral'];   
+//         $refer->registration_total = $refer->register_referral*$registration;
+// })
+// ->each(function($refer) {
+//     $planPurchase = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('plan_purchase_referral')->first(); 
+//     $refer->plan_referral = $planPurchase['plan_purchase_referral'];     
+// });
+              $data['refer'] = $refer;
+            return view('admin.referEarn.refer_earn_list')->with($data);
         }
     }
 

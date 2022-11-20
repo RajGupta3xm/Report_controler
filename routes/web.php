@@ -222,9 +222,14 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
      /*******Refer and earn Management */
     Route::get('/refer-earn-management', 'Admin\ReferAndEarnController@index');
     Route::post('/refer_earn_submit', 'Admin\ReferAndEarnController@refer_earn_submit');
-    // Route::post('/promoCode/change_status', 'Admin\PromoController@change_status');
-    // Route::post('/promoCode-delete','Admin\PromoController@promoCode_delete');
      /*******End refer and earn Management */
+
+         /*******Meal Management */
+    Route::get('/meal-management', 'Admin\MealController@index');
+    Route::get('/add-meal', 'Admin\MealController@add_meal');
+    Route::post('/meal/submit', 'Admin\MealController@meal_submit');
+    Route::post('/meal/change_status', 'Admin\MealController@change_status');
+     /*******End Meal Management */
 
 
     Route::get('/category-management', 'Admin\CategoryController@index');

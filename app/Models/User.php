@@ -33,4 +33,20 @@ class User extends Model {
     ];
     public $timestamps = true;
 
+    public function user_referral(){
+        return $this->belongsTo(ReferAndEarnUsed::class,'id','referral_id');
+    }
+    public function refers(){
+        return $this->belongsTo(ReferAndEarnUsed::class,'id','referral_id');
+    }
+
+    public function registration_count(){
+        return $this->belongsTo(ReferAndEarnUsed::class,'id','referral_id');
+    }
+
+    // public function plan_purchase_count(){
+    //     return $this->belongsTo(ReferAndEarnUsed::class,['id'=>'referral_id']);
+    // }
+
+    
 }

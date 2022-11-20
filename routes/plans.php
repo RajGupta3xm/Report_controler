@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+/* Set API Lang */
+\App::setlocale(!empty(request()->header('Lang')) ? request()->header('Lang') : 'en');
+
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){    
     Route::post('subscriptionPlans', 'SubscriptionController@planListing');
     Route::get('calculateCalorie', 'SubscriptionController@calculateCalorie');  //api for bar 1000-1200-1500 etc

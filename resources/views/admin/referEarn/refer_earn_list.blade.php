@@ -174,61 +174,19 @@
                                           </tr>
                                        </thead>
                                        <tbody>
+                                          @foreach($refer as $key=>$user_refer)
                                           <tr>
-                                             <td>1</td>
-                                             <td>Ajay Sharma</td>
-                                             <td>7367835675</td>
-                                             <td>6</td>
-                                             <td>3x50</td>
-                                             <td>150</td>
-                                             <td>3x50</td>
-                                             <td>150</td>
-                                             <td>300</td>
+                                             <td>{{$key+1}}</td>
+                                             <td>{{$user_refer->name}}</td>
+                                             <td>{{$user_refer->mobile}}</td>
+                                             <td>{{$user_refer['user_referral_count']}}</td>
+                                             <td>{{$user_refer->registration}}x{{$user_refer->register_referral}}</td>
+                                             <td>{{$user_refer->registration_total}}</td>
+                                             <td>{{$user_refer->purchase}}x{{$user_refer->plan_referral}}</td>
+                                             <td>{{$user_refer->plan_purchase_total}}</td>
+                                             <td>{{$user_refer->grand_total}}</td>
                                           </tr>
-                                          <tr>
-                                             <td>2</td>
-                                             <td>Vijay Sharma</td>
-                                             <td>7367835675</td>
-                                             <td>7</td>
-                                             <td>2x50</td>
-                                             <td>100</td>
-                                             <td>5x50</td>
-                                             <td>250</td>
-                                             <td>350</td>
-                                          </tr>
-                                          <tr>
-                                             <td>3</td>
-                                             <td>Modh. Aarif</td>
-                                             <td>7367835675</td>
-                                             <td>8</td>
-                                             <td>3x50</td>
-                                             <td>150</td>
-                                             <td>5x50</td>
-                                             <td>250</td>
-                                             <td>400</td>
-                                          </tr>
-                                          <tr>
-                                             <td>4</td>
-                                             <td>Vijay Sharma</td>
-                                             <td>7367835675</td>
-                                             <td>9</td>
-                                             <td>5x50</td>
-                                             <td>250</td>
-                                             <td>4x50</td>
-                                             <td>200</td>
-                                             <td>450</td>
-                                          </tr>
-                                          <tr>
-                                             <td>5</td>
-                                             <td>Modh. Aarif</td>
-                                             <td>7367835675</td>
-                                             <td>10</td>
-                                             <td>4x50</td>
-                                             <td>200</td>
-                                             <td>6x50</td>
-                                             <td>300</td>
-                                             <td>500</td>
-                                          </tr>
+                                          @endforeach
                                        </tbody>
                                     </table>
                                  </div>
@@ -241,6 +199,7 @@
             </div>
          </div>
       </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script>
           $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
@@ -294,8 +253,9 @@
                      <div class="col-md-6 d-flex align-items-stretch">
                         <div class="border row content_management_box me-0">
                            <h2>Terms & Condition</h2>
-                           <a class="edit_content_btn comman_btn" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
-                           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+                           <a class="edit_content_btn comman_btn" id="edit" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
+                          
+                           <p  class="text-info" style="color:black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
                         </div>
                      </div>
                      <div class="col-md-6 d-flex align-items-stretch">
@@ -342,6 +302,13 @@
       </div>
    </div>
 </div>
+<script>
+   $('#edit').click(function() {
+ var text = $('.text-info').text();
+ var input = $('<textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea>')
+ $('.text-info').text('').append(input);
+});
+</script>
 <script>
             function validate(obj) {
             $(".text-danger").html('');
