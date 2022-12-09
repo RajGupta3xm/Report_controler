@@ -19,6 +19,7 @@ class ReferAndEarn extends Model
     	'message_body_en',
     	'message_body_ar',
         'start_date',
+        'ticket_id',
         'status',
 
 

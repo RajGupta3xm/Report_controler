@@ -32,6 +32,11 @@ Route::get('/onboardingScreen','Auth\ApiController@onboardingScreen');
 
 Route::post('insertImage', 'Auth\ApiController@insertImage');
 
+
+/*********Driver route */
+Route::post('/driver/login','Auth\DriverController@login');
+/********End Driver Route */
+
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
 	Route::get('myProfile', 'ApiController@myProfile');
 	Route::post('/editProfile','ApiController@editProfile');
@@ -57,11 +62,12 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('editAddress', 'ApiController@editAddress');
     Route::get('addressListing', 'ApiController@addressListing');
     Route::get('giftCardListing', 'ApiController@giftCardListing');
+    Route::get('giftCardOneShow/{gift_card_id}', 'ApiController@giftCardOneShow');
     Route::post('addGiftCard', 'ApiController@addGiftCard');
     Route::get('availableCredit', 'ApiController@availableCredit');
     Route::get('creditTransactionList', 'ApiController@creditTransactionList');
     Route::post('basicInfo', 'ApiController@basicInfo');
-    Route::get('promoCodeListing', 'ApiController@promoCodeListings');
+    Route::get('promoCodeListing/{meal_plan_id}', 'ApiController@promoCodeListings');
     Route::get('basicInfoDetail', 'ApiController@basicInfoDetail');
     Route::get('cities_listing', 'ApiController@cities_listing');
     Route::post('select_delivery_location', 'ApiController@select_delivery_location');
@@ -70,10 +76,11 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('sample_daily_meals', 'ApiController@sample_daily_meals'); 
     Route::any('updateBasicInfo', 'ApiController@updateBasicInfo'); 
     Route::get('delivery_slot', 'ApiController@delivery_slot');
+    Route::get('social_link_listing', 'ApiController@social_link');
+    Route::get('refer_and_earn', 'ApiController@refer_and_earn');
+    Route::get('paymentAvailableCredit', 'ApiController@paymentAvailableCredit');
+    // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 
-   
-
-  
 
 });

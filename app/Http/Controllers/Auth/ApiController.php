@@ -8,17 +8,20 @@ use App\Models\Otp;
 use App\Models\User;
 use App\Models\PromoCode;
 use App\Models\Countries;
+use App\Models\ReferEarnContent;
 use App\Models\CalorieRecommend;
 use App\Models\UserCaloriTarget;
 use App\Models\FitnessGoal;
 use App\Models\DislikeItem;
 use App\Models\MealIngredientList;
 use App\Models\UserProfile;
+use App\Models\SocialLink;
 use App\Models\SelectDeliveryLocation;
 use App\Models\UserDislike;
 use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
 use App\Models\DislikeGroup;
+use App\Models\ReferAndEarn;
 use App\Models\SubscriptionPlan;
 use App\Models\Cities;
 use App\Models\Subscription;
@@ -480,6 +483,9 @@ class ApiController extends Controller {
                 $this->message = trans('messages.dislikes_selection_incomplete');
             }
             if($flag){
+
+                $data['home_screen_banner'] = HomeScreenBanner::select('*')->get();
+
                    $data['your_subscription'] = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
                    ->select('subscription_plans.name','subscription_plans.description','subscription_plans.image','subscriptions.*')
                    ->where('user_id',Auth::guard('api')->id())->where('delivery_status','paused')
@@ -560,9 +566,14 @@ class ApiController extends Controller {
                 ->get()
                 // ->toArray();
                 ->each(function($dietPlanType) {
-                   $meals= $dietPlanType->meals= Meal::join('meal_schedules','meals.id','=','meal_schedules.id')->whereDate('meals.created_at',date('Y-m-d'))->where('meals.diet_plan_type_id', $dietPlanType->id)->select('meals.id as meal_id','meals.name as meal_name','image','meal_schedules.name','meals.created_at as date')->get()->toArray();
-                
-                            
+                   $meals= $dietPlanType->meals= Meal::join('meal_diet_plan','meals.id','=','meal_diet_plan.meal_id')
+                   ->where('meal_diet_plan.diet_plan_type_id', $dietPlanType->id)
+                   ->select('meals.id as meal_id','meals.name as meal_name','meals.food_type','image','meals.created_at as date')->get()
+                 ->each(function($meals){
+                    $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+                   ->where('meal_group_schedule.meal_id', $meals->meal_id)
+                   ->select('meal_schedules.name')->first();
+                });       
                 })->toArray(); 
                 $data['our_preview_plan'] = $dietPlanType;
                 // echo '<pre>';print_r($category);
@@ -1011,6 +1022,7 @@ class ApiController extends Controller {
                   "user_id" => Auth::guard('api')->id(),
                   "card_number" => $request->input('card_number'),
                   "expiry_date" => $request->input('expiry_date'),
+                  "cvv" => $request->input('cvv'),
               ];
 
               if($request->card_type == "credit"){
@@ -1087,6 +1099,7 @@ public function addAddress(Request $request){
           "area" => $request->input('area'),
           "user_id" => Auth::guard('api')->id(),
           "building" => $request->input('building'),
+          "house_number" => $request->input('house_number'),
           "street" => $request->input('street'),
           "postal_code" => $request->input('postal_code'),
           "delivery_slot_id" => $request->input('delivery_slot_id'),
@@ -1181,6 +1194,7 @@ public function editAddress(Request $request){
           "area" => $request->input('area'),
           "user_id" => Auth::guard('api')->id(),
           "building" => $request->input('building'),
+          "house_number" => $request->input('house_number'),
           "street" => $request->input('street'),
           "postal_code" => $request->input('postal_code'),
           "delivery_slot_id" => $request->input('delivery_slot_id'),
@@ -1249,7 +1263,7 @@ public function editAddress(Request $request){
         $update = UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->update($data);
        
         if($update){
-        $data = UserAddress::select('id as user_address_id' ,'user_address.*')->where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->get();
+         $data = UserAddress::select('id as user_address_id' ,'user_address.*')->where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->get();
          $response = new \Lib\PopulateResponse($data);
          $this->data = $response->apiResponse();
          $this->message = trans('messages.update_address');
@@ -1266,7 +1280,7 @@ public function editAddress(Request $request){
 public function addressListing(Request $request) {
   
      $address_data = UserAddress::where('user_address.user_id', Auth::guard('api')->id())->where('user_address.status','active')
-   ->select('user_address.*','delivery_slots.*' )
+   ->select('user_address.id as address_id','user_address.*','delivery_slots.*' )
    ->join('delivery_slots', 'delivery_slots.id','=','user_address.delivery_slot_id')
    ->orderBy('user_address.id','Desc')
    ->limit(3)
@@ -1296,6 +1310,17 @@ public function giftCardListing(Request $request) {
   
     $gift_card = GiftCard::where('status', 'active')->orderBy('id', 'ASC')->get();
     $response = new \Lib\PopulateResponse($gift_card);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.card_listing');
+    return $this->populateResponse();
+}
+
+public function giftCardOneShow(Request $request) {
+  
+    $gift_card_show = GiftCard::where(['id'=>$request->gift_card_id,'status'=>'active'])->orderBy('id', 'ASC')->first();
+    $gift_card_show ->how_to_redeem = 'ggg';
+    $response = new \Lib\PopulateResponse($gift_card_show);
     $this->status = true;
     $this->data = $response->apiResponse();
     $this->message = trans('messages.card_listing');
@@ -1381,27 +1406,16 @@ public function availableCredit(Request $request) {
     $meal_des=[];
     $status=[];
      $available_credit = UserProfile::select('available_credit')->where('user_id', Auth::guard('api')->id())->first();
-     if($available_credit){
-           $chech_status = Subscription::with('subscription_plan')->where('delivery_status','!=','upcoming')->where('delivery_status','!=','terminated')->where('status', 'active')->where('user_id', Auth::guard('api')->id())->get();
-      foreach($chech_status as $active_status){
-            // array_push($meal_des,$active_status->subscription_plan->name);
-            // array_push($status,$active_status->delivery_status);
-          
-            // print_r($meal_des);
-            $available_credit->time_line=[
-                $active_status->delivery_status
-                 ];
-           
-           
-      }
-     
-     
-      
-     
-  
+     $chech_status = SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
+     ->select('subscription_plans.name','subscriptions.delivery_status',DB::raw('DATE_FORMAT(subscriptions.created_at,"%d %b %Y") as date'))
+     ->where('subscriptions.delivery_status','!=','upcoming')
+     ->where('subscriptions.delivery_status','!=','terminted')
+     ->where('subscriptions.user_id', Auth::guard('api')->id())
+     ->get();
+    
 
-     }
      $data['available_credit'] = $available_credit;
+     $data['timeline'] = $chech_status;
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
@@ -1510,7 +1524,11 @@ public function basicInfo(Request $request){
 
 public function promoCodeListings(Request $request) {
   
-    $promo_codes = PromoCode::select('id','name','image','description')->orderBy('id', 'ASC')->get();
+    $promo_codes = PromoCode::join('promo_code_diet_plan','promo_codes.id','=','promo_code_diet_plan.promo_code_id')
+    ->select('promo_codes.id','promo_codes.name','promo_codes.image','promo_codes.description','promo_codes.start_date','promo_codes.end_date')->orderBy('id', 'ASC')
+    ->where('promo_code_diet_plan.meal_plan_id', $request->meal_plan_id)
+    ->get();
+
     $response = new \Lib\PopulateResponse($promo_codes);
     $this->status = true;
     $this->data = $response->apiResponse();
@@ -1652,7 +1670,7 @@ public function resume_meal_plan(Request $request) {
 }
 
 public function meal_plan_listing(Request $request){
-    $data['meal_plan'] =SubscriptionPlan::select('id','name')->where('id',$request->diet_plan_type_id)->get();
+    $data['meal_plan'] =SubscriptionPlan::select('id','name')->where('diet_plan_type_id',$request->diet_plan_type_id)->get();
     $available_credit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
     if($available_credit){
         $data['description'] = "You have $available_credit->available_credit credit valid for 3 Days";
@@ -1667,18 +1685,30 @@ public function meal_plan_listing(Request $request){
 
 public function sample_daily_meals(Request $request) {
     $dates = $request->date;
+   
        $category = MealSchedules::select('id','name')
        ->get()
         ->each(function($category) use($dates){
-                   $meals = $category->meals=Meal::join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+                   $meals = $category->meals=Meal::
+                //    join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+                   join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
                 //    ->where(['meal_ratings.user_id',Auth::guard('api')->id()])
-                   ->select('meals.*','meal_ratings.rating')
+                   ->select('meals.*')
+                    ->where('meal_group_schedule.meal_schedule_id',$category->id)
                    ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
-                   ->where(['meals.meal_schedule_id'=>$category->id])->get()->each(function($meals) {
+                //    ->where(['meals.meal_schedule_id'=>$category->id])
+                    
+                   ->get()->each(function($meals) {
                     $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+                    $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+                    ->where('meal_id', $meals->id)
+                    ->groupBy('meal_id')
+                   ->first();
+                   $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+                   ->groupBy('meal_id')
+                  ->count();
             })->toArray();
            })->toArray();
-
    
    $data = $category;
    if($data){
@@ -1698,6 +1728,35 @@ public function sample_daily_meals(Request $request) {
       }
 return $this->populateResponse();
 }
+
+// public function select_start_day_meal(Request $request) {
+//     $dates = $request->date;
+//     $plan_id = $request->plan_id;
+//     $meals = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+//                ->select('meals.*')
+//                ->where('subscription_meal_plan_variant_default_meal.meal_plan_id','=', $plan_id)
+//                ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+//                ->get();
+
+   
+//    $data = $meals;
+//    if($data){
+//     $response = new \Lib\PopulateResponse($data);
+//     $this->status = true;
+//     $this->data = $response->apiResponse();
+//     $this->message = trans('messages.sample_daily_meal');
+
+
+//       }else{
+//        $data =[];
+//         $response = new \Lib\PopulateResponse($data);
+//         $this->status = true;
+//         $this->data = $response->apiResponse();
+//         $this->message = trans('messages.sample_daily_meal_not');
+
+//       }
+// return $this->populateResponse();
+// }
 
 
 public function updateBasicInfo(Request $request){
@@ -1781,9 +1840,54 @@ public function delivery_slot(Request $request) {
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.promo_code');
+    $this->message = trans('messages.delivery_slot');
     return $this->populateResponse();
 }
 
+public function social_link(Request $request) {
+  
+    $data['socialLink'] = SocialLink::select('*')->orderBy('id', 'ASC')->get();
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.social_link');
+    return $this->populateResponse();
+}
+
+public function refer_and_earn(Request $request) {
+
+    $terms = ReferEarnContent::select('content')->first();
+    $refer = ReferAndEarn::select('*')->where('status','active')->first();
+    if($refer){
+        $total_get = ($refer->register_referee+$refer->plan_purchase_referee);
+    }
+    $data['refer'] = $refer;
+    $data['total_get'] = $total_get;
+    $data['terms'] = $terms;
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.refer');
+    return $this->populateResponse();
+}
+
+
+public function paymentAvailableCredit(Request $request) {
+    $meal_des=[];
+    $status=[];
+     $available_credit = UserProfile::select('available_credit')->where('user_id', Auth::guard('api')->id())->first();
+     $refer = ReferAndEarn::select('*')->where('status','active')->first();
+     if($refer){
+        $available_referral = ($refer->register_referee+$refer->plan_purchase_referee);
+    }
+    
+     $data['available_credit'] = $available_credit;
+     $data['available_referral'] = $available_referral;
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.available_credit');
+    return $this->populateResponse();
+}
 
 }

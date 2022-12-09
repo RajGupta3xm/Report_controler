@@ -52,9 +52,11 @@
                                                    <span class="offer_text">Enter the referral Credits for registration</span>
                                                 </div>
                                                 <div class="col-3">
+                                                   <p class="form-label">Sender</p>
                                                    <input class="form-control" type="text" name="register_referee" >
                                                 </div>
                                                 <div class="col-3">
+                                                <p class="form-label">Receiver</p>
                                                    <input class="form-control" type="text" name="register_referral">
                                                 </div>
                                              </div>
@@ -250,20 +252,19 @@
             <div class="row p-4">
                <div class="col-12">
                   <div class="row">
-                     <div class="col-md-6 d-flex align-items-stretch">
+                     <div class="col-md-6 d-flex align-items-stretch tt">
                         <div class="border row content_management_box me-0">
-                           <h2>Terms & Condition</h2>
+                           <h2>{{$refer_contents->name}}</h2>
                            <a class="edit_content_btn comman_btn" id="edit" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
                           
-                           <p  class="text-info" style="color:black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin sodales pulvinar sic tempor. Sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+                           <p  class="text-info" >{{$refer_contents->content}}</p>
                         </div>
                      </div>
-                     <div class="col-md-6 d-flex align-items-stretch">
+                     <div class="col-md-6 d-flex align-items-stretch ttar">
                         <div class="border row content_management_box ms-0 text-end">
-                           <h2>معلومات عنا</h2>
-                           <a class="edit_content_btn comman_btn" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
-                           <p>لكن لا بد أن أوضح لك أن كل هذه الأفكار المغلوطة حول استنكار  النشوة وتمجيد الألم نشأت  بالفعل، وسأعرض لك التفاصيل لتكتشف حقيقة وأساس تلك السعادة البشرية، فلا أحد يرفض أو يكره أو يتجنب الشعور بالسعادة، ولكن بفضل هؤلاء الأشخاص الذين لا يدركون بأن السعادة لا بد أن نستشعرها بصورة أكثر عقلانية ومنطقية فيعرضهم هذا لمواجهة الظروف الأليمة، وأكرر بأنه لا يوجد من يرغب في الحب ونيل المنال ويتلذذ بالآلام، الألم هو الألم ولكن نتيجة لظروف ما قد تكمن السعاده فيما نتحمله من كد وأسي. 
-                              و سأعرض مثال حي لهذا، من منا لم يتحمل جهد بدني شاق إلا من أجل الحصول على ميزة أو فائدة؟ ولكن من لديه الحق أن ينتقد شخص ما أراد أن يشعر بالسعادة التي لا تشوبها عواقب أليمة أو آخر أراد أن يتجنب الألم الذي ربما تنجم عنه بعض المتعة 
+                           <h2>{{$refer_contents->name_ar}}</h2>
+                           <a class="edit_content_btn comman_btn" id="edit1" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
+                           <p class="text-info1" >{{$refer_contents->content_ar}}
                            </p>
                         </div>
                      </div>
@@ -305,8 +306,17 @@
 <script>
    $('#edit').click(function() {
  var text = $('.text-info').text();
- var input = $('<textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea>')
- $('.text-info').text('').append(input);
+ var input = $(' <div class="border row content_management_box me-0"> <h2> Terms & Condition </h2>  <a class="edit_content_btn comman_btn"  href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
+ $('.tt').text('').append(input);
+});
+
+
+</script>
+<script>
+$('#edit1').click(function() {
+ var text = $('.text-info1').text();
+ var input = $(' <div class="border row content_management_box ms-0 text-end"><h2> معلومات عنا </h2><a class="edit_content_btn comman_btn" onclick="sendQuery(this)" href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
+ $('.ttar').text('').append(input);
 });
 </script>
 <script>
@@ -338,3 +348,4 @@
             
         }
     </script>
+   

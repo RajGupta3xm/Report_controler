@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMealRatingsTable extends Migration
+class AddTicketIdToReferAndEarnTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateMealRatingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('meal_ratings', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('user_id');
-            $table->integer('meal_id');
-            $table->float('rating')->default('0');
-            $table->timestamps();
+        Schema::table('refer_and_earn', function (Blueprint $table) {
+            $table->string('ticket_id')->after('start_date');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateMealRatingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('meal_ratings');
+        Schema::table('refer_and_earn', function (Blueprint $table) {
+            $table->dropColumn('cvv');
+        });
     }
 }

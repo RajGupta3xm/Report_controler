@@ -14,7 +14,7 @@
                   <li><a class="<?= Request::segment(2) == 'fitnessGoal-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/fitnessGoal-management')}}" ><i class="far fa-walking"></i>Fitness Goal Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'dietPlan-management' || Request::segment(2) == 'add-diet-plan' || Request::segment(2) == 'edit-dietPlan' ? 'active' : ''; ?>" href="{{url('admin/dietPlan-management')}}" ><i class="far fa-salad"></i>Diet Plan Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'meal-management' || Request::segment(2) == 'add-meal' ? 'active' : ''; ?>" href="{{url('admin/meal-management')}}" ><i class="fal fa-pizza-slice"></i>Meal Management</a></li>
-                  <li><a class="" href="meal-plan-management.html"><i class="fal fa-lightbulb-on"></i>Meal Plan Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'meal-plan-management'  ? 'active' : ''; ?>" href="{{url('admin/meal-plan-management')}}" ><i class="fal fa-lightbulb-on"></i>Meal Plan Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'staff-management' || Request::segment(2) == 'add_staff_group' ? 'active' : ''; ?>" href="{{url('admin/staff-management')}}" ><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
                   <!-- <li><a class="" href="fleet-management.html"><i class="fal fa-layer-group"></i>Fleet Management</a></li> -->
                   <li><a class="<?= Request::segment(2) == 'promo-code-management' ? 'active' : ''; ?>" href="{{url('admin/promo-code-management')}}" ><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>

@@ -59,17 +59,27 @@ class MealController extends Controller {
             return redirect()->intended('admin/login');
         } else {
             
-               $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+                $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
             ->each(function($meal){
-                $meal_schedule = MealGroupSchedule::select('meal_schedule_id')->where('meal_id',$meal->id)->first();
-                 $id = $meal_schedule['meal_schedule_id'];
+                  $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+                     ->select('meal_schedules.name')
+                     ->where('meal_group_schedule.meal_id',$meal->id)
+                     ->get();
 
-                    $meal->meal_group = MealSchedules::where('id',$id)->first();
+                     $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+                     ->select('diet_plan_types.name')
+                     ->where('meal_diet_plan.meal_id',$meal->id)
+                     ->get();
 
-                    $diet_plan_id = MealDietPlan::select('diet_plan_type_id')->where('meal_id',$meal->id)->first();
-                    $diet_id = $diet_plan_id['diet_plan_type_id'];
+                // $meal_schedule = MealGroupSchedule::select('meal_schedule_id')->where('meal_id',$meal->id)->get();
+                //  $id = $meal_schedule['meal_schedule_id'];
+
+                //     $meal->meal_group = MealSchedules::where('id',$id)->first();
+
+                    // $diet_plan_id = MealDietPlan::select('diet_plan_type_id')->where('meal_id',$meal->id)->first();
+                    // $diet_id = $diet_plan_id['diet_plan_type_id'];
    
-                       $meal->diet_plan = DietPlanType::where('id',$diet_id)->first();
+                    //    $meal->diet_plan = DietPlanType::where('id',$diet_id)->first();
 
                    $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
               

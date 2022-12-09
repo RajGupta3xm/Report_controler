@@ -14,6 +14,7 @@ class UserAddress extends Model
         "latitude",
         "longitude",
         "building",
+        "house_number",
         "street",
         "postal_code",
         "mobile_number",

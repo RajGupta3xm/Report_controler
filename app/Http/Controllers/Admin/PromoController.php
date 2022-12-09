@@ -15,7 +15,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserDislike;
 use App\Models\DislikeItem;
-use App\Models\DietPlanType;
+use App\Models\SubscriptionPlan;
 use App\Models\PromoCodeDietPlan;
 use App\Models\PromoCode;
 use App\Models\UserCaloriTarget;
@@ -48,7 +48,7 @@ class PromoController extends Controller {
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-             $dietplan = DietPlanType::select('id','name')->orderBy('id','asc')->get();
+             $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
              $promoCode = PromoCode::select('*')->orderBy('id','asc')->get();
             $data['dietplan'] = $dietplan;
             $data['promoCode'] = $promoCode;
@@ -76,7 +76,7 @@ class PromoController extends Controller {
              $return = $request->banner_image->move(
              base_path() . '/../public/uploads/promo_image/', $imageName);
          }
-         $url = url('/uploads/giftCard_image/');
+         $url = url('/uploads/promo_image/');
       $data['image'] = $url.'/'. $imageName;
       
      }
@@ -86,7 +86,7 @@ class PromoController extends Controller {
  {
      PromoCodeDietPlan::create([
         'promo_code_id' => $insert->id,
-         'diet_plan_type_id'  => $id   
+         'meal_plan_id'  => $id   
     ]);
  }
  

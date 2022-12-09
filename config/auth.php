@@ -51,6 +51,11 @@ return [
             'driver' => 'session',
             'provider' => 'admin',
         ],
+
+        'staff_members' => [
+            'driver' => 'session',
+            'provider' => 'staff_members',
+        ],
     ],
 
     /*
@@ -79,6 +84,11 @@ return [
         'admin' => [
             'driver' => 'eloquent',
             'model' => App\Admin::class,
+        ], 
+
+        'staff_members' => [
+            'driver' => 'eloquent',
+            'model' => App\StaffMembers::class,
         ], 
     ],
 

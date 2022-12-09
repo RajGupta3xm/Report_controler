@@ -30,6 +30,10 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('viewPlanDeliveries', 'SubscriptionController@viewPlanDeliveries');
     Route::get('myPlan', 'SubscriptionController@myPlan');
     Route::post('buySubscriptionPlan', 'SubscriptionController@buySubscriptionPlan');
+    Route::post('sample_daily_meals_with_schedule', 'SubscriptionController@sample_daily_meals_with_schedule'); 
+    Route::get('selectStartDayCircle', 'SubscriptionController@selectStartDayCircle');
+    Route::get('paymentPlan_detail/{plan_id}', 'SubscriptionController@paymentPlan_detail');
+   
 
 
 });

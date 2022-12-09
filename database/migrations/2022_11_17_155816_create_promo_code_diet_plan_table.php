@@ -16,7 +16,7 @@ class CreatePromoCodeDietPlanTable extends Migration
         Schema::create('promo_code_diet_plan', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('promo_code_id');
-            $table->string('diet_plan_type_id');
+            $table->string('meal_plan_id');
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });

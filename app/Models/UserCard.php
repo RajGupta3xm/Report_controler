@@ -12,6 +12,8 @@ class UserCard extends Model
         "card_holder_name",
         "expiry_date",
         "card_number",
-        "card_type"
+        "card_type",
+        "cvv"
+
     ];
 }

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\ReferAndEarnUsed;
 use App\Models\ReferAndEarn;
+use App\Models\ReferEarnContent;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -45,6 +46,7 @@ class ReferAndEarnController extends Controller {
         } else {
            
                $registration_count = User::withcount('registration_count')->get();
+               $refer_content = ReferEarnContent::select('*')->first();
                 $plan_purchase_count = ReferAndEarnUsed::withcount('user')->where('used_for','plan_purchase')->get();
           
                    $refer = User::withcount('user_referral')->with('refers')->get()
@@ -73,6 +75,7 @@ class ReferAndEarnController extends Controller {
 //     $refer->plan_referral = $planPurchase['plan_purchase_referral'];     
 // });
               $data['refer'] = $refer;
+              $data['refer_contents'] = $refer_content;
             return view('admin.referEarn.refer_earn_list')->with($data);
         }
     }
@@ -89,6 +92,7 @@ class ReferAndEarnController extends Controller {
         "message_body_en" => $request->input('message_body_en'),
         "message_body_ar" => $request->input('message_body_ar'),
         "start_date" => $request->input('start_date'),
+        'ticket_id'  => strtoupper(str_random(14)),
 
     ];
 
@@ -98,6 +102,21 @@ if($insert){
 }
 else {
    return redirect()->back()->with('error', 'Some error occurred while insert ');
+}
+
+}
+
+public function refer_content_update(Request $request ){
+    return $data=[
+   "content_ar" => $request->input('content_ar'),
+];
+
+$insert = ReferAndEarn::create($data);
+if($insert){
+return redirect('admin/refer-earn-management')->with('success', ' Insert successfully.');
+}
+else {
+return redirect()->back()->with('error', 'Some error occurred while insert ');
 }
 
 }

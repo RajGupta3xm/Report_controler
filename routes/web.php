@@ -222,6 +222,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
      /*******Refer and earn Management */
     Route::get('/refer-earn-management', 'Admin\ReferAndEarnController@index');
     Route::post('/refer_earn_submit', 'Admin\ReferAndEarnController@refer_earn_submit');
+    Route::post('/refercontent/update', 'Admin\ReferAndEarnController@refer_content_update');
      /*******End refer and earn Management */
 
          /*******Meal Management */
@@ -230,6 +231,17 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/meal/submit', 'Admin\MealController@meal_submit');
     Route::post('/meal/change_status', 'Admin\MealController@change_status');
      /*******End Meal Management */
+
+        /*******Meal Plan Management */
+    Route::get('/meal-plan-management', 'Admin\MealPlanController@index');
+    Route::get('/add-mealplan', 'Admin\MealPlanController@add_meal');
+    Route::post('/add_variants', 'Admin\MealPlanController@add_variants');
+    Route::post('/mealplan/submit', 'Admin\MealPlanController@meal_plan_submit');
+    Route::post('/mealplan/change_status', 'Admin\MealPlanController@change_status');
+    Route::any('edit-mealplan/{id}', 'Admin\MealPlanController@editMealPlan');
+    Route::post('/edit-mealplan/edit_update/{id}','Admin\MealPlanController@edit_update');
+
+     /*******End Meal Plan Management */
 
 
     Route::get('/category-management', 'Admin\CategoryController@index');

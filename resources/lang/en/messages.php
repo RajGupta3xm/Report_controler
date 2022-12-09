@@ -50,6 +50,9 @@ return [
 	'sample_daily_meal'=>'Sample daily meal list',
 	'sample_daily_meal_not'=>'Sample daily meal not found',
 	'buy_plan'=>'Buy plan successfully',
+	'social_link'=>'Social link listing',
+	'delivery_slot'=>'Delivery slot listing',
+	'plan_detail'=>'Plan detail ',
 
 	
 ];

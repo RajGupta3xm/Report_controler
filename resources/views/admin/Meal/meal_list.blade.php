@@ -110,13 +110,13 @@
                                            </td>
                                            <td><img class="table_img" src="{{$meal->image}}" alt=""></td>
                                            <td>{{$meal->name}}</td> 
-                                           <td>{{$meal->meal_group['name']??'N/A'}}</td>
-                                           <td>{{$meal->diet_plan['name']??'N/A'}}</td>
+                                           <td>{{$meal->meal_group->pluck('name')->implode(',  ')}}</td>
+                                           <td>{{$meal->diet_plan->pluck('name')->implode(', ')}}</td>
                                            <td>{{$meal->rating['rating']??'0'}}</td> 
                                            <td>
                                            <div class="mytoggle">
                                              <label class="switch">
-                                             <input type="checkbox" onchange="changeStatus(this, '<?= $meal->id ?>');" <?= ( $meal->status == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
+                                             <input type="checkbox" onchange="changeStatus(this, '<?= $meal->id ?>');" <?= ($meal->status == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
                                              </label>
                                          </div>
                                            </td>
