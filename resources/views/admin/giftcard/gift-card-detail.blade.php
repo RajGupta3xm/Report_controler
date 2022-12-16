@@ -34,7 +34,7 @@
                                  <p class="text-danger text-small" id="name_enError"></p>
                               </div>
                               <div class="form-group col-4">
-                                 <label for="">Gift Card Name (En) </label>
+                                 <label for="">Gift Card Name (Ar) </label>
                                  <input type="text" class="form-control validate" value="" name="name_ar" id="name">
                                  <p class="text-danger text-small" id="name_arError"></p>
                               </div>
@@ -54,7 +54,7 @@
                                  <textarea class="form-control validate" name="description_ar" id=""></textarea>
                                  <p class="text-danger text-small" id="description_arError"></p>
                               </div>
-                              <div class="col">
+                              <div class="col mb-0">
                                  <div class="row align-items-end">
                                     <div class="col-auto">
                                        <a class="change_value" onclick="toggleVisibility('Menu1');" href="javascript:;">Discount</a>
@@ -73,6 +73,11 @@
                                     </div>
                                  </div>
                              </div> 
+                             <div class="form-group mb-0 col-4 description_box ">
+                                 <label for="">Gift Card Amount :</label>
+                                 <input type="text" class="form-control" value="" name="gift_card_amount" id="">
+                                 <p class="text-danger text-small" id="gift_card_amountError"></p>
+                              </div>
                               <!-- <div class="col form-group position-relative percentage_icons mb-0">
                                  <label for="">Discount %</label>
                                  <input class="form-control validate" type="text" value="" name="discount">
@@ -123,6 +128,7 @@
                                            <th>Image</th>
                                            <th>Discount %</th>
                                            <th>Price</th>  
+                                           <th>Gift Card Amount</th> 
                                            <th>Status</th>
                                            <th>Action</th>
                                          </tr>
@@ -137,6 +143,7 @@
                                            <td><img class="table_img" src="{{$giftCard->image?$giftCard->image:asset('assets/img/bg-img.jpg')}}" alt=""></td>
                                            <td>{{$giftCard->discount ?? 'N/A'}}</td> 
                                            <td>{{$giftCard->amount ?? 'N/A'}}</td>  
+                                           <td>{{$giftCard->gift_card_amount ?? '-'}}</td>  
                                            <td>
                                            <!-- <form class="table_btns d-flex align-items-center"> 
                                                 <div class="check_toggle">

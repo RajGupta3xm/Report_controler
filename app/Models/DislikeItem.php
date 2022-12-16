@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DislikeItem extends Model
 {
+
+   protected $table="dislike_items";
    protected $fillable = [
         'id',
         'group_id',

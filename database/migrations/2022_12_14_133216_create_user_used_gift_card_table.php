@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeliveryDaysTable extends Migration
+class CreateUserUsedGiftCardTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateDeliveryDaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('delivery_days', function (Blueprint $table) {
+        Schema::create('user_used_gift_card', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->enum('type',['Weekly','Monthly']);
-            $table->string('including_weekend');
-            $table->integer('number_of_days');
-            $table->text('description');
-            $table->enum('status',['active','inactive','trahsed']);
+            $table->integer('user_id');
+            $table->integer('gift_card_id');
+            $table->string('voucher_code');
+            $table->string('voucher_pin');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateDeliveryDaysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('delivery_days');
+        Schema::dropIfExists('user_used_gift_card');
     }
 }

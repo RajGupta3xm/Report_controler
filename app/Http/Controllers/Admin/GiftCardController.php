@@ -52,9 +52,11 @@ public function giftCard_submit(Request $request ){
         "title_ar" => $request->input('name_ar'),
         "discount" => $request->input('discount'),
         "amount" => $request->input('price'),
+        "gift_card_amount" => $request->input('gift_card_amount'),
         "description" => $request->input('description'),
         "description_ar" => $request->input('description_ar'),
     ];
+
 
     if(!empty($request->image)){
         $filename = $request->image->getClientOriginalName();
@@ -63,8 +65,8 @@ public function giftCard_submit(Request $request ){
             $return = $request->image->move(
             base_path() . '/public/uploads/giftCard_image/', $imageName);
         }else{
-            $return = $request->banner_image->move(
-            base_path() . '/../public/uploads/giftCard_image/', $imageName);
+            $return = $request->image->move(
+            base_path() . '/public/uploads/giftCard_image/', $imageName);
         }
         $url = url('/uploads/giftCard_image/');
      $data['image'] = $url.'/'. $imageName;

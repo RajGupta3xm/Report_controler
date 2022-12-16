@@ -9,9 +9,9 @@ class MealIngredientList extends Model
     protected $table='meal_ingredient_list';
     protected $fillable = [
         "meal_id",
-        "ingredients",
+        "item_id",
         "quantity",
-        "unit",
+        "unit_id",
         "status",
     
     ];

@@ -40,7 +40,7 @@ Route::post('/driver/login','Auth\DriverController@login');
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
 	Route::get('myProfile', 'ApiController@myProfile');
 	Route::post('/editProfile','ApiController@editProfile');
-    Route::get('/homescreen','ApiController@homescreen');
+    Route::any('/homescreen/{plan_types}','ApiController@homescreen');
     Route::get('/fitnessGoals','ApiController@fitnessGoals');
     Route::get('/dislikes','ApiController@dislikes');
     Route::get('/dietPlanType','ApiController@dietPlanType');
@@ -74,11 +74,13 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('resume_meal_plan', 'ApiController@resume_meal_plan');
     Route::get('meal_plan_listing/{diet_plan_type_id}', 'ApiController@meal_plan_listing');
     Route::post('sample_daily_meals', 'ApiController@sample_daily_meals'); 
+    Route::post('balance_sample_daily_meals', 'ApiController@balance_sample_daily_meals'); 
     Route::any('updateBasicInfo', 'ApiController@updateBasicInfo'); 
     Route::get('delivery_slot', 'ApiController@delivery_slot');
     Route::get('social_link_listing', 'ApiController@social_link');
     Route::get('refer_and_earn', 'ApiController@refer_and_earn');
     Route::get('paymentAvailableCredit', 'ApiController@paymentAvailableCredit');
+   
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 

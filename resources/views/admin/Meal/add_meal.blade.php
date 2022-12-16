@@ -175,7 +175,26 @@
                                              </thead>
                                              <tbody>
                                                 <tr>
+                                                 
+                                                <td>
+                                                      <select class="form-select table_input table_select adjust_lenth" aria-label="Default select example" id="fname"  name="ingredient[]">
+                                                      @foreach($ingredients as $ingredient)
+                                                         <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option>
+                                                         @endforeach
+                                                     </select>
+                                                   </td>
+                                                
                                                    <td>
+                                                      <input class="form-control table_input table_select adjust_lenth" type="number" id="fname" name="qty[]" value="">
+                                                   </td>
+                                                   <td>
+                                                      <select class="form-select table_input table_select adjust_lenth" aria-label="Default select example" id="fname" name="unit[]">
+                                                      @foreach($unit as $units)
+                                                         <option value='{{$units->id}}'>{{$units->unit}}</option>
+                                                         @endforeach
+                                                     </select>
+                                                   </td>
+                                                   <!-- <td>
                                                       <input class="form-control table_input" type="text" id="fname" name="ingredient[]" value="">
                                                    </td>
                                                    <td>
@@ -183,7 +202,7 @@
                                                    </td>
                                                    <td>
                                                       <input class="form-control table_input" type="text" id="fname" name="unit[]" value="">
-                                                   </td>
+                                                   </td> -->
                                                 </tr>
                                            
                                              </tbody>
@@ -412,9 +431,9 @@ function insRow(id) {
     var y = x.insertCell(0);
     var z = x.insertCell(1);
     var t = x.insertCell(2);
-    y.innerHTML = '<input class="form-control table_input" type="text" name="ingredient[]" id="fname">';
-    z.innerHTML ='<input class="form-control table_input" type="text" name="qty[]" id="fname">';
-    t.innerHTML ='<input class="form-control table_input" type="text" name="unit[]" id="fname">';
+    y.insertAdjacentHTML('beforeend','<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="ingredient[]" id="fname" @foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}" >{{$ingredient->name}}</option>@endforeach</select>');
+    z.innerHTML ='<input class="form-control table_input table_select adjust_lenth" type="text" name="qty[]" id="fname">';
+    t.insertAdjacentHTML('beforeend','<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="unit[]" id="fname">@foreach($unit as $units)<option value="{{$units->id}}">{{$units->unit}}</option>@endforeach</select>');
 }
 </script>
       <script>

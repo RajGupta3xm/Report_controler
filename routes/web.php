@@ -130,15 +130,34 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/category/submit','Admin\IngredientController@category_submit');
     Route::post('/group/submit','Admin\IngredientController@group_submit');
     Route::post('/group/change_status','Admin\IngredientController@change_status');
+    Route::post('/unit/change_status','Admin\IngredientController@unit_status');
     Route::post('/edit_group/update/{id}', [
         'uses' => 'Admin\IngredientController@update',
         'as' => 'admin.edit_group.update'
+    ]);
+    Route::post('/edit_category/update/{id}', [
+        'uses' => 'Admin\IngredientController@update_category',
+        'as' => 'admin.edit_category.update'
     ]);
     Route::get('/get_group/data/{id}', [
         'uses' => 'Admin\IngredientController@get_data',
         'as' => 'admin.get_group.data'
     ]);
+    Route::get('/get_category/data/{id}', [
+        'uses' => 'Admin\IngredientController@get_category_data',
+        'as' => 'admin.get_category.data'
+    ]);
+    Route::get('/get_unit/data/{id}', [
+        'uses' => 'Admin\IngredientController@get_unit_data',
+        'as' => 'admin.get_unit.data'
+    ]);
+    Route::post('/edit_unit/update/{id}', [
+        'uses' => 'Admin\IngredientController@update_unit',
+        'as' => 'admin.edit_unit.update'
+    ]);
     Route::post('/group-delete','Admin\IngredientController@group_delete');
+    Route::post('/category-delete','Admin\IngredientController@category_delete');
+    Route::post('/unit-delete','Admin\IngredientController@unit_delete');
     Route::post('/ingredient/submit','Admin\IngredientController@ingredient_submit');
     Route::post('/ingredient/change_status','Admin\IngredientController@change_status_ingredient');
     Route::post('/edit_ingredient/update/{id}', [
@@ -147,6 +166,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     ]);
     
     Route::post('/ingredient-delete','Admin\IngredientController@ingredient_delete');
+    Route::post('/category/change_status','Admin\IngredientController@change_status_category');
 
     /*******End Ingredient Management */
 
@@ -223,6 +243,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::get('/refer-earn-management', 'Admin\ReferAndEarnController@index');
     Route::post('/refer_earn_submit', 'Admin\ReferAndEarnController@refer_earn_submit');
     Route::post('/refercontent/update', 'Admin\ReferAndEarnController@refer_content_update');
+    Route::post('/refer_earn/update_content/{id}', 'Admin\ReferAndEarnController@update_content');
      /*******End refer and earn Management */
 
          /*******Meal Management */

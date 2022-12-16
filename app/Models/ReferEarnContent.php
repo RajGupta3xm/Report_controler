@@ -9,10 +9,8 @@ class ReferEarnContent extends Model
     protected $table = 'refer_and_earn_content';
     protected $fillable = [
     	'id',
-    	'name',
-    	'name_ar',
+    	'type',
     	'content',
-    	'content_ar',
     	'status',
     
    	];

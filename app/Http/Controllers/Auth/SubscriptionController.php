@@ -16,12 +16,17 @@ use App\Models\SubscriptionCosts;
 use App\Models\SubscriptionDietPlan;
 use App\Models\SubscriptionMealGroup;
 use App\Models\Meal;
+use App\Models\PromoCode;
+use App\Models\UserUsedPromoCode;
+use App\Models\DislikeGroup;
+use App\Models\UserGiftCard;
 use App\Models\subscriptions;
 use App\Models\SubscriptionOrder;
 use App\Models\SubscriptionMealPlanVariant;
 use App\Models\Order;
 use App\Models\MealRating;
 use App\Models\Mealschedules;
+use App\Models\UserUsedGiftCard;
 use App\Models\DislikeCategory;
 use App\Models\UserDislike;
 use App\Models\DislikeItem;
@@ -286,34 +291,55 @@ class SubscriptionController extends Controller {
     }
 
     public function mealDetails(Request $request){
+        $id = $request->meal_plan_id;
         $meal_des=[];
          $mealDetail=Meal::select('*')->where('id',$request->meal_plan_id)->first();
         // return $meal = Meal::select('name','image')->with('meal_schedule')->get();
          $mealDetail = Meal::join('meal_schedules','meals.id','=','meal_schedules.id')
         ->select('meals.id as meal_id','meals.name as meal_name','image','description','image','food_type','meal_schedules.name')
         ->where('meals.id',$request->meal_plan_id)
-        ->first();
+        ->get()
+        ->each(function($mealDetail) use($id){
+           $meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+           ->where('meal_group_schedule.meal_id', $mealDetail->meal_id)
+           ->select('meal_schedules.name')->first();
+           $mealDetail->name = $meal_schedule->name;
+        
+      
 
-        $ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$request->meal_plan_id])->get();
-        foreach($ingredient as $meal){
-            array_push($meal_des,$meal->ingredients);
-        }
-        $ing = implode(',', $meal_des);
+        // $ingredient=DislikeItem::select('name')->get();
+        // foreach($ingredient as $meal){
+        //     array_push($meal_des,$meal->name);
+        // }
+        // $ing = implode(',', $meal_des);
 
-         $dislikeItem = DislikeItem::select('id','category_id','name')->where('status','active')->get()->each(function($dislikeItem){
+         $dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+         ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+         ->where('meal_ingredient_list.meal_id',$id)
+         ->where('dislike_items.status','active')->get()
+         ->each(function($dislikeItem){
             $dislikeItem->selected=false;
-            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->id])->first()){
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
                 $dislikeItem->selected=true;
             }
         });
+        $dislikegroup = DislikeGroup::select('id','name')->where('status','active')->get()->each(function($dislikegroup){
+            $dislikegroup->selected=false;
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+                $dislikegroup->selected=true;
+            }
+        });
+  
         $mealDetail->dislike_item = $dislikeItem;
-        $mealDetail->ingredient = $ing;
+        $mealDetail->dislikegroup = $dislikegroup;
         $data=$mealDetail;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
         $this->message = trans('plan_messages.diet_plan_detail');
+    }); 
         return $this->populateResponse();
+        
     }
 
 
@@ -405,34 +431,35 @@ class SubscriptionController extends Controller {
         // $request->plan_type;
         // $request->is_weekend;
         $request->subscription_plan_id; // this id get from my plan when user click on perticular plan then get ths detail
-        $user_recommended_calorie=2200;
        
         $subscriptions=SubscriptionPlan::select('id')->where(['id'=> $request->subscription_plan_id])->first();
-        if(Subscription::where(['delivery_status'=>'active','plan_id'=>$subscriptions->id])->orWhere(['delivery_status'=>'terminated','plan_id'=>$subscriptions->id])->first()){
-         $subscription=SubscriptionPlan::select('id','name','description','image')->where(['status'=>'active','id'=>$subscriptions->id])->first();
-        if($subscription){
-            // foreach($subscriptions as $subscription){
-                $subscription->cost="0";
-                $subscription->delivery_day_type="N/A";
+        if(Subscription::where(['delivery_status'=>'active','plan_id'=>$subscriptions['id']])->orWhere(['delivery_status'=>'terminated','plan_id'=>$subscriptions['id']])->first()){
+          $subscription=SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
+         ->join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+         ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days')
+         ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
+         ->first();
+         if($subscription){
+
+                $dates = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                $date = $dates->addDays($subscription->no_days);
+                $diff = now()->diffInDays(Carbon::parse($date));
+                $subscription->days_remaining = $diff .' days left to expire ';
+               
+                
                 
                 $subscription->meal_groups=[];
 
-                if(SubscriptionDietPlan::where(['plan_id'=>$subscription->id])->first()){
-                      $plan_type=SubscriptionCosts::with('delivery_day_type')->where(['plan_id'=>$subscription->id])->first();
-                        if($plan_type->delivery_day_type->id == 1 || $plan_type->delivery_day_type->id == 2){
-                            $subscription->delivery_day_type="Week";
-                        }else{
-                            $subscription->delivery_day_type="Month";
-                        }
-                        $deliveryDay=DeliveryDay::find($plan_type->delivery_day_type->id);
+                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id])->first()){
 
-                        if(SubscriptionCosts::where(['plan_id'=>$subscription->id,'delivery_day_type_id'=>$plan_type->delivery_day_type->id])->first()){
-                        $costs=SubscriptionCosts::where(['plan_id'=>$subscription->id,'delivery_day_type_id'=>$plan_type->delivery_day_type->id])->first();
-                        $subscription->cost=$costs->cost;
+                        $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id])->first();
+                        $subscription->cost=$costs->plan_price;
+                        $subscription->day=$costs->option1;
+                        // $costs->option1 = '-';
 
                         $meals=[];
                         $meal_des=[];
-                          $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
+                           $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
                         foreach($subscription->meal_groups as $meal){
                             array_push($meals,['id'=>$meal->meal_group->id,'meal_name'=>$meal->meal_group->name]);
                             array_push($meal_des,$meal->meal_group->name);
@@ -440,8 +467,8 @@ class SubscriptionController extends Controller {
                         $meal_des=count($meal_des)." Meals Package (".implode(',',$meal_des).")";
 
                         $subscription->description=[
-                            "Serves Upto 2000 calories out of $user_recommended_calorie calories recommended for you.",
-                            $deliveryDay->number_of_days." days a ".$subscription->delivery_day_type,
+                            "Serves Upto $costs->serving_calorie calories out of $costs->calorie calories recommended for you.",
+                            $costs->no_days." days a ".$costs->option1,
                             " ".$meal_des
                         ];
                         $subscription->meal_groups=$meals;
@@ -450,15 +477,14 @@ class SubscriptionController extends Controller {
                     }
                 }
                 
-            }
-                
-            // }
+
             $response = new \Lib\PopulateResponse($subscription);
             $this->status = true;
             $this->data = $response->apiResponse();
             $this->message = trans('messages.plan_list');
             return $this->populateResponse();
         }
+        
       $subscription=[];
       $response = new \Lib\PopulateResponse($subscription);
      $this->status = true;
@@ -470,18 +496,42 @@ class SubscriptionController extends Controller {
 
      public function viewPlanDeliveries(Request $request) {
         $dates = $request->date;
-          $data['deliveries'] = DeliverySlot::with('user_address')->first();
-           $category = MealSchedules::select('id','name')
+        $plan_id = $request->subscription_plan_id;
+          $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+          ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.address_type')
+          ->first();
+            $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$plan_id])
            ->get()
-            ->each(function($category) use($dates){
-                       $meals = $category->meals=Meal::join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
-                    //    ->where(['meal_ratings.user_id',Auth::guard('api')->id()])
-                       ->select('meals.*','meal_ratings.rating')
-                       ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
-                       ->where(['meals.meal_schedule_id'=>$category->id])->get()->each(function($meals) {
-                        $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
-                })->toArray();
-               })->toArray();
+           ->each(function($category) use($dates,$plan_id){
+            $category->meal_group->meals =Meal::
+         join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+         //    join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
+            ->select('meals.*')
+             ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
+            ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+            ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $plan_id,'meals.status'=>'active'])
+             
+            ->get()->each(function($meals) {
+            
+             $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+             $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+             ->where('meal_id', $meals->id)
+             ->groupBy('meal_id')
+            ->first();
+            $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+            ->groupBy('meal_id')
+           ->count();
+     })->toArray();
+    })->toArray();
+            // ->each(function($category) use($dates){
+            //            $meals = $category->meals=Meal::join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+            //         //    ->where(['meal_ratings.user_id',Auth::guard('api')->id()])
+            //            ->select('meals.*','meal_ratings.rating')
+            //            ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+            //            ->where(['meals.meal_schedule_id'=>$category->id])->get()->each(function($meals) {
+            //             $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+            //     })->toArray();
+            //    })->toArray();
                 // $category->deliveries = $deliveries;
        
        $data['category'] = $category;
@@ -509,13 +559,20 @@ class SubscriptionController extends Controller {
         ->join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
        ->select('subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscription_plans.image','subscription_plans.name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price')
        ->where(['subscriptions.delivery_status'=>'active','subscriptions.user_id'=>Auth::guard('api')->id()])
-       ->get()->each(function($meal){
+       ->first();
+       if($meal){
         $dates = Carbon::createFromFormat('Y-m-d',$meal->start_date);
         $date = $dates->addDays($meal->no_days);
         $diff = now()->diffInDays(Carbon::parse($date));
         $meal->days_remaining = $diff .' days left to expire ';
+       }
+    //    ->each(function($meal){
+    //     $dates = Carbon::createFromFormat('Y-m-d',$meal->start_date);
+    //     $date = $dates->addDays($meal->no_days);
+    //     $diff = now()->diffInDays(Carbon::parse($date));
+    //     $meal->days_remaining = $diff .' days left to expire ';
         
-       });
+    //    });
     
 
     $meals = SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
@@ -848,5 +905,161 @@ public function paymentPlan_detail(Request $request) {
     $this->message = trans('messages.plan_detail');
     return $this->populateResponse();
 }
+
+public function getSwapMeal(Request $request) {
+
+    $plan_detail=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+    ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.option1')
+    ->where('subscription_plans.id',$request->plan_id)
+    ->where(['subscription_plans.status'=>'active'])
+    ->first();
+   
+   
+    $data['plan_detail'] = $plan_detail;
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.plan_detail');
+    return $this->populateResponse();
+}
     
+
+public function apply_gift_card(Request $request){
+    $validate = Validator::make($request->all(), [
+        'voucher_code' => 'required',
+        'voucher_pin' => 'required',
+       
+    ], [
+        'voucher_code.required' => trans('validation.required', ['attribute' => 'voucher code  ']),
+        'voucher_pin.required' => trans('validation.required', ['attribute' => 'voucher pin  ']),
+      
+    ]);
+    $validate->after(function ($validate) use ($request) {
+        if ($request['voucher_code'] &&  $request['voucher_pin']) {
+            $getBooking = UserGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
+            if (!$getBooking) {
+                $this->error_code = 201;
+                $validate->errors()->add('gift card', "This gift card is not valid");
+            }
+        }
+
+        if ($request['voucher_code'] &&  $request['voucher_pin']) {
+             $count_used = UserUsedGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->count();
+            if ($count_used) {
+                $quantity = UserGiftCard::select('quantity')->where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
+                if($count_used == $quantity->quantity){
+                 $this->error_code = 201;
+                 $validate->errors()->add('gift card used', "You used all gift card");
+               }
+           }
+        }
+    
+    });
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+        
+         $giftCard = UserGiftCard::join('gift_cards','user_gift_cards.gift_card_id','=','gift_cards.id')
+            ->select('gift_cards.id','gift_cards.discount','gift_cards.amount','gift_cards.gift_card_amount')
+            ->where('user_gift_cards.user_id',Auth::guard('api')->id())
+            ->where(['user_gift_cards.voucher_code'=>$request['voucher_code'],'user_gift_cards.voucher_pin'=>$request['voucher_pin']])
+            ->first();
+            if(!empty($giftCard->discount)){
+               $giftCard->deducted_amount = ($giftCard->discount/100)*$request->meal_amount;
+
+            }elseif(!empty($giftCard->amount)){
+                $giftCard->deducted_amount = $giftCard->amount;
+            }
+          
+        if($giftCard){
+         $response = new \Lib\PopulateResponse($giftCard);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.purchase_gift_card_used');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+} 
+
+public function apply_promo_code(Request $request){
+    $validate = Validator::make($request->all(), [
+        'ticket_id' => 'required',
+
+    ], [
+        'ticket_id.required' => trans('validation.required', ['attribute' => 'ticket_id  ']),
+      
+    ]);
+    $validate->after(function ($validate) use ($request) {
+        if ($request['ticket_id'] ) {
+            $getBooking = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
+            if (!$getBooking) {
+                $this->error_code = 201;
+                $validate->errors()->add('promo code', "This promo code is not valid");
+            }
+        }
+
+       
+    
+    });
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+        if ($request['ticket_id'] ) {
+            $count_used = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
+            if ($count_used->limit_to_one_use == '1' ) {
+                if($count_used->maximum_discount_uses == null){
+                    $countUser = UserUsedPromoCode::where('user_id',Auth::guard('api')->id())->where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->first();
+                    if ($countUser) {
+                        return response()->json([
+                            'status' => true,
+                             'message'=> 'This Code  is already used'
+                           ]);
+                    }
+                }else{
+                    $countUsers = UserUsedPromoCode::where('user_id',Auth::guard('api')->id())->where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->count();
+                    if($countUsers == $count_used->maximum_discount_uses){
+                        return response()->json([
+                            'status' => true,
+                             'message'=> 'You used your max limit'
+                           ]);
+                    }
+                }
+           }else{
+             $countTicket = UserUsedPromoCode::where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->count();
+             if($countTicket == $count_used->maximum_discount_uses){
+                 return response()->json([
+                    'status' => true,
+                     'message'=> 'This code is expired '
+                   ]);
+              }
+            }
+
+           $promoCodeTicket_id = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
+          $insert=[
+            'user_id' => Auth::guard('api')->id(),
+            'promocode_id' => $promoCodeTicket_id->id,
+            'promo_code_ticket_id' => $request->input('ticket_id'),
+
+          ];
+          $promo = UserUsedPromoCode::create($insert);
+        if($promo){
+         $response = new \Lib\PopulateResponse($promo);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.promo_code_used');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+}
+    return $this->populateResponse();
+} 
+
+
 }

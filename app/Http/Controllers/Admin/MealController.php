@@ -21,6 +21,7 @@ use App\Models\WeekDays;
 use App\Models\MealWeekDay;
 use App\Models\MealDepartment;
 use App\Models\MealDietPlan;
+use App\Models\DislikeUnit;
 use App\Models\MealGroupSchedule;
 use App\Models\MealMacroNutrients;
 use App\Models\MealIngredientList;
@@ -59,7 +60,7 @@ class MealController extends Controller {
             return redirect()->intended('admin/login');
         } else {
             
-                $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+                 $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
             ->each(function($meal){
                   $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
                      ->select('meal_schedules.name')
@@ -70,6 +71,8 @@ class MealController extends Controller {
                      ->select('diet_plan_types.name')
                      ->where('meal_diet_plan.meal_id',$meal->id)
                      ->get();
+
+                    
 
                 // $meal_schedule = MealGroupSchedule::select('meal_schedule_id')->where('meal_id',$meal->id)->get();
                 //  $id = $meal_schedule['meal_schedule_id'];
@@ -88,6 +91,7 @@ class MealController extends Controller {
             return view('admin.meal.meal_list')->with($data);
         }
     }
+    
 
     public function change_status(Request $request){
         $id = $request->input('id');
@@ -109,6 +113,8 @@ class MealController extends Controller {
               $data['diet_plan'] = DietPlanType::select('id','name')->orderBy('id','Asc')->get(); 
                $data['tags'] = WeekDays::select('id','name')->orderBy('id','Asc')->get(); 
                $data['department'] = StaffGroup::select('id','name')->orderBy('id','Asc')->get(); 
+                $data['ingredients'] = DislikeItem::select('id','name')->orderBy('id','Asc')->get(); 
+                 $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
             
             return view('admin.meal.add_meal')->with($data);
         }

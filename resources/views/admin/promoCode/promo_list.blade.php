@@ -77,15 +77,16 @@
                               <div class="form-group col-6 setup_pricing maximum_discount">
                                  <span for="">Maximum Discount Uses</span>
                                  <div class="row">
-                                    <div class="col-12 mb-2">
+                                    <div class="col-12 mb-2 d-flex select_tr">
                                        <div class="check_radio">
-                                          <input type="checkbox" checked="" name="v2" id="v3" class="d-none">
+                                          <input type="checkbox" checked="" name="v2" id="v2" class="d-none">
                                           <label for="v2">Limit number of times this Discount can be used in total</label>
                                        </div> 
+                                       <input class="form-control width_manage" type="text" id="" name="maximum_discount_uses">
                                     </div>
                                     <div class="col-12">
                                        <div class="check_radio">
-                                          <input type="checkbox" checked="" name="v2" id="v4" class="d-none">
+                                          <input type="checkbox" name="v4" id="v4" value="1" class="d-none">
                                           <label for="v4">Limit to one use per customer</label>
                                        </div>
                                     </div>
@@ -175,7 +176,9 @@
                                              <br>
                                              {{date('g:i A', strtotime($promoCodes->end_date))}}
                                           </td> 
-                                           <td>2323</td>
+                                      
+                                           <td>{{$promoCodes->promo_code_used_count}}</td>
+                                      
                                            <td>2323</td>
                                            <td>
                                            <div class="mytoggle">
@@ -201,6 +204,7 @@
             </div>
          </div>
       </div>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
@@ -209,6 +213,11 @@
    <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
+});
+  </script>
+   <script>
+    $('.select_tr input:checkbox').change(function() {
+  $(this).closest('.select_tr').find('input:not([type=checkbox])').prop("disabled", !this.checked);
 });
   </script>
    @endsection

@@ -27,7 +27,7 @@
                               <div class="col">
                                  <h2>Refer and Earn</h2>
                               </div>
-                              <div class="col-auto refer-earn">
+                              <div class="col-auto refer-earn mt-4">
                                  <form class="table_btns d-flex align-items-center">
                                     <div class="check_toggle">
                                        <input type="checkbox" checked name="check2" id="check2" class="d-none">
@@ -51,12 +51,12 @@
                                                 <div class="col ps-4">
                                                    <span class="offer_text">Enter the referral Credits for registration</span>
                                                 </div>
-                                                <div class="col-3">
-                                                   <p class="form-label">Sender</p>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Sender</span>
                                                    <input class="form-control" type="text" name="register_referee" >
                                                 </div>
-                                                <div class="col-3">
-                                                <p class="form-label">Receiver</p>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Receiver</span>
                                                    <input class="form-control" type="text" name="register_referral">
                                                 </div>
                                              </div>
@@ -70,10 +70,12 @@
                                                 <div class="col ps-4">
                                                    <span class="offer_text">Enter the referral Credits for Plan Purchase</span>
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-3 refer-boxx">
+                                                <span>Sender</span>
                                                    <input class="form-control" type="text" name="plan_purchase_referee">
                                                 </div>
-                                                <div class="col-3">
+                                                <div class="col-3 refer-boxx">
+                                                <span>Receiver</span>
                                                    <input class="form-control" type="text" name="plan_purchase_referral">
                                                 </div>
                                              </div>
@@ -90,7 +92,7 @@
                                           </div>
                                        </div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6 mt-4">
                                        <div class="row">
                                           <div class="form-group mb-4 col-12 checkbox_comman select_tr2">
                                              <div class="row align-items-center">
@@ -123,12 +125,12 @@
                                                 </div>
                                              </div>
                                           </div>
-                                          <div class="form-group mb-4 col-12 textarea_height"> 
+                                          <div class="form-group mb-4 col-12 textarea_height mt-4 pt-1"> 
                                              <label for="">Message body on sharing (En) :</label>
                                              <textarea class="form-control text-start" name="message_body_en" id="">
                                              </textarea>  
                                           </div>
-                                          <div class="form-group mb-4 col-12 textarea_height"> 
+                                          <div class="form-group mb-4 col-12 textarea_height "> 
                                              <label for="">Message body on sharing (Ar) :</label>
                                              <textarea class="form-control text-start" name="message_body_ar" id="">
                                              </textarea>  
@@ -254,17 +256,18 @@
                   <div class="row">
                      <div class="col-md-6 d-flex align-items-stretch tt">
                         <div class="border row content_management_box me-0">
-                           <h2>{{$refer_contents->name}}</h2>
+                           <h2>{{$refer_contents[0]->type}}</h2>
                            <a class="edit_content_btn comman_btn" id="edit" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
-                          
-                           <p  class="text-info" >{{$refer_contents->content}}</p>
+                           <input type="hidden" id="id1" value="{{$refer_contents[0]->id}}">
+                           <p  class="text-infoo" >{{$refer_contents[0]->content}}</p>
                         </div>
                      </div>
                      <div class="col-md-6 d-flex align-items-stretch ttar">
                         <div class="border row content_management_box ms-0 text-end">
-                           <h2>{{$refer_contents->name_ar}}</h2>
+                           <h2>{{$refer_contents[1]->type}}</h2>
                            <a class="edit_content_btn comman_btn" id="edit1" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
-                           <p class="text-info1" >{{$refer_contents->content_ar}}
+                           <input type="hidden" id="id2" value="{{$refer_contents[1]->id}}">
+                           <p class="text-info1" >{{$refer_contents[1]->content}}
                            </p>
                         </div>
                      </div>
@@ -305,8 +308,9 @@
 </div>
 <script>
    $('#edit').click(function() {
- var text = $('.text-info').text();
- var input = $(' <div class="border row content_management_box me-0"> <h2> Terms & Condition </h2>  <a class="edit_content_btn comman_btn"  href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
+ var text = $('.text-infoo').text();
+ var id2 = document.getElementById('id1').value
+ var input = $(' <div class="border row content_management_box me-0"> <h2> Terms & Condition </h2>  <a class="edit_content_btn comman_btn" onclick="sendQuery(this,'+id2+')"  href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" id="message" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
  $('.tt').text('').append(input);
 });
 
@@ -315,9 +319,35 @@
 <script>
 $('#edit1').click(function() {
  var text = $('.text-info1').text();
- var input = $(' <div class="border row content_management_box ms-0 text-end"><h2> معلومات عنا </h2><a class="edit_content_btn comman_btn" onclick="sendQuery(this)" href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
+ var id2 = document.getElementById('id2').value
+ var input = $(' <div class="border row content_management_box ms-0 text-end" style="width: 100%;"><h2> معلومات عنا </h2><a class="edit_content_btn comman_btn" onclick="sendQuery(this,'+id2+')" href="javscript:;"><i class="far fa-save me-2"></i> Save </a><textarea  type="text" id="message" rows="12" class="form-control mt-400">' + text + '</textarea></div>')
  $('.ttar').text('').append(input);
 });
+</script>
+<script>
+   function sendQuery(obj,id) {
+alert(id);
+var flag = true;
+var message = $('textarea#message').val();
+if (flag) {
+    $.ajax({
+        url: "<?= url('admin/refer_earn/update_content/') ?>/" +id,
+        type: 'POST',
+        data:   '&action=' + message + '&_token=<?= csrf_token() ?>',
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
 </script>
 <script>
             function validate(obj) {

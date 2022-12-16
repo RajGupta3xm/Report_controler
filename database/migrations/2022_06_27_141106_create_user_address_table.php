@@ -25,7 +25,7 @@ class CreateUserAddressTable extends Migration
             $table->string('postal_code')->nullable();
             $table->string('mobile_number')->nullable();
             $table->text('instructions')->nullable();
-            $table->enum('address_type',['home','office','other']);
+            $table->enum('address_type',['Home','Office','Other']);
             $table->enum('status',['active','inactive','trahsed']);
             $table->timestamps();
         });

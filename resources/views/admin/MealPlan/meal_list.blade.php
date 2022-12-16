@@ -51,7 +51,7 @@
                                                 @foreach($fitness_goal as $key=>$fitness_goals)
                                                     <tr draggable="true" ondragstart="start()" ondragover="dragover()" class="draggable">
                                                         <td class="tb_bg"></td>
-                                                        <td>1</td>
+                                                        <td>{{$key+1}}</td>
                                                         <td>
                                                             <form class="table_btns d-flex align-items-center justify-content-center">
                                                                 <div class="check_radio td_check_radio">
@@ -62,7 +62,18 @@
                                                         </td>
                                                         <td><img class="table_img" src="{{$fitness_goals->image}}" alt=""></td>
                                                         <td><a class="text-dark" href="add-meal-plan.html">{{$fitness_goals->name}}</a></td>
-                                                        <td>{{isset($fitness_goals->mealplan_variant[0]->diet_plan->name)?$fitness_goals->mealplan_variant[0]->diet_plan->name:'-'}}</td>
+                                                        @php
+                                                            $diet_plan=$fitness_goals->mealplan_variant;
+                                                            $diet_plan_list=[];
+                                                            if(count($diet_plan) > 0){
+                                                                foreach ($diet_plan as $value){
+                                                                    if(isset($value)){
+                                                                    $diet_plan_list[]=implode(',',(array)$value->dietPlan->name);
+                                                                    }
+                                                                }
+                                                            }
+                                                        @endphp
+                                                        <td>{{isset($diet_plan_list)?implode(',',$diet_plan_list):'-'}}</td>
                                                         <td>
                                                             <div class="mytoggle">
                                                                 <label class="switch">

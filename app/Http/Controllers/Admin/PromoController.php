@@ -18,6 +18,7 @@ use App\Models\DislikeItem;
 use App\Models\SubscriptionPlan;
 use App\Models\PromoCodeDietPlan;
 use App\Models\PromoCode;
+use App\Models\UserUsedPromoCode;
 use App\Models\UserCaloriTarget;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
@@ -49,7 +50,9 @@ class PromoController extends Controller {
             return redirect()->intended('admin/login');
         } else {
              $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
-             $promoCode = PromoCode::select('*')->orderBy('id','asc')->get();
+              $promoCode = PromoCode::withcount('promoCodeUsed')->orderBy('id','asc')->get();
+            //   $codeUsed = PromoCode::withcount('promoCodeUsed')->get();
+            
             $data['dietplan'] = $dietplan;
             $data['promoCode'] = $promoCode;
             return view('admin.promoCode.promo_list')->with($data);
@@ -57,13 +60,16 @@ class PromoController extends Controller {
     }
 
     public function promoCode_submit(Request $request ){
-         $data=[
+          $data=[
          "name" => $request->input('promo_name'),
         //  'diet_plan_type_id' => implode(',', $request->diet_plan_type_id),
          "discount" => $request->input('discount'),
          "price" => $request->input('price'),
+         "maximum_discount_uses" => $request->input('maximum_discount_uses'),
+         "limit_to_one_use" => $request->input('v4'),
          "start_date" => $request->input('valid_from'),
          "end_date" => $request->input('valid_till'),
+         "promo_code_ticket_id" =>  substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 14),
      ];
  
      if(!empty($request->image)){

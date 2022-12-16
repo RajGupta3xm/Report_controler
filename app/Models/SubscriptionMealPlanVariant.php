@@ -34,4 +34,8 @@ class SubscriptionMealPlanVariant extends Model
         
         return $this->belongsTo(SubscriptionPlan::class);
     }
+
+    public function dietPlan(){
+        return $this->belongsTo(DietPlanType::class,'diet_plan_id','id');
+    }
 }

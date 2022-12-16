@@ -53,6 +53,8 @@ return [
 	'social_link'=>'Social link listing',
 	'delivery_slot'=>'Delivery slot listing',
 	'plan_detail'=>'Plan detail ',
+	'purchase_gift_card_used'=>'Thank you so much for using card!',
+	'promo_code_used'=>'Thank you so much for using promo code!',
 
 	
 ];

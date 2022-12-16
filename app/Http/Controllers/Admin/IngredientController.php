@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Models\Unit;
+use App\Models\DislikeUnit;
 use App\Models\DislikeCategory;
 use App\Models\DislikeGroup;
 use App\Models\DislikeItem;
@@ -221,5 +222,97 @@ public function ingredient_delete(Request $request ){
   }
 }
 
+public function change_status_category(Request $request){
+    $id = $request->input('id');
+    $status = $request->input('action');
+   $update = DislikeCategory::find($id)->update(['status' => $status]);
+   if ($update) {
+       return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Status updated successfully']);
+   } else {
+       return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while updating status']);
+   }
+}
 
+public function get_category_data(Request $request)
+    {
+        if($request->ajax()){
+            $data = DislikeCategory::Find($request->id);
+            return Response($data);
+        }
+     }
+
+
+     public function update_category(Request $request, $id=null){
+
+        $update = DislikeCategory::find($id);
+        $update->name = $request->input('category_name');
+        $update->name_ar = $request->input('category_name_ar');
+
+      $update->save();
+
+          if($update){
+              return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+          }
+          else {
+              return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+          }
+      }
+
+      public function category_delete(Request $request ){
+        $id = $request->input('id');
+         $category_delete = DislikeCategory::find($id);
+        $delete = $category_delete->delete();
+        if ($delete) {
+          return response()->json(['status' => true, 'error_code' => 200, 'message' => 'category deleted successfully']);
+      } else {
+          return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting category']);
+      }
+    }
+
+
+    public function unit_status(Request $request){
+        $id = $request->input('id');
+        $status = $request->input('action');
+       $update = DislikeUnit::find($id)->update(['status' => $status]);
+       if ($update) {
+           return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Status updated successfully']);
+       } else {
+           return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while updating status']);
+       }
+   }
+
+   public function get_unit_data(Request $request)
+    {
+        if($request->ajax()){
+            $data = DislikeUnit::Find($request->id);
+            return Response($data);
+        }
+     }
+
+     public function update_unit(Request $request, $id=null){
+
+        $update = DislikeUnit::find($id);
+        $update->unit = $request->input('unit_name');
+        $update->unit_ar = $request->input('unit_name_ar');
+
+      $update->save();
+
+          if($update){
+              return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+          }
+          else {
+              return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+          }
+      }
+
+      public function unit_delete(Request $request ){
+        $id = $request->input('id');
+         $unit_delete = DislikeUnit::find($id);
+        $delete = $unit_delete->delete();
+        if ($delete) {
+          return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Unit deleted successfully']);
+      } else {
+          return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting Unit']);
+      }
+    }    
 }

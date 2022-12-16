@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDeliveryDaysTable extends Migration
+class CreateUserUsedPromoCodeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateDeliveryDaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('delivery_days', function (Blueprint $table) {
+        Schema::create('user_used_promo_code', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->enum('type',['Weekly','Monthly']);
-            $table->string('including_weekend');
-            $table->integer('number_of_days');
-            $table->text('description');
-            $table->enum('status',['active','inactive','trahsed']);
+            $table->integer('user_id');
+            $table->integer('promocode_id');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateDeliveryDaysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('delivery_days');
+        Schema::dropIfExists('user_used_promo_code');
     }
 }

@@ -22,6 +22,7 @@ use App\Models\DietPlanType;
 use App\Models\DislikeCategory;
 use App\Models\DislikeGroup;
 use App\Models\ReferAndEarn;
+use App\Models\SubscriptionMealPlanVariant;
 use App\Models\SubscriptionPlan;
 use App\Models\Cities;
 use App\Models\Subscription;
@@ -47,6 +48,8 @@ use App\Models\CreditTransaction;
 use App\Models\UserSelectedDaysForAddress;
 use Carbon\Carbon;
 use DateTime;
+use App\Mail\YourMailTemplate;
+use Mail;
 
 
 use Validator;
@@ -96,12 +99,12 @@ class ApiController extends Controller {
                     
                 }
             }
-            if($request['email']){
-                $email = User::where('email',$request['email'])->whereNotIn('status',['0'])->first();
-                if ($email) {
-                    $validatedData->errors()->add('email', 'email already registered');
-                }
-            }
+            // if($request['email']){
+            //     $email = User::where('email',$request['email'])->whereNotIn('status',['0'])->first();
+            //     if ($email) {
+            //         $validatedData->errors()->add('email', 'email already registered');
+            //     }
+            // }
             
         });
         
@@ -462,7 +465,7 @@ class ApiController extends Controller {
         return $this->populateResponse();
     }
 
-    public function homescreen(request $request) {
+    public function homescreen(Request $request) {
         
         $profile=UserProfile::where('user_id',Auth::guard('api')->id())->first();
         if($profile){
@@ -498,40 +501,41 @@ class ApiController extends Controller {
                 ->get();
                 // $data['plan_list']=SubscriptionPlan::where(['duration_type'=>'weekly','status'=>'active'])->get();
                 $data['plan_type_list']=DietPlanType::select('id','name')->where(['status'=>'active'])->get();
-                $data['my_plan']=new \stdClass();
+                // $data['my_plan']=new \stdClass();
 
-
+                $plan_type= $request->plan_types;
                 $selectDietPlan = DietPlanType:: select('diet_plan_types.name','diet_plan_types.id')
-                ->first();
+                ->get()
                 // ->toArray();
-                
-                // ->each(function($selectDietPlan) {
-                    //  $weekly  = DeliveryDay::where('type','Weekly')
-                    //  ->where('including_weekend','N')
-                    // ->select('delivery_days.id','delivery_days.including_weekend','delivery_days.type')->get()
-                    // ->each(function($weekly) use ($selectDietPlan){
-                        $user_recommended_calorie=2200;
-                          $subscriptions=SubscriptionPlan::select('id','name','description','image')->where(['status'=>'active','diet_plan_type_id'=>$selectDietPlan->id])->get();
+            
+                ->each(function($selectDietPlan) use($plan_type) {
+                        // $user_recommended_calorie=2200;
+                       
+                           $subscriptions=SubscriptionPlan::select('id','name','image')->where(['status'=>'active'])->get();
+                        
                         if($subscriptions){
                             foreach($subscriptions as $subscription){
                                 $subscription->cost="0";
                                 $subscription->delivery_day_type="N/A";
-                                $plan_type=1;
-                                $plan_types=2;
+                                // $plan_type= $request->plan_types;
+                                // $plan_type=2;
                                 $subscription->meal_groups=[];
                 
-                                if(SubscriptionDietPlan::where(['plan_id'=>$subscription->id,'diet_plan_type_id'=>$selectDietPlan->id])->first()){
-                                    if($plan_type == 1 || $plan_types == 2){
+                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->first()){
+                                    if($plan_type == 1 || $plan_type == 2){
                                         $subscription->delivery_day_type="Week";
                                     }else{
                                         $subscription->delivery_day_type="Month";
                                     }
-                                    $deliveryDay=DeliveryDay::find($plan_types);
+                                          $deliveryDay=DeliveryDay::find($plan_type);
 
                 
-                                        if(SubscriptionCosts::where(['plan_id'=>$subscription->id,'delivery_day_type_id'=>$plan_types])->first()){
-                                         $costs=SubscriptionCosts::where(['plan_id'=>$subscription->id,'delivery_day_type_id'=>$plan_types])->first();
-                                        $subscription->cost=$costs->cost;
+                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option1'=>$deliveryDay->type])->first()){
+                                            if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
+                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->get();
+                                          foreach($costss as $costs){
+
+                                          $subscription->cost=$costs['plan_price'];
                 
                                         $meals=[];
                                         $meal_des=[];
@@ -543,21 +547,24 @@ class ApiController extends Controller {
                                         $meal_des=count($meal_des)." Meals Package (".implode(',',$meal_des).")";
                 
                                         $subscription->description=[
-                                            "Serves Upto 2000 calories out of $user_recommended_calorie calories recommended for you.",
+                                            "Serves Upto $costs->serving_calorie calories out of $costs->calorie calories recommended for you.",
                                             $deliveryDay->number_of_days." days a ".$subscription->delivery_day_type,
                                             " ".$meal_des
                                         ];
-                                         $subscription->meal_groups=$meals;
+                                         $subscription->meal_groups='';
                 
-                                        
+                                        }
+                                     }
                                     }
                                 }
   
                                 
                             }
                         }
+                    
                          $selectDietPlan->meals=$subscriptions;
-                
+                        
+                        });
 
                 $data['select_diet_plan'] = $selectDietPlan;
                 
@@ -708,15 +715,18 @@ class ApiController extends Controller {
     }
 
     public function dislikes() {
-        $category=DislikeGroup::select('id','name','image')->with('items')->where('status','active')->get()->each(function($category){
+        $category=DislikeGroup::select('id','name','image')
+        // ->with('items')
+        ->where('status','active')->get();
+        // ->each(function($category){
             foreach($category as $item){
-                $category->selected=false;
-                if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$category->id,'status'=>'active'])->first()){
-                    $category->selected=true;
+                $item->selected=false;
+                if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
+                    $item->selected=true;
                 }
             }
             
-        });
+        // });
 
         $response = new \Lib\PopulateResponse($category);
         $this->status = true;
@@ -1112,15 +1122,15 @@ public function addAddress(Request $request){
 
       if($request->address_type == '0'){
 
-           $data['address_type'] = "home";
+           $data['address_type'] = "Home";
          
       }elseif($request->address_type == '1'){
 
-         $data['address_type'] = "office";
+         $data['address_type'] = "Office";
 
       }else{
 
-        $data['address_type'] = "other";
+        $data['address_type'] = "Other";
 
       }
 
@@ -1346,44 +1356,73 @@ public function addGiftCard(Request $request){
         'purchase_type.required' => trans('validation.required', ['attribute' => 'purchase type ']),
       
     ]);
-    $validate->after(function ($validate) use ($request) {
-        if ($request['country_code'] &&  $request['receiver_mobile']) {
-            $getBooking = User::where('country_code', $request['country_code'])->where('mobile', $request['receiver_mobile'])->first();
-            if (!$getBooking) {
-                $this->error_code = 201;
-                $validate->errors()->add('purchase_type', "This user is not registered");
-            }
-        }
+    // $validate->after(function ($validate) use ($request) {
+    //     if ($request['country_code'] &&  $request['receiver_mobile']) {
+    //         $getBooking = User::where('country_code', $request['country_code'])->where('mobile', $request['receiver_mobile'])->first();
+    //         if (!$getBooking) {
+    //             $this->error_code = 201;
+    //             $validate->errors()->add('purchase_type', "This user is not registered");
+    //         }
+    //     }
     
-    });
+    // });
     if ($validate->fails()) {
         $this->status_code = 201;
         $this->message = $validate->errors();
     } else {
      if($request->purchase_type == 'gifted'){
-        $identifyUserId = User::select('id')->where('country_code',$request->country_code)->where('mobile',$request->receiver_mobile)->first();
+        // $identifyUserId = User::select('id','email','name','created_at')->where('country_code',$request->country_code)->where('mobile',$request->receiver_mobile)->first();
           $data=[
           "receiver_name" => $request->input('receiver_name'),
           "quantity" => $request->input('quantity'),
+          "gift_card_id" => $request->input('gift_card_id'),
           "gift_from_user_id" => Auth::guard('api')->id(),
-          "user_id" => $identifyUserId->id,
+        //   "user_id" => $identifyUserId->id,
           "receiver_email" => $request->input('receiver_email'),
           "mobile_number" => $request->input('receiver_mobile'),
           "purchase_type" => 'gifted',
+          'voucher_code' => substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 14),
+          'voucher_pin' => mt_rand(100000, 999999),
           "purchase_amount" => $request->input('purchase_amount'),
           "occassion" => $request->input('occassion'),
           "message_for_receiver" => $request->input('message_for_receiver'),
 
       ];
-    }else{
+      $insert = UserGiftCard::create($data);
+      $email = [
+        'to' => $request->input('receiver_email'),
+        'name' => $request->input('receiver_name'),
+        'voucher_code' => $insert->voucher_code,
+         'voucher_pin' =>$insert->voucher_pin,
+        'subject' => "You have received a gift from",
+        'message' => "You have Received a gift card of Diet-on",
+        'created_at' => date('d M Y H:i A', strtotime($insert->created_at))
+    ];
+    $this->send_mail($email);
 
+    }else{
+        $identifyUserId = User::select('id','email','name','created_at')->where('id',Auth::guard('api')->id())->first();
         $data=[
             "quantity" => $request->input('quantity'),
             "user_id" => Auth::guard('api')->id(),
+            "gift_card_id" => $request->input('gift_card_id'),
             "purchase_type" => 'self',
+            'voucher_code' => substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 14),
+            'voucher_pin' => mt_rand(100000, 999999),
             "purchase_amount" => $request->input('purchase_amount'),
   
         ];
+        $insert = UserGiftCard::create($data);
+        $email = [
+            'to' => $identifyUserId->email,
+            'name' => $identifyUserId->name,
+            'voucher_code' => $insert->voucher_code,
+            'voucher_pin' =>$insert->voucher_pin,
+            'subject' => "You have received a gift from",
+            'message' => "You have Received a gift card of Diet-on",
+            'created_at' => date('d M Y H:i A', strtotime($identifyUserId->created_at))
+        ];
+        $this->send_mail($email);
 
     }
 
@@ -1400,6 +1439,14 @@ public function addGiftCard(Request $request){
     }
     return $this->populateResponse();
 } 
+
+public function send_mail($email) {
+    $data = ['name' => $email['name'], 'query' => $email['message'], 'voucher_code' => $email['voucher_code'], 'voucher_pin' => $email['voucher_pin']];
+    Mail::send('admin.giftcard.email', $data, function ($message) use ($email) {
+        $message->to($email['to'], $email['name'])->subject('Reply to: ' . $email['subject']);
+        $message->from('praveen.techgropse@gmail.com', 'Diet-on ');
+    });
+}
 
 
 public function availableCredit(Request $request) {
@@ -1729,6 +1776,48 @@ public function sample_daily_meals(Request $request) {
 return $this->populateResponse();
 }
 
+
+public function balance_sample_daily_meals(Request $request) {
+    $dates = $request->date;
+
+                   $meals =Meal::
+                //    join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+                   join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
+                //    ->where(['meal_ratings.user_id',Auth::guard('api')->id()])
+                   ->select('meals.*')
+                   ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+                //    ->where(['meals.meal_schedule_id'=>$category->id])
+                    
+                   ->get()->each(function($meals) {
+                    $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+                    $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+                    ->where('meal_id', $meals->id)
+                    ->groupBy('meal_id')
+                   ->first();
+                   $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+                   ->groupBy('meal_id')
+                  ->count();
+            })->toArray();
+   
+   $data = $meals;
+   if($data){
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.sample_daily_meal');
+
+
+      }else{
+       $data =[];
+        $response = new \Lib\PopulateResponse($data);
+        $this->status = true;
+        $this->data = $response->apiResponse();
+        $this->message = trans('messages.sample_daily_meal_not');
+
+      }
+return $this->populateResponse();
+}
+
 // public function select_start_day_meal(Request $request) {
 //     $dates = $request->date;
 //     $plan_id = $request->plan_id;
@@ -1876,11 +1965,24 @@ public function paymentAvailableCredit(Request $request) {
     $meal_des=[];
     $status=[];
      $available_credit = UserProfile::select('available_credit')->where('user_id', Auth::guard('api')->id())->first();
-     $refer = ReferAndEarn::select('*')->where('status','active')->first();
-     if($refer){
-        $available_referral = ($refer->register_referee+$refer->plan_purchase_referee);
+     $refer_sender = ReferAndEarn::join('refer_and_earn_used','refer_and_earn.id','=','refer_and_earn_used.refer_and_earn_id')
+     ->select('refer_and_earn.*')
+     ->where('refer_and_earn.status','active')
+     ->where('refer_and_earn_used.referee_id',Auth::guard('api')->id())
+     ->first();
+     if($refer_sender){
+        $referee = ($refer_sender->register_referee+$refer_sender->plan_purchase_referee);
     }
-    
+    $refer_receiver = ReferAndEarn::join('refer_and_earn_used','refer_and_earn.id','=','refer_and_earn_used.refer_and_earn_id')
+     ->select('refer_and_earn.*')
+     ->where('refer_and_earn.status','active')
+     ->where('refer_and_earn_used.referral_id',Auth::guard('api')->id())
+     ->first();
+     if($refer_receiver){
+        $referral = ($refer_receiver->register_referral+$refer_receiver->plan_purchase_referral);
+    }
+    $available_referral = $referee+$referral;
+
      $data['available_credit'] = $available_credit;
      $data['available_referral'] = $available_referral;
     $response = new \Lib\PopulateResponse($data);

@@ -14,7 +14,7 @@ class PlanDeliveryDaysSeeder extends Seeder
         DB::table('delivery_days')->insert([
             [
                 'type' => 'Weekly',
-                'including_weekend' => 'Y',
+                'including_weekend' => 'withweekend',
                 'number_of_days'=>'7',
                 'description'=>'Without Friday/Saturday',
                 'status'=>'active',
@@ -23,7 +23,7 @@ class PlanDeliveryDaysSeeder extends Seeder
             ],
             [
                 'type' => 'Weekly',
-                'including_weekend' => 'N',
+                'including_weekend' => 'withoutweekend',
                 'number_of_days'=>'5',
                 'description'=>'With Friday/Saturday',
                 'status'=>'active',
@@ -32,7 +32,7 @@ class PlanDeliveryDaysSeeder extends Seeder
             ],
             [
                 'type' => 'Monthly',
-                'including_weekend' => 'Y',
+                'including_weekend' => 'withweekend',
                 'number_of_days'=>'28',
                 'description'=>'With Friday/Saturday',
                 'status'=>'active',
@@ -41,7 +41,7 @@ class PlanDeliveryDaysSeeder extends Seeder
             ],
             [
                 'type' => 'Monthly',
-                'including_weekend' => 'N',
+                'including_weekend' => 'withoutweekend',
                 'number_of_days'=>'20',
                 'description'=>'Without Friday/Saturday',
                 'status'=>'active',

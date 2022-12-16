@@ -16,9 +16,9 @@ class CreateMealIngredientListTable extends Migration
         Schema::create('meal_ingredient_list', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('meal_id');
-            $table->string('ingredients');
+            $table->string('item_id');
             $table->string('quantity');
-            $table->string('unit');
+            $table->string('unit_id');
             $table->enum('status',['active','inactive'])->default('active'); 
             $table->timestamps();
         });

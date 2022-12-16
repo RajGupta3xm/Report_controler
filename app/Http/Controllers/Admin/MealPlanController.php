@@ -113,7 +113,8 @@ class MealPlanController extends Controller {
         $meal_plan=SubscriptionPlan::create([
              'name'=>$request->title,
              'name_ar'=>$request->title_ar,
-             'image'=>$images
+             'image'=>$images,
+             
         ]);
         if(isset($request->variant_name_hidden)){
             foreach ($request->variant_name_hidden as $key=>$value){

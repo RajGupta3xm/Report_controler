@@ -258,6 +258,76 @@
 															</div>
 														</form>
                                                     </div>
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                              <div class="row comman_header justify-content-start">
+                                <div class="col">
+                                  <h2>Categories</h2>
+                                </div>
+                                <div class="col-3">
+                                  <form class="form-design" action="">
+                                    <div class="form-group mb-0 position-relative icons_set">
+                                      <input type="text" class="form-control" placeholder="Search" name="name" id="name">
+                                      <i class="far fa-search"></i>
+                                    </div>
+                                  </form>
+                                </div>
+                                <div class="col-auto text-end">
+                                  <div class="dropdown more_filters">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                      <form action="">
+                                        <div class="form-group mb-2">
+                                          <label for="">Status :</label>
+                                          <select class="form-select form-control" aria-label="Default select example">
+                                            <option selected="" disabled="">Status</option>
+                                            <option value="1">Active</option>
+                                            <option value="2">Draft</option>
+                                          </select>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-12 comman_table_design bg-white px-0">
+                                  <div class="table-responsive">
+                                    <table class="table mb-0">
+                                      <thead>
+                                        <tr>
+                                          <th>S.No.</th>
+                                          <th>Categories (En)</th>
+                                          <th>Categories (Ar)</th>
+                                          <th>Status</th>
+                                          <th>Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                      @foreach($category as $key=>$categories)
+                                        <tr>
+                                          <td>{{$key+1}}</td>
+                                          <td>{{$categories->name}}</td>
+                                          <td>{{$categories->name_ar}}</td>
+                                          <td>
+                                               <div class="mytoggle">
+                                                  <label class="switch">
+                                                     <input type="checkbox" onchange="changeStatus2(this, '<?= $categories->id ?>');" <?= ($categories->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                   </label>
+                                                </div>
+                                          </td>
+                                          <td>
+                                            <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop09">Edit</a> -->
+                                            <a class="comman_btn table_viewbtn " onclick="showmodal1(this,'{{$categories->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                            <a class="comman_btn table_viewbtn delete_btn" onclick="deleteCategoryData(this,'{{$categories->id}}');" href="javscript:;">Delete</a>
+                                          </td>
+                                        </tr>
+                                        @endforeach
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                                                 </div>
                                             </div>
                                             <div class="tab-pane fade" id="nav-profile1" role="tabpanel" aria-labelledby="nav-profile1-tab">
@@ -285,6 +355,76 @@
                                                                 </div>
                                                         </form>
                                                     </div>
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                                <div class="row comman_header justify-content-start">
+                                  <div class="col">
+                                    <h2>Unit</h2>
+                                  </div>
+                                  <div class="col-3">
+                                    <form class="form-design" action="">
+                                      <div class="form-group mb-0 position-relative icons_set">
+                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name">
+                                        <i class="far fa-search"></i>
+                                      </div>
+                                    </form>
+                                  </div>
+                                  <div class="col-auto text-end">
+                                    <div class="dropdown more_filters">
+                                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
+                                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <form action="">
+                                          <div class="form-group mb-2">
+                                            <label for="">Status :</label>
+                                            <select class="form-select form-control" aria-label="Default select example">
+                                              <option selected="" disabled="">Status</option>
+                                              <option value="1">Active</option>
+                                              <option value="2">Draft</option>
+                                            </select>
+                                          </div>
+                                        </form>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-12 comman_table_design bg-white px-0">
+                                    <div class="table-responsive">
+                                      <table class="table mb-0">
+                                        <thead>
+                                          <tr>
+                                            <th>S.No.</th>
+                                            <th>Unit (En)</th>
+                                            <th>Unit (Ar)</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($unit as $key=>$units)
+                                          <tr>
+                                            <td>{{$key+1}}</td>
+                                            <td>{{$units->unit}}</td>
+                                            <td>{{$units->unit_ar}}</td>
+                                            <td>
+                                            <div class="mytoggle">
+                                                  <label class="switch">
+                                                     <input type="checkbox" onchange="changeStatus3(this, '<?= $units->id ?>');" <?= ($units->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                   </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                              <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop10">Edit</a> -->
+                                              <a class="comman_btn table_viewbtn " onclick="showunitmodal(this,'{{$units->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                              <a class="comman_btn table_viewbtn delete_btn" onclick="deleteUnitData(this,'{{$units->id}}');" href="javscript:;">Delete</a>
+                                            </td>
+                                          </tr>
+                                          @endforeach
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -297,6 +437,68 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Category modal -->
+<div class="modal fade comman_modal" id="staticBackdrop09" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Category</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="categoryForm"> 
+          @csrf
+          <input type="hidden" class="form-control"  id="id" name="id" >
+            <div class="form-group col-4"> 
+                <label for="">Category Name (En)</label> 
+                <input type="text" class="form-control" value="" id="category_name" name="category_name" > 
+            </div>
+            <div class="form-group col-4"> 
+                <label for="">Category Name (Ar)</label> 
+                <input type="text" class="form-control" value="" id="category_name_ar" name="category_name_ar" > 
+            </div>
+             <div class="form-group mb-0 col-auto">
+                <button type="button" class="comman_btn" onclick="updateCategory(this);" >Save</button>
+             </div>
+          </form>
+        </div> 
+      </div>
+    </div>
+</div>
+    <!-- End category modal -->
+
+        <!-- Unit modal -->
+<div class="modal fade comman_modal" id="staticBackdrop010" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Unit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="unitForm"> 
+          @csrf
+          <input type="hidden" class="form-control"  id="ids" name="id" >
+            <div class="form-group col-4"> 
+                <label for="">Unit Name (En)</label> 
+                <input type="text" class="form-control" value="" id="unit_name" name="unit_name" > 
+            </div>
+            <div class="form-group col-4"> 
+                <label for="">Unit Name (Ar)</label> 
+                <input type="text" class="form-control" value="" id="unit_name_ar" name="unit_name_ar" > 
+            </div>
+             <div class="form-group mb-0 col-auto">
+                <button type="button" class="comman_btn" onclick="updateUnit(this);" >Save</button>
+             </div>
+          </form>
+        </div> 
+      </div>
+    </div>
+</div>
+    <!-- End unit modal -->
+
   <!--modal-->
  
   <div class="modal fade comman_modal" id="staticBackdrop08" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -444,6 +646,42 @@
 
 </script>
 <script>
+   function showmodal1(obj,id) {
+    
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_category/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#id').val(data.id);
+          $('#category_name').val(data.name);
+          $('#category_name_ar').val(data.name_ar);
+          $('#staticBackdrop09').modal('show');
+        }
+      });
+   }
+
+</script>
+<script>
+   function showunitmodal(obj,id) {
+    
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_unit/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#ids').val(data.id);
+          $('#unit_name').val(data.unit);
+          $('#unit_name_ar').val(data.unit_ar);
+          $('#staticBackdrop010').modal('show');
+        }
+      });
+   }
+
+</script>
+<script>
     
 function updateCar(obj) {
     
@@ -455,6 +693,76 @@ if (flag) {
     $.ajax({
         // _token: _token,
         url: "<?= url('admin/edit_group/update/') ?>/" + id,
+        type: 'POST',
+        enctype: 'multipart/form-data',
+        // data: $("#carForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
+</script>
+
+<script>
+    
+function updateUnit(obj) {
+    
+var flag = true;
+let  formData = new FormData($("#unitForm")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#ids').val();
+if (flag) {
+    $.ajax({
+        // _token: _token,
+        url: "<?= url('admin/edit_unit/update/') ?>/" + id,
+        type: 'POST',
+        enctype: 'multipart/form-data',
+        // data: $("#carForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
+</script>
+
+<script>
+    
+function updateCategory(obj) {
+    
+var flag = true;
+let  formData = new FormData($("#categoryForm")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#id').val();
+if (flag) {
+    $.ajax({
+        // _token: _token,
+        url: "<?= url('admin/edit_category/update/') ?>/" + id,
         type: 'POST',
         enctype: 'multipart/form-data',
         // data: $("#carForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
@@ -569,6 +877,48 @@ if (flag) {
                             swal({
                                 title: "Success!",
                                 text : "Group has been deleted \n Click OK to refresh the page",
+                                icon : "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error : function(){
+                            swal({
+                                title: 'Opps...',
+                                text : data.message,
+                                type : 'error',
+                                timer : '1500'
+                            })
+                        }
+                    })
+                } else {
+                swal("Your  file is safe!");
+                }
+            });
+        }
+        
+</script>
+
+<script>
+      function deleteCategoryData(obj, id){
+            //var csrf_token=$('meta[name="csrf_token"]').attr('content');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url : "<?= url('admin/category-delete') ?>",
+                        type : "POST",
+                        data : 'id=' + id + '&_token=<?= csrf_token() ?>',
+                        success: function(data){
+                            swal({
+                                title: "Success!",
+                                text : "Category has been deleted \n Click OK to refresh the page",
                                 icon : "success",
                             }).then(function() {
                                 location.reload();
@@ -747,7 +1097,7 @@ if (flag) {
                                     
                                         swal({
                                            title: "Success!",
-                                            text : "User Status has been Updated ",
+                                            text : "Group Status has been Updated ",
                                             icon : "success",
                                         })
                                     }
@@ -794,7 +1144,7 @@ if (flag) {
                                     
                                         swal({
                                            title: "Success!",
-                                            text : "Status has been Updated ",
+                                            text : "Ingredient Status has been Updated ",
                                             icon : "success",
                                         })
                                     }
@@ -815,3 +1165,141 @@ if (flag) {
                     });
         }
     </script>
+
+<script>
+       function changeStatus2(obj, id) {
+            swal({
+                title: "Are you sure?",
+                text: " status will be closed",
+                icon: "warning",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                var status = 'active';
+                            } else {
+                                var status = 'inactive';
+                            }
+                            if (id) {
+                                $.ajax({
+                                    url: "<?= url('admin/category/change_status') ?>",
+                                    type: 'post',
+                                    data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
+                                    success: function (data) {
+                                    
+                                        swal({
+                                           title: "Success!",
+                                            text : "category Status has been Updated ",
+                                            icon : "success",
+                                        })
+                                    }
+                                });
+                            } else {
+                                var data = {message: "Something went wrong"};
+                                errorOccured(data);
+                            }
+                        } else {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                $(obj).prop('checked', false);
+                            } else {
+                                $(obj).prop('checked', true);
+                            }
+                            return false;
+                        }
+                    });
+        }
+    </script>
+
+<script>
+       function changeStatus3(obj, id) {
+            swal({
+                title: "Are you sure?",
+                text: " status will be closed",
+                icon: "warning",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                var status = 'active';
+                            } else {
+                                var status = 'inactive';
+                            }
+                            if (id) {
+                                $.ajax({
+                                    url: "<?= url('admin/unit/change_status') ?>",
+                                    type: 'post',
+                                    data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
+                                    success: function (data) {
+                                    
+                                        swal({
+                                           title: "Success!",
+                                            text : "Unit Status has been Updated ",
+                                            icon : "success",
+                                        })
+                                    }
+                                });
+                            } else {
+                                var data = {message: "Something went wrong"};
+                                errorOccured(data);
+                            }
+                        } else {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                $(obj).prop('checked', false);
+                            } else {
+                                $(obj).prop('checked', true);
+                            }
+                            return false;
+                        }
+                    });
+        }
+    </script>
+
+<script>
+      function deleteUnitData(obj, id){
+            //var csrf_token=$('meta[name="csrf_token"]').attr('content');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url : "<?= url('admin/unit-delete') ?>",
+                        type : "POST",
+                        data : 'id=' + id + '&_token=<?= csrf_token() ?>',
+                        success: function(data){
+                            swal({
+                                title: "Success!",
+                                text : "Ingredient has been deleted \n Click OK to refresh the page",
+                                icon : "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error : function(){
+                            swal({
+                                title: 'Opps...',
+                                text : data.message,
+                                type : 'error',
+                                timer : '1500'
+                            })
+                        }
+                    })
+                } else {
+                swal("Your  file is safe!");
+                }
+            });
+        }
+        
+</script>    

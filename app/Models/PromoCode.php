@@ -17,13 +17,17 @@ class PromoCode extends Model
         "discount",
         "price",
         "maximum_discount_uses",
+        "limit_to_one_use",
         "start_date",
+        "promo_code_ticket_id",
         "end_date",
         "is_extended",
         "extended_end_date",
         "status"
 
-
-
     ];
+
+    public function promoCodeUsed(){
+        return $this->belongsTo(UserUsedPromoCode::class,'id','promocode_id');
+    }
 }

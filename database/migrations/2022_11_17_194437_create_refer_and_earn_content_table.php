@@ -15,10 +15,8 @@ class CreateReferAndEarnContentTable extends Migration
     {
         Schema::create('refer_and_earn_content', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('name_ar');
+            $table->string('type');
             $table->text('content');
-            $table->text('content_ar');
             $table->enum('status',['active','inactive','trahsed']);
             $table->timestamps();
         });

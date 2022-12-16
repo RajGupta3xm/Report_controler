@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        'admin/add_variants'
+        'admin/add_variants',
+        'admin/fleetarea/edit',
     ];
 }

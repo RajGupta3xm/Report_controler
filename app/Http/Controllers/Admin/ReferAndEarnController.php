@@ -46,7 +46,7 @@ class ReferAndEarnController extends Controller {
         } else {
            
                $registration_count = User::withcount('registration_count')->get();
-               $refer_content = ReferEarnContent::select('*')->first();
+                $refer_content = ReferEarnContent::select('*')->get();
                 $plan_purchase_count = ReferAndEarnUsed::withcount('user')->where('used_for','plan_purchase')->get();
           
                    $refer = User::withcount('user_referral')->with('refers')->get()
@@ -119,6 +119,16 @@ else {
 return redirect()->back()->with('error', 'Some error occurred while insert ');
 }
 
+}
+
+public function update_content(Request $request, $id=null){
+      $update['content'] = $request->input('action');
+   $update = ReferEarnContent::find($id)->update($update);
+   if ($update) {
+       return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Status updated successfully']);
+   } else {
+       return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while updating status']);
+   }
 }
 
 }

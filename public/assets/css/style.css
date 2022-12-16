@@ -2674,3 +2674,15 @@ input.select2-search__field {
     background-color: #00B65E;
     border-color: #00B65E;
 }
+
+.refer-boxx span {
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.width_manage {
+    width: 80px;
+    margin-left: 30px;
+}
