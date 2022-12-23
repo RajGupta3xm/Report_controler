@@ -59,7 +59,14 @@
                                        <textarea class="form-control validate" name="description_ar" id=""></textarea>
                                        <p class="text-danger text-small" id="description_arError"></p>
                                     </div>
-                                    <div class="form-group col-12 uploadimg_box">
+                                    <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                                        <input type="file" id="uploadimg" class="validate dropify" name="image">
+{{--                                       <label for="uploadimg">--}}
+{{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
+{{--                                                </label>--}}
+                                                <p class="text-danger text-small" id="imageError"></p>
+                                          </div>
+                                    <!-- <div class="form-group col-12 uploadimg_box">
                                        <span>Media :</span>
                                        <input type="file" id="uploadimg" name="image" class="d-none validate">
                                        
@@ -71,7 +78,7 @@
                                        </label>
                                        <img id="blah" src="#" alt="your image" />
                                        <p class="text-danger text-small" id="imageError"></p>
-                                    </div> 
+                                    </div>  -->
                                  
                                  </div>
                               </div>
@@ -157,7 +164,7 @@
                                        <h2>Recipe</h2>
                                     </div>
                                     <div class="col-auto">
-                                       <a class="comman_btn yellow-btn add_row_btn" href="javscript:;" onclick="insRow('myTable')" value="Insert row">
+                                       <a class="comman_btn yellow-btn add_row_btn addButton " href="javscript:;" onclick="insRow('myTable')" value="Insert row">
                                          Add Row
                                        </a>
                                     </div>
@@ -165,7 +172,7 @@
                                  <div class="row" >
                                     <div class="col-12 comman_table_design New_tabledesign">
                                        <div class="table-responsive">
-                                          <table class="table mb-0" id="myTable">
+                                          <table class="table mb-0 cloning-table" >
                                              <thead>
                                                 <tr>
                                                    <th>Ingredients</th>
@@ -174,7 +181,7 @@
                                                 </tr>
                                              </thead>
                                              <tbody>
-                                                <tr>
+                                                <tr class="clonetr">
                                                  
                                                 <td>
                                                       <select class="form-select table_input table_select adjust_lenth" aria-label="Default select example" id="fname"  name="ingredient[]">
@@ -194,6 +201,7 @@
                                                          @endforeach
                                                      </select>
                                                    </td>
+                                                   <!-- <td><input type="button" class=" btn btn-danger deleteButton " value="delete"/></td> -->
                                                    <!-- <td>
                                                       <input class="form-control table_input" type="text" id="fname" name="ingredient[]" value="">
                                                    </td>
@@ -268,7 +276,7 @@
                                        <h2>Portioning & Macro Nutrients</h2>
                                     </div>
                                  </div>
-                                 <div class="row">
+                                 <!-- <div class="row">
                                     <div class="col-12 comman_table_design New_tabledesign">
                                        <div class="table-responsive">
                                           <table class="table mb-0">
@@ -408,7 +416,7 @@
                                           </table>
                                        </div>
                                     </div>
-                                 </div>
+                                 </div> -->
                               </div>
                               <div class="form-group col-6 text-end" style="margin-top: 23px;">
 								 <button class="comman_btn" onclick="validate(this);">Save</button>
@@ -424,17 +432,36 @@
             </div>
          </div>
       </div> 
-      <script>
-function insRow(id) {
-    var filas = document.getElementById("myTable").rows.length;
-    var x = document.getElementById(id).insertRow(filas);
-    var y = x.insertCell(0);
-    var z = x.insertCell(1);
-    var t = x.insertCell(2);
-    y.insertAdjacentHTML('beforeend','<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="ingredient[]" id="fname" @foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}" >{{$ingredient->name}}</option>@endforeach</select>');
-    z.innerHTML ='<input class="form-control table_input table_select adjust_lenth" type="text" name="qty[]" id="fname">';
-    t.insertAdjacentHTML('beforeend','<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="unit[]" id="fname">@foreach($unit as $units)<option value="{{$units->id}}">{{$units->unit}}</option>@endforeach</select>');
-}
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+     <script>
+   $(document).ready(function(){
+   var Data_to_clone = $('.cloning-table tbody').html();
+    $(".addButton").click(function(){
+        $(Data_to_clone).appendTo(".cloning-table");
+    });
+
+    $(".cloning-table").on('click','.deleteButton',function(){
+        $(this).parents(".clonetr").remove();
+    });
+});
+
+// function insRow(id) {
+//     var filas = document.getElementById("myTable").rows.length;
+//     alert(filas);
+//     var x = document.getElementById(id).insertRow(filas);
+//     var y = x.insertCell(0);
+//     var z = x.insertCell(1);
+//     var t = x.insertCell(2);
+//     y.insertAdjacentHTML('<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="ingredient[]" id="fname" @foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}" >{{$ingredient->name}}</option>@endforeach</select>');
+//     z.innerHTML ='<input class="form-control table_input table_select adjust_lenth" type="text" name="qty[]" id="fname">';
+//     t.insertAdjacentHTML('beforeend','<select  class="form-select table_input table_select adjust_lenth" aria-label="Default select example " name="unit[]" id="fname">@foreach($unit as $units)<option value="{{$units->id}}">{{$units->unit}}</option>@endforeach</select>');
+// }
 </script>
       <script>
          uploadimg.onchange = evt => {

@@ -647,6 +647,7 @@ class ComposerStaticInit4dd6f25346a5011cf111d34624ead948
         'App\\Models\\UserProfile' => __DIR__ . '/../..' . '/app/Models/UserProfile.php',
         'App\\Models\\UserSelectedDaysForAddress' => __DIR__ . '/../..' . '/app/Models/UserSelectedDaysForAddress.php',
         'App\\Models\\UserUsedGiftCard' => __DIR__ . '/../..' . '/app/Models/UserUsedGiftCard.php',
+        'App\\Models\\UserUsedPromoCode' => __DIR__ . '/../..' . '/app/Models/UserUsedPromoCode.php',
         'App\\Models\\WeekDays' => __DIR__ . '/../..' . '/app/Models/WeekDays.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',

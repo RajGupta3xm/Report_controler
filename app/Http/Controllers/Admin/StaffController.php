@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Models\FitnessGoal;
 use App\Models\StaffGroup;
+use App\Models\Admin;
 use App\Models\StaffMembers;
 
 
@@ -132,11 +133,32 @@ public function submit(Request $request){
 
 
 public function staff_member_submit(Request $request){
-     $data=[
+    if($request->input('check11') == ''){
+         $data=[
+        "name" => $request->input('name'),
+        "group_id" => $request->input('group_id'),
+        "email" => $request->input('email'),
+        'password' => \Hash::make($request->input('password')),
+        "user_mgmt" => '3',
+        "order_mgmt" => '3',
+        "ingredient_mgmt" => '3',
+        "fitness_goal_mgmt" => '3',
+        "diet_plan_mgmt" => '3',
+        "meal_mgmt" => '3',
+        "meal_plan_mgmt" => '3',
+        "fleet_mgmt" => '3',
+        "promo_code_mgmt" => '3',
+        "gift_card_mgmt" => '3',
+        "notification_mgmt" => '3',
+        "refer_earn_mgmt" => '3',
+        "report_mgmt" => '3',
+        "content_mgmt" => '3',
+    ];
+    }else{
+       $data=[
      "name" => $request->input('name'),
      "group_id" => $request->input('group_id'),
      "email" => $request->input('email'),
-     "group_id" => $request->input('group_id'),
      'password' => \Hash::make($request->input('password')),
      "user_mgmt" => $request->input('check11'),
      "order_mgmt" => $request->input('checkv4'),
@@ -154,6 +176,7 @@ public function staff_member_submit(Request $request){
      "content_mgmt" => $request->input('v10'),
    
    ];
+}
    if(!empty($request->image1)){
       $filename = $request->image1->getClientOriginalName();
       $imageName = time().'.'.$filename;
@@ -170,6 +193,33 @@ public function staff_member_submit(Request $request){
   }
 
    $insert = StaffMembers::create($data);
+
+   if($insert){
+     $datasubadmin=[
+       "staff_member_id" => $insert->id,
+      "name" => $request->input('name'),
+      "email" => $request->input('email'),
+      'password' => \Hash::make($request->input('password')),
+      'type' => '1',
+
+   ];
+//   if(!empty($request->image1)){
+//       $filename = $request->image1->getClientOriginalName();
+//       $imageName = time().'.'.$filename;
+//      if(env('APP_ENV') == 'local'){
+//           $return = $request->image1->move(
+//          base_path() . '/public/uploads/staff_group_image/', $imageName);
+//       }else{
+//         $return = $request->image1->move(
+//         base_path() . '/../public/uploads/staff_group_image/', $imageName);
+//       }
+//       $url = url('/uploads/staff_group_image/');
+//        $datasubadmin['image'] = $url.'/'. $imageName;
+//     }
+$insert = Admin::create($datasubadmin);
+}
+
+
     if ($insert) {
         return redirect()->back()->with('success','Staff member added successfully');
       } else {
@@ -196,28 +246,52 @@ public function get_staff_member_data(Request $request){
 }
 
 public function update_member(Request $request, $id=null){
-     $data=[
-        "name" => $request->input('name'),
-        "group_id" => $request->input('group_id'),
-        "email" => $request->input('email'),
-        "group_id" => $request->input('group_id'),
-        'password' => \Hash::make($request->input('password')),
-        "user_mgmt" => $request->input('check11'),
-        "order_mgmt" => $request->input('checkv4'),
-        "ingredient_mgmt" => $request->input('checki1'),
-        "fitness_goal_mgmt" => $request->input('check01'),
-        "diet_plan_mgmt" => $request->input('checkk1'),
-        "meal_mgmt" => $request->input('v1'),
-        "meal_plan_mgmt" => $request->input('v2'),
-        "fleet_mgmt" => $request->input('v3'),
-        "promo_code_mgmt" => $request->input('v4'),
-        "gift_card_mgmt" => $request->input('v5'),
-        "notification_mgmt" => $request->input('v6'),
-        "refer_earn_mgmt" => $request->input('v7'),
-        "report_mgmt" => $request->input('v8'),
-        "content_mgmt" => $request->input('v10'),
-      
-      ];
+    if($request->input('check11') == ''){
+         $data=[
+            "name" => $request->input('name'),
+            "group_id" => $request->input('group_id'),
+            "email" => $request->input('email'),
+            "group_id" => $request->input('group_id'),
+            'password' => \Hash::make($request->input('password')),
+            "user_mgmt" => '3',
+            "order_mgmt" => '3',
+            "ingredient_mgmt" => '3',
+            "fitness_goal_mgmt" => '3',
+            "diet_plan_mgmt" => '3',
+            "meal_mgmt" => '3',
+            "meal_plan_mgmt" => '3',
+            "fleet_mgmt" => '3',
+            "promo_code_mgmt" => '3',
+            "gift_card_mgmt" => '3',
+            "notification_mgmt" => '3',
+            "refer_earn_mgmt" => '3',
+            "report_mgmt" => '3',
+            "content_mgmt" => '3',
+        ];
+    }else{
+        $data=[
+            "name" => $request->input('name'),
+            "group_id" => $request->input('group_id'),
+            "email" => $request->input('email'),
+            "group_id" => $request->input('group_id'),
+            'password' => \Hash::make($request->input('password')),
+            "user_mgmt" => $request->input('check11'),
+            "order_mgmt" => $request->input('checkv4'),
+            "ingredient_mgmt" => $request->input('checki1'),
+            "fitness_goal_mgmt" => $request->input('check01'),
+            "diet_plan_mgmt" => $request->input('checkk1'),
+            "meal_mgmt" => $request->input('v1'),
+            "meal_plan_mgmt" => $request->input('v2'),
+            "fleet_mgmt" => $request->input('v3'),
+            "promo_code_mgmt" => $request->input('v4'),
+            "gift_card_mgmt" => $request->input('v5'),
+            "notification_mgmt" => $request->input('v6'),
+            "refer_earn_mgmt" => $request->input('v7'),
+            "report_mgmt" => $request->input('v8'),
+            "content_mgmt" => $request->input('v10'),
+          
+          ];
+    }
       if(!empty($request->image3)){
          $filename = $request->image3->getClientOriginalName();
          $imageName = time().'.'.$filename;

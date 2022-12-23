@@ -17,6 +17,7 @@ class UserProfile extends Model
             'age',
             'gender',
             'activity_scale',
+            'available_referral',
             'fitness_scale_id',
             'diet_plan_type_id'
         ];

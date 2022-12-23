@@ -236,6 +236,10 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/promoCode_submit', 'Admin\PromoController@promoCode_submit');
     Route::post('/promoCode/change_status', 'Admin\PromoController@change_status');
     Route::post('/promoCode-delete','Admin\PromoController@promoCode_delete');
+    Route::post('/user/filter', [
+        'uses' => 'Admin\PromoController@filter_list',
+        'as' => 'admin.user.filter'
+    ]);
      /*******End Promo Code Management */
 
      

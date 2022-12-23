@@ -14,7 +14,7 @@ class AddLimitToOneUseToPromoCodesTable extends Migration
     public function up()
     {
         Schema::table('promo_codes', function (Blueprint $table) {
-            $table->enum('limit_to_one_use',['0','1']);
+            $table->enum('limit_to_one_use',['0','1'])->after('discount');
         });
     }
 

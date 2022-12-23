@@ -223,8 +223,9 @@ class LoginController extends Controller {
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
              if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
-                $user = Admin::where('email', $request->email)->first();
+                $user = Admin::where('email', $request->email)->where('type', '0')->orWhere('type','1')->first();
                  Session::put('admin_logged_in', $user);
+                //  Session::put('admin_logged_in', ['id' => $user->id, 'type' => $user->type]);
 //                 dd('as');
                  return redirect()->intended('admin/dashboard');
              } else {

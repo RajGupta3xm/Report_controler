@@ -36,6 +36,8 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('getSwapMeal', 'SubscriptionController@getSwapMeal');
     Route::post('apply_gift_card', 'SubscriptionController@apply_gift_card');
     Route::post('apply_promo_code', 'SubscriptionController@apply_promo_code');
+    Route::post('apply_referral_code', 'SubscriptionController@apply_referral_code');
+    Route::get('getArea', 'SubscriptionController@getArea');
    
 
 

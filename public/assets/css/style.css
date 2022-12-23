@@ -2686,3 +2686,76 @@ input.select2-search__field {
     width: 80px;
     margin-left: 30px;
 }
+
+.Modules_head {
+    font-weight: 600;
+    font-size: 17px;
+    margin-right: 10px;
+}
+.Modules_check span {
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+}
+.Access_part_main a {
+    width: 60px;
+    display: inline-flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    font-size: 14px;
+    color: #000;
+    font-weight: 600;
+}
+/* .Access_part_main a:last-child {
+    background-color: #f20;
+    color: #fff;
+} */
+
+.access_solve a:first-child{
+    background-color: #00B65E;
+    color: #fff;
+}
+
+.vaccine_name.active{
+	background-color: #00B65E;
+	color: #fff;
+}
+
+.vaccine_names.active{
+    background-color: #f20;
+    color: #fff;
+}
+
+.vaccine_names.active{
+	background-color: #00B65E;
+	color: #fff;
+}
+
+.vaccine_namess.active{
+    background-color: #f20;
+    color: #fff;
+}
+
+.access_solve a:last-child{
+    background-color: #fff;
+    color: #000;
+}
+.disable_all {
+    position: relative;
+    cursor: no-drop;
+}
+.disable_all::after {
+    position: absolute;
+    content: '';
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    opacity: 0.8;
+    background-color: #fff;
+    z-index: 22;
+}

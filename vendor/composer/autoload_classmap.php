@@ -130,6 +130,7 @@ return array(
     'App\\Models\\UserProfile' => $baseDir . '/app/Models/UserProfile.php',
     'App\\Models\\UserSelectedDaysForAddress' => $baseDir . '/app/Models/UserSelectedDaysForAddress.php',
     'App\\Models\\UserUsedGiftCard' => $baseDir . '/app/Models/UserUsedGiftCard.php',
+    'App\\Models\\UserUsedPromoCode' => $baseDir . '/app/Models/UserUsedPromoCode.php',
     'App\\Models\\WeekDays' => $baseDir . '/app/Models/WeekDays.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

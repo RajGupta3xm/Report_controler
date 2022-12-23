@@ -17,6 +17,7 @@ class CreateUserUsedPromoCodeTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('promocode_id');
+            $table->string('promo_code_ticket_id');
             $table->timestamps();
         });
     }

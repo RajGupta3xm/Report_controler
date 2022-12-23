@@ -26,6 +26,7 @@ class CreatePromoCodesTable extends Migration
             $table->date('end_date');
             $table->integer('is_extended')->default('0')->comment("extended count");
             $table->date('extended_end_date')->nullable();
+            $table->string('promo_code_ticket_id');
             $table->enum('status',['active','inactive','expired']);
             $table->timestamps();
         });

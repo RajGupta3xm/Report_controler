@@ -16,6 +16,7 @@ use App\Models\SubscriptionCosts;
 use App\Models\SubscriptionDietPlan;
 use App\Models\SubscriptionMealGroup;
 use App\Models\Meal;
+use App\Models\ReferAndEarn;
 use App\Models\PromoCode;
 use App\Models\UserUsedPromoCode;
 use App\Models\DislikeGroup;
@@ -29,6 +30,7 @@ use App\Models\Mealschedules;
 use App\Models\UserUsedGiftCard;
 use App\Models\DislikeCategory;
 use App\Models\UserDislike;
+use App\Models\ReferAndEarnused;
 use App\Models\DislikeItem;
 use App\Models\DeliverySlot;
 use App\Models\MealIngredientList;
@@ -686,6 +688,93 @@ class SubscriptionController extends Controller {
             ]
            
         );
+        $user3=UserProfile::updateOrCreate(
+            ['user_id' =>  Auth::guard('api')->id()],
+            [
+                'available_credit' => $request->total_amount,
+               
+            ]
+           
+        );
+
+        if($request->gift_card_status == '1'){
+            $giftCardTicket_id = UserGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
+        UserUsedGiftCard::create([
+            'user_id' => Auth::guard('api')->id(),
+            'gift_card_id' => $giftCardTicket_id->gift_card_id,
+            'voucher_code' => $request['voucher_code'],
+            'voucher_pin' => $request['voucher_pin'],
+          ]);
+        }else{
+
+        }
+
+
+        if($request->promo_status == '1'){
+            $promoCodeTicket_id = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
+         UserUsedPromoCode::create([
+            'user_id' => Auth::guard('api')->id(),
+            'promocode_id' => $promoCodeTicket_id->id,
+            'promo_code_ticket_id' => $request->input('ticket_id'),
+          ]);
+          $countUsers = UserUsedPromoCode::where('promo_code_ticket_id',$promoCodeTicket_id->promo_code_ticket_id)->count();
+          if($countUsers == $promoCodeTicket_id->maximum_discount_uses){
+            PromoCode::where('promo_code_ticket_id',$request['ticket_id'])->update(['status'=>'expired']);
+          }
+        }
+        
+
+
+         $select_id = ReferAndEarn::join('refer_and_earn_used','refer_and_earn.id','=','refer_and_earn_used.refer_and_earn_id')
+         ->select('refer_and_earn.id')
+         ->where('refer_and_earn_used.used_for','registration')
+         ->where('refer_and_earn.status','active')
+         ->where('refer_and_earn_used.referral_id',Auth::guard('api')->id())
+         ->first();
+         $select = ReferAndEarn::select('id')->where('ticket_id',$request['referral_code'])->first();
+        if(!empty($select)){
+           if($request->checkStatusReferral == '0'){
+             $user_referral_add = UserProfile::select('available_referral')->where('user_id',Auth::guard('api')->id())->first();
+             $user3=UserProfile::updateOrCreate(
+                 ['user_id' =>  Auth::guard('api')->id()],
+                 [
+                    'available_referral' => $user_referral_add->available_referral
+                   
+                 ]
+               );
+           }else{
+             $user3=UserProfile::updateOrCreate(
+               ['user_id' =>  Auth::guard('api')->id()],
+               [
+                  'available_referral' => '0',
+                 
+               ]
+             
+             );
+             ReferAndEarnUsed::create([
+                'refer_and_earn_id'  => $select->id,
+                'referral_id'  => Auth::guard('api')->id(),
+                'used_for'  => 'plan_purchase',
+              ]);
+            }
+         }else{
+            if($request->checkStatusReferral == '1'){
+            $user3=UserProfile::updateOrCreate(
+              ['user_id' =>  Auth::guard('api')->id()],
+              [
+                 'available_referral' => '0',
+                
+              ]
+            
+            );
+            ReferAndEarnUsed::create([
+               'refer_and_earn_id'  => $select_id->id,
+               'referral_id'  => Auth::guard('api')->id(),
+               'used_for'  => 'plan_purchase',
+             ]);
+           }
+        }
+
         $response = new \Lib\PopulateResponse($user3);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -944,16 +1033,11 @@ public function apply_gift_card(Request $request){
         }
 
         if ($request['voucher_code'] &&  $request['voucher_pin']) {
-             $count_used = UserUsedGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->count();
-            if ($count_used) {
-                $quantity = UserGiftCard::select('quantity')->where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
-                if($count_used == $quantity->quantity){
-                 $this->error_code = 201;
-                 $validate->errors()->add('gift card used', "You used all gift card");
-               }
+            if($user_used = UserUsedGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->where('user_id',Auth::guard('api')->id())->exists()){
+             $this->error_code = 201;
+             $validate->errors()->add('gift card used', "You already used this gift card");
            }
         }
-    
     });
     if ($validate->fails()) {
         $this->status_code = 201;
@@ -961,7 +1045,7 @@ public function apply_gift_card(Request $request){
     } else {
         
          $giftCard = UserGiftCard::join('gift_cards','user_gift_cards.gift_card_id','=','gift_cards.id')
-            ->select('gift_cards.id','gift_cards.discount','gift_cards.amount','gift_cards.gift_card_amount')
+            ->select('gift_cards.id','gift_cards.discount','gift_cards.amount','gift_cards.gift_card_amount','user_gift_cards.purchase_amount')
             ->where('user_gift_cards.user_id',Auth::guard('api')->id())
             ->where(['user_gift_cards.voucher_code'=>$request['voucher_code'],'user_gift_cards.voucher_pin'=>$request['voucher_pin']])
             ->first();
@@ -969,7 +1053,7 @@ public function apply_gift_card(Request $request){
                $giftCard->deducted_amount = ($giftCard->discount/100)*$request->meal_amount;
 
             }elseif(!empty($giftCard->amount)){
-                $giftCard->deducted_amount = $giftCard->amount;
+                $giftCard->deducted_amount = $giftCard->purchase_amount;
             }
           
         if($giftCard){
@@ -983,7 +1067,60 @@ public function apply_gift_card(Request $request){
         $this->status = true;
     }
     return $this->populateResponse();
-} 
+}
+
+
+public function apply_referral_code(Request $request){
+    $validate = Validator::make($request->all(), [
+        'referral_code' => 'required',
+       
+    ], [
+        'referral_code.required' => trans('validation.required', ['attribute' => 'referral code']),
+      
+    ]);
+    $validate->after(function ($validate) use ($request) {
+        if ($request['referral_code']) {
+            $getBooking = ReferAndEarn::where('ticket_id', $request['referral_code'])->first();
+            if (!$getBooking) {
+                $this->error_code = 201;
+                $validate->errors()->add('gift card', "This referral code is not valid");
+            }
+        }
+
+        if ($request['referral_code']) {
+            if($user_used = ReferAndEarnused::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
+                ->where('refer_and_earn_used.referral_id',Auth::guard('api')->id())
+                ->where('refer_and_earn_used.used_for','plan_purchase')
+                ->where('refer_and_earn.ticket_id',$request['referral_code'])
+                ->exists()){
+             $this->error_code = 201;
+             $validate->errors()->add('gift card used', "You already used this referral code for plan purchase");
+           }
+        }
+    });
+    if ($validate->fails()) {
+        $this->status_code = 201;
+        $this->message = $validate->errors();
+    } else {
+        
+        $getReferral = ReferAndEarn::select('id','plan_purchase_referral')->where('ticket_id', $request['referral_code'])->first();
+            if(!empty($getReferral->plan_purchase_referral)){
+               $getReferral->gain_referral = $getReferral->plan_purchase_referral;
+
+            }
+          
+        if($getReferral){
+         $response = new \Lib\PopulateResponse($getReferral);
+         $this->data = $response->apiResponse();
+         $this->message = trans('messages.purchase_gift_card_used');
+        } else {
+            $this->message = trans('messages.server_error');
+            $this->status_code = 202;
+        }
+        $this->status = true;
+    }
+    return $this->populateResponse();
+}
 
 public function apply_promo_code(Request $request){
     $validate = Validator::make($request->all(), [
@@ -1040,15 +1177,21 @@ public function apply_promo_code(Request $request){
             }
 
            $promoCodeTicket_id = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
-          $insert=[
-            'user_id' => Auth::guard('api')->id(),
-            'promocode_id' => $promoCodeTicket_id->id,
-            'promo_code_ticket_id' => $request->input('ticket_id'),
+          
+        //   $insert=[
+        //     'user_id' => Auth::guard('api')->id(),
+        //     'promocode_id' => $promoCodeTicket_id->id,
+        //     'promo_code_ticket_id' => $request->input('ticket_id'),
 
-          ];
-          $promo = UserUsedPromoCode::create($insert);
-        if($promo){
-         $response = new \Lib\PopulateResponse($promo);
+        //   ];
+        //   $promo = UserUsedPromoCode::create($insert);
+          if(!empty($promoCodeTicket_id->discount)){
+            $promoCodeTicket_id->amount_discount = ($promoCodeTicket_id->discount/100)*$request->total_amount;
+            }else{
+             $promoCodeTicket_id->amount_discount = $promoCodeTicket_id->price;
+            }
+        if($promoCodeTicket_id){
+         $response = new \Lib\PopulateResponse($promoCodeTicket_id);
          $this->data = $response->apiResponse();
          $this->message = trans('messages.promo_code_used');
         } else {
@@ -1061,5 +1204,23 @@ public function apply_promo_code(Request $request){
     return $this->populateResponse();
 } 
 
+
+public function getArea(Request $request) {
+$city = array(
+    'Al-Haflaj',
+    'Al-kharj',
+    'Al-Ghat',
+    'Almara',
+    'Duruma',
+    'Rumah',
+);
+   
+ 
+    $response = new \Lib\PopulateResponse($city);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.city_list');
+    return $this->populateResponse();
+}
 
 }

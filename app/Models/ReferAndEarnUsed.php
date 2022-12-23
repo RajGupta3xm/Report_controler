@@ -12,7 +12,7 @@ class ReferAndEarnUsed extends Model
     	'refer_and_earn_id',
     	'referee_id',
     	'referral_id',
-    	'user_for',
+    	'used_for',
     	'status',
     
    	];

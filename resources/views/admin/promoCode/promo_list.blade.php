@@ -112,17 +112,18 @@
                                  </form>
                               </div>
                            </div>
-                           <form class="form-design py-4 px-3 row align-items-end justify-content-between" action="">
+                           <form method="post" class="form-design py-4 px-3 row align-items-end justify-content-between" action="{{route('admin.user.filter')}}">
+                              @csrf
                               <div class="form-group mb-0 col-5">
                                  <label for="">From</label>
-                                 <input type="datetime-local" class="form-control">
+                                 <input type="datetime-local" onchange="$('#start_date').attr('min', $(this).val());" max="<?= date('Y-m-d') ?>"  value="{{isset($start_date)?$start_date:''}}"  name="start_date" class="form-control">
                               </div>
                               <div class="form-group mb-0 col-5">
                                  <label for="">To</label>
-                                 <input type="datetime-local" class="form-control">
+                                 <input type="datetime-local" id="start_date" name="end_date" max="<?= date('Y-m-d') ?>" value="{{isset($end_date)?$end_date:''}}" class="form-control">
                               </div> 
                               <div class="form-group mb-0 col-auto">
-                                 <button class="comman_btn">Search</button>
+                                 <button  href="#filter" onclick="filterList(this)"; class="comman_btn">Search</button>
                               </div> 
                            </form>
                            <div class="row">
@@ -218,6 +219,7 @@
    <script>
     $('.select_tr input:checkbox').change(function() {
   $(this).closest('.select_tr').find('input:not([type=checkbox])').prop("disabled", !this.checked);
+  $(this).closest('.select_tr').find('input:not([type=checkbox])').val('');
 });
   </script>
    @endsection
@@ -341,3 +343,25 @@
         }
         
 </script>
+<script>
+       function filterList(obj){
+        if ($(':input[name=start_date]').val() == '' && $(':input[name=end_date]').val() == ''){
+        $("#formError").html('Select filter attribute');
+        } else{
+
+        if ($(':input[name=start_date]').val() != '' && $(':input[name=end_date]').val() != ''){
+        $('form').submit();
+        } else{
+        if ($(':input[name=start_date]').val() != ''){
+        $("#formError").html('End date is required');
+        } else if ($(':input[name=end_date]').val() != ''){
+        $("#formError").html('Start date is required');
+        } else{
+        $("#formError").html('Select filter attribute');
+        }
+        }
+        }
+
+        }
+    
+ </script>
