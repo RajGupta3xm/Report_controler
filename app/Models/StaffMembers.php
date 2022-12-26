@@ -14,6 +14,7 @@ class StaffMembers extends Authenticatable
     protected $table='staff_members';
     protected $fillable = [
     	'id',
+    	'admin_id',
     	'name',
     	'name_ar',
     	'image',

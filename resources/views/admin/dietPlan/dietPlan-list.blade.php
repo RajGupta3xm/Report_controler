@@ -6,9 +6,18 @@
                <div class="row diet-plan-management justify-content-center">
                   <div class="col-12"> 
                      <div class="row mx-0">
+                     @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 text-end mb-4 pe-0"> 
                         <a href="<?= url('admin/add-diet-plan')?>" class="comman_btn me-2">Add Plan</a>
                         </div>
+                        @endif
+                     @if(Session::get('admin_logged_in')['type']=='1')
+                       @if(Session::get('staff_logged_in')['diet_plan_mgmt']!='1')
+                        <div class="col-12 text-end mb-4 pe-0"> 
+                        <a href="<?= url('admin/add-diet-plan')?>" class="comman_btn me-2">Add Plan</a>
+                        </div>
+                        @endif
+                        @endif
                         <div class="col-12 design_outter_comman shadow mb-4">
                            <div class="row comman_header justify-content-between">
                               <div class="col">
@@ -32,8 +41,16 @@
                                            <th>Media(En)</th>
                                            <th>Media(Ar)</th> 
                                            <th>Items</th> 
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <th>Status</th>
                                            <th>Action</th>
+                                           @endif
+                                           @if(Session::get('admin_logged_in')['type']=='1')
+                                           @if(Session::get('staff_logged_in')['diet_plan_mgmt']!='1')
+                                           <th>Status</th>
+                                           <th>Action</th>
+                                           @endif
+                                           @endif
                                          </tr>
                                        </thead>
                                        <tbody>
@@ -42,6 +59,7 @@
                                            <td><img class="table_img" src="{{$diet_plans->image?$diet_plans->image:assets/img/bg-img.jpg}}" alt=""></td>
                                            <td><img class="table_img" src="{{$diet_plans->image_ar?$diet_plans->image_ar:assets/img/bg-img.jpg}}" alt=""></td>
                                            <td>{{$diet_plans->name}}</td>  
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <td>
                                                <div class="mytoggle">
                                                     <label class="switch">
@@ -52,6 +70,21 @@
                                            <td> 
                                              <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-dietPlan/' . base64_encode($diet_plans->id)); ?>">Edit</a>
                                            </td>
+                                           @endif
+                                           @if(Session::get('admin_logged_in')['type']=='1')
+                                           @if(Session::get('staff_logged_in')['diet_plan_mgmt']!='1')
+                                           <td>
+                                               <div class="mytoggle">
+                                                    <label class="switch">
+                                                       <input type="checkbox" onchange="changeStatus(this, '<?= $diet_plans->id ?>');" <?= ( $diet_plans->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                    </label>
+                                                </div>
+                                           </td>
+                                           <td> 
+                                             <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-dietPlan/' . base64_encode($diet_plans->id)); ?>">Edit</a>
+                                           </td>
+                                           @endif
+                                           @endif
                                          </tr> 
                                         @endforeach
                                        </tbody>

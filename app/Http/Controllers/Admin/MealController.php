@@ -208,12 +208,12 @@ foreach($request->meal_schedule_id  as $id)
   
 
 foreach($request->week_days_id  as $id)
-{
+ {
     if (!intval($id)) {
        $schedule_id = WeekDays::create([
             'name'  => $id   
         ]);
-    }
+   
     if(!empty($schedule_id))
     {
       $ids = $schedule_id->id;
@@ -224,6 +224,23 @@ foreach($request->week_days_id  as $id)
            ]);
         } 
     }
+}
+    // if (date("Y-m-d", $request->id)) {
+    //     $date_id = WeekDays::create([
+    //          'name'  => $id   
+    //      ]);
+     
+    //  if(!empty($date_id))
+    //  {
+    //    $idss = $date_id->id;
+    //    if (is_numeric($idss)) {
+    //      MealWeekDay::create([
+    //           'meal_id' => $insert->id,
+    //            'week_days_id'  => $idss   
+    //         ]);
+    //      } 
+    //  }
+    // }
     
     if (is_numeric($id)) {
         MealWeekDay::create([

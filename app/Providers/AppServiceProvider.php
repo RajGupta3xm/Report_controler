@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('admin.layout.header', function($view)   // '*' means can we use anywhere if we mention route like web.layout.header then can we use only on header
         {
             if (Auth::guard('admin')->check()){
-            $image = Admin::select('image')->first();
+            $image = Admin::select('image')->where('id',Auth::guard('admin')->id())->first();
             $view->with('admin_image', $image);
         }
         });

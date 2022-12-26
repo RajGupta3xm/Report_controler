@@ -7,12 +7,24 @@
                <div class="row meal-management justify-content-center">
                   <div class="col-12"> 
                      <div class="row mx-0">
+                     @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 text-end mb-4 pe-0">
                            <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a>
                            <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a>
                            <a href="javscript:;" class="comman_btn me-2">Print</a>
                            <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
                         </div>
+                        @endif
+                     @if(Session::get('admin_logged_in')['type']=='1')
+                       @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
+                        <div class="col-12 text-end mb-4 pe-0">
+                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a>
+                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a>
+                           <a href="javscript:;" class="comman_btn me-2">Print</a>
+                           <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
+                        </div>
+                        @endif
+                        @endif
                         <div class="col-12 design_outter_comman shadow mb-4">
                            <div class="row comman_header justify-content-between">
                               <div class="col">
@@ -94,7 +106,14 @@
                                            <th>Meal Group</th>
                                            <th>Plan Type</th>
                                            <th>Rating</th> 
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <th>Status</th>
+                                           @endif
+                                           @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
+                                             <th>Status</th>
+                                           @endif
+                                           @endif
                                          </tr>
                                        </thead>
                                        <tbody>
@@ -113,6 +132,7 @@
                                            <td>{{$meal->meal_group->pluck('name')->implode(',  ')}}</td>
                                            <td>{{$meal->diet_plan->pluck('name')->implode(', ')}}</td>
                                            <td>{{$meal->rating['rating']??'0'}}</td> 
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <td>
                                            <div class="mytoggle">
                                              <label class="switch">
@@ -120,6 +140,18 @@
                                              </label>
                                          </div>
                                            </td>
+                                         @endif
+                                         @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
+                                           <td>
+                                           <div class="mytoggle">
+                                             <label class="switch">
+                                             <input type="checkbox" onchange="changeStatus(this, '<?= $meal->id ?>');" <?= ($meal->status == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
+                                             </label>
+                                         </div>
+                                           </td>
+                                           @endif
+                                           @endif
                                          </tr> 
                                        @endforeach
                                        </tbody>

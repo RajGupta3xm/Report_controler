@@ -52,7 +52,7 @@ use Carbon\Carbon;
 use DateTime;
 use App\Mail\YourMailTemplate;
 use Mail;
-
+use Cookie;
 
 use Validator;
 use Illuminate\Support\Facades\Auth;
@@ -102,7 +102,7 @@ class ApiController extends Controller {
                 }
             }
             if($request['referal_code']){
-            $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->first();
+            $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->where('status','active')->first();
             if(empty($CheckReferIsValid))
             {
                 $validatedData->errors()->add('referral', 'This code is not valid');
@@ -148,8 +148,9 @@ class ApiController extends Controller {
             }
 
             if($request->referal_code){
+                return $referred_by = Cookie::get('referral');
                 $referee_id = $request->referee_id;
-                $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->first();
+                $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->where('status','active')->first();
                 if(!empty($CheckReferIsValid)){
                     $insertReferRegistration = [
                     'refer_and_earn_id'  => $CheckReferIsValid->id,

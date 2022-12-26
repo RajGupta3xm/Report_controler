@@ -658,6 +658,7 @@ class SubscriptionController extends Controller {
             [
                 'user_id'=> Auth::guard('api')->id(),
                 'card_type' => $request->card_type,
+                'payment_method' => $request->payment_method,
                 'total_amount' => $request->total_amount,
                 
             ]

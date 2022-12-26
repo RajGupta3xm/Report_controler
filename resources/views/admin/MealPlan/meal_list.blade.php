@@ -6,10 +6,20 @@
                 <div class="row plan-management justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
+                        @if(Session::get('admin_logged_in')['type']=='0')
                             <div class="col-12 text-end mb-4 pe-0">
                                 <a href="{{url('admin/add-mealplan')}}" class="comman_btn yellow-btn me-2">Add Plan</a>
                                 <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a>
                             </div>
+                            @endif
+                        @if(Session::get('admin_logged_in')['type']=='1')
+                        @if(Session::get('staff_logged_in')['meal_plan_mgmt']!='1')
+                            <div class="col-12 text-end mb-4 pe-0">
+                                <a href="{{url('admin/add-mealplan')}}" class="comman_btn yellow-btn me-2">Add Plan</a>
+                                <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a>
+                            </div>
+                            @endif
+                            @endif
                             <div class="col-12 design_outter_comman shadow mb-4">
                                 <div class="row comman_header justify-content-between">
                                     <div class="col">
@@ -43,8 +53,16 @@
                                                     <th>Media</th>
                                                     <th>Plan Name</th>
                                                     <th>Plan Type</th>
+                                                    @if(Session::get('admin_logged_in')['type']=='0')
                                                     <th>Status</th>
                                                     <th>Action</th>
+                                                    @endif
+                                                    @if(Session::get('admin_logged_in')['type']=='1')
+                                                    @if(Session::get('staff_logged_in')['meal_plan_mgmt']!='1')
+                                                    <th>Status</th>
+                                                    <th>Action</th>
+                                                    @endif
+                                                    @endif
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -74,6 +92,7 @@
                                                             }
                                                         @endphp
                                                         <td>{{isset($diet_plan_list)?implode(',',$diet_plan_list):'-'}}</td>
+                                                        @if(Session::get('admin_logged_in')['type']=='0')
                                                         <td>
                                                             <div class="mytoggle">
                                                                 <label class="switch">
@@ -84,10 +103,23 @@
                                                         <td>
                                                             <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-mealplan/' . base64_encode($fitness_goals->id)); ?>">Edit</a>
                                                         </td>
+                                                        @endif
+                                                        @if(Session::get('admin_logged_in')['type']=='1')
+                                                        @if(Session::get('staff_logged_in')['meal_plan_mgmt']!='1')
+                                                        <td>
+                                                            <div class="mytoggle">
+                                                                <label class="switch">
+                                                                    <input type="checkbox" onchange="changeStatus(this, '<?= $fitness_goals->id ?>');" <?= ( $fitness_goals->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span>
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-mealplan/' . base64_encode($fitness_goals->id)); ?>">Edit</a>
+                                                        </td>
+                                                        @endif
+                                                        @endif
                                                     </tr>
                                                 @endforeach
-
-
                                                 </tbody>
                                             </table>
                                         </div>

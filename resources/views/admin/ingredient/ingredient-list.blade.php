@@ -19,7 +19,14 @@
                 <div class="row ingredients_management justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
+                        @if(Session::get('admin_logged_in')['type']=='0')
                             <div class="col-12 text-end mb-4 pe-0"> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> </div>
+                            @endif
+                         @if(Session::get('admin_logged_in')['type']=='1')
+                           @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                            <div class="col-12 text-end mb-4 pe-0"> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> </div>
+                            @endif
+                            @endif
                             <div class="col-12 design_outter_comman shadow">
                                 <div class="row">
                                     <div class="col-12 px-0 comman_tabs">
@@ -29,6 +36,7 @@
                                         <div class="tab-content" id="nav-tabContent">
                                             <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                                                 <div class="row p-4 mx-0">
+                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-between">
                                                             <div class="col-auto">
@@ -76,6 +84,58 @@
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate3(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
+                                                    @endif
+                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                 @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                                                        <div class="row comman_header justify-content-between">
+                                                            <div class="col-auto">
+                                                                <h2>Add New Ingredient</h2>
+                                                            </div>
+                                                        </div>
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm3" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
+                                                            @csrf
+                                                            <div class="form-group col-4"> 
+                                                                <label for="">Ingredient Name (En)</label> 
+                                                                <input type="text" class="form-control validate" value="" name="name" id="name"> 
+                                                                <p class="text-danger text-small" id="nameError"></p> 
+                                                            </div>
+                                                              <div class="form-group col-4">
+                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small" id="name_arError"></p>
+                                                              </div>
+                                                                <div class="form-group col-4"> 
+                                                                <label for="">Group</label>
+                                                                <select class="form-select form-control " name="group_id" aria-label="Default select example">
+                                                                    <option selected>Select Group</option>
+                                                                    @foreach($group as $groups)
+                                                                    <option value="{{$groups->id}}">{{$groups->name}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group mb-0 col"> 
+                                                                <label for="">Category</label>
+                                                                <select class="form-select form-control validate" name="category_id" aria-label="Default select example">
+                                                                    <option selected>Select Category</option>
+                                                                    @foreach($category as $categories) 
+                                                                    <option value="{{$categories->id}}">{{$categories->name}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                              
+                                                            </div>
+                                                            <div class="form-group mb-0 col"> 
+                                                                <label for="">Unit</label> 
+                                                                <select class="form-select form-control validate" name="unit_id" aria-label="Default select example">
+                                                                    <option selected>Select Unit</option>
+                                                                    @foreach($unit as $units) 
+                                                                    <option value="{{$units->id}}">{{$units->unit}}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate3(this)" class="comman_btn">Save</button> </div>
+                                                        </form>
+                                                    </div>
+                                                    @endif
+                                                    @endif
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-start">
                                                             <div class="col">
@@ -115,8 +175,16 @@
                                                                                 <th>Category</th>
                                                                                 <th>Group</th>
                                                                                 <th>Unit</th>
+                                                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                                                 <th>Status</th>
                                                                                 <th>Action</th>
+                                                                                @endif
+                                                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                                                @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                                                <th>Status</th>
+                                                                                <th>Action</th>
+                                                                                @endif
+                                                                                @endif
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -128,6 +196,8 @@
                                                                                 <td>{{$ingredients->category['name']?:'N/A'}}</td>
                                                                                 <td>{{$ingredients->group['name']?:'N/A'}}</td>
                                                                                 <td>{{$ingredients->unit['unit']?:'N/A'}}</td>
+                                                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                                                @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
                                                                                 <td>
                                                                                 <div class="mytoggle">
                                                                                    <label class="switch">
@@ -140,6 +210,22 @@
                                                                                     <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop07{{$ingredients->id}}">Edit</a> 
                                                                                     <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData1(this,'{{$ingredients->id}}');" href="javscript:;">Delete</a> 
                                                                                 </td> 
+                                                                                @endif
+                                                                                @endif
+                                                                                @if(Session::get('admin_logged_in')['type']=='0')
+                                                                                <td>
+                                                                                <div class="mytoggle">
+                                                                                   <label class="switch">
+                                                                                     <input type="checkbox" onchange="changeStatus1(this, '<?= $ingredients->id ?>');" <?= ( $ingredients->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                                                    </label>
+                                                                                </div>
+                                                                                </td>
+                                                                                <td> 
+                                                                                    <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop07">Edit</a>  -->
+                                                                                    <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop07{{$ingredients->id}}">Edit</a> 
+                                                                                    <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData1(this,'{{$ingredients->id}}');" href="javscript:;">Delete</a> 
+                                                                                </td> 
+                                                                                @endif
                                                                             </tr>
                                                                             @endforeach
                                                                         </tbody>
@@ -150,8 +236,10 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                          
                                             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                                                 <div class="row p-4 mx-0">
+                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-between">
                                                             <div class="col-auto">
@@ -166,6 +254,25 @@
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
+                                                    @endif
+                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                 @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                                                        <div class="row comman_header justify-content-between">
+                                                            <div class="col-auto">
+                                                                <h2>Add New Group</h2>
+                                                            </div>
+                                                        </div>
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
+                                                            @csrf
+                                                            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" ><p class="text-danger text-small" id="groupError"></p> </div>
+                                                            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" ><p class="text-danger text-small" id="group_arError"></p> </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger text-small" id="imageError"></p> </div>
+                                                            <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
+                                                        </form>
+                                                    </div>
+                                                    @endif
+                                                    @endif
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-start">
                                                             <div class="col">
@@ -204,8 +311,16 @@
                                                                                 <th>Media</th>
                                                                                 <th>Group Name (En)</th>
                                                                                 <th>Group Name (Ar)</th>
+                                                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                                                 <th>Status</th>
                                                                                 <th>Action</th> 
+                                                                                @endif
+                                                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                                                @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                                                <th>Status</th>
+                                                                                <th>Action</th> 
+                                                                                @endif
+                                                                                @endif
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
@@ -215,6 +330,7 @@
                                                                                 <td> <img class="table_img" src="{{$groups->image?$groups->image:assets/img/bg-img.jpg}}" alt=""> </td>
                                                                                 <td>{{$groups->name}}</td>
                                                                                 <td>{{$groups->name_ar}}</td>
+                                                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                                                 <td>
                                                                                 <div class="mytoggle">
                                                                                    <label class="switch">
@@ -227,6 +343,23 @@
                                                                                     <!-- <a class="comman_btn table_viewbtn delete_btn" href="javscript:;">Delete</a> -->
                                                                                     <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$groups->id}}');" href="javscript:;">Delete</a>
                                                                                 </td> 
+                                                                                @endif
+                                                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                                                @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                                                <td>
+                                                                                <div class="mytoggle">
+                                                                                   <label class="switch">
+                                                                                     <input type="checkbox" onchange="changeStatus(this, '<?= $groups->id ?>');" <?= ( $groups->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                                                    </label>
+                                                                                </div>
+                                                                                </td>
+                                                                                <td> 
+                                                                                    <a class="comman_btn table_viewbtn " onclick="showmodal(this,'{{$groups->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                                                                    <!-- <a class="comman_btn table_viewbtn delete_btn" href="javscript:;">Delete</a> -->
+                                                                                    <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$groups->id}}');" href="javscript:;">Delete</a>
+                                                                                </td> 
+                                                                                @endif
+                                                                                @endif
                                                                             </tr>
                                                                             @endforeach
                                                                         </tbody>
@@ -239,6 +372,7 @@
                                             </div>
                                             <div class="tab-pane fade" id="nav-profile2" role="tabpanel" aria-labelledby="nav-profile2-tab">
                                                 <div class="row p-4 mx-0">
+                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-between">
                                                             <div class="col-auto">
@@ -258,6 +392,30 @@
 															</div>
 														</form>
                                                     </div>
+                                                    @endif
+                                                @if(Session::get('admin_logged_in')['type']=='1')
+                                                 @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                                                        <div class="row comman_header justify-content-between">
+                                                            <div class="col-auto">
+                                                                <h2>Categories</h2>
+                                                            </div>
+                                                        </div>
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForms" enctype="multipart/form-data" action="{{url('admin/category/submit')}}">
+                                                            @csrf
+															<div class="form-group mb-0 col">
+																<label for="">Ingredient Categories (En)</label>
+																<input type="text" class="form-control validate" value="" name="category" > <p class="text-danger text-small" id="categoryError"></p> </div>
+															<div class="form-group mb-0 col">
+																<label for="">Ingredient Categories (Ar)</label>
+																<input type="text" class="form-control validate" value="" name="category_ar" >  <p class="text-danger text-small" id="category_arError"></p></div>
+															<div class="form-group mb-0 col-auto">
+																<button type="button" onclick="validate1(this);" class="comman_btn" >Create</button>
+															</div>
+														</form>
+                                                    </div>
+                                                    @endif
+                                                    @endif
                                                     <div class="col-12 mb-4 inner_design_comman border">
                               <div class="row comman_header justify-content-start">
                                 <div class="col">
@@ -298,8 +456,16 @@
                                           <th>S.No.</th>
                                           <th>Categories (En)</th>
                                           <th>Categories (Ar)</th>
+                                          @if(Session::get('admin_logged_in')['type']=='0')
                                           <th>Status</th>
                                           <th>Action</th>
+                                          @endif
+                                          @if(Session::get('admin_logged_in')['type']=='1')
+                                          @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                          <th>Status</th>
+                                          <th>Action</th>
+                                          @endif
+                                          @endif
                                         </tr>
                                       </thead>
                                       <tbody>
@@ -308,6 +474,7 @@
                                           <td>{{$key+1}}</td>
                                           <td>{{$categories->name}}</td>
                                           <td>{{$categories->name_ar}}</td>
+                                          @if(Session::get('admin_logged_in')['type']=='0')
                                           <td>
                                                <div class="mytoggle">
                                                   <label class="switch">
@@ -320,6 +487,24 @@
                                             <a class="comman_btn table_viewbtn " onclick="showmodal1(this,'{{$categories->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
                                             <a class="comman_btn table_viewbtn delete_btn" onclick="deleteCategoryData(this,'{{$categories->id}}');" href="javscript:;">Delete</a>
                                           </td>
+                                          @endif
+                                        
+                                          @if(Session::get('admin_logged_in')['type']=='1')
+                                          @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                          <td>
+                                               <div class="mytoggle">
+                                                  <label class="switch">
+                                                     <input type="checkbox" onchange="changeStatus2(this, '<?= $categories->id ?>');" <?= ($categories->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                   </label>
+                                                </div>
+                                          </td>
+                                          <td>
+                                            <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop09">Edit</a> -->
+                                            <a class="comman_btn table_viewbtn " onclick="showmodal1(this,'{{$categories->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                            <a class="comman_btn table_viewbtn delete_btn" onclick="deleteCategoryData(this,'{{$categories->id}}');" href="javscript:;">Delete</a>
+                                          </td>
+                                          @endif
+                                          @endif
                                         </tr>
                                         @endforeach
                                       </tbody>
@@ -332,6 +517,7 @@
                                             </div>
                                             <div class="tab-pane fade" id="nav-profile1" role="tabpanel" aria-labelledby="nav-profile1-tab">
                                                 <div class="row p-4 mx-0">
+                                                @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                                         <div class="row comman_header justify-content-between">
                                                             <div class="col-auto">
@@ -339,7 +525,7 @@
                                                             </div>
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/unit_submit')}}">
-                                                        {{ csrf_field() }} 
+                                                         {{ csrf_field() }} 
                                                             <div class="form-group mb-0 col ">
                                                                  <label for="">Ingredient Unit (En)</label>
                                                                   <input type="text" class="form-control validate" value="" name="name" id="name">
@@ -355,6 +541,34 @@
                                                                 </div>
                                                         </form>
                                                     </div>
+                                                    @endif
+                                                 @if(Session::get('admin_logged_in')['type']=='1')
+                                                   @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                                    <div class="col-12 mb-4 inner_design_comman border">
+                                                        <div class="row comman_header justify-content-between">
+                                                            <div class="col-auto">
+                                                                <h2>Unit</h2>
+                                                            </div>
+                                                        </div>
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/unit_submit')}}">
+                                                         {{ csrf_field() }} 
+                                                            <div class="form-group mb-0 col ">
+                                                                 <label for="">Ingredient Unit (En)</label>
+                                                                  <input type="text" class="form-control validate" value="" name="name" id="name">
+                                                                   <p class="text-danger text-small" id="nameError"></p>
+                                                            </div>
+                                                            <div class="form-group mb-0 col "> 
+                                                                <label for="">Ingredient Unit (Ar)</label> 
+                                                                <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                                                 <p class="text-danger text-small" id="name_arError"></p>
+                                                             </div>
+                                                            <div class="form-group mb-0 col-auto">
+                                                                 <button type="button" onclick="validate(this);" class="comman_btn" >Create</button> 
+                                                                </div>
+                                                        </form>
+                                                    </div>
+                                                    @endif
+                                                  @endif
                                                     <div class="col-12 mb-4 inner_design_comman border">
                                 <div class="row comman_header justify-content-start">
                                   <div class="col">
@@ -395,8 +609,16 @@
                                             <th>S.No.</th>
                                             <th>Unit (En)</th>
                                             <th>Unit (Ar)</th>
+                                            @if(Session::get('admin_logged_in')['type']=='0')
                                             <th>Status</th>
                                             <th>Action</th>
+                                            @endif
+                                            @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                            @endif
+                                            @endif
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -405,6 +627,7 @@
                                             <td>{{$key+1}}</td>
                                             <td>{{$units->unit}}</td>
                                             <td>{{$units->unit_ar}}</td>
+                                            @if(Session::get('admin_logged_in')['type']=='0')
                                             <td>
                                             <div class="mytoggle">
                                                   <label class="switch">
@@ -417,6 +640,23 @@
                                               <a class="comman_btn table_viewbtn " onclick="showunitmodal(this,'{{$units->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
                                               <a class="comman_btn table_viewbtn delete_btn" onclick="deleteUnitData(this,'{{$units->id}}');" href="javscript:;">Delete</a>
                                             </td>
+                                            @endif
+                                            @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
+                                            <td>
+                                            <div class="mytoggle">
+                                                  <label class="switch">
+                                                     <input type="checkbox" onchange="changeStatus3(this, '<?= $units->id ?>');" <?= ($units->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                   </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                              <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop10">Edit</a> -->
+                                              <a class="comman_btn table_viewbtn " onclick="showunitmodal(this,'{{$units->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                              <a class="comman_btn table_viewbtn delete_btn" onclick="deleteUnitData(this,'{{$units->id}}');" href="javscript:;">Delete</a>
+                                            </td>
+                                            @endif
+                                            @endif
                                           </tr>
                                           @endforeach
                                         </tbody>

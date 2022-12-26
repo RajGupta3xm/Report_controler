@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin;
+use App\Models\StaffMembers;
 use Auth;
 use App\Models\Otp;
 use DB;
@@ -225,6 +226,8 @@ class LoginController extends Controller {
              if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
                 $user = Admin::where('email', $request->email)->where('type', '0')->orWhere('type','1')->first();
                  Session::put('admin_logged_in', $user);
+                   $staffUser = StaffMembers::where('email', $request->email)->first();
+                 Session::put('staff_logged_in', $staffUser);
                 //  Session::put('admin_logged_in', ['id' => $user->id, 'type' => $user->type]);
 //                 dd('as');
                  return redirect()->intended('admin/dashboard');

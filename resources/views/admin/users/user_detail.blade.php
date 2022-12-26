@@ -14,10 +14,21 @@
                            </div>
                            <div class="row">
                               <form class="row align-items-center justify-content-center form-design position-relative p-4 py-5">
+                              @if(Session::get('admin_logged_in')['type']=='0')
                                  <div class="check_toggle">
                                     <input type="checkbox"  name="check1" id="check1" class="d-none"  onchange="changeStatus(this, '<?= $user->id ?>');" <?= ( $user->status == '1' ? 'checked' : '') ?>>
                                     <label for="check1"></label>
                                  </div>
+                                 @endif
+                                 @if(Session::get('admin_logged_in')['type']=='1')
+                                 @if(Session::get('staff_logged_in')['user_mgmt']!='1')
+                                 <div class="check_toggle">
+                                    <input type="checkbox"  name="check1" id="check1" class="d-none"  onchange="changeStatus(this, '<?= $user->id ?>');" <?= ( $user->status == '1' ? 'checked' : '') ?>>
+                                    <label for="check1"></label>
+                                 </div>
+                                 
+                                 @endif
+                                 @endif
                                  <div class="col-5">
                                     <div class="row adjust_margin">
                                        <div class="form-group col-12 mb-2">

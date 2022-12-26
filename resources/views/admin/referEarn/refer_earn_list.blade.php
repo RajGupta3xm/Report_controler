@@ -19,9 +19,19 @@
                   </div>
                    @endif 
                    @endif
+                   @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 text-end mb-4">
                            <a class="information_box shadow" data-bs-toggle="modal" data-bs-target="#exampleModal" href="javascript:;"><i class="fas fa-info"></i></a>
                         </div>
+                        @endif
+                      @if(Session::get('admin_logged_in')['type']=='1')
+                        @if(Session::get('staff_logged_in')['refer_earn_mgmt']!='1')
+                        <div class="col-12 text-end mb-4">
+                           <a class="information_box shadow" data-bs-toggle="modal" data-bs-target="#exampleModal" href="javascript:;"><i class="fas fa-info"></i></a>
+                        </div>
+                        @endif
+                        @endif
+                        @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 design_outter_comman shadow mb-4">
                            <div class="row comman_header justify-content-between">
                               <div class="col">
@@ -151,14 +161,157 @@
                               </div>
                            </form>
                         </div>
+                        @endif
+                        @if(Session::get('admin_logged_in')['type']=='1')
+                        @if(Session::get('staff_logged_in')['refer_earn_mgmt']!='1')
+                        <div class="col-12 design_outter_comman shadow mb-4">
+                           <div class="row comman_header justify-content-between">
+                              <div class="col">
+                                 <h2>Refer and Earn</h2>
+                              </div>
+                              <div class="col-auto refer-earn mt-4">
+                                 <form class="table_btns d-flex align-items-center">
+                                    <div class="check_toggle">
+                                       <input type="checkbox" checked name="check2" id="check2" class="d-none">
+                                       <label for="check2"></label>
+                                    </div>
+                                 </form>
+                              </div>
+                           </div>
+                           <form class="form-design py-4 my-3 px-3 row align-items-start justify-content-center form_hide_"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/refer_earn_submit')}}">
+                           {{ csrf_field() }}  
+                              <div class="col-12">
+                                 <div class="row">
+                                    <div class="col-6">
+                                       <div class="row">
+                                          <div class="form-group mb-4 col-12 checkbox_comman select_tr">
+                                             <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                   <input type="checkbox" checked="" name="v2" id="v2" class="d-none">
+                                                   <label class="text-dark" for="v2"></label>
+                                                </div>
+                                                <div class="col ps-4">
+                                                   <span class="offer_text">Enter the referral Credits for registration</span>
+                                                </div>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Sender</span>
+                                                   <input class="form-control" type="text" name="register_referee" >
+                                                </div>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Receiver</span>
+                                                   <input class="form-control" type="text" name="register_referral">
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="form-group mb-4 col-12 checkbox_comman select_tr1">
+                                             <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                   <input type="checkbox" checked="" name="v3" id="v3" class="d-none">
+                                                   <label class="text-dark" for="v3"></label>
+                                                </div>
+                                                <div class="col ps-4">
+                                                   <span class="offer_text">Enter the referral Credits for Plan Purchase</span>
+                                                </div>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Sender</span>
+                                                   <input class="form-control" type="text" name="plan_purchase_referee">
+                                                </div>
+                                                <div class="col-3 refer-boxx">
+                                                <span>Receiver</span>
+                                                   <input class="form-control" type="text" name="plan_purchase_referral">
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="form-group mb-4 col-12 textarea_height"> 
+                                             <label for="">How it Works (En) :</label>
+                                             <textarea class="form-control text-start" name="how_it_work_en" id="">
+                                             </textarea>  
+                                          </div>
+                                          <div class="form-group mb-4 col-12 textarea_height"> 
+                                             <label for="">How it Works (Ar) :</label>
+                                             <textarea class="form-control text-start" name="how_it_work_ar" id="">
+                                             </textarea>  
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-6 mt-4">
+                                       <div class="row">
+                                          <div class="form-group mb-4 col-12 checkbox_comman select_tr2">
+                                             <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                   <input type="checkbox" checked="" name="v3" id="v4" class="d-none">
+                                                   <label class="text-dark" for="v4"></label>
+                                                </div>
+                                                <div class="col ps-4">
+                                                   <span class="offer_text">Number of referral per user.</span>
+                                                </div>
+                                                <div class="col-3">
+                                                   <input class="form-control" type="text" name="referral_per_user">
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="form-group mb-4 col-12 checkbox_comman opacity-0">
+                                             <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                   <input type="checkbox" checked="" name="v3" id="v3" class="d-none">
+                                                   <label class="text-dark" for="v3"></label>
+                                                </div>
+                                                <div class="col ps-4">
+                                                   <span class="offer_text">Enter the referral Credits for Plan Purchase</span>
+                                                </div>
+                                                <div class="col-3">
+                                                   <input class="form-control" type="text">
+                                                </div>
+                                                <div class="col-3">
+                                                   <input class="form-control" type="text">
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="form-group mb-4 col-12 textarea_height mt-4 pt-1"> 
+                                             <label for="">Message body on sharing (En) :</label>
+                                             <textarea class="form-control text-start" name="message_body_en" id="">
+                                             </textarea>  
+                                          </div>
+                                          <div class="form-group mb-4 col-12 textarea_height "> 
+                                             <label for="">Message body on sharing (Ar) :</label>
+                                             <textarea class="form-control text-start" name="message_body_ar" id="">
+                                             </textarea>  
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="form-group mb-0 col-6 text-center d-flex align-items-center justify-content-center">
+                                 <div class="row">
+                                    <div class="col-auto">
+                                       <button type="button" class="comman_btn" onclick="validate(this);">Save & Apply</button>
+                                    </div>
+                                    <div class="col-6">
+                                       <input type="date" name="start_date" class="form-control w-20">
+                                    </div>
+                                 </div>
+                              </div>
+                           </form>
+                        </div>
+                        @endif
+                        @endif
                         <div class="col-12 design_outter_comman shadow">
                            <div class="row comman_header justify-content-between">
                               <div class="col-auto">
                                  <h2>History Table</h2>
                               </div>
+                              @if(Session::get('admin_logged_in')['type']=='0')
                               <div class="col-auto">
                                  <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
                               </div>
+                              @endif
+                              @if(Session::get('admin_logged_in')['type']=='1')
+                              @if(Session::get('staff_logged_in')['refer_earn_mgmt']!='1')
+                              <div class="col-auto">
+                                 <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
+                              </div>
+                              @endif
+                              @endif
                            </div>
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">

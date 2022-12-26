@@ -21,7 +21,8 @@
                   <div class="col-12">
                      <div class="row mx-0">
                         <div class="col-12 design_outter_comman shadow mb-4">
-                           <div class="row comman_header justify-content-between">
+                           @if(Session::get('admin_logged_in')['type']=='0')
+                           <div class="row comman_header justify-content-between" style="margin-bottom: 14px;">
                               <div class="col">
                                  <h2>Fitness Goal Management</h2>
                               </div>
@@ -72,6 +73,66 @@
                                  </div>
                               </div>   
                            </form>
+                           @endif
+                           @if(Session::get('admin_logged_in')['type']=='1')
+                           @if(Session::get('staff_logged_in')['fitness_goal_mgmt']=='1')
+                           <div class="row comman_header justify-content-between" style="margin-bottom: 14px;">
+                              <div class="col">
+                                 <h2>Fitness Goal Management</h2>
+                              </div>
+                           </div>
+                           @endif
+                           @endif
+                           @if(Session::get('admin_logged_in')['type']=='1')
+                           @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
+                           <form class="form-design py-4 px-4 row align-items-start justify-content-start mb-4"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/fitness-goal/submit')}}">
+                            @csrf
+                              <div class="col-md-12">
+                                 <div class="row">
+                                    <div class="col-6 pe-5 border-end mb-4">
+                                       <div class="form-group">
+                                          <label for=""> Title (English):</label>
+                                          <input type="text" class="form-control validate" value="" name="name" id="name"> 
+                                          <p class="text-danger text-small" id="nameError">
+                                       </div> 
+                                       <div class="form-group uploadimg_box">
+                                          <span>Media (English):</span>
+                                          <input type="file" id="uploadimg" name="image" class="d-none ">
+                                          <label for="uploadimg">
+                                             <div class="uploadimg_inner">
+                                                <i class="fas fa-upload me-2"></i>
+                                                <span>Upload File</span>
+                                             </div>
+                                          </label>
+                                        
+                                       </div>  
+                                    </div> 
+                                    <div class="col-6 ps-5 mb-4">
+                                       <div class="form-group">
+                                          <label for=""> Title (Arabic):</label>
+                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                          <p class="text-danger text-small" id="name_arError">
+                                       </div> 
+                                       <div class="form-group uploadimg_box">
+                                          <span>Media (Arabic):</span>
+                                          <input type="file" id="uploadimg1" name="image_ar" class="d-none ">
+                                          <label for="uploadimg1">
+                                             <div class="uploadimg_inner">
+                                                <i class="fas fa-upload me-2"></i>
+                                                <span>Upload File</span>
+                                             </div>
+                                          </label>
+                                        
+                                       </div>  
+                                    </div>  
+                                    <div class="form-group mb-0 col-12 text-center">
+                                       <button type="button" onclick="validate(this)" class="comman_btn">Save</button>
+                                    </div>
+                                 </div>
+                              </div>   
+                           </form>
+                           @endif
+                           @endif
                            <div class="row mx-0 pb-4 px-4">
                               <div class="col-12 design_outter_comman border">
                                  <div class="row comman_header justify-content-between">
@@ -90,7 +151,14 @@
                                                  <th>Title(Ar)</th>
                                                  <th>Media(En)</th>
                                                  <th>Media(Ar)</th>
+                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                  <th>Status</th> 
+                                                 @endif
+                                                 @if(Session::get('admin_logged_in')['type']=='1')
+                                                  @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
+                                                 <th>Status</th> 
+                                                 @endif
+                                                 @endif
                                                </tr>
                                              </thead>
                                              <tbody>
@@ -101,6 +169,7 @@
                                                  <td>{{$fitness_goals->name_ar}}</td> 
                                                  <td><img class="table_imggg" src="{{$fitness_goals->image}}" alt=""></td>
                                                  <td><img class="table_imggg" src="{{$fitness_goals->image_ar}}" alt=""></td> 
+                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                  <td>
                                                    <div class="mytoggle">
                                                       <label class="switch">
@@ -108,6 +177,18 @@
                                                         </label>
                                                    </div>
                                                 </td>
+                                                @endif
+                                                 @if(Session::get('admin_logged_in')['type']=='1')
+                                                  @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
+                                                 <td>
+                                                   <div class="mytoggle">
+                                                      <label class="switch">
+                                                            <input type="checkbox" onchange="changeStatus(this, '<?= $fitness_goals->id ?>');" <?= ( $fitness_goals->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                        </label>
+                                                   </div>
+                                                </td>
+                                                @endif
+                                                @endif
                                                </tr> 
                                             @endforeach
                                              </tbody>

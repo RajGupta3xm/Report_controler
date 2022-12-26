@@ -19,6 +19,7 @@
                 </div>
                 @endif 
                 @endif
+                @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 design_outter_comman shadow mb-4">
                            <div class="row comman_header justify-content-between">
                               <div class="col-auto">
@@ -94,6 +95,86 @@
                               </div>
                            </form>
                         </div>
+                        @endif
+                  @if(Session::get('admin_logged_in')['type']=='1')
+                     @if(Session::get('staff_logged_in')['gift_card_mgmt']!='1')
+                        <div class="col-12 design_outter_comman shadow mb-4">
+                           <div class="row comman_header justify-content-between">
+                              <div class="col-auto">
+                                 <h2>Add New Gift Card 
+                                 </h2>
+                              </div> 
+                           </div>
+                           <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/giftCard_submit')}}">
+                           {{ csrf_field() }}  
+                              <div class="form-group col-4">
+                                 <label for="">Gift Card Name (En) </label>
+                                 <input type="text" class="form-control validate" value="" name="name_en" id="name">
+                                 <p class="text-danger text-small" id="name_enError"></p>
+                              </div>
+                              <div class="form-group col-4">
+                                 <label for="">Gift Card Name (Ar) </label>
+                                 <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                 <p class="text-danger text-small" id="name_arError"></p>
+                              </div>
+                              <div class="form-group col-4 choose_file position-relative">
+                                 <span>Upload Image</span>
+                                 <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label>
+                                 <input type="file" class="form-control validate" value="" name="image" id="upload_video">
+                                 <p class="text-danger text-small" id="imageError"></p>
+                              </div> 
+                              <div class="form-group col-6 description_box">
+                                 <label for="">Description (En) :</label>
+                                 <textarea class="form-control validate" name="description" id=""></textarea>
+                                 <p class="text-danger text-small" id="descriptionError"></p>
+                              </div>
+                              <div class="form-group col-6 description_box">
+                                 <label for="">Description (Ar) :</label>
+                                 <textarea class="form-control validate" name="description_ar" id=""></textarea>
+                                 <p class="text-danger text-small" id="description_arError"></p>
+                              </div>
+                              <div class="col mb-0">
+                                 <div class="row align-items-end">
+                                    <div class="col-auto">
+                                       <a class="change_value" onclick="toggleVisibility('Menu1');" href="javascript:;">Discount</a>
+                                       <a class="change_value" onclick="toggleVisibility('Menu2');" href="javascript:;">Price</a>
+                                    </div>
+                                    <div id="Menu1" class="col form-group position-relative percentage_icons mb-0">
+                                       <label for="">Discount %</label>
+                                       <input class="form-control " type="text" value="" name="discount">
+                                       <p class="text-danger text-small" id="discountError"></p>
+                                       <div class="icon">%</div>
+                                    </div>
+                                    <div id="Menu2" class="form-group mb-0 col" style="display: none;">
+                                       <label for="">Price</label>
+                                       <input type="text" class="form-control " value="" name="price" id="price">
+                                       <p class="text-danger text-small" id="priceError"></p>
+                                    </div>
+                                 </div>
+                             </div> 
+                             <div class="form-group mb-0 col-4 description_box ">
+                                 <label for="">Gift Card Amount :</label>
+                                 <input type="text" class="form-control" value="" name="gift_card_amount" id="">
+                                 <p class="text-danger text-small" id="gift_card_amountError"></p>
+                              </div>
+                              <!-- <div class="col form-group position-relative percentage_icons mb-0">
+                                 <label for="">Discount %</label>
+                                 <input class="form-control validate" type="text" value="" name="discount">
+                                 <p class="text-danger text-small" id="discountError"></p>
+                                 <div class="icon">%</div>
+                              </div>
+                              <div class="form-group mb-0 col">
+                                 <label for="">Price</label>
+                                 <input type="text" class="form-control validate" value="" name="price" id="price">
+                                 <p class="text-danger text-small" id="priceError"></p>
+                              </div>  -->
+                              <div class="form-group mb-0 col-auto">
+                                 <button type="button" class="comman_btn" onclick="validate(this);">Save</button>
+                              </div>
+                           </form>
+                        </div>
+                        @endif
+                        @endif
                         <div class="col-12 design_outter_comman shadow">
                            <div class="row comman_header justify-content-between">
                               <div class="col-auto">
@@ -128,9 +209,17 @@
                                            <th>Image</th>
                                            <th>Discount %</th>
                                            <th>Price</th>  
-                                           <th>Gift Card Amount</th> 
+                                           <th>Gift Card Amount</th>
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <th>Status</th>
                                            <th>Action</th>
+                                           @endif
+                                           @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['gift_card_mgmt']!='1')
+                                           <th>Status</th>
+                                           <th>Action</th>
+                                           @endif
+                                           @endif
                                          </tr>
                                        </thead>
                                        <tbody>
@@ -143,7 +232,8 @@
                                            <td><img class="table_img" src="{{$giftCard->image?$giftCard->image:asset('assets/img/bg-img.jpg')}}" alt=""></td>
                                            <td>{{$giftCard->discount ?? 'N/A'}}</td> 
                                            <td>{{$giftCard->amount ?? 'N/A'}}</td>  
-                                           <td>{{$giftCard->gift_card_amount ?? '-'}}</td>  
+                                           <td>{{$giftCard->gift_card_amount ?? '-'}}</td> 
+                                           @if(Session::get('admin_logged_in')['type']=='0')
                                            <td>
                                            <!-- <form class="table_btns d-flex align-items-center"> 
                                                 <div class="check_toggle">
@@ -160,6 +250,27 @@
                                            <td>
                                             <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$giftCard->id}}');" href="javscript:;">Delete</a>
                                            </td>
+                                           @endif
+                                           @if(Session::get('admin_logged_in')['type']=='1')
+                                            @if(Session::get('staff_logged_in')['gift_card_mgmt']!='1')
+                                           <td>
+                                           <!-- <form class="table_btns d-flex align-items-center"> 
+                                                <div class="check_toggle">
+                                                   <input type="checkbox" checked="" name="check2" id="check2" class="d-none">
+                                                   <label for="check2"></label>
+                                                </div>
+                                             </form> -->
+                                             <div class="mytoggle">
+                                             <label class="switch">
+                                             <input type="checkbox" onchange="changeStatus(this, '<?= $giftCard->id ?>');" <?= ( $giftCard->status == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
+                                             </label>
+                                         </div>
+                                           </td>
+                                           <td>
+                                            <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData(this,'{{$giftCard->id}}');" href="javscript:;">Delete</a>
+                                           </td>
+                                           @endif
+                                           @endif
                                          </tr> 
                                          @endforeach
                                          @endif

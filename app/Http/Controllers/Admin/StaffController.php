@@ -23,7 +23,6 @@ class StaffController extends Controller
            
              $data['staff_group'] = StaffGroup::select('id','name')->orderBy('id','Asc')->get();
              $data['staff_member'] = StaffMembers::with('group')->select('*')->orderBy('id','Asc')->get();
-
              return view('admin.staffGroup.add_staff')->with($data);
         }
     }
@@ -133,8 +132,32 @@ public function submit(Request $request){
 
 
 public function staff_member_submit(Request $request){
+
+        $datasubadmin=[
+         "name" => $request->input('name'),
+         "email" => $request->input('email'),
+         'password' => \Hash::make($request->input('password')),
+         'type' => '1',
+   
+      ];
+     if(!empty($request->image1)){
+         $filename = $request->image1->getClientOriginalName();
+         $imageName = time().'.'.$filename;
+        if(env('APP_ENV') == 'local'){
+             $return = $request->image1->move(
+            base_path() . '/public/uploads/staff_group_image/', $imageName);
+         }else{
+           $return = $request->image1->move(
+           base_path() . '/../public/uploads/staff_group_image/', $imageName);
+         }
+         $url = url('/uploads/staff_group_image/');
+          $datasubadmin['image'] = $url.'/'. $imageName;
+       }
+   $insert = Admin::create($datasubadmin);
+   if($insert){
     if($request->input('check11') == ''){
          $data=[
+        "admin_id" => $insert->id,
         "name" => $request->input('name'),
         "group_id" => $request->input('group_id'),
         "email" => $request->input('email'),
@@ -156,6 +179,7 @@ public function staff_member_submit(Request $request){
     ];
     }else{
        $data=[
+    "admin_id" => $insert->id,
      "name" => $request->input('name'),
      "group_id" => $request->input('group_id'),
      "email" => $request->input('email'),
@@ -177,48 +201,25 @@ public function staff_member_submit(Request $request){
    
    ];
 }
-   if(!empty($request->image1)){
-      $filename = $request->image1->getClientOriginalName();
-      $imageName = time().'.'.$filename;
-      if(env('APP_ENV') == 'local'){
-          $return = $request->image1->move(
-          base_path() . '/public/uploads/staff_group_image/', $imageName);
-      }else{
-          $return = $request->image1->move(
-          base_path() . '/../public/uploads/staff_group_image/', $imageName);
-      }
-      $url = url('/uploads/staff_group_image/');
-       $data['image'] = $url.'/'. $imageName;
+   }
+//    if(!empty($request->image1)){
+//       $filename = $request->image1->getClientOriginalName();
+//       $imageName = time().'.'.$filename;
+//       if(env('APP_ENV') == 'local'){
+//           $return = $request->image1->move(
+//           base_path() . '/public/uploads/staff_group_image/', $imageName);
+//       }else{
+//           $return = $request->image1->move(
+//           base_path() . '/../public/uploads/staff_group_image/', $imageName);
+//       }
+//       $url = url('/uploads/staff_group_image/');
+//        $data['image'] = $url.'/'. $imageName;
    
-  }
+//   }
 
    $insert = StaffMembers::create($data);
 
-   if($insert){
-     $datasubadmin=[
-       "staff_member_id" => $insert->id,
-      "name" => $request->input('name'),
-      "email" => $request->input('email'),
-      'password' => \Hash::make($request->input('password')),
-      'type' => '1',
-
-   ];
-//   if(!empty($request->image1)){
-//       $filename = $request->image1->getClientOriginalName();
-//       $imageName = time().'.'.$filename;
-//      if(env('APP_ENV') == 'local'){
-//           $return = $request->image1->move(
-//          base_path() . '/public/uploads/staff_group_image/', $imageName);
-//       }else{
-//         $return = $request->image1->move(
-//         base_path() . '/../public/uploads/staff_group_image/', $imageName);
-//       }
-//       $url = url('/uploads/staff_group_image/');
-//        $datasubadmin['image'] = $url.'/'. $imageName;
-//     }
-$insert = Admin::create($datasubadmin);
-}
-
+   
 
     if ($insert) {
         return redirect()->back()->with('success','Staff member added successfully');
@@ -292,22 +293,46 @@ public function update_member(Request $request, $id=null){
           
           ];
     }
-      if(!empty($request->image3)){
-         $filename = $request->image3->getClientOriginalName();
-         $imageName = time().'.'.$filename;
-         if(env('APP_ENV') == 'local'){
-             $return = $request->image3->move(
-             base_path() . '/public/uploads/staff_member_image/', $imageName);
-         }else{
-             $return = $request->image3->move(
-             base_path() . '/../public/uploads/staff_member_image/', $imageName);
-         }
-         $url = url('/uploads/staff_member_image/');
-            $data['image'] = $url.'/'. $imageName;
+    //   if(!empty($request->image3)){
+    //      $filename = $request->image3->getClientOriginalName();
+    //      $imageName = time().'.'.$filename;
+    //      if(env('APP_ENV') == 'local'){
+    //          $return = $request->image3->move(
+    //          base_path() . '/public/uploads/staff_member_image/', $imageName);
+    //      }else{
+    //          $return = $request->image3->move(
+    //          base_path() . '/../public/uploads/staff_member_image/', $imageName);
+    //      }
+    //      $url = url('/uploads/staff_member_image/');
+    //         $data['image'] = $url.'/'. $imageName;
       
-     }
+    //  }
    
    $update = StaffMembers::find($id)->update($data);
+   $id = StaffMembers::where('id',$id)->first();
+   if($id){
+   $updatesubadmin=[
+    "name" => $request->input('name'),
+    "email" => $request->input('email'),
+    'password' => \Hash::make($request->input('password')),
+
+    ];
+    if(!empty($request->image3)){
+             $filename = $request->image3->getClientOriginalName();
+             $imageName = time().'.'.$filename;
+             if(env('APP_ENV') == 'local'){
+                 $return = $request->image3->move(
+                 base_path() . '/public/uploads/staff_member_image/', $imageName);
+             }else{
+                 $return = $request->image3->move(
+                 base_path() . '/../public/uploads/staff_member_image/', $imageName);
+             }
+             $url = url('/uploads/staff_member_image/');
+                $updatesubadmin['image'] = $url.'/'. $imageName;
+          
+         }
+$update = Admin::where('id',$id->admin_id)->update($updatesubadmin);
+   }
    if($update){
        return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
    }
