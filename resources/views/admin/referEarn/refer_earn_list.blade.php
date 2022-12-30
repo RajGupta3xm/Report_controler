@@ -63,11 +63,11 @@
                                                 </div>
                                                 <div class="col-3 refer-boxx">
                                                 <span>Sender</span>
-                                                   <input class="form-control" type="text" name="register_referee" >
+                                                   <input class="form-control" type="text" value="{{!empty($refer_id) ? $refer_id->register_referee : '-'}}" name="register_referee" >
                                                 </div>
                                                 <div class="col-3 refer-boxx">
                                                 <span>Receiver</span>
-                                                   <input class="form-control" type="text" name="register_referral">
+                                                   <input class="form-control" value="{{!empty($refer_id) ? $refer_id->register_referral : '-'}}" type="text" name="register_referral">
                                                 </div>
                                              </div>
                                           </div>
@@ -82,22 +82,22 @@
                                                 </div>
                                                 <div class="col-3 refer-boxx">
                                                 <span>Sender</span>
-                                                   <input class="form-control" type="text" name="plan_purchase_referee">
+                                                   <input class="form-control" type="text" name="plan_purchase_referee"  value="{{!empty($refer_id) ? $refer_id->plan_purchase_referee : '-'}}">
                                                 </div>
                                                 <div class="col-3 refer-boxx">
                                                 <span>Receiver</span>
-                                                   <input class="form-control" type="text" name="plan_purchase_referral">
+                                                   <input class="form-control" type="text" name="plan_purchase_referral" value="{{!empty($refer_id) ? $refer_id->plan_purchase_referral : '-'}}">
                                                 </div>
                                              </div>
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (En) :</label>
-                                             <textarea class="form-control text-start" name="how_it_work_en" id="">
+                                             <textarea class="form-control text-start" name="how_it_work_en" id="" >{{$refer_id->how_it_work_en}}
                                              </textarea>  
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (Ar) :</label>
-                                             <textarea class="form-control text-start" name="how_it_work_ar" id="">
+                                             <textarea class="form-control text-start" name="how_it_work_ar" id="" >{{$refer_id->how_it_work_ar}}
                                              </textarea>  
                                           </div>
                                        </div>
@@ -114,7 +114,8 @@
                                                    <span class="offer_text">Number of referral per user.</span>
                                                 </div>
                                                 <div class="col-3">
-                                                   <input class="form-control" type="text" name="referral_per_user">
+                                                   <input class="form-control" type="text" name="referral_per_user" value="{{!empty($refer_id) ? $refer_id->referral_per_user : '-'}}" >
+                                                   <input class="form-control" type="hidden" name="id" value="{{$refer_id->id}}">
                                                 </div>
                                              </div>
                                           </div>
@@ -128,21 +129,21 @@
                                                    <span class="offer_text">Enter the referral Credits for Plan Purchase</span>
                                                 </div>
                                                 <div class="col-3">
-                                                   <input class="form-control" type="text">
+                                                   <input class="form-control" type="text" >
                                                 </div>
                                                 <div class="col-3">
-                                                   <input class="form-control" type="text">
+                                                   <input class="form-control" type="text" >
                                                 </div>
                                              </div>
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height mt-4 pt-1"> 
                                              <label for="">Message body on sharing (En) :</label>
-                                             <textarea class="form-control text-start" name="message_body_en" id="">
+                                             <textarea class="form-control text-start" name="message_body_en" id="" >{{$refer_id->message_body_en}}
                                              </textarea>  
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height "> 
                                              <label for="">Message body on sharing (Ar) :</label>
-                                             <textarea class="form-control text-start" name="message_body_ar" id="">
+                                             <textarea class="form-control text-start" name="message_body_ar" id="" >{{$refer_id->message_body_ar}}
                                              </textarea>  
                                           </div>
                                        </div>

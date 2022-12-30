@@ -83,7 +83,7 @@ class ApiController extends Controller {
             // 'family_name' => 'required',
             'email' => 'required',
             'country_code' => 'required',
-            'mobile' => 'required'
+            'mobile' => 'required|string|size:11'
         ], [
             'name.required' => trans('validation.required', ['attribute' => 'name']),
             // 'family_name.required' => trans('validation.required', ['attribute' => 'family_name']),
@@ -101,20 +101,23 @@ class ApiController extends Controller {
                     
                 }
             }
-            if($request['referal_code']){
-            $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->where('status','active')->first();
-            if(empty($CheckReferIsValid))
-            {
-                $validatedData->errors()->add('referral', 'This code is not valid');
-            }
-         }
+            if($request['referral_code']){
+              $CheckReferIsValid = User::where('referral_code',$request->referral_code)->whereNotIn('status',['0'])->first();
+             if(empty($CheckReferIsValid))
+              {
+                 $validatedData->errors()->add('referral', 'This code is not valid');
+               }
+           }
 
-            // if($request['email']){
-            //     $email = User::where('email',$request['email'])->whereNotIn('status',['0'])->first();
-            //     if ($email) {
-            //         $validatedData->errors()->add('email', 'email already registered');
-            //     }
-            // }
+            if($request['referral_code']){
+                $referralPerUser = ReferAndEarn::select('referral_per_user')->where('status','active')->first();
+                $getUserId = User::select('id')->where('referral_code',$request['referral_code'])->whereNotIn('status',['0'])->first();
+                if ($getUserId) {
+                    $countUser = ReferAndEarnUsed::where('referee_id',$getUserId->id)->where('used_for','registration')->count();
+                    if($countUser == $referralPerUser->referral_per_user)
+                    $validatedData->errors()->add('referral code', 'This code is not valid');
+                }
+            }
             
         });
         
@@ -141,67 +144,69 @@ class ApiController extends Controller {
                     'name' => $request['name'] .' ' . $request['family_name'] ,
                     'email' => $request['email'],
                     'country_code' => $request['country_code'],
-                    'mobile'=> $request['mobile']
+                    'mobile'=> $request['mobile'],
+                    'referral_code'  => strtoupper(str_random(14)),
                 ];
 
                 $newUser = User::create($insert);
             }
 
-            if($request->referal_code){
-                return $referred_by = Cookie::get('referral');
-                $referee_id = $request->referee_id;
-                $CheckReferIsValid = ReferAndEarn::where('ticket_id',$request->referal_code)->where('status','active')->first();
+            if($request->referral_code){
+                 $CheckReferIsValid = User::where('referral_code',$request->referral_code)->whereNotIn('status',['0'])->first();
                 if(!empty($CheckReferIsValid)){
                     $insertReferRegistration = [
-                    'refer_and_earn_id'  => $CheckReferIsValid->id,
                     'referral_id'  => $newUser->id,
-                    'referee_id'  => $referee_id,
+                    'referee_id'  => $CheckReferIsValid->id,
                     'used_for'  => 'registration',
 
                     ];
                     $refer_registration = ReferAndEarnUsed::create($insertReferRegistration);
-
-                    $referral_registration = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-                    ->select('refer_and_earn.*')
-                    ->where('refer_and_earn.status','active')
-                    ->where('refer_and_earn_used.status','active')
-                    ->where('refer_and_earn_used.referral_id',$newUser->id,)
-                    ->where('refer_and_earn_used.used_for','registration')
-                    ->get();
-                    $totalCostRegistration = 0; 
-                    foreach($referral_registration as $cost){
-                       $totalCostRegistration += $cost->register_referral;
-                   }
-                   $referee_registration = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-                    ->select('refer_and_earn.*')
-                    ->where('refer_and_earn.status','active')
-                    ->where('refer_and_earn_used.status','active')
-                    ->where('refer_and_earn_used.referee_id',$referee_id,)
-                    ->where('refer_and_earn_used.used_for','registration')
-                    ->get();
-                    $totalCostRefereeRegistration = 0; 
-                    foreach($referee_registration as $cost){
-                       $totalCostRefereeRegistration += $cost->register_referee;
-                   }
-                   UserProfile::updateOrCreate(
-                    ['user_id' =>  $referee_id],
-                    [
-                        'available_referral' => $totalCostRefereeRegistration,
+                    $cost = ReferAndEarn::select('*')->where('status','active')->first();
+                    // $referral_registration = ReferAndEarnUsed::where('referral_id',$newUser->id)
+                    // ->where('used_for','registration')
+                    // ->get();
+                    // $totalCostRegistration = 0; 
+                    // foreach($referral_registration as $referral_registrations){
+                    // $totalCostRegistration += $cost->register_referral;
+                    // }
+                    UserProfile::updateOrCreate(
+                        ['user_id' =>  $newUser->id],
+                        [
+                            'available_referral' => $cost->register_referral,
+                           
+                        ]
                        
-                    ]
-                   
-                 );
-                  
-                   UserProfile::updateOrCreate(
-                       ['user_id' =>  $newUser->id],
-                       [
-                           'available_referral' => $totalCostRegistration,
-                          
-                       ]
-                      
-                   );
-                 
+                    );
+                    $availableReferral = UserProfile::select('available_referral')->where('user_id',$CheckReferIsValid->id)->first();
+                    $sum = $availableReferral->available_referral+$cost->register_referee;
+                    UserProfile::updateOrCreate(
+                        ['user_id' =>  $CheckReferIsValid->id],
+                        [
+                            'available_referral' => $sum,
+                           
+                        ]
+                       
+                    );
                 }
+                    // $CheckReferIsValidd = User::where('referral_code',$request->referral_code)->whereNotIn('status',['0'])->first();
+                    // if(!empty($CheckReferIsValidd)){
+                    //   $referee_registration = ReferAndEarnUsed::where('referee_id',$CheckReferIsValidd->id)
+                    //   ->where('used_for','registration')
+                    //   ->get();
+                    //   $cost = ReferAndEarn::select('*')->where('status','active')->first();
+                    //   $totalCostRefereeRegistration = 0; 
+                    //   foreach($referee_registration as $referee_registrations){
+                    //       $totalCostRefereeRegistration += $cost->register_referee;
+                    //    }
+                    //  UserProfile::updateOrCreate(
+                    //      ['user_id' =>  $CheckReferIsValidd->id],
+                    //      [
+                    //      'available_referral' => $totalCostRefereeRegistration,
+                       
+                    //     ]
+                    //     );
+                  
+                    // }  
    
             }
             
@@ -568,22 +573,28 @@ class ApiController extends Controller {
                 // $data['my_plan']=new \stdClass();
 
                 $plan_type= $request->plan_types;
-                $selectDietPlan = DietPlanType:: select('diet_plan_types.name','diet_plan_types.id')
+                 $selectDietPlan = DietPlanType::select('diet_plan_types.name','diet_plan_types.id')
                 ->get()
                 // ->toArray();
             
                 ->each(function($selectDietPlan) use($plan_type) {
                         // $user_recommended_calorie=2200;
                        
-                           $subscriptions=SubscriptionPlan::select('id','name','image')->where(['status'=>'active'])->get();
+                          $subscriptions=SubscriptionPlan::select('id','name','image')->where(['status'=>'active'])->get();
                         
                         if($subscriptions){
                             foreach($subscriptions as $subscription){
                                 $subscription->cost="0";
+                               
                                 $subscription->delivery_day_type="N/A";
                                 // $plan_type= $request->plan_types;
                                 // $plan_type=2;
                                 $subscription->meal_groups=[];
+                                if(userProfile::where('subscription_id',$subscription->id)->exists()){
+                                    $subscription->buy_status ="switch";
+                                }else{
+                                    $subscription->buy_status ="buy";
+                                }
                 
                                 if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->first()){
                                     if($plan_type == 1 || $plan_type == 2){
@@ -1447,7 +1458,7 @@ public function addGiftCard(Request $request){
           "receiver_name" => $request->input('receiver_name'),
           "quantity" => $request->input('quantity'),
           "gift_card_id" => $request->input('gift_card_id'),
-          "gift_from_user_id" => Auth::guard('api')->id(),
+          "user_id" => Auth::guard('api')->id(),
         //   "user_id" => $identifyUserId->id,
           "receiver_email" => $request->input('receiver_email'),
           "mobile_number" => $request->input('receiver_mobile'),
@@ -1465,6 +1476,7 @@ public function addGiftCard(Request $request){
         'name' => $request->input('receiver_name'),
         'voucher_code' => $insert->voucher_code,
          'voucher_pin' =>$insert->voucher_pin,
+         "purchase_amount" => $insert->purchase_amount,
         'subject' => "You have received a gift from",
         'message' => "You have Received a gift card of Diet-on",
         'created_at' => date('d M Y H:i A', strtotime($insert->created_at))
@@ -1476,6 +1488,7 @@ public function addGiftCard(Request $request){
         $data=[
             "quantity" => $request->input('quantity'),
             "user_id" => Auth::guard('api')->id(),
+            "gift_from_user_id" => Auth::guard('api')->id(),
             "gift_card_id" => $request->input('gift_card_id'),
             "purchase_type" => 'self',
             'voucher_code' => substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 14),
@@ -1489,6 +1502,7 @@ public function addGiftCard(Request $request){
             'name' => $identifyUserId->name,
             'voucher_code' => $insert->voucher_code,
             'voucher_pin' =>$insert->voucher_pin,
+            "purchase_amount" => $insert->purchase_amount,
             'subject' => "You have received a gift from",
             'message' => "You have Received a gift card of Diet-on",
             'created_at' => date('d M Y H:i A', strtotime($identifyUserId->created_at))
@@ -1512,7 +1526,7 @@ public function addGiftCard(Request $request){
 } 
 
 public function send_mail($email) {
-    $data = ['name' => $email['name'], 'query' => $email['message'], 'voucher_code' => $email['voucher_code'], 'voucher_pin' => $email['voucher_pin']];
+    $data = ['name' => $email['name'], 'query' => $email['message'], 'voucher_code' => $email['voucher_code'], 'voucher_pin' => $email['voucher_pin'], 'purchase_amount' => $email['purchase_amount']];
     Mail::send('admin.giftcard.email', $data, function ($message) use ($email) {
         $message->to($email['to'], $email['name'])->subject('Reply to: ' . $email['subject']);
         $message->from('praveen.techgropse@gmail.com', 'Diet-on ');
@@ -1752,7 +1766,7 @@ public function resume_meal_plan(Request $request) {
 
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
-        'id' => $request->subscription_id,
+        'id' => $request->subscription_plan_id,
          ],
         [
             'plan_id'=> $request->plan_id,
@@ -1769,6 +1783,7 @@ public function resume_meal_plan(Request $request) {
             ],
             [
                 'diet_plan_type_id'=> $request->diet_plan_type_id,
+                'subscription_id'=> $request->plan_id,
 
             ]
         );
@@ -2016,13 +2031,18 @@ public function social_link(Request $request) {
 }
 
 public function refer_and_earn(Request $request) {
-
     $terms = ReferEarnContent::select('content')->first();
     $refer = ReferAndEarn::select('*')->where('status','active')->first();
+    $refer_code = User::select('referral_code')->where('id',Auth::guard('api')->id())->first();
     if($refer){
         $total_get = ($refer->register_referee+$refer->plan_purchase_referee);
     }
+    return $referUsed = ReferAndEarnUsed::where('referee_id',Auth::guard('api')->id())->where('used_for','registration')->where('used_for','plan_purchase')->count();
+    if($referUsed){
+           $data['referralUsed'] = $referUsed;
+    }
     $data['refer'] = $refer;
+    $data['refer_code'] = $refer_code;
     $data['total_get'] = $total_get;
     $data['terms'] = $terms;
     $response = new \Lib\PopulateResponse($data);

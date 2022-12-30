@@ -56,6 +56,12 @@ return [
 	'purchase_gift_card_used'=>'Thank you so much for using card!',
 	'promo_code_used'=>'Thank you so much for using promo code!',
 	'city_list'=>'City list',
+	'time_slot_change'=>'Time Slot change successfully',
+	'skip_delivery'=>'Your delivery skip successfully',
+	'change_location'=>'Your location change successfully',
+	'switch_plan'=>'Your plan switch successfully',
+	'swap_meal'=>'Your meal swap successfully',
+	'swap_meal_listing'=>'Swap meal listing ',
 
 	
 ];

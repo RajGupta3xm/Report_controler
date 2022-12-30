@@ -33,12 +33,19 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('sample_daily_meals_with_schedule', 'SubscriptionController@sample_daily_meals_with_schedule'); 
     Route::get('selectStartDayCircle', 'SubscriptionController@selectStartDayCircle');
     Route::get('paymentPlan_detail/{plan_id}', 'SubscriptionController@paymentPlan_detail');
-    Route::get('getSwapMeal', 'SubscriptionController@getSwapMeal');
+    Route::post('getSwapMeal', 'SubscriptionController@getSwapMeal');
     Route::post('apply_gift_card', 'SubscriptionController@apply_gift_card');
     Route::post('apply_promo_code', 'SubscriptionController@apply_promo_code');
     Route::post('apply_referral_code', 'SubscriptionController@apply_referral_code');
     Route::get('getArea', 'SubscriptionController@getArea');
-   
+    Route::post('myMeals', 'SubscriptionController@myMeals');
+    Route::post('changeDeliveryTime', 'SubscriptionController@changeDeliveryTime');
+    Route::post('userSkipDelivery', 'SubscriptionController@userSkipDelivery');
+    Route::post('userChangeDeliveryLocation','SubscriptionController@userChangeDeliveryLocation');
+    Route::post('switchPlan','SubscriptionController@switchPlan');
+    Route::post('swapMeal','SubscriptionController@swapMeal');
+    Route::get('savedAddressListing', 'SubscriptionController@savedAddressListing');
+
 
 
 });

@@ -45,20 +45,20 @@ class ReferAndEarnController extends Controller {
             return redirect()->intended('admin/login');
         } else {
            
-               $registration_count = User::withcount('registration_count')->get();
+                $registration_count = User::withcount('registration_count')->get();
                 $refer_content = ReferEarnContent::select('*')->get();
-                $plan_purchase_count = ReferAndEarnUsed::withcount('user')->where('used_for','plan_purchase')->get();
+                 $plan_purchase_count = ReferAndEarnUsed::withcount('user')->where('used_for','plan_purchase')->get();
           
-                   $refer = User::withcount('user_referral')->with('refers')->get()
+                    $refer = User::withcount('user_referral')->with('refers')->get()
               ->each(function($refer){
                      $refer->purchase = ReferAndEarnUsed::where(['referral_id'=>$refer->id,'used_for'=>'plan_purchase'])->count(); 
-                     $planPurchase = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('plan_purchase_referral')->first(); 
+                     $planPurchase = ReferAndEarn::select('plan_purchase_referral')->first(); 
                      $refer->plan_referral = $planPurchase['plan_purchase_referral'];  
                      $refer->plan_purchase_total = $refer->purchase*$refer->plan_referral;
             
             // ->each(function($refer){
                 $refer->registration = ReferAndEarnUsed::where(['referral_id'=>$refer->id,'used_for'=>'registration'])->count();
-                $registerReferral = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('register_referral')->first();  
+                $registerReferral = ReferAndEarn::select('register_referral')->first();  
               $refer->register_referral = $registerReferral['register_referral'];   
                $refer->registration_total = $refer->registration* $refer->register_referral;
                $refer->grand_total = $refer->registration_total+$refer->plan_purchase_total;
@@ -73,7 +73,8 @@ class ReferAndEarnController extends Controller {
 // ->each(function($refer) {
 //     $planPurchase = ReferAndEarn::where(['id'=>$refer->refers['refer_and_earn_id']])->select('plan_purchase_referral')->first(); 
 //     $refer->plan_referral = $planPurchase['plan_purchase_referral'];     
-// });
+// });        
+             $data['refer_id'] = ReferAndEarn::where('status','active')->first();
               $data['refer'] = $refer;
               $data['refer_contents'] = $refer_content;
             return view('admin.referEarn.refer_earn_list')->with($data);
@@ -81,6 +82,7 @@ class ReferAndEarnController extends Controller {
     }
 
     public function refer_earn_submit(Request $request ){
+        $refer_id = $request->input('id');
          $data=[
         "register_referee" => $request->input('register_referee'),
         "register_referral" => $request->input('register_referral'),
@@ -92,13 +94,13 @@ class ReferAndEarnController extends Controller {
         "message_body_en" => $request->input('message_body_en'),
         "message_body_ar" => $request->input('message_body_ar'),
         "start_date" => $request->input('start_date'),
-        'ticket_id'  => strtoupper(str_random(14)),
+        // 'ticket_id'  => strtoupper(str_random(14)),
 
     ];
 
-$insert = ReferAndEarn::create($data);
+$insert = ReferAndEarn::find($refer_id)->update($data);
 if($insert){
-   return redirect('admin/refer-earn-management')->with('success', ' Insert successfully.');
+   return redirect('admin/refer-earn-management')->with('success', ' Update successfully.');
 }
 else {
    return redirect()->back()->with('error', 'Some error occurred while insert ');

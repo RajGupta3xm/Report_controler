@@ -75,7 +75,7 @@
                                        <table width="100%" style="margin: 0 auto; border: 0; border-spacing: 0;">
                                           <tr>
                                              <td style="text-align: left; font-size: 20px;font-weight: 500; color: #fff; padding-bottom: 10px;">
-                                                ₹100
+                                             {{$purchase_amount}}
                                              </td>
                                           </tr>
                                           <tr>

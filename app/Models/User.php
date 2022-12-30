@@ -16,6 +16,7 @@ class User extends Model {
         'name',
         'email',
         'image',
+        'referral_code',
         'country_code',
         'mobile',
         'country',
