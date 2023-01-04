@@ -16,7 +16,7 @@ class CreateMealWeekDaysTable extends Migration
         Schema::create('meal_week_days', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('meal_id');
-            $table->integer('week_days_id');
+            $table->string('week_days_id');
             $table->enum('status',['active','inactive']);
             $table->timestamps();
         });

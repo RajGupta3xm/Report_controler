@@ -112,7 +112,7 @@ class MealController extends Controller {
 
              $data['meal_schedule'] = MealSchedules::select('id','name')->orderBy('id','Asc')->get();
               $data['diet_plan'] = DietPlanType::select('id','name')->orderBy('id','Asc')->get(); 
-               $data['tags'] = WeekDays::select('id','name')->orderBy('id','Asc')->get(); 
+               $data['tags'] = MealWeekDay::select('id','week_days_id')->orderBy('id','Asc')->take(7)->get(); 
                $data['department'] = MealAllocationDepartment::select('id','name')->orderBy('id','Asc')->get(); 
                 $data['ingredients'] = DislikeItem::select('id','name')->orderBy('id','Asc')->get(); 
                  $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
@@ -158,16 +158,16 @@ $insert = Meal::create($data);
 if($insert){
     
 
-//      $data=[
-//         ['meal_id'=> $insert->id,  'user_calorie' => $request->input('user_calorie1'),'size_pcs' => $request->input('size1'), 'recipe_yields' => $request->input('recipe_yield1'), 'meal_calorie' => $request->input('meal_calorie1'), 'protein' => $request->input('protein1'),   'carbs' => $request->input('carb1'),  'fat' => $request->input('fat1')],
-//         ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie2'), 'size_pcs' => $request->input('size2'), 'recipe_yields' => $request->input('recipe_yield2'), 'meal_calorie' => $request->input('meal_calorie2'), 'protein' => $request->input('protein2'),   'carbs' => $request->input('carb2'),  'fat' => $request->input('fat2')],
-//         ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie3'), 'size_pcs' => $request->input('size3'), 'recipe_yields' => $request->input('recipe_yield3'), 'meal_calorie' => $request->input('meal_calorie3'), 'protein' => $request->input('protein3'),   'carbs' => $request->input('carb3'),  'fat' => $request->input('fat3')],
-//         ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie4'), 'size_pcs' => $request->input('size4'), 'recipe_yields' => $request->input('recipe_yield4'), 'meal_calorie' => $request->input('meal_calorie4'), 'protein' => $request->input('protein4'),   'carbs' => $request->input('carb4'),  'fat' => $request->input('fat4')],
-//         ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie5'), 'size_pcs' => $request->input('size5'), 'recipe_yields' => $request->input('recipe_yield5'), 'meal_calorie' => $request->input('meal_calorie5'), 'protein' => $request->input('protein5'),   'carbs' => $request->input('carb5'),  'fat' => $request->input('fat5')],
+     $data=[
+        ['meal_id'=> $insert->id,  'user_calorie' => $request->input('user_calorie1'),'size_pcs' => $request->input('size1'), 'recipe_yields' => $request->input('recipe_yield1'), 'meal_calorie' => $request->input('meal_calorie1'), 'protein' => $request->input('protein1'),   'carbs' => $request->input('carb1'),  'fat' => $request->input('fat1')],
+        ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie2'), 'size_pcs' => $request->input('size2'), 'recipe_yields' => $request->input('recipe_yield2'), 'meal_calorie' => $request->input('meal_calorie2'), 'protein' => $request->input('protein2'),   'carbs' => $request->input('carb2'),  'fat' => $request->input('fat2')],
+        ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie3'), 'size_pcs' => $request->input('size3'), 'recipe_yields' => $request->input('recipe_yield3'), 'meal_calorie' => $request->input('meal_calorie3'), 'protein' => $request->input('protein3'),   'carbs' => $request->input('carb3'),  'fat' => $request->input('fat3')],
+        ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie4'), 'size_pcs' => $request->input('size4'), 'recipe_yields' => $request->input('recipe_yield4'), 'meal_calorie' => $request->input('meal_calorie4'), 'protein' => $request->input('protein4'),   'carbs' => $request->input('carb4'),  'fat' => $request->input('fat4')],
+        ['meal_id'=>$insert->id,  'user_calorie' => $request->input('user_calorie5'), 'size_pcs' => $request->input('size5'), 'recipe_yields' => $request->input('recipe_yield5'), 'meal_calorie' => $request->input('meal_calorie5'), 'protein' => $request->input('protein5'),   'carbs' => $request->input('carb5'),  'fat' => $request->input('fat5')],
       
-//     ];
+    ];
     
-//   MealMacroNutrients::insert($data);
+  MealMacroNutrients::insert($data);
 
 foreach($request->meal_schedule_id  as $id)
 {
@@ -209,22 +209,33 @@ foreach($request->meal_schedule_id  as $id)
 
 foreach($request->week_days_id  as $id)
  {
-    if (!intval($id)) {
-       $schedule_id = WeekDays::create([
-            'name'  => $id   
-        ]);
-   
-    if(!empty($schedule_id))
+
+    if(!empty($id))
     {
-      $ids = $schedule_id->id;
-      if (is_numeric($ids)) {
+
         MealWeekDay::create([
              'meal_id' => $insert->id,
-              'week_days_id'  => $ids   
+              'week_days_id'  => lcfirst($id) 
            ]);
-        } 
+
     }
-}
+
+//     if (!intval($id)) {
+//        $schedule_id = WeekDays::create([
+//             'name'  => $id   
+//         ]);
+   
+//     if(!empty($schedule_id))
+//     {
+//       $ids = $schedule_id->id;
+//       if (is_numeric($ids)) {
+//         MealWeekDay::create([
+//              'meal_id' => $insert->id,
+//               'week_days_id'  => $ids   
+//            ]);
+//         } 
+//     }
+// }
     // if (date("Y-m-d", $request->id)) {
     //     $date_id = WeekDays::create([
     //          'name'  => $id   
@@ -242,12 +253,12 @@ foreach($request->week_days_id  as $id)
     //  }
     // }
     
-    if (is_numeric($id)) {
-        MealWeekDay::create([
-           'meal_id' => $insert->id,
-            'week_days_id'  => $id   
-        ]);
-     } 
+    // if (is_numeric($id)) {
+    //     MealWeekDay::create([
+    //        'meal_id' => $insert->id,
+    //         'week_days_id'  => $id   
+    //     ]);
+    //  } 
 
 }
   
@@ -309,7 +320,6 @@ foreach($request->week_days_id  as $id)
 
 
 }
-
 
 if($insert){
    return redirect('admin/add-meal')->with('success', ' Insert successfully.');

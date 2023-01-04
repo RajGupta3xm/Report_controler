@@ -45,7 +45,8 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('switchPlan','SubscriptionController@switchPlan');
     Route::post('swapMeal','SubscriptionController@swapMeal');
     Route::get('savedAddressListing', 'SubscriptionController@savedAddressListing');
-
-
+    Route::post('pause_meal_plan', 'SubscriptionController@pause_meal_plan');
+    Route::post('viewPreviousPlan', 'SubscriptionController@viewPreviousPlan');
+    Route::post('viewPreviousPlanDeliveries', 'SubscriptionController@viewPreviousPlanDeliveries');
 
 });

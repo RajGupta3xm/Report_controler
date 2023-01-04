@@ -62,7 +62,8 @@ return [
 	'switch_plan'=>'Your plan switch successfully',
 	'swap_meal'=>'Your meal swap successfully',
 	'swap_meal_listing'=>'Swap meal listing ',
-
+	'plan_pause'=>'Your plan pause successfully',
+	'custom_calorie'=>'Your custom calorie ',
 	
 ];
 

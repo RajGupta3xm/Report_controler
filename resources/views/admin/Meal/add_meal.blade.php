@@ -110,9 +110,9 @@
                                           <div class="form-group col-12">
                                              <label for="">Tags :</label>
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Choose anything" multiple name="week_days_id[]">
-                                                @foreach($tags as $tag) 
-                                                <option value="{{$tag->id}}">{{$tag->name}}</option>
-                                               @endforeach
+                                               @foreach($tags as $tag)
+                                                <option value="{{$tag->week_days_id}}">{{ucfirst($tag->week_days_id)}}</option>
+                                              @endforeach
                                              </select>
                                           </div>
                                           <div class="form-group col-12">
@@ -276,7 +276,7 @@
                                        <h2>Portioning & Macro Nutrients</h2>
                                     </div>
                                  </div>
-                                 <!-- <div class="row">
+                                 <div class="row">
                                     <div class="col-12 comman_table_design New_tabledesign">
                                        <div class="table-responsive">
                                           <table class="table mb-0">
@@ -416,10 +416,10 @@
                                           </table>
                                        </div>
                                     </div>
-                                 </div> -->
+                                 </div>
                               </div>
                               <div class="form-group col-6 text-end" style="margin-top: 23px;">
-								 <button class="comman_btn" onclick="validate(this);">Save</button>
+								 <button type="button" class="comman_btn" onclick="validate(this);">Save</button>
 							   </div>
 								<!-- <div class="form-group col-6 text-start">
 									<button class="comman_btn bg-red">Close</button>
