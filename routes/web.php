@@ -268,6 +268,37 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
 
      /*******End Meal Plan Management */
 
+ /*******upcoming deliveries Management */
+     Route::get('/upcoming-deliveries', 'Admin\AdminController@upcoming_deliveries');
+     Route::any('/upcomingDeliveriesShow', 'Admin\AdminController@upcomingDeliveriesShow');
+
+
+ /*******upcoming deliveries Management */
+
+ /*******order Management */
+ Route::get('/order-management', 'Admin\OrderController@index');
+ Route::post('/currentPlan/change_currentPlan_status', 'Admin\OrderController@change_status');
+ Route::post('/currentPlan/change_previousPlan_status', 'Admin\OrderController@change_previousPlan_status');
+ Route::get('/order-details/{id}', 'Admin\OrderController@show');
+ Route::post('/updateDeliveryStatus', 'Admin\OrderController@updateDeliveryStatus');
+ /*******End order Management */
+
+ /*******fleet Management */
+    Route::get('/fleet-management', 'Admin\FleetController@index');
+    Route::post('/fleetarea/submit', 'Admin\FleetController@addArea');
+    Route::post('/fleetarea/change_status', 'Admin\FleetController@change_status');
+    Route::post('fleetarea/edit', 'Admin\FleetController@editArea')->name('area.edit');
+    Route::post('/fleetarea/edit_update/{id}','Admin\FleetController@edit_update');
+    Route::post('/fleetdriver/submit', 'Admin\FleetController@storeFleetDriver');
+ /*******End fleet Management */
+
+ /*******Notification Management */
+ Route::get('/notification-management', 'Admin\NotificationController@index');
+    Route::post('/brodcastnotify/submit', 'Admin\NotificationController@storeBroadCastNotification');
+    Route::post('/popupnotify/submit', 'Admin\NotificationController@storePopupNotification');
+
+/*******End Notification Management */
+
 
     Route::get('/category-management', 'Admin\CategoryController@index');
     Route::post('category/store', [
@@ -299,21 +330,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     ]);
    
     
-    Route::get('/reason-management', 'Admin\AdminController@reason_list');
-    Route::post('reason/store', [
-        'uses' => 'Admin\AdminController@reason_store',
-        'as' => 'admin.reason.store'
-    ]);
-    Route::get('edit-reason/{id}', 'Admin\AdminController@edit_reason');
-    Route::post('reason/update/{id}', [
-        'uses' => 'Admin\AdminController@reason_update',
-        'as' => 'admin.reason.update'
-    ]);
-    Route::post('/reason/change_category_status', 'Admin\AdminController@change_reason_status');
-    Route::post('/reason/delete', 'Admin\AdminController@delete_reason');
-    Route::any('/custom-notification', 'Admin\AdminController@customNotification');
-    Route::get('/notification-management', 'Admin\AdminController@notificationList');
-    Route::get('/notification-detail/{id}', 'Admin\AdminController@notificationDetails');
+  
 
 });
 Route::get('/', 'Website\WebController@index');

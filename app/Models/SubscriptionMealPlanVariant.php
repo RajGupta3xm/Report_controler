@@ -38,4 +38,12 @@ class SubscriptionMealPlanVariant extends Model
     public function dietPlan(){
         return $this->belongsTo(DietPlanType::class,'diet_plan_id','id');
     }
+
+    public function plan(){
+        return $this->belongsTo(SubscriptionPlan::class,'meal_plan_id','id')->select(['id','name']);
+    }
+
+    public function dietPlans(){
+        return $this->belongsTo(DietPlanType::class,'diet_plan_id','id')->select(['id','name']);
+    } 
 }

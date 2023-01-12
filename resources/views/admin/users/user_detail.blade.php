@@ -209,73 +209,26 @@
                                                          <tbody>
                                                            <tr>
                                                              <td>1</td>   
-                                                             <td>Lorem</td>   
-                                                             <td>1001</td>   
-                                                             <td>500/Week</td>   
-                                                             <td>23/08/2022</td>   
-                                                             <td>23/08/2023</td>   
-                                                             <td>400 SAR</td>   
+                                                             <td>{{$user_current_plan['name'] ?: '-'}}</td>   
+                                                             <td>{{$user_current_plan['order_id'] ?: '-' }}</td>   
+                                                             <td>{{$user_current_plan['plan_price'] ?: '-' }}/<?php if($user_current_plan['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>   
+                                                             <td>{{$user_current_plan['puchase_on'] ?: '-' }}</td>   
+                                                             <td>{{$user_current_plan['expired_on'] ?: '-' }}</td>   
+                                                             <td>{{$user_current_plan['available_credit'] ?: '-' }} SAR</td>   
                                                              <td>
-                                                               <form class="table_btns d-flex align-items-center"> 
-                                                                  <div class="check_toggle">
-                                                                     <input type="checkbox" name="check2" id="check2" class="d-none">
-                                                                     <label for="check2"></label>
-                                                                  </div>
-                                                               </form>
+                                                             <div class="mytoggle">
+                                                                <label class="switch">
+                                                                   <input type="checkbox" onchange="changeStatusForCurrentPlan(this, '<?= $user_current_plan['id'] ?>');" <?= ($user_current_plan['status'] == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
+                                                                 </label>
+                                                             </div>
                                                              </td>    
                                                              <td>
-                                                               <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($user_current_plan['user_id']))}}">View</a>
                                                              </td>
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
                                                              </td>
-                                                           </tr> 
-                                                           <tr>
-                                                            <td>2</td>   
-                                                            <td>Lorem</td>   
-                                                            <td>1002</td>   
-                                                            <td>500/Week</td>   
-                                                            <td>23/08/2022</td>   
-                                                            <td>23/08/2023</td>   
-                                                            <td>400 SAR</td>   
-                                                            <td>
-                                                              <form class="table_btns d-flex align-items-center"> 
-                                                                 <div class="check_toggle">
-                                                                    <input type="checkbox" name="check4" id="check4" class="d-none">
-                                                                    <label for="check4"></label>
-                                                                 </div>
-                                                              </form>
-                                                            </td>    
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
-                                                            </td>
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
-                                                            </td>
-                                                           </tr>
-                                                           <tr>
-                                                            <td>3</td>   
-                                                            <td>Lorem</td>   
-                                                            <td>1003</td>   
-                                                            <td>500/Week</td>   
-                                                            <td>23/08/2022</td>   
-                                                            <td>23/08/2023</td>   
-                                                            <td>400 SAR</td>   
-                                                            <td>
-                                                              <form class="table_btns d-flex align-items-center"> 
-                                                                 <div class="check_toggle">
-                                                                    <input type="checkbox" name="check5" id="check5" class="d-none">
-                                                                    <label for="check5"></label>
-                                                                 </div>
-                                                              </form>
-                                                            </td>    
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
-                                                            </td>
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
-                                                            </td>
-                                                           </tr>
+                                                      
                                                          </tbody>
                                                        </table>
                                                    </div>
@@ -310,21 +263,22 @@
                                                            </tr>
                                                          </thead>
                                                          <tbody>
+                                                            @if(count($user_previous_plan) > 0)
+                                                            @foreach($user_previous_plan as $key=>$user_previous_plans)
                                                            <tr>
-                                                             <td>1</td>   
-                                                             <td>Lorem</td>   
-                                                             <td>1001</td>   
-                                                             <td>500/Week</td>   
-                                                             <td>23/08/2022</td>   
-                                                             <td>23/08/2023</td>   
-                                                             <td>400 SAR</td>   
+                                                             <td>{{$key+1}}</td>   
+                                                             <td>{{$user_previous_plans['name'] ?: '-'}}</td>   
+                                                             <td>{{$user_previous_plans['order_id'] ?: '-'}}</td>   
+                                                             <td>{{$user_previous_plans['plan_price'] ?: '-' }}/<?php if($user_previous_plans['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>      
+                                                             <td>{{date('d/m/Y',strtotime($user_previous_plans['puchase_on']))}}</td>   
+                                                             <td>{{date('d/m/Y',strtotime($user_previous_plans['expired_on']))}}</td>   
+                                                             <td>{{$user_previous_plans['available_credit'] ?: '-' }} SAR</td>   
                                                              <td>
-                                                               <form class="table_btns d-flex align-items-center"> 
-                                                                  <div class="check_toggle">
-                                                                     <input type="checkbox" name="check11" id="check11" class="d-none">
-                                                                     <label for="check11"></label>
-                                                                  </div>
-                                                               </form>
+                                                             <div class="mytoggle">
+                                                                <label class="switch">
+                                                                   <input type="checkbox" onchange="changeStatusForPreviousPlan(this, '<?= $user_previous_plans['id'] ?>');" <?= ($user_previous_plans['status'] == 'active' ? 'checked' : '') ?> ><span class="slider round"> </span> 
+                                                                 </label>
+                                                             </div>
                                                              </td>    
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
@@ -333,52 +287,14 @@
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
                                                              </td>
                                                            </tr> 
-                                                           <tr>
-                                                            <td>2</td>   
-                                                            <td>Lorem</td>   
-                                                            <td>1002</td>   
-                                                            <td>500/Week</td>   
-                                                            <td>23/08/2022</td>   
-                                                            <td>23/08/2023</td>   
-                                                            <td>400 SAR</td>   
+                                                          @endforeach
+                                                          @else
+                                                          <tr>
                                                             <td>
-                                                              <form class="table_btns d-flex align-items-center"> 
-                                                                 <div class="check_toggle">
-                                                                    <input type="checkbox" name="check12" id="check12" class="d-none">
-                                                                    <label for="check12"></label>
-                                                                 </div>
-                                                              </form>
-                                                            </td>    
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
-                                                            </td>
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
-                                                            </td>
+                                                           <p> No Plan Found...</p>
+                                                           </td> 
                                                            </tr>
-                                                           <tr>
-                                                            <td>3</td>   
-                                                            <td>Lorem</td>   
-                                                            <td>1003</td>   
-                                                            <td>500/Week</td>   
-                                                            <td>23/08/2022</td>   
-                                                            <td>23/08/2023</td>   
-                                                            <td>400 SAR</td>   
-                                                            <td>
-                                                              <form class="table_btns d-flex align-items-center"> 
-                                                                 <div class="check_toggle">
-                                                                    <input type="checkbox" name="check13" id="check13" class="d-none">
-                                                                    <label for="check13"></label>
-                                                                 </div>
-                                                              </form>
-                                                            </td>    
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
-                                                            </td>
-                                                            <td>
-                                                              <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
-                                                            </td>
-                                                           </tr>
+                                                           @endif
                                                          </tbody>
                                                        </table>
                                                    </div>
@@ -398,6 +314,100 @@
          </div>
       </div>
     @endsection
+    <script>
+       function changeStatusForPreviousPlan(obj, id) {
+            swal({
+                title: "Are you sure?",
+                text: " status will be closed",
+                icon: "warning",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                var status = 'active';
+                            } else {
+                                var status = 'terminted';
+                            }
+                            if (id) {
+                                $.ajax({
+                                    url: "<?= url('admin/currentPlan/change_previousPlan_status') ?>",
+                                    type: 'post',
+                                    data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
+                                    success: function (data) {
+                                    
+                                        swal({
+                                           title: "Success!",
+                                            text : "Status has been Updated ",
+                                            icon : "success",
+                                        })
+                                    }
+                                });
+                            } else {
+                                var data = {message: "Something went wrong"};
+                                errorOccured(data);
+                            }
+                        } else {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                $(obj).prop('checked', false);
+                            } else {
+                                $(obj).prop('checked', true);
+                            }
+                            return false;
+                        }
+                    });
+        }
+    </script>
+    <script>
+       function changeStatusForCurrentPlan(obj, id) {
+            swal({
+                title: "Are you sure?",
+                text: " status will be closed",
+                icon: "warning",
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                var status = 'active';
+                            } else {
+                                var status = 'terminted';
+                            }
+                            if (id) {
+                                $.ajax({
+                                    url: "<?= url('admin/currentPlan/change_currentPlan_status') ?>",
+                                    type: 'post',
+                                    data: 'id=' + id + '&action=' + status + '&_token=<?= csrf_token() ?>',
+                                    success: function (data) {
+                                    
+                                        swal({
+                                           title: "Success!",
+                                            text : "Status has been Updated ",
+                                            icon : "success",
+                                        })
+                                    }
+                                });
+                            } else {
+                                var data = {message: "Something went wrong"};
+                                errorOccured(data);
+                            }
+                        } else {
+                            var checked = $(obj).is(':checked');
+                            if (checked == true) {
+                                $(obj).prop('checked', false);
+                            } else {
+                                $(obj).prop('checked', true);
+                            }
+                            return false;
+                        }
+                    });
+        }
+    </script>
     <script>
        function changeStatus(obj, id) {
             swal({

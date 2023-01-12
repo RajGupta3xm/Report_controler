@@ -64,7 +64,7 @@ return [
 	'swap_meal_listing'=>'Swap meal listing ',
 	'plan_pause'=>'Your plan pause successfully',
 	'custom_calorie'=>'Your custom calorie ',
-	
+	'repeat_plan'=>'Your plan repeat successfully',
 ];
 
 ?>

@@ -12,10 +12,20 @@ use App\Http\Requests\UsersRequest as UpdateRequest;
 use App\Http\Controllers\CrudOverrideController;
 use Illuminate\Http\Request;
 use App\Models\Users;
+use App\Models\User;
+use App\Models\UserProfile;
+use App\Models\UserAddress;
+use App\Models\DeliverySlot;
 use App\Models\Order;
+use App\Models\SubscriptionPlan;
+use App\Models\MealSchedules;
+use App\Models\SubscriptionMealVariantDefaultMeal;
+use App\Models\SubscriptionOrder;
 use App\Models\Admin;
+use App\Models\Subscription;
 use App\Models\ReportReason;
 use App\Models\AdminNotification;
+use App\Models\Meal;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -64,24 +74,118 @@ class AdminController extends Controller {
 //            dd('hello');
             return redirect()->intended('admin/login');
         } else {
-            // $user_count = 0;
-            // $order_count = 0;
-            // $upcomingDeliveries_count = 0;
+            $activeUser = 0;
+            $pausedUser = 0;
+            $expiredUser = 0;
+            $inactiveUser = 0;
 
-            // $user = User::orderBy('id', 'DESC')->get();
-            // $order_count = Order::orderBy('id', 'DESC')->get();
-            // if ($user) {
-            //     $user_count = count($user);
-            //       $users = User::withCount('pets')->orderBy('id', 'DESC')->limit(5)->get();
-            //     // return $users->pets_count;
-            //     $total_pets = Pet::where('status','active')->orderBy('id','desc')->get();
-            //  $data['users'] = $users;
-            // } else {
-            //     $data['users'] = [];
-            // }
-            // $data['total_user'] = $user_count;
-            // $data['total_pet'] = count($total_pets);
-            return view('admin.dashboard');
+
+             $data['activeUser'] = Subscription::where('delivery_status','active')->count();
+             $data['pausedUser'] = Subscription::where('delivery_status','paused')->count();
+             $data['expiredUser'] = Subscription::where('delivery_status','terminted')->count();
+             $data['inactiveUser'] = User::where('status','0')->count();
+              $data['totalOrder'] = SubscriptionOrder::where('payment_status','completed')->count();
+              $userList = [];
+             $recent_order = User::join('user_profile','users.id','=','user_profile.user_id')
+            ->join('subscriptions','Users.id','=','subscriptions.user_id')
+            ->join('orders','Users.id','=','orders.user_id')
+            ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','subscriptions.start_date','orders.id as order_id')
+            ->where('subscriptions.delivery_status','active')
+            ->get();
+            if(!empty($recent_order)){
+                foreach($recent_order as $recent_orders){
+                $recent_orders->get_plan = SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+                           ->select('subscriptions_meal_plans_variants.option1','subscription_plans.name')
+                           ->where('subscription_plans.id',$recent_orders->subscription_id)
+                           ->get();
+
+                           array_push($userList,$recent_orders);
+                }
+
+            }
+           
+            $data['recent_order'] = $userList;
+            return view('admin.dashboard')->with($data);
+        }
+    }
+
+    public function upcomingDeliveriesShow(Request $request) {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->intended('admin/login');
+        } else {
+              $start_date = date('Y-m-d', strtotime($request->input('start_date')));
+                $date = $start_date;
+           
+             $delivery_slot = DeliverySlot::select('id','name','start_time','end_time')->get()
+            ->each(function($delivery_slot) use($date){
+                $delivery_slot->address = Order::join('user_address','orders.address_id','=','user_address.id')
+                ->join('users','orders.user_id','=','users.id')
+                ->join('subscriptions','orders.user_id','=','subscriptions.user_id')
+                ->select('orders.id as order_id','orders.user_id','user_address.area','user_address.street','users.name as user_name','subscriptions.plan_id','subscriptions.start_date','users.image')
+                ->where('subscriptions.delivery_status','active')
+                ->where('subscriptions.start_date',$date)
+                ->where(['user_address.delivery_slot_id'=>$delivery_slot->id,'user_address.status'=>'active'])
+                ->get()
+                ->each(function($address){
+                       $address->meal_schedule = MealSchedules::join('subscription_meal_groups','meal_schedules.id','=','subscription_meal_groups.meal_schedule_id')
+                       ->select('meal_schedules.id','meal_schedules.name')
+                       ->where('subscription_meal_groups.plan_id',$address->plan_id)
+                       ->get()->each(function($meal_schedule) use($address){
+                               $meal_schedule->meal = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
+                                 ->select('meals.id as meal_id','meals.name')
+                                 ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$meal_schedule->id)
+                                 ->where('subscription_meal_plan_variant_default_meal.meal_plan_id',$address->plan_id)
+                                 ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                                 ->get();
+                       });
+                });
+                
+            });
+                  
+            $data['startDate'] = date('d/m/Y',strtotime($date));
+               $data['delivery_slots'] = $delivery_slot;
+            return view('admin.upcoming_deliveries')->with($data);
+        }
+    }
+
+
+    public function upcoming_deliveries() {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->intended('admin/login');
+        } else {
+            
+                $date = date('Y-m-d',strtotime(' +1day'));
+             
+           
+             $delivery_slot = DeliverySlot::select('id','name','start_time','end_time')->get()
+            ->each(function($delivery_slot) use($date){
+                $delivery_slot->address = Order::join('user_address','orders.address_id','=','user_address.id')
+                ->join('users','orders.user_id','=','users.id')
+                ->join('subscriptions','orders.user_id','=','subscriptions.user_id')
+                ->select('orders.id as order_id','orders.user_id','orders.status','user_address.area','user_address.street','users.name as user_name','subscriptions.plan_id','subscriptions.start_date','users.image')
+                ->where('subscriptions.delivery_status','active')
+                ->where('subscriptions.start_date',$date)
+                ->where(['user_address.delivery_slot_id'=>$delivery_slot->id,'user_address.status'=>'active'])
+                ->get()
+                ->each(function($address){
+                       $address->meal_schedule = MealSchedules::join('subscription_meal_groups','meal_schedules.id','=','subscription_meal_groups.meal_schedule_id')
+                       ->select('meal_schedules.id','meal_schedules.name')
+                       ->where('subscription_meal_groups.plan_id',$address->plan_id)
+                       ->get()->each(function($meal_schedule) use($address){
+                               $meal_schedule->meal = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
+                                 ->select('meals.id as meal_id','meals.name')
+                                 ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$meal_schedule->id)
+                                 ->where('subscription_meal_plan_variant_default_meal.meal_plan_id',$address->plan_id)
+                                 ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                                 ->get();
+                       });
+                });
+                
+            });
+                  
+            $data['startDate'] = date('d/m/Y',strtotime($date));
+                $data['delivery_slots'] = $delivery_slot;
+            return view('admin.upcoming_deliveries')->with($data);
         }
     }
 

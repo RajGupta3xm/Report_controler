@@ -35,5 +35,7 @@ class SubscriptionPlan extends Model
     public function meal_plan_variant_default(){
         return $this->hasMany(SubscriptionMealVariantDefaultMeal::class,'meal_plan_id','id');
     }
+
+    
 	
 }

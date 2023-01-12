@@ -14,7 +14,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserDislike;
+use App\Models\Subscription;
 use App\Models\DislikeItem;
+use App\Models\Order;
+use App\Models\UserAddress;
 use App\Models\UserCaloriTarget;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
@@ -45,7 +48,16 @@ class UserController extends Controller {
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-            $data['users'] = User::select('*')->orderBy('id', 'DESC')->get();
+            // $userList = [];
+            $user = User::select('*')->orderBy('id', 'DESC')->get();
+        //   ->each(function($user){
+        //     $users->totalOrder = Order::where('user_id',$users->id)->count();
+        //     $users->user_address = UserAddress::select('area')->where(['user_id'=>$users->id, 'status'=>'active'])->get();
+        //   });
+        
+          $data['users'] = $user;
+           
+            
             return view('admin.users.user_list')->with($data);
         }
     }
@@ -77,7 +89,50 @@ class UserController extends Controller {
             }else{
                 
             }
+            $userList = [];
+             $user_previous_plan = UserProfile::join('subscriptions','user_profile.subscription_id','=','subscriptions.plan_id')
+            ->join('orders','user_profile.user_id','=','orders.user_id')
+            ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+            ->select('subscriptions.start_date','orders.id as order_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','user_profile.available_credit','subscriptions_meal_plans_variants.no_days','subscriptions.id','subscriptions.status')
+            ->where('subscriptions.delivery_status','terminted')
+            ->where('subscriptions.user_id',$id)
+            ->get();
+            if($user_previous_plan){
+                foreach($user_previous_plan as $user_previous_plans){
+                 $puchase_on = $user_previous_plans->start_date;
+                  $user_previous_plans->puchase_on = date('d/m/Y', strtotime($puchase_on));
+                 $dates = Carbon::createFromFormat('Y-m-d',$user_previous_plans->start_date);
+                 $user_previous_plans->expired_on = $dates->addDays($user_previous_plans->no_days);
+
+                 array_push($userList,$user_previous_plans);
+            }
+           
+        }
+       $data['user_previous_plan'] = $userList;
+
+                $user_current_plan = UserProfile::join('subscriptions','user_profile.subscription_id','=','subscriptions.plan_id')
+            ->join('orders','user_profile.user_id','=','orders.user_id')
+            ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+            ->select('subscriptions.start_date','orders.id as order_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','user_profile.available_credit','subscriptions_meal_plans_variants.no_days','subscriptions.id','subscriptions.status','user_profile.user_id')
+            ->where('user_profile.user_id',$id)
+            ->where(function($q){
+                $q->where('subscriptions.delivery_status','active')
+                   ->orwhere('subscriptions.delivery_status','paused');
+                    })
+            ->first();
+            if(!empty($user_current_plan)){
+                 $puchase_on = $user_current_plan->start_date;
+                  $user_current_plan['puchase_on'] = date('d/m/Y', strtotime($puchase_on));
+                 $dates = Carbon::createFromFormat('Y-m-d',$user_current_plan->start_date);
+                 $expired_on = $dates->addDays($user_current_plan->no_days);
+                  $user_current_plan['expired_on'] = date('d/m/Y', strtotime($expired_on));
+            }
+
+              $data['user_current_plan'] = $user_current_plan;
             $data['user'] = $user;
+
             $data['user_details'] = $user_detail;
            
             $data['userCalorieTargets'] = $userCalorieTarget;

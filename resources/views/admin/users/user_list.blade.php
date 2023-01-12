@@ -79,6 +79,7 @@
                                          </tr>
                                        </thead>
                                        <tbody>
+                                       @if(count($users) > 0)
                                         @foreach($users as $key=>$user)
                                          <tr>
                                            <td>{{$key+1}}</td>
@@ -87,19 +88,33 @@
                                            <td>{{$user->mobile}}</td>
                                            <td>{{$user->email}}</td>
                                            <td>{{date('d-m-Y', strtotime($user->created_at))}}</td>
-                                           <td>04</td> 
+                                           @php
+                                                $totalOrder=\App\Models\Order::where('user_id',$user->id)->count();
+                                               
+                                            @endphp
+                                           <td>{{$totalOrder}}</td> 
                                            <td>22</td> 
-                                           <td>Lorem ipsum dolor</td>
-                                           <td>Lorem ipsum dolor</td> 
+                                           @php
+                                                $deliveryLocationOne =\App\Models\UserAddress::where(['user_id'=>$user->id, 'status'=>'active'])->get();
+                                               
+                                            @endphp
+                                            @foreach($deliveryLocationOne as $key1=> $deliveryLocationOnes)
+                                            @if($key1 == 0)
+                                           <td>{{$deliveryLocationOnes['area'] ?? '-' }}</td>
+                                           @endif
+                                           @if($key1 == 1)
+                                           <td>{{$deliveryLocationOnes['area'] ?? '-' }}</td>
+                                           @endif
+                                            @endforeach
                                            <td>
                                            Active
                                            </td> 
                                            <td> 
-                                          
                                              <a class="comman_btn table_viewbtn" href="{{url('admin/user-details/'.base64_encode($user->id))}}">View</a>
                                            </td>
                                          </tr>
                                          @endforeach
+                                         @endif
                                        </tbody>
                                      </table>
                                  </div>
@@ -133,7 +148,7 @@
                <div class="form-group row">
                   <div class="col-12 mb-3 Export_head"> <label for="">Exports As :</label> </div>
                   <div class="col-12">
-                     <div class="comman_radio mb-2"> <input class="d-none" type="radio" checked id="radio2" name="radio2"> <label for="radio2">Excel (In Proper Format)</label> </div>
+                     <div class="comman_radio mb-2"> <input class="d-none" type="radio" checked id="radio3" name="radio3"> <label for="radio3">Excel (In Proper Format)</label> </div>
                   </div>
                </div>
             </form>

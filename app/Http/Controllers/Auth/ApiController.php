@@ -1890,8 +1890,8 @@ public function sample_daily_meals(Request $request) {
                    ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
                     ->where('meal_group_schedule.meal_schedule_id',$category->id)
+                    ->where('meals.status','=', 'active')
                    ->where('meal_week_days.week_days_id','=', $dates)
-                   ->where('meals.status','=', 'active')
                 //    ->where(['meals.meal_schedule_id'=>$category->id])
                     
                    ->get()->each(function($meals) {
@@ -2216,6 +2216,106 @@ public function paymentAvailableCredit(Request $request) {
     $this->data = $response->apiResponse();
     $this->message = trans('messages.available_credit');
     return $this->populateResponse();
+}
+
+public function helpSupport(Request $request)
+{
+    $validator = \Validator::make($request->all(), [
+        'subject'     =>  'required',
+        'message'         =>  'required|max:450',
+        // 'user_id'         =>  'required',
+        
+    ],[
+        'subject.required'         =>  trans('messages.F046'),
+        //'subject.max'              =>  trans('messages.F047'),
+        'message.required'     =>  trans('messages.F048'),
+        'message.max'         =>  trans('messages.F049'),
+        // 'user_id.required'         =>  trans('messages.F069'),
+        
+    ]);
+
+    $validator->after(function($validator) use($request) {
+        
+    });
+
+    if ($validator->fails()) {
+        $this->message = $validator->errors();
+    }else{
+        $input['user_id']  = Auth::guard('api')->id();
+        $input['subject']  = $request->subject;
+        $input['message']  = $request->message;
+        $data = Query::create($input);
+
+        if(!empty($data)){
+            /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
+            $this->updateDialogue($input);
+        }
+        $response = new \Lib\PopulateResponse($data);
+        $this->data = $response->apiResponse();
+        $this->status   = true;
+        $this->message  = trans('messages.query_submit');
+
+    }
+    return $this->populateResponse();  
+}
+
+public function updateDialogue($request){
+    // $r = $request['user_id'];
+    // print_r($r);
+    // die;
+    
+     $getGroup = User::where('id', $request['user_id'])->first();
+    // dd($getGroup);
+    // die;
+
+    $auth_token=$this->createSession();  // Create session for quickblox login - refer to Controller class 
+    $token=$this->loginQB($auth_token, $getGroup->user_id);     // Quickblox login for authentication - refer to Controller class 
+    $headers = array(
+        'Accept' => 'application/json',
+        'Content-Type: application/json',
+        "QB-Token: ".$token
+    );
+    print_r($token);
+    die;
+    // set fields to update
+
+    $fields=[];
+    if(isset($request['group_name']) && $request['group_name']){
+        $fields['name']=$request['group_name'];
+    }
+    if(isset($request['image'])){
+        $fields['photo']=$request['image'];
+    }
+    if(isset($request['add_member']) && $request['add_member']){
+        $fields['push_all']=['occupants_ids'=>$request['add_member']];
+    }
+    if(isset($request['remove_member']) && $request['remove_member']){
+        $fields['pull_all']=['occupants_ids'=>$request['remove_member']];
+    } 
+
+    // set fields to update
+
+    if($fields){
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://api.quickblox.com/chat/Dialog/".$request['quickblox_group_id'].".json");
+        // curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        // $result=json_decode($result);
+        curl_close($ch);
+        // print_r($result); die;
+        if (isset($result->errors)) {
+            return false;
+        } else {
+            return true;
+        }
+    }else{
+        return false;
+    }
 }
 
 }

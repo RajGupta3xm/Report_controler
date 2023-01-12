@@ -80,7 +80,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('social_link_listing', 'ApiController@social_link');
     Route::get('refer_and_earn', 'ApiController@refer_and_earn');
     Route::get('paymentAvailableCredit', 'ApiController@paymentAvailableCredit');
-   
+    Route::post('helpSupport', 'ApiController@helpSupport');
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 
