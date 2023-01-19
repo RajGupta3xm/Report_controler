@@ -67,8 +67,8 @@
                                        <tbody>
                                           @if(count($orders) > 0)
                                           @foreach($orders as $key1=>$order)
-                                          @foreach($order->order as $key2=>$orderId)
-                                          @foreach($orderId->plans as $key3=>$variant)
+                                    
+                                          @foreach($order->plans as $key3=>$variant)
                                           <tr>
                                              <td >
                                                 <form class="table_btns d-flex align-items-center justify-content-center">
@@ -79,17 +79,17 @@
                                                 </form>
                                              </td>
                                              <td>{{$key1+1}}</td>
-                                             <td>{{date('d/m/Y',strtotime($orderId->created_at))}}<br>{{date('h:i A',strtotime($orderId->created_at))}}</td>
+                                             <td>{{date('d/m/Y',strtotime($order->created_at))}}<br>{{date('h:i A',strtotime($order->created_at))}}</td>
                                              <td>{{$order->name}}</td>
-                                             <td>#{{$orderId->order_id}}</td>
+                                             <td>#{{$order->order_id}}</td>
                                              <td>{{$variant->dietPlans['name']}}</td>
                                              <td>{{$variant->plan['name']}}</td>
                                              <td>{{$variant->variant_name}}</td>
-                                             <td>{{$orderId->amount}} SR</td>     
-                                             <td><a class="comman_btn table_viewbtn" href="order-details.html">View</a></td>
+                                             <td>{{$variant->plan_price}} SR</td>     
+                                             <td> <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($order['id']))}}">View</a></td>
                                           </tr>
                                           @endforeach
-                                          @endforeach
+                                        
                                           @endforeach
                                           @endif
                                        </tbody>

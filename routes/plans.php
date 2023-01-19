@@ -49,5 +49,5 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('viewPreviousPlan', 'SubscriptionController@viewPreviousPlan');
     Route::post('viewPreviousPlanDeliveries', 'SubscriptionController@viewPreviousPlanDeliveries');
     Route::post('repeat_meal_plan', 'SubscriptionController@repeat_meal_plan');
-
+    Route::post('userUnskipDelivery', 'SubscriptionController@userUnskipDelivery');
 });

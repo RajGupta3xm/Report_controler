@@ -1,3 +1,4 @@
+
 <form class="form-design filter_check" action="{{url('admin/fleetdriver/submit')}}" method="post">
     @csrf
 <div class="row p-4 mx-0 driver_management">
@@ -106,14 +107,15 @@
                                             <td>{{$order->user->user_address->area??null}}</td>
                                             <td>{{$order->user->user_address->street??null}}</td>
                                             <td>
-                                                <form action="">
+
+
                                                     <div class="form-group">
-                                                        <select class="form-select select_tabls" aria-label="Default select example" style="width:180px !important;">
-                                                            <option>Expedite</option>
-                                                            <option selected="" value="1">Normal</option>
+                                                        <select class="form-select select_tabls" aria-label="Default select example" name="priority[{{$order->id}}]" style="width:180px !important;">
+                                                            <option value="2" @if(isset($driver->priority) && $driver->priority == 2) selected @endif>Expedite</option>
+                                                            <option value="1" @if(isset($driver->priority) && $driver->priority == 1) selected @endif >Normal</option>
                                                         </select>
                                                     </div>
-                                                </form>
+
                                             </td>
                                             <td>{{$order->status??null}}</td>
                                             <td><a class="map_pin" href="javscript:;"><i class="far fa-file"></i></a></td>

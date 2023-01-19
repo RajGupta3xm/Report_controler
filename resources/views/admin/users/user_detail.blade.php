@@ -267,12 +267,16 @@
                                                             @foreach($user_previous_plan as $key=>$user_previous_plans)
                                                            <tr>
                                                              <td>{{$key+1}}</td>   
-                                                             <td>{{$user_previous_plans['name'] ?: '-'}}</td>   
-                                                             <td>{{$user_previous_plans['order_id'] ?: '-'}}</td>   
+                                                             <td>{{$user_previous_plans['name'] ?: '-'}}</td>  
+                                                             @php 
+                                                             $orderId =\App\Models\Order::select('id')->where('user_id',$user_previous_plans['user_id'])->first();
+                                                             @endphp
+                                                            
+                                                             <td>{{$orderId['id'] ?: '-' }}</td>   
                                                              <td>{{$user_previous_plans['plan_price'] ?: '-' }}/<?php if($user_previous_plans['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>      
                                                              <td>{{date('d/m/Y',strtotime($user_previous_plans['puchase_on']))}}</td>   
                                                              <td>{{date('d/m/Y',strtotime($user_previous_plans['expired_on']))}}</td>   
-                                                             <td>{{$user_previous_plans['available_credit'] ?: '-' }} SAR</td>   
+                                                             <td>{{$user_previous_plans['plan_price'] ?: '-' }} SAR</td>   
                                                              <td>
                                                              <div class="mytoggle">
                                                                 <label class="switch">
@@ -281,7 +285,7 @@
                                                              </div>
                                                              </td>    
                                                              <td>
-                                                               <a class="comman_btn table_viewbtn" href="order-details.html">View</a>
+                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($user_previous_plans['user_id']))}}">View</a>
                                                              </td>
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>

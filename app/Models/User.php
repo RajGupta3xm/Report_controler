@@ -49,9 +49,9 @@ class User extends Model {
         return $this->hasMany(Subscription::class);
     }
 
-    // public function plan_purchase_count(){
-    //     return $this->belongsTo(ReferAndEarnUsed::class,['id'=>'referral_id']);
-    // }
+    public function user_address(){
+        return $this->belongsTo(UserAddress::class,'id','user_id');
+    }
 
     
 }

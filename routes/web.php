@@ -300,37 +300,12 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
 /*******End Notification Management */
 
 
-    Route::get('/category-management', 'Admin\CategoryController@index');
-    Route::post('category/store', [
-        'uses' => 'Admin\CategoryController@store',
-        'as' => 'admin.category.store'
-    ]);
-    Route::get('edit-category/{id}', 'Admin\CategoryController@edit');
-    Route::post('category/update/{id}', [
-        'uses' => 'Admin\CategoryController@update',
-        'as' => 'admin.category.update'
-    ]);
-    Route::post('/category/change_category_status', 'Admin\CategoryController@change_category_status');
-    Route::post('/category/delete', 'Admin\CategoryController@delete_category');
+/*******Report Management */
+Route::get('/report-management', 'Admin\ReportController@index');
+Route::post('/search_packing_list', 'Admin\ReportController@search_packing_list');
+/*******End Report Management */
 
-    Route::get('/video-management', 'Admin\UserController@videoList');
-    Route::get('/video-detail/{id}', 'Admin\UserController@videoDetail');
-    Route::post('/video/change_video_status', 'Admin\UserController@change_video_status');
-    Route::post('/video/filter', [
-        'uses' => 'Admin\UserController@filter_video_list',
-        'as' => 'admin.video.filter'
-    ]);
-    Route::get('/participants/{id}', 'Admin\UserController@participants');
-    Route::post('/video/change_participationvideo_status', 'Admin\UserController@change_participationvideo_status');
-    Route::get('/report-management', 'Admin\UserController@reportList');
-    Route::get('/report-detail/{id}', 'Admin\UserController@reportDetail');
-    Route::post('/report/filter', [
-        'uses' => 'Admin\UserController@filter_report_list',
-        'as' => 'admin.report.filter'
-    ]);
-   
-    
-  
+
 
 });
 Route::get('/', 'Website\WebController@index');

@@ -11,6 +11,7 @@ class Order extends Model
     	'user_id',
     	'address_id',
     	'delivery_slot_id',
+    	'plan_id',
     	'meals_count',
     	'item_total',
     	'discount',
@@ -26,4 +27,8 @@ class Order extends Model
    	];
 
 	public $timestamps = true;
+
+	public function user(){
+        return $this->belongsTo(User::class , 'user_id','id');
+    }
 }

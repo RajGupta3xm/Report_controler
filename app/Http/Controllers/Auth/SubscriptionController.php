@@ -438,7 +438,7 @@ class SubscriptionController extends Controller {
         // $request->plan_type;
         // $request->is_weekend;
         $request->subscription_plan_id; // this id get from my plan when user click on perticular plan then get ths detail
-       
+     
         $subscriptions=SubscriptionPlan::select('id')->where(['id'=> $request->subscription_plan_id])->first();
         if(Subscription::where(['delivery_status'=>'active','plan_id'=>$subscriptions['id']])->where('user_id',Auth::guard('api')->id())->orwhere(['delivery_status'=>'paused','plan_id'=>$subscriptions['id']])->first()){
           $subscription=SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
@@ -447,8 +447,9 @@ class SubscriptionController extends Controller {
          ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
         
          ->first();
+      
          if($subscription){
-
+            $subscription->dietPlanTypeId = UserProfile::select('diet_plan_type_id')->where('user_id',Auth::guard('api')->id())->first();
                 $dates = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
                  $date = $dates->addDays($subscription->no_days);
                    $diff = now()->diffInDays(Carbon::parse($date));
@@ -458,7 +459,7 @@ class SubscriptionController extends Controller {
                     $subscription->days_remaining = $diff .' days left to expire ';
                  }
                
-                
+                 $subscription->end_date= date('Y-m-d',strtotime($date));
                 
                 $subscription->meal_groups=[];
 
@@ -666,7 +667,7 @@ class SubscriptionController extends Controller {
  
                     ];
                     $updateVaccine=UserAddress::where(['id'=>$vaccination['address_id'],'user_id'=>Auth::guard('api')->id()])->update($update);
-                    
+                  
                 }
                
             }
@@ -711,15 +712,32 @@ class SubscriptionController extends Controller {
             ]
            
         );
-        $user3=UserProfile::updateOrCreate(
-            ['user_id' =>  Auth::guard('api')->id()],
-            [
-                'available_credit' => $request->total_amount,
-                'subscription_id' => $request->plan_id,
+        $credit = UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        if(!empty($credit->available_credit)){
+             $totalCredit = $credit->available_credit += $request->total_amount;
+            $user3=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'available_credit' => $totalCredit,
+                    'subscription_id' => $request->plan_id,
+                   
+                ]
                
-            ]
-           
-        );
+            );
+
+        }else{
+            $user3=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'available_credit' => $request->total_amount,
+                    'subscription_id' => $request->plan_id,
+                   
+                ]
+               
+            );
+
+        }
+        
 
         if($request->gift_card_status == '1'){
             $giftCardTicket_id = UserGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
@@ -1445,24 +1463,58 @@ public function changeDeliveryTime(Request $request){
 }
 
 public function userSkipDelivery(Request $request){
-    
-    $insert=[];
+     $current_time = date('H:i:s');
+    $fourtyHourDate= date('Y-m-d H:i:s',strtotime(' +2day '));
+    if(UserSkipDelivery::where(['user_id'=> Auth::guard('api')->id(),'user_address_id' => $request->user_address_id,  'subscription_plan_id' => $request->subscription_plan_id,  'skip_delivery_date' => $request->skip_delivery_date])->exists()){
+        return response()->json([
+            'status' => true,
+             'error'=> 'You already skip delivery for this date'
+        ]);
+    }else{
+      if($fourtyHourDate <= $request->skip_delivery_date.' '. $current_time){   
+      $insert=[];
         $insert=[
             'user_id' => Auth::guard('api')->id(),
             'user_address_id' => $request->user_address_id,
             'subscription_plan_id' => $request->subscription_plan_id,
             'skip_delivery_date' => $request->skip_delivery_date,
 
-        ];
-        
+        ];   
     
     if($insert){
-        $user=UserSkipDelivery::create($insert);
+         $user=UserSkipDelivery::create($insert);
+         
     }   
-    
+  }else{
+    return response()->json([
+        'status' => true,
+         'error'=> 'You can not skip delivery for this date'
+       ]);
+   }
+     
+   $response = new \Lib\PopulateResponse($user);
     $this->status = true; 
+    $this->data = $response->apiResponse();
     $this->message = trans('messages.skip_delivery');
+}
     return $this->populateResponse();
+}
+
+public function userUnskipDelivery(Request $request){
+    $current_time = date('H:i:s');
+    $fourtyHourDate= date('Y-m-d H:i:s',strtotime(' +2day '));
+   if($fourtyHourDate <= $request->skip_delivery_date.' '. $current_time){   
+      $unSkip =  UserSkipDelivery::where(['user_id'=> Auth::guard('api')->id(),'user_address_id' => $request->user_address_id,  'subscription_plan_id' => $request->subscription_plan_id,'skip_delivery_date' => $request->skip_delivery_date,])->delete();   
+}else{
+ return response()->json([
+     'status' => true,
+      'error'=> 'You can not Unskip delivery for this date'
+    ]);
+}
+ 
+ $this->status = true; 
+ $this->message = trans('messages.unskip_delivery');
+ return $this->populateResponse();
 }
 
 public function userChangeDeliveryLocation(Request $request){

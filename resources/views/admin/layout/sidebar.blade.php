@@ -8,7 +8,7 @@
             <diV class="sidebar_menus">
                <ul class="list-unstyled ps-1 m-0">
                   <li><a class="<?= Request::segment(2) == 'dashboard' || Request::segment(2) == 'change_password' || Request::segment(2) == 'edit_profile' || Request::segment(2) == 'dashboard' ? 'active' : ''; ?>" href="{{url('admin/dashboard')}}"  ><i class="fal fa-home"></i>Dashboard</a></li>
-                  <li><a class="<?= Request::segment(2) == 'user-management' || Request::segment(2) == 'user-details' ? 'active' : ''; ?>" href="{{url('admin/user-management')}}" ><i class="fal fa-user"></i>Users Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'user-management' || Request::segment(2) == 'user-details' || Request::segment(2) == 'order-details' ? 'active' : ''; ?>" href="{{url('admin/user-management')}}" ><i class="fal fa-user"></i>Users Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'order-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/order-management')}}" ><i class="fal fa-box-full"></i>Order Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'ingredient-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/ingredient-management')}}" ><i class="fal fa-utensils-alt"></i>Ingredients Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'fitnessGoal-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/fitnessGoal-management')}}" ><i class="far fa-walking"></i>Fitness Goal Management</a></li>
@@ -25,8 +25,8 @@
                   <li><a class="<?= Request::segment(2) == 'refer-earn-management' ? 'active' : ''; ?>" href="{{url('admin/refer-earn-management')}}" ><i class="fad fa-coins"></i>Refer & Earn</a></li>
                   <li><a class="<?= Request::segment(2) == 'notification-management' ? 'active' : ''; ?>" href="{{url('admin/notification-management')}}" ><i class="far fa-bell"></i>Notification Management</a></li>
                   <!-- <li><a class="" href="notification-management.html"><i class="far fa-bell"></i>Notification Management</a></li>
-                  <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li>
-                  <li><a class="" href="report-management.html"><i class="far fa-file-spreadsheet"></i>Report Management</a></li> -->
+                  <li><a class="" href="refer-and-earn.html"><i class="fad fa-coins"></i>Refer & Earn</a></li> -->
+                  <li><a class="<?= Request::segment(2) == 'report-management' ? 'active' : ''; ?>" href="{{url('admin/report-management')}}"><i class="far fa-file-spreadsheet"></i>Report Management</a></li>
                   @if(Session::get('admin_logged_in')['type']=='0')
                   <li><a class="<?= Request::segment(2) == 'content-management' || Request::segment(2) == 'content-edit' ? 'active' : ''; ?>" href="{{url('admin/content-management')}}" ><i class="fal fa-user-edit"></i>Content Management</a></li>
                   @endif

@@ -46,6 +46,11 @@ use App\Models\SubscriptionCosts;
 use App\Models\UserGiftCard;
 use App\Models\MealSchedules;
 
+use App\Models\AppUserDeviceToken;
+
+use Twilio\Rest\Client;
+use Twilio\Jwt\ClientToken;
+
 use App\Models\CreditTransaction;
 use App\Models\UserSelectedDaysForAddress;
 use Carbon\Carbon;
@@ -53,7 +58,7 @@ use DateTime;
 use App\Mail\YourMailTemplate;
 use Mail;
 use Cookie;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -83,7 +88,7 @@ class ApiController extends Controller {
             // 'family_name' => 'required',
             'email' => 'required',
             'country_code' => 'required',
-            'mobile' => 'required|string|size:11'
+            'mobile' => 'required|string|size:10'
         ], [
             'name.required' => trans('validation.required', ['attribute' => 'name']),
             // 'family_name.required' => trans('validation.required', ['attribute' => 'family_name']),
@@ -149,6 +154,15 @@ class ApiController extends Controller {
                 ];
 
                 $newUser = User::create($insert);
+                 // $member = new User;
+                 $orcode='Name: '.request('name').PHP_EOL.'User Id: '.$newUser->id.'-'.'highSquare'.PHP_EOL.'Mobile: '.request('mobile');
+                 $codeimage=QrCode::format('png')->size(100)->generate($orcode);
+                 $output_file =   time() . '.png';
+                  $dd=Storage::disk('public')->put($output_file, $codeimage);
+                  $url = url('storage/app');
+                 $images= $output_file;
+                 // $member->save();
+                 User::where('id',$newUser->id)->update(['image'=>$images]);
             }
 
             if($request->referral_code){
@@ -188,29 +202,15 @@ class ApiController extends Controller {
                        
                     );
                 }
-                    // $CheckReferIsValidd = User::where('referral_code',$request->referral_code)->whereNotIn('status',['0'])->first();
-                    // if(!empty($CheckReferIsValidd)){
-                    //   $referee_registration = ReferAndEarnUsed::where('referee_id',$CheckReferIsValidd->id)
-                    //   ->where('used_for','registration')
-                    //   ->get();
-                    //   $cost = ReferAndEarn::select('*')->where('status','active')->first();
-                    //   $totalCostRefereeRegistration = 0; 
-                    //   foreach($referee_registration as $referee_registrations){
-                    //       $totalCostRefereeRegistration += $cost->register_referee;
-                    //    }
-                    //  UserProfile::updateOrCreate(
-                    //      ['user_id' =>  $CheckReferIsValidd->id],
-                    //      [
-                    //      'available_referral' => $totalCostRefereeRegistration,
-                       
-                    //     ]
-                    //     );
-                  
-                    // }  
+                    
    
             }
+            // dd(phpinfo());
+           
+
+           
             
-            
+
             //dd($resultSMS);
             if ($newUser) {
                 $createOtp = [
@@ -265,15 +265,54 @@ class ApiController extends Controller {
             $updateUser = User::where('id', $request->user_id)->update(['is_otp_verified' => '1', 'status' => '1']);
             
             $updateArr = array();
-            if ($request->device_token != "" && $request->device_type != "") {
-                $updateArr['device_token'] = $request->device_token;
-                $updateArr['device_type'] = $request->device_type ? $request->device_type : 0;
-            }
-            if ($updateArr) {
-                User::where('id', $user->id)->update($updateArr);
-            }
-            $user->user_id = $user->id;
+            // if ($request->device_token != "" && $request->device_type != "") {
+            //     $updateArr['device_token'] = $request->device_token;
+            //     $updateArr['device_type'] = $request->device_type ? $request->device_type : 0;
+            // }
+            // if ($updateArr) {
+            //     User::where('id', $user->id)->update($updateArr);
+            // }
+            $user->hashMac = hash_hmac('sha256',$user->id,'KsI8gRFVBgZhoZ8atIvaK9KfwYf5I-fpqg18CSYq',);
+           $user->user_id = $user->id;
             $user = $this->getToken($user);
+
+          
+           
+
+            $title = 'Registered Successfully';
+
+            $message = 'Congrats! You have successfully registered';
+
+
+            // if(!empty($request->device_token)){
+            //     /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
+            //     $this->sendNotification($request['user_id'], $request->device_token, $title, $message, 'registered');
+            // }
+            //die;
+
+            // sms gateway api
+    //        $data = [];
+    //        $users = User::find($request['user_id']);
+
+    //        $url ="https://mshastra.com/sendurlcomma.aspx?user=AlmuthafT&pwd=SMS@Cn1122@&senderid=Canny&mobileno=504485141&msgtext=Hello&CountryCode=966&priority=High";
+    //        $ch = curl_init($url);
+    //        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    //        $curl_scraped_page = curl_exec($ch);
+    //        curl_close($ch);
+    //        try
+    //    {
+    //        // dd($curl_scraped_page); die;
+          
+    //        return true;
+    //    }
+    //    catch (Exception $e)
+    //    {
+    //        // dd($e); die;
+    //    }
+
+    //   end sms gateway
+
+          
             $response = new \Lib\PopulateResponse($user);
             $this->data = $response->apiResponse();
             
@@ -283,6 +322,8 @@ class ApiController extends Controller {
         return $this->populateResponse();
     }
 
+
+   
      // Resend OTP on email/mobile
      public function resendOTP(Request $request)    
      {
@@ -350,6 +391,8 @@ class ApiController extends Controller {
             $data['user_id'] = $user->id;
             $data['otp'] = $createOtp['otp'];
             $otp = Otp::create($createOtp);
+            $resultSMS = $this->sendSMS("+91",$request->mobile,$data['otp']);
+            //dd($resultSMS);
             $updateArr = array();
             if ($request->device_token != "" && $request->device_type != "") {
                 $updateArr['device_token'] = $request->device_token;
@@ -385,6 +428,108 @@ class ApiController extends Controller {
             // $user->image = url('assets/images/dummy2.jpg');
         }
         return $user;
+    }
+
+    function sendSMS($countrycode,$number,$otp){
+        $accountSid = "ACe4d25dc6cc8201aaa766610388c138c8";
+        $authToken  = "52e861913af092c4e0718c94542a376a";
+        $TwilioNumber  = "+13254252306";
+         //dd($TwilioNumber);
+        $client = new Client($accountSid, $authToken);
+        try
+        {
+            // Use the client to do fun stuff like send text messages!
+            $client->messages->create(
+            // the number you'd like to send the message to
+                $countrycode.$number,
+            array(
+                    // A Twilio phone number you purchased at twilio.com/console
+                    'from' => $TwilioNumber,
+                    // the body of the text message you'd like to send
+                    'body' => 'Please use OTP '.$otp .' to login to your Picwale account.'
+                )
+            );
+
+            return true;
+        }
+        catch (Exception $e)
+        {
+            
+        }
+
+    }
+
+    function sendNotification($user_id, $device_code='', $title, $message, $type)
+    {
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+    
+        /*$notification = [
+            'title' => $title,
+            "body" => $message,
+            'sound' => true,
+            'type' => $type,
+        ];*/
+            
+        $extraNotificationData = [
+            //'message' => $message,
+            'type' => $type,
+            //'id' => $data['id'],
+        ];
+    
+        $fcmNotification = [
+            'to'        => $device_code,
+            //'to'        => 'cfA6mVygSHWMRQydDeqLdN:APA91bHRkdREmOyJh_Si3nscRJfRNYV6kcqzNIrzEUraXFIS6aAAfj4DJurMQhgh7OIoNFKV2F8-PFmrg1cL5kJfRnNCvbmm8yrCz8u629hm7uPXYHleGISI7CFa6KAYYnLYTPE65-sd', //single token
+            //'notification' => $notification,
+            'data' => $extraNotificationData,
+            'priority' => 'high'
+        ];
+    
+        // dd($fcmNotification);
+          
+        $SERVER_API_KEY = 'AAAAzTjhJng:APA91bF6B3HlGSOL7zx2-o0RQk_IScvOmuRSqSSAuWZ7fJFbOlLnBEMOetgnlKi1ZfproC8dse-5nXDeAZAqVt6Pw88Jas1SrMJhOQmCxdOgL8DW11D8_ry6rmxQ6zN_yi3KFWAUiv3M';
+    
+        // $data = [
+        //     "registration_ids" => $user_id,
+        //     "notification" => [
+        //         "title" => $request->title,
+        //         "body" => $request->body,  
+        //     ]
+        // ];
+        // $dataString = json_encode($data);
+    
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+    
+    
+        $ch = curl_init();
+      
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+    
+        $result = curl_exec($ch);
+        //dd($result);
+        /*$data = [
+            'user_id' => $user_id,
+            'body' => [
+                'notification' => $notification,
+                'data' => $extraNotificationData
+            ],
+            'result' => $result,
+            'type' => $type,
+            'status' => 'unread'
+        ];
+    
+        AppNotification::create($data);*/
+        // dd($result);
+            //dd(env('FIREBASE_KEY'));
+        //Log::info($result);
+        curl_close($ch);
     }
 
     public function aboutUs()
@@ -1771,6 +1916,7 @@ public function select_delivery_location(Request $request) {
 }
 
 public function resume_meal_plan(Request $request) {
+
 if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->subscription_plan_id)->exists()){
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
@@ -1784,7 +1930,12 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
 
         ]
     );
-    Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'terminted']);
+    if($request->subscription_plan_id == $request->old_subscription_plan_id){
+        Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'active']);
+    }else{
+        Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'terminted']);
+    }
+  
 }else{
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
@@ -1798,6 +1949,40 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
         ]
     );
     Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'terminted']);
+    
+    if(!empty($request->old_subscription_plan_id)){
+         $getAvailableCredit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
+        if($getAvailableCredit){
+                $newPlanPrice = SubscriptionMealPlanVariant::select('no_days','plan_price')->where('meal_plan_id',$request->subscription_plan_id)->first();
+                 $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where('meal_plan_id',$request->old_subscription_plan_id)->first();
+                  $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
+                   $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
+               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
+               $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,])->first();
+               $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,])->first();
+                $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
+                 $old_pause_date = Carbon::createFromFormat('Y-m-d',$pause_date->pause_date);
+                 $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
+                 $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
+
+                 $newDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'delivery_status'=>'active'])->first();
+                 $dates = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
+                 $next_date = $dates->addDays($remainingDayFromOldPlan);
+
+               
+                $new_date = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
+                // $old_date = Carbon::createFromFormat('Y-m-d',$next_date);
+                 $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
+                //  $remaingDaysOfPlan = $oldNumberOfDays->no_days-$usedPlanForDays;
+                 $getRequiredAmount = $perDayRequiredCredit*$usedPlanForDays;
+                 $UserPay = $getRequiredAmount-$getAvailableCredit->available_credit;
+                     $data['pay'] = $UserPay;
+               }else{
+                    $data['pay'] = '';
+               }
+               
+        }
+      }
      
 }
     if($data){
@@ -1823,8 +2008,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
                    ]
                );
     }
-   
-      
+     
     if($data){
     $response = new \Lib\PopulateResponse($data);
     $this->data = $response->apiResponse();
@@ -1842,7 +2026,7 @@ public function meal_plan_listing(Request $request){
    $diet_plan = DietPlanType::select('id','name')->get()
    ->each(function($diet_plan){
    $diet_plan->meal_plan =SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
-    ->select('subscription_plans.id','subscription_plans.name','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1')
+    ->select('subscription_plans.id','subscription_plans.name','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days')
     ->where('subscriptions_meal_plans_variants.diet_plan_id',$diet_plan->id)->get();
     // $meal_plan->remainingDays = Subscription::where('user_id',Auth::guard('api')->id())->where('plan_id',$userprofile->subscription_id)->first();
     // if($remainingDays){

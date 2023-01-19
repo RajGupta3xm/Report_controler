@@ -178,19 +178,34 @@
                                                             <div class="row align-items-center">
                                                                <div class="col-4">
                                                                   <div class="plan_img">
-                                                                     <img src="assets/img/bg-img.jpg" alt=""> 
-                                                                     <span class="days_left">5 days left to expire</span>
+                                                                     <img src="{{$subscription->image}}" alt=""> 
+                                                                     @php
+     
+                                                                           $dates = carbon\Carbon::createFromFormat('Y-m-d',$subscription->start_date->start_date);
+                                                                            $date = $dates->addDays($subscription->no_days);
+                                                                            $diff = now()->diffInDays(carbon\Carbon::parse($date));
+                                                                            if($diff == 0){
+                                                                            $days_remaining  = "Your plan is expire today";
+                                                                              }
+                                                                             elseif($date< now()){
+                                                                             $days_remaining  = "0";
+                                                                               }else{
+                                                                              $days_remaining  = $diff;
+                                                                                }
+      
+                                                                     @endphp
+                                                                     <span class="days_left">{{$days_remaining}} days left to expire</span>
                                                                   </div>
                                                                </div>
                                                                <div class="col-3">
                                                                   <div class="plan_data text-start pt-2">
-                                                                     <h2>Plan Name <span>(Lorem)</span></h2>
-                                                                     <strong>500 SAR/Week</strong>
+                                                                     <h2>Plan Name <span>({{$subscription->name}})</span></h2>
+                                                                     <strong>{{$subscription->cost}} SAR/{{$subscription->day}}</strong>
                                                                      <div class="promo">Promo 10%</div> 
                                                                      <div class="orderdetails mt-1">
                                                                         <span class="mb-1 d-flex">Order: <strong> #2305</strong></span>
-                                                                        <span class="d-flex mb-1">Plan Expiry Date: <strong> 23/09/2022</strong></span> 
-                                                                        <span class="d-flex">Credit Balance: <strong> 500</strong></span> 
+                                                                        <span class="d-flex mb-1">Plan Expiry Date: <strong>{{date('d/m/Y',strtotime($date))}}</strong></span> 
+                                                                        <span class="d-flex">Credit Balance: <strong>{{$user_details->available_credit}}</strong></span> 
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -198,15 +213,17 @@
                                                                   <div class="plan_discription">
                                                                      <strong>Description:</strong>
                                                                      <ul class="list-circle mb-0">
+                                                                        @foreach($subscription->description as $subscriptions)
                                                                         <li>
-                                                                           <p>Serves Upto 2000 calories out of 2200 calories recommend for you.</p>
+                                                                           <p>{{$subscriptions}}</p>
                                                                         </li>
-                                                                        <li>
+                                                                        @endforeach
+                                                                        <!-- <li>
                                                                            <p>5 days a week.</p>
                                                                         </li>
                                                                         <li>
                                                                            <p>4 Meals Package (Breakfast, Lunch, Snacks, Dinner).</p>
-                                                                        </li>
+                                                                        </li> -->
                                                                      </ul>
                                                                   </div>
                                                                </div>
@@ -227,7 +244,7 @@
                                                                         <span>Location :</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">A-301/302, Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
+                                                                        <a href="javscript:;">{{$deliveries->address_type}}, Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -237,7 +254,7 @@
                                                                         <span>Slot :</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">6 AM - 11 AM</a>
+                                                                        <a href="javscript:;">{{$deliveries->start_time}}- {{$deliveries->end_time}}</a>
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -246,19 +263,14 @@
                                                       </div>
                                                       <div class="col-12 mt-2 mb-4">
                                                          <div class="Plan_category_slider owl-carousel">
-                                                            <div class="Plan_datee ">08 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee active">09 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">10 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">11 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">12 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">13 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">14 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">15 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">16 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">17 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">18 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">19 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
-                                                            <div class="Plan_datee ">20 Jan <a class="cut_icon" href="javscript:;"><i class="far fa-times"></i></a></div>
+                                                         @foreach($datee as $k=>$date)
+                                                         @if($k==0)
+                                                         <div class="Plan_datee active">{{\Carbon\Carbon::parse($date)->format('d M')}} <a class="cut_icon"  href="javscript:;"><i class="far fa-times"></i></a></div>
+                                                         @else
+                                                            <div class="Plan_datee">{{\Carbon\Carbon::parse($date)->format('d M')}} <a class="cut_icon"  href="javscript:;"><i class="far fa-times"></i></a></div>
+                                                            @endif
+                                                            @endforeach
+                                                          
                                                          </div>
                                                       </div>
                                                       <div class="col-12">
@@ -266,27 +278,36 @@
                                                             <div class="col-12 current_plan_tabbing">
                                                                <nav>
                                                                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                                     <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Breakfast (2) </button>
-                                                                     <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Lunch & Dinner</button>
+                                                                    @foreach($category as $key=>$categories)
+                                                                    @if($key==0)
+                                                                     <button class="nav-link vaccine_name active" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
+                                                                     @else
+                                                                     <button class="nav-link vaccine_name" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
+                                                                     @endif
+                                                                     @endforeach
+                                                                     <!-- <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Lunch & Dinner</button>
                                                                      <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Snacks</button>
                                                                      <button class="nav-link" id="nav-contact1-tab" data-bs-toggle="tab" data-bs-target="#nav-contact1" type="button" role="tab" aria-controls="nav-contact1" aria-selected="false">Dinner</button>
-                                                                     <button class="nav-link" id="nav-contact2-tab" data-bs-toggle="tab" data-bs-target="#nav-contact2" type="button" role="tab" aria-controls="nav-contact2" aria-selected="false">Soup</button>
+                                                                     <button class="nav-link" id="nav-contact2-tab" data-bs-toggle="tab" data-bs-target="#nav-contact2" type="button" role="tab" aria-controls="nav-contact2" aria-selected="false">Soup</button> -->
                                                                   </div>
                                                                </nav>
                                                                <div class="tab-content" id="nav-tabContent">
+                                                             
                                                                   <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                                                     <div class="row mx-0 plan_tabbing_inner">
+                                                                  @foreach($category as $key=>$categories)
+                                                                     <div class="row mx-0 plan_tabbing_inner video_list" id='video_list_<?=$categories['meal_schedule_id']?>' <?php if($key!=0)  { ?> style="display:none" <?php }?>>
                                                                         <div class="col-12 p-4">
+                                                                        @foreach($categories['meal_group']['meals'] as $v=>$meal)
                                                                            <div class="plan_box mb-4">
                                                                               <div class="row align-items-center">
                                                                                  <div class="col">
                                                                                     <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
+                                                                                       <img src="{{$meal['image']}}" alt="">  
                                                                                     </div>
                                                                                  </div>
                                                                                  <div class="col-4">
                                                                                     <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
+                                                                                       <h2>{{$meal['name']}}</h2>
                                                                                        <div class="rating_box">
                                                                                           <a href="javscript:;"><i class="fas fa-star"></i></a>
                                                                                           <a href="javscript:;"><i class="fas fa-star"></i></a>
@@ -301,7 +322,7 @@
                                                                                                    <span>Calories :</span>
                                                                                                 </div>
                                                                                                 <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
+                                                                                                   <strong>{{$meal['meal_calorie']}} cal</strong>
                                                                                                 </div>
                                                                                              </div>
                                                                                              <div class="row plan_box_inner py-1 border-bottom">
@@ -309,7 +330,7 @@
                                                                                                    <span>Protein :</span>
                                                                                                 </div>
                                                                                                 <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
+                                                                                                   <strong>{{$meal['protein']}} gms</strong>
                                                                                                 </div>
                                                                                              </div>
                                                                                              <div class="row plan_box_inner py-1 border-bottom">
@@ -317,7 +338,7 @@
                                                                                                    <span>Carbs :</span>
                                                                                                 </div>
                                                                                                 <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
+                                                                                                   <strong>{{$meal['carbs']}} gms</strong>
                                                                                                 </div>
                                                                                              </div>
                                                                                              <div class="row plan_box_inner py-1">
@@ -325,7 +346,7 @@
                                                                                                    <span>Fat :</span>
                                                                                                 </div>
                                                                                                 <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
+                                                                                                   <strong>{{$meal['fat']}} gms</strong>
                                                                                                 </div>
                                                                                              </div>
                                                                                           </div>
@@ -338,22 +359,25 @@
                                                                                        <div class="meal_discription_inner border">
                                                                                           <p class="subhead">This meal contains:</p>
                                                                                           <ul class="list-circle mb-0">
+                                                                                          @foreach($meal['dislikeItem'] as $t=>$dislikeItems)
                                                                                              <li>
-                                                                                                <p>Gluten</p>
+                                                                                                <p>{{$dislikeItems->name}}</p>
                                                                                              </li>
-                                                                                             <li>
+                                                                                             @endforeach
+                                                                                             <!-- <li>
                                                                                                 <p>Chicken</p>
                                                                                              </li>
                                                                                              <li>
                                                                                                 <p>Soy</p>
-                                                                                             </li>
+                                                                                             </li> -->
                                                                                           </ul>
                                                                                        </div>
                                                                                     </div>
                                                                                  </div>
                                                                               </div>
                                                                            </div> 
-                                                                           <div class="plan_box mb-4">
+                                                                           @endforeach
+                                                                           <!-- <div class="plan_box mb-4">
                                                                               <div class="row align-items-center">
                                                                                  <div class="col">
                                                                                     <div class="plan_img">
@@ -428,661 +452,14 @@
                                                                                     </div>
                                                                                  </div>
                                                                               </div>
-                                                                           </div>
+                                                                           </div> -->
                                                                         </div>
                                                                         <div class="col-12 text-center mb-4">
                                                                            <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
                                                                            <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a>
                                                                         </div>
                                                                      </div>
-                                                                  </div>
-                                                                  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                                                                     <div class="row mx-0 plan_tabbing_inner">
-                                                                        <div class="col-12 p-4">
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div> 
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div>
-                                                                        </div>
-                                                                        <div class="col-12 text-center mb-4">
-                                                                           <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
-                                                                           <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a> 
-                                                                        </div>
-                                                                     </div>
-                                                                  </div>
-                                                                  <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                                                                     <div class="row mx-0 plan_tabbing_inner">
-                                                                        <div class="col-12 p-4">
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div> 
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div>
-                                                                        </div>
-                                                                        <div class="col-12 text-center mb-4">
-                                                                           <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
-                                                                           <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a>
-                                                                        </div>
-                                                                     </div>
-                                                                  </div>
-                                                                  <div class="tab-pane fade" id="nav-contact1" role="tabpanel" aria-labelledby="nav-contact1-tab"> 
-                                                                     <div class="row mx-0 plan_tabbing_inner">
-                                                                        <div class="col-12 p-4">
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div> 
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div>
-                                                                        </div>
-                                                                        <div class="col-12 text-center mb-4">
-                                                                           <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
-                                                                           <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a>
-                                                                        </div>
-                                                                     </div>
-                                                                  </div>
-                                                                  <div class="tab-pane fade" id="nav-contact2" role="tabpanel" aria-labelledby="nav-contact2-tab"> 
-                                                                     <div class="row mx-0 plan_tabbing_inner">
-                                                                        <div class="col-12 p-4">
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div> 
-                                                                           <div class="plan_box mb-4">
-                                                                              <div class="row align-items-center">
-                                                                                 <div class="col">
-                                                                                    <div class="plan_img">
-                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="plan_data text-start">
-                                                                                       <h2>Meal Name</h2>
-                                                                                       <div class="rating_box">
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
-                                                                                       </div>
-                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
-                                                                                          <div class="col-12">
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Calories :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>500 cal</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Protein :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>150 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1 border-bottom">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Carbs :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>250 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                             <div class="row plan_box_inner py-1">
-                                                                                                <div class="col-6 pe-1 ps-2">
-                                                                                                   <span>Fat :</span>
-                                                                                                </div>
-                                                                                                <div class="col-6 ps-1 pe-2">
-                                                                                                   <strong>50 gms</strong>
-                                                                                                </div>
-                                                                                             </div>
-                                                                                          </div>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                                 <div class="col-4">
-                                                                                    <div class="meal_discription">
-                                                                                       <strong>Description:</strong>
-                                                                                       <div class="meal_discription_inner border">
-                                                                                          <p class="subhead">This meal contains:</p>
-                                                                                          <ul class="list-circle mb-0">
-                                                                                             <li>
-                                                                                                <p>Gluten</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li>
-                                                                                          </ul>
-                                                                                       </div>
-                                                                                    </div>
-                                                                                 </div>
-                                                                              </div>
-                                                                           </div>
-                                                                        </div>
-                                                                        <div class="col-12 text-center mb-4">
-                                                                           <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
-                                                                           <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a>
-                                                                        </div>
-                                                                     </div>
+                                                                     @endforeach
                                                                   </div>
                                                                </div>
                                                             </div>
@@ -1108,6 +485,26 @@
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>
       <script src="assets/js/main.js"></script>
+      <script>
+ function activeDate(obj,id) {
+
+   $('.video_lists').css('display','none');
+   $('#video_lists_'+ id ).css('display','block');
+   $('.vaccine_names').removeClass('active');
+   $(obj ).addClass('active');
+
+    }
+    </script>
+      <script>
+ function activeTab(obj,id) {
+
+   $('.video_list').css('display','none');
+   $('#video_list_'+ id ).css('display','block');
+   $('.vaccine_name').removeClass('active');
+   $(obj ).addClass('active');
+
+    }
+    </script>
   @endsection
   <script>
        function changeStatus(obj, id) {

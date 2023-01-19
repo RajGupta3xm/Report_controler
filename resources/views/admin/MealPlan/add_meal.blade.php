@@ -190,7 +190,7 @@
 
 
                                      <div id="DefaultSelection">
-
+                                     <!-- defaultMealPageSection -->
                                      </div>
                                      <div class="col-12 comman_table_design mb-4 New_tabledesign" id="variantsShow" style="display: none;">
                                          <div class="row mx-0 comman_header justify-content-between rounded-top">
