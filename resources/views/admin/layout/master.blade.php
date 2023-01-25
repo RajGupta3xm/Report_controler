@@ -22,7 +22,8 @@
       <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css"/>
      
       <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" />
-     
+      
+      <!-- <link  href="{{asset('assets/admin/plugins/datatables/css/dataTables.bootstrap.min.css')}}" rel="stylesheet"> -->
       <!-- <link rel="stylesheet" href="{{asset('assets/admin/css/style.css')}}"> -->
       
         <style>
@@ -264,8 +265,11 @@
       
        <script src="{{asset('assets/js/main.js')}}"></script>
        <script src="{{asset('assets/admin/js/demo.js')}}"></script>
-     
-        
+    <!-- filter script  -->
+    <script src="{{asset('assets/admin/plugins/functions/dashboard1.js')}}"></script>
+    <script src="{{asset('assets/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('assets/admin/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
+<!-- end filter script -->
       <script type="text/javascript">
          $(function () {
                $('#dtpickerdemo').datetimepicker();
@@ -378,6 +382,8 @@
             $(function () {
                 $('#example1').DataTable()
                 $('#example2').DataTable()
+                $('#example4').DataTable()
+                $('#example5').DataTable()
                 $('#example3').DataTable({
                     'paging': true,
                     'lengthChange': false,

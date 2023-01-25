@@ -57,7 +57,7 @@
                                                                 <tbody>
                                                                 <tr>
                                                                     <td>
-                                                                        <input class="form-control table_input validate" type="text" name="variant_name" id="variant_name">
+                                                                        <input class="form-control table_input validate" type="text" name="variant_name" id="variant_name"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="variant_nameError"></p>
                                                                     </td>
                                                                     <td>
@@ -65,8 +65,9 @@
                                                                             $diet_plans=\App\Models\DietPlanType::get();
                                                                         @endphp
 
-                                                                        <select class="form-select table_input table_select validate" aria-label="Default select example" name="diet_plan" id="diet_plan_id">
+                                                                        <select class="form-select table_input table_select validate" aria-label="Default select example" name="diet_plan" id="diet_plan_id" style="    width: 157px !important;">
                                                                             @if(count($diet_plans) > 0)
+                                                                                <option value="">Select Text</option>
                                                                                 @foreach($diet_plans as $key=> $group)
                                                                                     <option value="{{$group->name}}" data-id="{{$group->id}}">{{$group->name}}</option>
                                                                                 @endforeach
@@ -75,25 +76,28 @@
                                                                         <p class="text-danger text-small" id="diet_planError"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value">
+                                                                        <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value" style="    width: 157px !important;">
+                                                                            <option value="">Select Text</option>
                                                                             <option value="weekly">Weekly</option>
                                                                             <option value="monthly">Monthly</option>
                                                                         </select>
                                                                         <p class="text-danger text-small" id="option1Error"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value">
+                                                                        <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value" style="    width: 157px !important;">
+                                                                            <option value="">Select Text</option>
                                                                             <option value="weekend">With Weekend</option>
                                                                             <option value="withoutweekend">Without Weekend</option>
                                                                         </select>
                                                                         <p class="text-danger text-small" id="option2Error"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <input class="form-control table_input validate serving_calorie" type="text" name="no_of_days" id="no_of_days">
+                                                                        <input class="form-control table_input validate serving_calorie" type="text" name="no_of_days" id="no_of_days"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="no_of_daysError"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <select class="form-select table_input table_select" aria-label="Default select example" name="calorie" id="calorie_value">
+                                                                        <select class="form-select table_input table_select" aria-label="Default select example" name="calorie" id="calorie_value" style="    width: 157px !important;">
+                                                                            <option value="">Select Text</option>
                                                                             <option value="1000">1000 cal</option>
                                                                             <option value="1200">1200 cal</option>
                                                                             <option value="1500">1500 cal</option>
@@ -103,26 +107,26 @@
                                                                         <p class="text-danger text-small" id="calorieError"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <input class="form-control table_input serving_calorie validate" type="text" name="serving_calorie" id="serving_calorie_value">
+                                                                        <input class="form-control table_input serving_calorie validate" type="text" name="serving_calorie" id="serving_calorie_value"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="serving_calorieError"></p>
                                                                     </td>
                                                                     <td>
-                                                                        <input class="form-control table_input validate" type="text" name="delivery_price" id="delivery_price_value">
+                                                                        <input class="form-control table_input " type="text" name="delivery_price" id="delivery_price_value"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="delivery_priceError"></p>
                                                                     </td>
 
                                                                     <td>
-                                                                        <input class="form-control table_input validate" type="text" name="plan_price" id="plan_price_value">
+                                                                        <input class="form-control table_input " type="text" name="plan_price" id="plan_price_value"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="plan_priceError"></p>
                                                                     </td>
 
                                                                     <td>
-                                                                        <input class="form-control table_input validate" type="text" name="compare_price" id="compare_price_value">
+                                                                        <input class="form-control table_input " type="text" name="compare_price" id="compare_price_value"  style="    width: 157px !important;">
                                                                         <p class="text-danger text-small" id="compare_priceError"></p>
                                                                     </td>
 
                                                                     <td>
-                                                                        <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat">
+                                                                        <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat"  style="    width: 157px !important;">
                                                                             <option selected>Yes</option>
                                                                             <option value="1">No</option>
                                                                         </select>
@@ -176,7 +180,7 @@
                                                     </div>
                                                     <div class="col-12 text-center mb-3 setup_pricingbtns">
                                                         <button class="comman_btn me-3" id="AddVariants" type="button">ADD</button>
-                                                        <button class="comman_btn bg-red">CLEAR</button>
+                                                        <button class="comman_btn bg-red" type="reset">CLEAR</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -363,7 +367,7 @@
                                         <button class="comman_btn" onclick="validate(this);">Save</button>
                                     </div>
                                     <div class="form-group col-6 text-start">
-                                        <button class="comman_btn bg-red">Close</button>
+                                        <a class="comman_btn bg-red" href="{{url('admin/meal-plan-management')}}" >Close</a>
                                     </div>
 
                                 </form>

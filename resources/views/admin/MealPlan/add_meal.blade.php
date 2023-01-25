@@ -62,7 +62,7 @@
                                                                  <tbody>
                                                                  <tr>
                                                                      <td>
-                                                                         <input class="form-control table_input validate" type="text" name="variant_name" id="variant_name">
+                                                                         <input class="form-control table_input validate" type="text" name="variant_name" id="variant_name"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="variant_nameError"></p>
                                                                      </td>
                                                                      <td>
@@ -70,8 +70,9 @@
                                                                              $diet_plans=\App\Models\DietPlanType::get();
                                                                          @endphp
 
-                                                                         <select class="form-select table_input table_select validate" aria-label="Default select example" name="diet_plan" id="diet_plan_id">
+                                                                         <select class="form-select table_input table_select validate" aria-label="Default select example" name="diet_plan" id="diet_plan_id" style="    width: 157px !important;">
                                                                              @if(count($diet_plans) > 0)
+                                                                                 <option value="">Select Text</option>
                                                                              @foreach($diet_plans as $key=> $group)
                                                                                  <option value="{{$group->name}}" data-id="{{$group->id}}">{{$group->name}}</option>
                                                                              @endforeach
@@ -80,25 +81,28 @@
                                                                          <p class="text-danger text-small" id="diet_planError"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value">
+                                                                         <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value" style="    width: 157px !important;">
+                                                                             <option value="">Select Text</option>
                                                                              <option value="weekly">Weekly</option>
                                                                              <option value="monthly">Monthly</option>
                                                                          </select>
                                                                          <p class="text-danger text-small" id="option1Error"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value">
+                                                                         <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value" style="    width: 157px !important;">
+                                                                             <option value="">Select Text</option>
                                                                              <option value="weekend">With Weekend</option>
                                                                              <option value="withoutweekend">Without Weekend</option>
                                                                          </select>
                                                                          <p class="text-danger text-small" id="option2Error"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <input class="form-control table_input validate serving_calorie" type="text" name="no_of_days" id="no_of_days">
+                                                                         <input class="form-control table_input validate serving_calorie" type="text" name="no_of_days" id="no_of_days"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="no_of_daysError"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <select class="form-select table_input table_select" aria-label="Default select example" name="calorie" id="calorie_value">
+                                                                         <select class="form-select table_input table_select" aria-label="Default select example" name="calorie" id="calorie_value" style="    width: 157px !important;">
+                                                                             <option value="">Select Text</option>
                                                                              <option value="1000">1000 cal</option>
                                                                              <option value="1200">1200 cal</option>
                                                                              <option value="1500">1500 cal</option>
@@ -108,26 +112,26 @@
                                                                          <p class="text-danger text-small" id="calorieError"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <input class="form-control table_input serving_calorie validate" type="text" name="serving_calorie" id="serving_calorie_value">
+                                                                         <input class="form-control table_input serving_calorie validate" type="text" name="serving_calorie" id="serving_calorie_value"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="serving_calorieError"></p>
                                                                      </td>
                                                                      <td>
-                                                                         <input class="form-control table_input validate" type="text" name="delivery_price" id="delivery_price_value">
+                                                                         <input class="form-control table_input " type="text" name="delivery_price" id="delivery_price_value"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="delivery_priceError"></p>
                                                                      </td>
 
                                                                      <td>
-                                                                         <input class="form-control table_input validate" type="text" name="plan_price" id="plan_price_value">
+                                                                         <input class="form-control table_input " type="text" name="plan_price" id="plan_price_value"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="plan_priceError"></p>
                                                                      </td>
 
                                                                      <td>
-                                                                         <input class="form-control table_input validate" type="text" name="compare_price" id="compare_price_value">
+                                                                         <input class="form-control table_input " type="text" name="compare_price" id="compare_price_value"  style="    width: 157px !important;">
                                                                          <p class="text-danger text-small" id="compare_priceError"></p>
                                                                      </td>
 
                                                                      <td>
-                                                                         <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat">
+                                                                         <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat"  style="    width: 157px !important;">
                                                                              <option selected>Yes</option>
                                                                              <option value="1">No</option>
                                                                          </select>
@@ -181,7 +185,7 @@
                                                      </div>
                                                      <div class="col-12 text-center mb-3 setup_pricingbtns">
                                                          <button class="comman_btn me-3" id="AddVariants" type="button">ADD</button>
-                                                         <button class="comman_btn bg-red">CLEAR</button>
+                                                         <button class="comman_btn bg-red" type="reset">CLEAR</button>
                                                      </div>
                                                  </div>
                                              </div>
@@ -190,7 +194,7 @@
 
 
                                      <div id="DefaultSelection">
-                                     <!-- defaultMealPageSection -->
+
                                      </div>
                                      <div class="col-12 comman_table_design mb-4 New_tabledesign" id="variantsShow" style="display: none;">
                                          <div class="row mx-0 comman_header justify-content-between rounded-top">
@@ -235,7 +239,7 @@
                                          <button type="button" class="comman_btn" onclick="validate(this);">Save</button>
                                      </div>
                                      <div class="form-group col-6 text-start">
-                                         <button class="comman_btn bg-red">Close</button>
+                                         <a class="comman_btn bg-red" href="{{url('admin/meal-plan-management')}}" >Close</a>
                                      </div>
                                  </form>
                              </div>
@@ -252,6 +256,7 @@
 
         $(document).ready(function(){
 
+            // at least one checkbox checked...
             $('.option1').on('change',function(){
                 var value=$(this).val();
                 if(value=="weekly"){
@@ -347,64 +352,69 @@
                     }
                 });
                 if(flag){
-                    var variant_name =$('#variant_name').val();
-                    var diet_plan_id =$('#diet_plan_id').find('option:selected').val();
-                    var diet_plan =$('#diet_plan_id').find('option:selected').attr('data-id');
-                    var option1_value =$('#option1_value').val();
-                    var option2_value =$('#option2_value').val();
-                    var no_of_days =$('#no_of_days').val();
-                    var calorie_value =$('#calorie_value').find('option:selected').val();
-                    var serving_calorie_value =$('#serving_calorie_value').val();
-                    var delivery_price_value =$('#delivery_price_value').val();
-                    var plan_price_value =$('#plan_price_value').val();
-                    var compare_price_value =$('#compare_price_value').val();
-                    var is_charge_vat =$('#is_charge_vat').val();
-                    var meal_groups =$('#meal_groups').val();
-                    var description_value =$('#description_value').val();
-                    var meal_groups_hidden=[];
-                    var arr = $("input:checkbox[name*=meal_groups]:checked").each(function(){
-                        meal_groups_hidden.push($(this).val());
-                    });
+                    if($('.meal_groups:checkbox:checked').length == 0){
+                        alert('Please check meal group')
+                    }else{
+                        var variant_name =$('#variant_name').val();
+                        var diet_plan_id =$('#diet_plan_id').find('option:selected').val();
+                        var diet_plan =$('#diet_plan_id').find('option:selected').attr('data-id');
+                        var option1_value =$('#option1_value').val();
+                        var option2_value =$('#option2_value').val();
+                        var no_of_days =$('#no_of_days').val();
+                        var calorie_value =$('#calorie_value').find('option:selected').val();
+                        var serving_calorie_value =$('#serving_calorie_value').val();
+                        var delivery_price_value =$('#delivery_price_value').val();
+                        var plan_price_value =$('#plan_price_value').val();
+                        var compare_price_value =$('#compare_price_value').val();
+                        var is_charge_vat =$('#is_charge_vat').val();
+                        var meal_groups =$('#meal_groups').val();
+                        var description_value =$('#description_value').val();
+                        var meal_groups_hidden=[];
+                        var arr = $("input:checkbox[name*=meal_groups]:checked").each(function(){
+                            meal_groups_hidden.push($(this).val());
+                        });
 
-                    var meal_groups_hidden_name=[];
-                    var arr1 = $("input:checkbox[name*=meal_groups]:checked").each(function(){
-                        meal_groups_hidden_name.push($(this).data('value'));
-                    });
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
+                        var meal_groups_hidden_name=[];
+                        var arr1 = $("input:checkbox[name*=meal_groups]:checked").each(function(){
+                            meal_groups_hidden_name.push($(this).data('value'));
+                        });
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
 
-                    $.ajax({
-                        url:'{{ url("admin/add_variants") }}',
-                        method:'post',
-                        data: {
-                            variant_name:variant_name,
-                            diet_plan_id:diet_plan_id,
-                            option1_value:option1_value,
-                            no_of_days:no_of_days,
-                            option2_value:option2_value,
-                            calorie_value:calorie_value,
-                            serving_calorie_value:serving_calorie_value,
-                            delivery_price_value:delivery_price_value,
-                            compare_price_value:compare_price_value,
-                            is_charge_vat:is_charge_vat,
-                            plan_price_value:plan_price_value,
-                            meal_groups_hidden:meal_groups_hidden,
-                            description_value:description_value,
-                            meal_groups_hidden_name:meal_groups_hidden_name
-                        },
-                        dataType:'json',
-                        type: "post",
-                        cache: false,
-                        success:function(data)
-                        {
-                            $('#DefaultSelection').html(data.html);
-                            $('#variantsShow').css('display','block');
-                            $('#tbody').append('<tr><td><div class="check_radio td_check_radio"><input type="checkbox" checked name="table2" id="table2" class="d-none"><label for="table2"></label></div></td><td>'+variant_name+'</td><td>'+diet_plan_id+'</td><td>'+meal_groups_hidden_name+'</td><td>'+ option1_value+'</td><td>'+option2_value+'</td><td>'+no_of_days+'</td><td>'+calorie_value+'</td><td>'+serving_calorie_value+'</td><td>'+delivery_price_value+'</td><td>'+plan_price_value+'</td><td>'+compare_price_value+'</td><td>'+description_value+'</td><input type="hidden" name="variant_name_hidden[]" value="'+variant_name+'"><input type="hidden" name="diet_plan_hidden[]" value="'+diet_plan+'"><input type="hidden" name="option1_hidden[]" value="'+option1_value+'"><input type="hidden" name="option2_hidden[]" value="'+option2_value+'"><input type="hidden" name="no_of_days_hidden[]" value="'+no_of_days+'"><input type="hidden" name="serving_calorie_hidden[]" value="'+serving_calorie_value+'"><input type="hidden" name="meal_groups_hidden_name[]" value="'+meal_groups_hidden_name+'"><input type="hidden" name="calorie_hidden[]" value="'+calorie_value+'"><input type="hidden" name="delivery_price_hidden[]" value="'+delivery_price_value+'"><input type="hidden" name="plan_price_hidden[]" value="'+plan_price_value+'"><input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'"><input type="hidden" name="is_charge_vat_hidden[]" value="'+is_charge_vat+'"><input type="hidden" name="description_value_hidden[]" value="'+description_value+'"></tr>');
-                        }
-                    })
+                        $.ajax({
+                            url:'{{ url("admin/add_variants") }}',
+                            method:'post',
+                            data: {
+                                variant_name:variant_name,
+                                diet_plan_id:diet_plan_id,
+                                option1_value:option1_value,
+                                no_of_days:no_of_days,
+                                option2_value:option2_value,
+                                calorie_value:calorie_value,
+                                serving_calorie_value:serving_calorie_value,
+                                delivery_price_value:delivery_price_value,
+                                compare_price_value:compare_price_value,
+                                is_charge_vat:is_charge_vat,
+                                plan_price_value:plan_price_value,
+                                meal_groups_hidden:meal_groups_hidden,
+                                description_value:description_value,
+                                meal_groups_hidden_name:meal_groups_hidden_name
+                            },
+                            dataType:'json',
+                            type: "post",
+                            cache: false,
+                            success:function(data)
+                            {
+                                $('#DefaultSelection').html(data.html);
+                                $('#variantsShow').css('display','block');
+                                $('#tbody').append('<tr><td><div class="check_radio td_check_radio"><input type="checkbox" checked name="table2" id="table2" class="d-none"><label for="table2"></label></div></td><td>'+variant_name+'</td><td>'+diet_plan_id+'</td><td>'+meal_groups_hidden_name+'</td><td>'+ option1_value+'</td><td>'+option2_value+'</td><td>'+no_of_days+'</td><td>'+calorie_value+'</td><td>'+serving_calorie_value+'</td><td>'+delivery_price_value+'</td><td>'+plan_price_value+'</td><td>'+compare_price_value+'</td><td>'+description_value+'</td><input type="hidden" name="variant_name_hidden[]" value="'+variant_name+'"><input type="hidden" name="diet_plan_hidden[]" value="'+diet_plan+'"><input type="hidden" name="option1_hidden[]" value="'+option1_value+'"><input type="hidden" name="option2_hidden[]" value="'+option2_value+'"><input type="hidden" name="no_of_days_hidden[]" value="'+no_of_days+'"><input type="hidden" name="serving_calorie_hidden[]" value="'+serving_calorie_value+'"><input type="hidden" name="meal_groups_hidden_name[]" value="'+meal_groups_hidden_name+'"><input type="hidden" name="calorie_hidden[]" value="'+calorie_value+'"><input type="hidden" name="delivery_price_hidden[]" value="'+delivery_price_value+'"><input type="hidden" name="plan_price_hidden[]" value="'+plan_price_value+'"><input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'"><input type="hidden" name="is_charge_vat_hidden[]" value="'+is_charge_vat+'"><input type="hidden" name="description_value_hidden[]" value="'+description_value+'"></tr>');
+                            }
+                        })
+                    }
+
                 }
 
 

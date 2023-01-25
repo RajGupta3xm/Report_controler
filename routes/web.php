@@ -280,6 +280,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
  Route::post('/currentPlan/change_currentPlan_status', 'Admin\OrderController@change_status');
  Route::post('/currentPlan/change_previousPlan_status', 'Admin\OrderController@change_previousPlan_status');
  Route::get('/order-details/{id}', 'Admin\OrderController@show');
+ Route::get('/previous-order-details/{id}/{plan_id}', 'Admin\OrderController@previousPlanShow');
  Route::post('/updateDeliveryStatus', 'Admin\OrderController@updateDeliveryStatus');
  /*******End order Management */
 
@@ -301,6 +302,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
 
 
 /*******Report Management */
+
 Route::get('/report-management', 'Admin\ReportController@index');
 Route::post('/search_packing_list', 'Admin\ReportController@search_packing_list');
 /*******End Report Management */
@@ -334,6 +336,35 @@ Route::group(['namespace' => 'Website'], function () {
     Route::post('/setsessiondetails', 'WebController@set_session_details');
 });
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
+
+/******Driver Route*******/
+Route::get('/driver', 'Driver\LoginController@index')->name('driver.index');
+Route::get('/driver/login', 'Driver\LoginController@login')->name('driver.login');
+Route::post('/driver/login', 'Driver\LoginController@postLogin')->name('driver.login');
+Route::get('/driver/sendotp', 'Driver\LoginController@sendotp')->name('driver.sendotp');
+Route::get('/driver/resetpassword', 'Driver\LoginController@resetpassword')->name('driver.resetpassword');
+Route::get('/driver/forgotpassword', 'Driver\LoginController@forgotpassword')->name('driver.forgotpassword');
+
+
+Route::group(['middleware' => ['\App\Http\Middleware\DriverAuth'], 'prefix' => 'driver'], function () {
+
+    Route::get('dashboard', 'Driver\DashboardController@index')->name('dashboard');
+    Route::get('profile', 'Driver\DashboardController@profileIndex')->name('profile');
+    Route::get('logout', 'Driver\LoginController@getLogout')->name('logout');
+
+    Route::get('orderdetails/{id}', 'Driver\OrderController@orderDetails')->name('orderdetails');
+    Route::get('navigation/{id}', 'Driver\OrderController@navigation')->name('navigation');
+    Route::get('cancelorder/{id}', 'Driver\OrderController@orderCancel')->name('cancelorder');
+    Route::post('submitcancelorder', 'Driver\OrderController@submitCancelOrder')->name('submitcancelorder');
+    Route::get('/scanorder', 'Driver\LoginController@scanorders')->name('scanorders');
+    Route::get('/scanorderfail', 'Driver\LoginController@scanFail')->name('scanorderfail');
+    Route::get('/scanordersuccess', 'Driver\LoginController@scanSuccess')->name('scanordersuccess');
+
+    Route::post('/storeLocation', 'Driver\LoginController@storeLocation');
+});
+/***********end driver route************/
+
+Route::any('payfort',function(Request $request){
+    return view('payfort.index');
+});

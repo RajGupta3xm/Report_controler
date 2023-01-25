@@ -285,7 +285,7 @@
                                                              </div>
                                                              </td>    
                                                              <td>
-                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($user_previous_plans['user_id']))}}">View</a>
+                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/previous-order-details',['id' => $user_previous_plans['user_id'] ,'plan_id' => $user_previous_plans['plan_id']] )}}">View</a>
                                                              </td>
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>

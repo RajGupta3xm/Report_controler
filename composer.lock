@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71d357f8bc504a4b79d12567fe2d3697",
+    "content-hash": "24df8c7ef18545ee058207474969701a",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -267,6 +267,69 @@
                 }
             ],
             "time": "2022-02-21T13:15:14+00:00"
+        },
+        {
+            "name": "conceptlz/payfort",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/conceptualize/payfort.git",
+                "reference": "965026ab94aa4b177aa33a2b1cf4f1f89bfc45c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/conceptualize/payfort/get/965026ab94aa4b177aa33a2b1cf4f1f89bfc45c1.zip",
+                "reference": "965026ab94aa4b177aa33a2b1cf4f1f89bfc45c1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Conceptlz\\Payfort\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Conceptualize",
+                    "email": "hello@conceptualize.ae",
+                    "homepage": "http://www.conceptualize.ae"
+                },
+                {
+                    "name": "Moiz Sitabkhan",
+                    "email": "moiz@conceptualize.ae",
+                    "homepage": "http://www.conceptualize.ae"
+                }
+            ],
+            "description": "A PHP library to work with the Payfort payment gateway API. This library will support the Merchant Page 2.0 and the Payfort Services API.",
+            "homepage": "https://bitbucket.org/conceptualize/payfort",
+            "keywords": [
+                "credit card",
+                "laravel",
+                "online payments",
+                "payfort",
+                "payment gateway",
+                "payment gateway in uae",
+                "payments",
+                "php",
+                "uae payment gateway"
+            ],
+            "support": {
+                "email": "hello@conceptualize.ae",
+                "issues": "https://bitbucket.org/conceptualize/payfort/issues",
+                "source": "https://bitbucket.org/conceptualize/payfort/src/965026ab94aa4b177aa33a2b1cf4f1f89bfc45c1/?at=master"
+            },
+            "abandoned": true,
+            "time": "2017-10-18T15:47:38+00:00"
         },
         {
             "name": "dasprid/enum",

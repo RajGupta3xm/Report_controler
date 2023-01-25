@@ -118,6 +118,7 @@ class SubscriptionController extends Controller {
 
     public function calculateCalorie(){
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        $dietPlan=DietPlanType::where('id',$user->diet_plan_type_id)->first();
            $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
          foreach($caloriRecommended as $calori){
             $calori->selected=false;
@@ -126,6 +127,7 @@ class SubscriptionController extends Controller {
             }
         }
         // $data=['recommended_colorie'=>1500];
+        $data['description'] = $dietPlan->description;
         $data['recommended_colorie'] = $caloriRecommended;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
@@ -221,6 +223,7 @@ class SubscriptionController extends Controller {
         
         
         $data['recommended_colorie'] = round($total_recommended_Kcal,0);
+         $data['description'] = $dietPlan->description;
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -352,24 +355,28 @@ class SubscriptionController extends Controller {
 
  
 
-    // public function targetCalorie(){
+    public function targetCalorie(){
       
-    //     $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
-    //     foreach($caloriRecommended as $calori){
-    //        $calori->selected=false;
-    //        if(UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'recommended_result_id'=>$calori->id,'status'=>'ongoing','is_custom'=>'0'])->first()){
-    //            $calori->selected=true;
-    //        }
-    //    }
+        $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
+        $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        $description = DietPlanType::select('description')->where('id',$user->diet_plan_type_id)->first();
+        foreach($caloriRecommended as $calori){
+           $calori->selected=false;
+           if(UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'recommended_result_id'=>$calori->id,'status'=>'ongoing','is_custom'=>'0'])->first()){
+               $calori->selected=true;
+           }
+       }
 
-    //     // $data=['recommended_colorie'=>1500];
-    //     $data['recommended_colorie'] = $caloriRecommended;
-    //     $response = new \Lib\PopulateResponse($data);
-    //     $this->status = true;
-    //     $this->data = $response->apiResponse();
-    //     $this->message = trans('plan_messages.calorie_calculation');
-    //     return $this->populateResponse();
-    // }
+        // $data=['recommended_colorie'=>1500];
+        $data=['description' => $description];
+        $data=['diet_id'=>$diet_id];
+        $data['recommended_colorie'] = $caloriRecommended;
+        $response = new \Lib\PopulateResponse($data);
+        $this->status = true;
+        $this->data = $response->apiResponse();
+        $this->message = trans('plan_messages.calorie_calculation');
+        return $this->populateResponse();
+    }
 
 
     // public function target_custom_calorie_save(Request $request){
@@ -414,6 +421,7 @@ class SubscriptionController extends Controller {
     
         $caloriRecommended = CalorieRecommend::select('id','recommended')->get();
         $user=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        $description = DietPlanType::select('description')->where('id',$user->diet_plan_type_id)->first();
         $diet_id = $user->diet_plan_type_id;
         foreach($caloriRecommended as $calori){
            $calori->selected=false;
@@ -423,6 +431,7 @@ class SubscriptionController extends Controller {
            }
        }
 
+        $data=['diet_id'=>$diet_id];
         $data=['diet_id'=>$diet_id];
         $data['recommended_colorie'] = $caloriRecommended;
         $response = new \Lib\PopulateResponse($data);

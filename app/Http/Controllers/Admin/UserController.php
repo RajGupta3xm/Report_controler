@@ -92,7 +92,7 @@ class UserController extends Controller {
             }
              $user_previous_plan = SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
             ->join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
-            ->select('subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.plan_price','subscriptions.id','subscriptions.status','subscriptions.user_id')
+            ->select('subscriptions.start_date','subscriptions.plan_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.plan_price','subscriptions.id','subscriptions.status','subscriptions.user_id')
            ->where(['subscriptions.delivery_status'=>'terminted','subscriptions.user_id'=>$id])
            ->get()->each(function($user_previous_plan){
             $puchase_on = $user_previous_plan->start_date;
@@ -122,7 +122,7 @@ class UserController extends Controller {
         //     }
            
         // }
-          $data['user_previous_plan'] = $user_previous_plan;
+            $data['user_previous_plan'] = $user_previous_plan;
 
                 $user_current_plan = UserProfile::join('subscriptions','user_profile.subscription_id','=','subscriptions.plan_id')
             ->join('orders','user_profile.user_id','=','orders.user_id')

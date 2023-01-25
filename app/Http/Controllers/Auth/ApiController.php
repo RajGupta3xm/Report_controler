@@ -68,6 +68,9 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiController extends Controller {
 
+    private $access_code = "u1KTPwtYrFxIz7R4zVJ4";
+    private $merchant_identifier = "7854d862";
+    private $sha_request_phrase = "54LZYmF815xFCQEsYUH/yl]@";
 
     protected $content;
 
@@ -424,6 +427,7 @@ class ApiController extends Controller {
         $token = $tokenResult->token;
         $token->save();
         $user['token'] = $tokenResult->accessToken;
+        unset($user['tokens']);
         if ($user->image == null) {
             // $user->image = url('assets/images/dummy2.jpg');
         }
@@ -650,6 +654,7 @@ class ApiController extends Controller {
             $addUser['image'] = $url . '/' . $imageName;
         }
 
+        $age = now()->diffInYears(Carbon::parse($request->dob));
         // if($request->dob || $request->gender){
         //     $editProfile = [
         //         'dob'  => $request->dob,
@@ -660,7 +665,7 @@ class ApiController extends Controller {
             ->update([
                 'dob'  => $request->dob,
                 'gender'  => $request->gender,
-
+                 'age'    =>$age
             ]);
 
         
@@ -725,6 +730,7 @@ class ApiController extends Controller {
                 // $data['my_plan']=new \stdClass();
                 // $data['users'] = SubscriptionPlan::all()->except($profile->subscription_id);
                 $plan_type= $request->plan_types;
+               
                  $selectDietPlan = DietPlanType::select('diet_plan_types.name','diet_plan_types.id')
                 ->get()
                 // ->toArray();
@@ -733,7 +739,7 @@ class ApiController extends Controller {
                         // $user_recommended_calorie=2200;
                         
                           $subscriptions=SubscriptionPlan::select('id','name','image')->where('status','active')->where('id', '!=', $profile->subscription_id)->get();
-                        
+                      
                         if($subscriptions){
                             foreach($subscriptions as $subscription){
                                 $subscription->cost="0";
@@ -749,8 +755,10 @@ class ApiController extends Controller {
                                 }else{
                                     $subscription->buy_status ="switch";
                                 }
-                
-                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->first()){
+                                $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+                                $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
+
+                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->first()){
                                     if($plan_type == 1 || $plan_type == 2){
                                         $subscription->delivery_day_type="Week";
                                     }else{
@@ -2061,11 +2069,15 @@ public function meal_plan_listing(Request $request){
 
 public function sample_daily_meals(Request $request) {
     $dates = $request->date;
-    $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+    $datess = Carbon::createFromFormat('Y-m-d',$dates);
+    $day = strtolower($datess->format('l'));
+    // $day = 'monday';
+  
+     $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
      $targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
        $category = MealSchedules::select('id','name')
        ->get()
-        ->each(function($category) use($dates,$targetCalorie){
+        ->each(function($category) use($dates,$targetCalorie,$day){
                    $meals = $category->meals=Meal::
                 //    join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
                    join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
@@ -2076,6 +2088,7 @@ public function sample_daily_meals(Request $request) {
                     ->where('meal_group_schedule.meal_schedule_id',$category->id)
                     ->where('meals.status','=', 'active')
                    ->where('meal_week_days.week_days_id','=', $dates)
+                   ->orWhere('meal_week_days.week_days_id','=', $day)
                 //    ->where(['meals.meal_schedule_id'=>$category->id])
                     
                    ->get()->each(function($meals) {
@@ -2128,6 +2141,9 @@ return $this->populateResponse();
 
 public function balance_sample_daily_meals(Request $request) {
           $dates = $request->date;
+          $datess = Carbon::createFromFormat('Y-m-d',$dates);
+          $day = strtolower($datess->format('l'));
+
                 $user_custom_calorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                 $targetCalorie = CalorieRecommend::select('recommended')->where('id',$user_custom_calorie->custom_result_id)->first();
                    $meals =Meal::
@@ -2136,8 +2152,12 @@ public function balance_sample_daily_meals(Request $request) {
                    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
                    ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
-                   ->where('meal_week_days.week_days_id','=', $dates)
-                   ->where('meals.status','=', 'active')
+                //    ->where('meal_week_days.week_days_id','=', $dates)
+                //    ->orWhere('meal_week_days.week_days_id','=', $day)
+                    ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
+                     $q->where('meal_week_days.week_days_id','=', $dates)
+                     ->orWhere('meal_week_days.week_days_id','=', $day);
+                   })
                    ->get()->each(function($meals) {
                     $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
                     ->where('meal_group_schedule.meal_id', $meals->id)
@@ -2443,63 +2463,107 @@ public function helpSupport(Request $request)
     return $this->populateResponse();  
 }
 
-public function updateDialogue($request){
-    // $r = $request['user_id'];
-    // print_r($r);
-    // die;
-    
-     $getGroup = User::where('id', $request['user_id'])->first();
-    // dd($getGroup);
-    // die;
+// public function createSignatures(Request $request)
+//     {
+//  $user = User::find(Auth::guard('api')->id());
+// $shaString  = '';
+// $amount = 1000;
+// $requestParams = array(
+// 'service_command' =>    'SDK_TOKEN',
+// 'access_code' =>         $this->access_code,
+// 'merchant_identifier' => $this->merchant_identifier,
+// 'language'             =>'en',
+// 'device_id'           =>'8a28bbcc-efd6-4765-b718-b91a22d8d51c',
 
-    $auth_token=$this->createSession();  // Create session for quickblox login - refer to Controller class 
-    $token=$this->loginQB($auth_token, $getGroup->user_id);     // Quickblox login for authentication - refer to Controller class 
-    $headers = array(
-        'Accept' => 'application/json',
-        'Content-Type: application/json',
-        "QB-Token: ".$token
-    );
-    print_r($token);
-    die;
-    // set fields to update
+// );
 
-    $fields=[];
-    if(isset($request['group_name']) && $request['group_name']){
-        $fields['name']=$request['group_name'];
-    }
-    if(isset($request['image'])){
-        $fields['photo']=$request['image'];
-    }
-    if(isset($request['add_member']) && $request['add_member']){
-        $fields['push_all']=['occupants_ids'=>$request['add_member']];
-    }
-    if(isset($request['remove_member']) && $request['remove_member']){
-        $fields['pull_all']=['occupants_ids'=>$request['remove_member']];
-    } 
+// // sort an array by key
+// ksort($requestParams);
+// foreach ($requestParams as $key => $value) {
+//     $shaString .= "$key=$value";
+// }
+// // echo $shaString;
+// // make sure to fill your sha request pass phrase
+// $shaString = $this->sha_request_phrase . $shaString . $this->sha_request_phrase;
+// // echo $shaString;
+// $signature = hash("SHA256", $shaString);
+// // your request signature
+// // echo "signature key ========>>>>>>>>>".$signature;
+// $data['signature'] =  $signature;
+// $response = new \Lib\PopulateResponse($data);
+// $this->status = true;
+// $this->data = $response->apiResponse();
+// $this->message = trans('messages.delivery_slot');
+// return $this->populateResponse();
+//     }
 
-    // set fields to update
+    public function generateToken(Request $request) {
 
-    if($fields){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://api.quickblox.com/chat/Dialog/".$request['quickblox_group_id'].".json");
-        // curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-        $result = curl_exec($ch);
-        // $result=json_decode($result);
-        curl_close($ch);
-        // print_r($result); die;
-        if (isset($result->errors)) {
-            return false;
-        } else {
-            return true;
+
+        $shaString  = '';
+        $amount = 1000;
+        $requestParams = array(
+        'service_command' =>    'SDK_TOKEN',
+        'access_code' =>         $this->access_code,
+        'merchant_identifier' => $this->merchant_identifier,
+        'language'             =>'en',
+        'device_id'           =>$request->devide_id,
+
+         );
+
+      // sort an array by key
+      ksort($requestParams);
+       foreach ($requestParams as $key => $value) {
+        $shaString .= "$key=$value";
         }
-    }else{
-        return false;
+         // echo $shaString;
+        // make sure to fill your sha request pass phrase
+        $shaString = $this->sha_request_phrase . $shaString . $this->sha_request_phrase;
+          // echo $shaString;
+        $signature = hash("SHA256", $shaString);
+// your request signature
+// echo "signature key ========>>>>>>>>>".$signature;
+
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
+
+         $url = 'https://sbpaymentservices.payfort.com/FortAPI/paymentApi';
+
+         $arrData = array(
+         'service_command' => 'SDK_TOKEN',
+         'access_code' =>   $this->access_code,
+          'merchant_identifier' => $this->merchant_identifier,
+          'language' => 'en',
+           'device_id'=> $request->devide_id,
+           'signature' => $signature,
+        );
+
+         $ch = curl_init( $url );
+        # Setup request to send json via POST.
+          $data = json_encode($arrData);
+          curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+         curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+          # Return response instead of printing.
+          curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+          # Send request.
+          $result = curl_exec($ch);
+          if ($result === false) {
+
+            die('Curl failed: ' . curl_error($ch));
+
+        } else {
+
+          //print_r("success");die;
+          return $result;
+
+        }
+          curl_close($ch);
+         # Print response.
+        //    echo "<pre>$result</pre>";
+ 
+        //    $requestParams['signature'] = $request->signature;
+      
+       
     }
-}
 
 }

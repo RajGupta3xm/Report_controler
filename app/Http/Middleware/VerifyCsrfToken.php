@@ -21,5 +21,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'admin/add_variants',
         'admin/fleetarea/edit',
+        'driver/storeLocation',
     ];
 }

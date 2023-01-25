@@ -69,7 +69,7 @@
                               <div class="col-3">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
-                                       <input type="text" class="form-control" placeholder="Search Recent Orders" name="name" id="example1">
+                                       <input type="text" class="form-control" placeholder="Search Recent Orders" name="name" >
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
@@ -91,7 +91,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
                                  <div class="table-responsive">
-                                    <table class="table mb-0" id="example1">
+                                    <table class="table mb-0" >
                                        <thead>
                                          <tr>
                                            <th>S.No.</th>

@@ -34,7 +34,7 @@ Route::post('insertImage', 'Auth\ApiController@insertImage');
 
 
 /*********Driver route */
-Route::post('/driver/login','Auth\DriverController@login');
+// Route::post('/driver/login','Auth\DriverController@login');
 /********End Driver Route */
 
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
@@ -81,6 +81,8 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('refer_and_earn', 'ApiController@refer_and_earn');
     Route::get('paymentAvailableCredit', 'ApiController@paymentAvailableCredit');
     Route::post('helpSupport', 'ApiController@helpSupport');
+    Route::post('generateToken', 'ApiController@generateToken');
+
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 

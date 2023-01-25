@@ -48,6 +48,7 @@ class StaffMembers extends Authenticatable
 	];
 	
 	public $timestamps = true;
+	
 
 	public function group(){
 		return $this->hasOne(StaffGroup::class,'id','group_id');

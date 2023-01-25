@@ -244,7 +244,9 @@
                                                                         <span>Location :</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">{{$deliveries->address_type}}, Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
+                                                                  
+                                                                        <a href="javscript:;">{{$date}}, Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
+                                        
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -254,7 +256,7 @@
                                                                         <span>Slot :</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">{{$deliveries->start_time}}- {{$deliveries->end_time}}</a>
+                                                                        <a href="javscript:;">{{$date}}- {{$date}}</a>
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -263,28 +265,36 @@
                                                       </div>
                                                       <div class="col-12 mt-2 mb-4">
                                                          <div class="Plan_category_slider owl-carousel">
-                                                         @foreach($datee as $k=>$date)
+                                                          
+                                                         @foreach($getDatess as $k=>$datt)
                                                          @if($k==0)
-                                                         <div class="Plan_datee active">{{\Carbon\Carbon::parse($date)->format('d M')}} <a class="cut_icon"  href="javscript:;"><i class="far fa-times"></i></a></div>
+                                                         
+                                                         <div ><a class="Plan_datee date_name active" onclick="activeDate(this,'<?= $datt->date ?>');"  href="javscript:;">{{date('d M',strtotime($datt->date))}}</a></div>
                                                          @else
-                                                            <div class="Plan_datee">{{\Carbon\Carbon::parse($date)->format('d M')}} <a class="cut_icon"  href="javscript:;"><i class="far fa-times"></i></a></div>
+                                                     
+                                                            <div><a class="Plan_datee  date_name" onclick="activeDate(this,'<?= $datt->date ?>');" href="javscript:;">{{date('d M', strtotime($datt->date))}} </a></div>
                                                             @endif
                                                             @endforeach
                                                           
                                                          </div>
                                                       </div>
                                                       <div class="col-12">
+                                                   
                                                          <div class="row">
-                                                            <div class="col-12 current_plan_tabbing">
+                                                         @foreach($getDatess as $k=>$datt)
+                                                        
+                                                            <div class="col-12 current_plan_tabbing date_list" id='date_list_<?= $datt->date ?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                <nav>
                                                                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                                    @foreach($category as $key=>$categories)
-                                                                    @if($key==0)
+                                                                  
+                                                                    @foreach($datt->category as $y=>$categories)
+                                                                    @if($y==0)
                                                                      <button class="nav-link vaccine_name active" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
                                                                      @else
                                                                      <button class="nav-link vaccine_name" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
                                                                      @endif
                                                                      @endforeach
+                                                                   
                                                                      <!-- <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Lunch & Dinner</button>
                                                                      <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Snacks</button>
                                                                      <button class="nav-link" id="nav-contact1-tab" data-bs-toggle="tab" data-bs-target="#nav-contact1" type="button" role="tab" aria-controls="nav-contact1" aria-selected="false">Dinner</button>
@@ -294,8 +304,10 @@
                                                                <div class="tab-content" id="nav-tabContent">
                                                              
                                                                   <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                                                  @foreach($category as $key=>$categories)
-                                                                     <div class="row mx-0 plan_tabbing_inner video_list" id='video_list_<?=$categories['meal_schedule_id']?>' <?php if($key!=0)  { ?> style="display:none" <?php }?>>
+                                                                
+                                                                    @foreach($datt->category as $y=>$categories)
+                                                                   
+                                                                     <div class="row mx-0 plan_tabbing_inner video_list" id='video_list_<?=$categories['meal_schedule_id']?>' <?php if($y!=0)  { ?> style="display:none" <?php }?>>
                                                                         <div class="col-12 p-4">
                                                                         @foreach($categories['meal_group']['meals'] as $v=>$meal)
                                                                            <div class="plan_box mb-4">
@@ -455,15 +467,19 @@
                                                                            </div> -->
                                                                         </div>
                                                                         <div class="col-12 text-center mb-4">
-                                                                           <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a>
+                                                                           <!-- <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a> -->
                                                                            <a href="order-timeline.html" class="comman_btn yellow-btn me-2">Order Timeline</a>
                                                                         </div>
                                                                      </div>
                                                                      @endforeach
+                                                                    
+
                                                                   </div>
                                                                </div>
                                                             </div>
+                                                            @endforeach
                                                          </div>
+                                                       
                                                       </div>
                                                    </div>
                                                 </div>
@@ -481,16 +497,17 @@
             </div>
          </div>
       </div>
+      
       <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>
       <script src="assets/js/main.js"></script>
       <script>
- function activeDate(obj,id) {
+ function activeDate(obj,dat) {
 
-   $('.video_lists').css('display','none');
-   $('#video_lists_'+ id ).css('display','block');
-   $('.vaccine_names').removeClass('active');
+   $('.date_list').css('display','none');
+   $('#date_list_'+ dat ).css('display','block');
+   $('.date_name').removeClass('active');
    $(obj ).addClass('active');
 
     }

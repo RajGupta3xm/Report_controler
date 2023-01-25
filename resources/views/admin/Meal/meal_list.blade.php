@@ -30,14 +30,14 @@
                               <div class="col">
                                  <h2>Meal Management</h2>
                               </div> 
-                              <div class="col-3">
+                              <!-- <div class="col-3" style="margin-top: 11px;">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
-                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name">
+                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name" >
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
-                              </div> 
+                              </div>  -->
                               <div class="col-auto">
                                  <div class="dropdown more_filters">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -85,22 +85,22 @@
                            </div>
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
-                                 <div class="meal_tablebtsn py-3 px-4">
-                                    <a class="comman_btn me-2" href="javscript:;">02 Selected</a>
+                                 <!-- <div class="meal_tablebtsn py-3 px-4">
+                                    <a class="comman_btn me-2" href="javscript:;">00 Selected</a>
                                     <a class="comman_btn" href="javscript:;">Edit Selected</a>
-                                 </div>
+                                 </div> -->
                                  <div class="table-responsive">
-                                    <table class="table mb-0">
+                                    <table class="table mb-0"  id="example1">
                                        <thead>
                                          <tr>
-                                           <th>
+                                           <!-- <th>
                                              <form class="table_btns d-flex align-items-center justify-content-center"> 
                                                 <div class="check_radio">
                                                    <input type="checkbox" name="table1" id="table1" class="d-none">
                                                    <label for="table1"></label>
                                                 </div>
                                              </form>
-                                           </th>
+                                           </th> -->
                                            <th>Media</th>
                                            <th>Items</th>
                                            <th>Meal Group</th>
@@ -119,14 +119,14 @@
                                        <tbody>
                                           @foreach($meals as $meal)
                                          <tr>
-                                           <td>
+                                           <!-- <td>
                                              <form class="table_btns d-flex align-items-center justify-content-center"> 
                                                 <div class="check_radio td_check_radio">
                                                    <input type="checkbox" name="table2" id="table2" class="d-none">
                                                    <label for="table2"></label>
                                                 </div>
                                              </form>
-                                           </td>
+                                           </td> -->
                                            <td><img class="table_img" src="{{$meal->image}}" alt=""></td>
                                            <td>{{$meal->name}}</td> 
                                            <td>{{$meal->meal_group->pluck('name')->implode(',  ')}}</td>

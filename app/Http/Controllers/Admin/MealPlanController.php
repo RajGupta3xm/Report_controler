@@ -40,7 +40,7 @@ use Carbon\Carbon;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class MealPlanController extends Controller {
-    
+
     private $URI_PLACEHOLDER;
     private $jsondata;
     private $redirect;
@@ -114,7 +114,7 @@ class MealPlanController extends Controller {
              'name'=>$request->title,
              'name_ar'=>$request->title_ar,
              'image'=>$images,
-             
+
         ]);
         if(isset($request->variant_name_hidden)){
             foreach ($request->variant_name_hidden as $key=>$value){
@@ -135,7 +135,7 @@ class MealPlanController extends Controller {
                     'custom_text'=>$request->description_value_hidden[$key],
                 ]);
             }
-            
+
         }
         if(count($request->meal_group_name) > 0){
             foreach (array_unique($request->meal_group_name) as $value){
@@ -145,13 +145,13 @@ class MealPlanController extends Controller {
                 ]);
             }
         }
-        
+
 
 
         if(count($request->plan_date) > 0){
             foreach ($request->plan_date as $key=>$value){
-                
-                
+
+
                 SubscriptionMealVariantDefaultMeal::create([
                     'date'=>Carbon::parse($value)->format('Y-m-d'),
                     'meal_schedule_id'=>$request->meals_schedule_id[$key],
@@ -161,7 +161,7 @@ class MealPlanController extends Controller {
             }
         }
 
-        if(count($request->selectionvariant) > 0){
+        if(isset($request->selectionvariant) && count($request->selectionvariant) > 0){
             foreach ($request->selectionvariant as $key=> $variant){
                 foreach ($variant as $key1=>$varian){
                     foreach ($varian as $key2=> $value){
@@ -240,7 +240,7 @@ $meal_plan->save();
         }
 
 
-        if(count($request->selectionvariant) > 0){
+        if(isset($request->selectionvariant) && count($request->selectionvariant) > 0){
             foreach ($request->selectionvariant as $key=> $variant){
 
                 foreach ($variant as $key1=>$varian){
@@ -254,7 +254,6 @@ $meal_plan->save();
                             $is_exists->save();
                         }
                     }
-
                 }
             }
         }

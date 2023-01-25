@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePackingListTable extends Migration
+class CreateEmailNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CreatePackingListTable extends Migration
      */
     public function up()
     {
-        Schema::create('packing_list', function (Blueprint $table) {
+        Schema::create('email_notifications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('user_name')->nullable();
-            $table->integer('user_id');
-            $table->integer('diet_plan_type_id');
-            $table->date('date');
-            $table->integer('mobile_number');
-            $table->integer('delivery_slot_id');
+            $table->string('identifier');
+            $table->longText('description');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CreatePackingListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('packing_list');
+        Schema::dropIfExists('email_notifications');
     }
 }

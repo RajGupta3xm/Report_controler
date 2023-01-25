@@ -20,18 +20,26 @@ class IngredientController extends Controller
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-             $data['group'] = DislikeGroup::select('*')->get();
-             $data['category'] = DislikeCategory::select('*')->get();
-             $data['unit'] = Unit::select('*')->get();
-             $data['ingredient'] = DislikeItem::with('group','category','unit')->select('*')->get();
+             $data['group'] = DislikeGroup::select('*')->orderBy('id','desc')->get();
+             $data['category'] = DislikeCategory::select('*')->orderBy('id','desc')->get();
+             $data['unit'] = Unit::select('*')->orderBy('id','desc')->get();
+             $data['ingredient'] = DislikeItem::with('group','category','unit')->select('*')->orderBy('id','desc')->get();
+
+             $data['groups'] = DislikeGroup::select('*')->orderBy('id','desc')->where('status','active')->get();
+             $data['categorys'] = DislikeCategory::select('*')->orderBy('id','desc')->where('status','active')->get();
+             $data['units'] = Unit::select('*')->orderBy('id','desc')->where('status','active')->get();
+             $data['ingredients'] = DislikeItem::with('group','category','unit')->select('*')->where('status','active')->orderBy('id','desc')->get();
              return view('admin.ingredient.ingredient-list')->with($data);
         }
     }
 
     public function unit_submit(Request $request){
+        if(Unit::where('unit',$request->unit)->where('unit_ar',$request->unit_ar)->exists()){
+            return redirect()->back()->with('error','Record already exist');
+        }else{
          $data=[
-            "unit" => $request->input('name'),
-            "unit_ar" => $request->input('name_ar'),
+            "unit" => ucwords($request->input('unit')),
+            "unit_ar" => $request->input('unit_ar'),
 
         ];
 
@@ -41,30 +49,39 @@ class IngredientController extends Controller
      } else {
          return redirect()->back()->with('error', 'Some error occurred while adding unit');
      }
+    }
     
     }
 
     public function ingredient_submit(Request $request){
-         $data=[
-           "name" => ucwords($request->input('name')),
-           "name_ar" => $request->input('name_ar'),
-           "group_id" => $request->input('group_id'),
-           "category_id" => $request->input('category_id'),
-           "unit_id" => $request->input('unit_id'),
+      if(DislikeItem::where('name',$request->name)->orWhere('name_ar',$request->name_ar)->exists()){
 
+        return redirect()->back()->with('error', 'Record already exist');
+      }else{
 
-       ];
-
-   $insert = DislikeItem::create($data);
+        $data=[
+            "name" => ucwords($request->input('name')),
+            "name_ar" => $request->input('name_ar'),
+            "group_id" => $request->input('group_id'),
+            "category_id" => $request->input('category_id'),
+            "unit_id" => $request->input('unit_id'),
+ 
+ 
+        ];
+       $insert = DislikeItem::create($data);
+        
    if ($insert) {
        return redirect()->back()->with('success','Ingredient added successfully');
     } else {
         return redirect()->back()->with('error', 'Some error occurred while adding Ingredient');
     }
-   
+}
    }
 
     public function category_submit(Request $request){
+        if(DislikeCategory::where('name',$request->category)->where('name_ar',$request->category_ar)->exists()){
+            return redirect()->back()->with('error', 'Record already exist');
+        }else{
         $data=[
            "name" => ucwords($request->input('category')),
            "name_ar" => $request->input('category_ar'),
@@ -77,10 +94,14 @@ class IngredientController extends Controller
     } else {
         return redirect()->back()->with('error', 'Some error occurred while adding category');
     }
+}
    
    }
 
     public function group_submit(Request $request){
+    if(DislikeGroup::where('name',$request->group)->where('name_ar',$request->group_ar)->exists()){
+        return redirect()->back()->with('error', 'Record already exist');
+    }else{
       $data=[
        "name" => $request->input('group'),
        "name_ar" => $request->input('group_ar'),
@@ -107,6 +128,7 @@ class IngredientController extends Controller
         } else {
           return redirect()->back()->with('error', 'Some error occurred while adding group');
         }
+    }
    }
 
    public function change_status(Request $request){

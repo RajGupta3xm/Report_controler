@@ -14,4 +14,11 @@ class FleetDriver extends Model
     	'staff_member_id',
     	'delivery_slot_id',
    	];
+
+	   public function orders(){
+        return $this->belongsTo(Order::class,'order_id','id');
+    }
+    public function deliverySlot(){
+        return $this->belongsTo(DeliverySlot::class,'delivery_slot_id','id');
+    }
 }

@@ -114,7 +114,7 @@ class MealController extends Controller {
               $data['diet_plan'] = DietPlanType::select('id','name')->orderBy('id','Asc')->get(); 
                $data['tags'] = MealWeekDay::select('id','week_days_id')->orderBy('id','Asc')->take(7)->get(); 
                $data['department'] = MealAllocationDepartment::select('id','name')->orderBy('id','Asc')->get(); 
-                $data['ingredients'] = DislikeItem::select('id','name')->orderBy('id','Asc')->get(); 
+                $data['ingredients'] = DislikeItem::select('id','name','unit_id')->orderBy('id','Asc')->get(); 
                  $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
             
             return view('admin.meal.add_meal')->with($data);
@@ -145,10 +145,11 @@ class MealController extends Controller {
         if(env('APP_ENV') == 'local'){
             $return = $request->image->move(
             base_path() . '/public/uploads/meal_image/', $imageName);
-        }else{
-            $return = $request->banner_image->move(
-            base_path() . '/../public/uploads/meal_image/', $imageName);
         }
+        // else{
+        //     $return = $request->banner_image->move(
+        //     base_path() . '/../public/uploads/meal_image/', $imageName);
+        // }
         $url = url('/uploads/meal_image/');
      $data['image'] = $url.'/'. $imageName;
      

@@ -10,21 +10,36 @@
                 </div>
                 @else 
                 @if(session()->has('error'))  
+                    <script>
+                     swal('Error!', '{{ session()->get('error') }}', 'error');
+                    </script>
+                @endif
+                <!-- @if(session()->has('error'))  
                 <div class="alert alert-danger">
                     <strong class="close" ></strong>
                     {{ session()->get('error') }}
                 </div>
-                @endif 
+                @endif  -->
                 @endif
                 <div class="row ingredients_management justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
                         @if(Session::get('admin_logged_in')['type']=='0')
-                            <div class="col-12 text-end mb-4 pe-0"> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> </div>
+                            <div class="col-12 text-end mb-4 pe-0">
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a>
+                                  <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>  -->
+                                  <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
+                                </div>
                             @endif
                          @if(Session::get('admin_logged_in')['type']=='1')
                            @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
-                            <div class="col-12 text-end mb-4 pe-0"> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> </div>
+                            <div class="col-12 text-end mb-4 pe-0">
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> 
+                                 <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> -->
+                                 <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
+                                 </div>
                             @endif
                             @endif
                             <div class="col-12 design_outter_comman shadow">
@@ -45,19 +60,19 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm3" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
                                                             @csrf
-                                                            <div class="form-group col-4"> 
+                                                            <div class="form-group position-relative col-4" > 
                                                                 <label for="">Ingredient Name (En)</label> 
-                                                                <input type="text" class="form-control validate" value="" name="name" id="name"> 
-                                                                <p class="text-danger text-small" id="nameError"></p> 
+                                                                <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
+                                                                <p class="text-danger text-small error m-0" id="nameError"></p> 
                                                             </div>
-                                                              <div class="form-group col-4">
-                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small" id="name_arError"></p>
+                                                              <div class="form-group position-relative col-4">
+                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small error m-0" id="name_arError" maxlength="20"></p>
                                                               </div>
                                                                 <div class="form-group col-4"> 
                                                                 <label for="">Group</label>
                                                                 <select class="form-select form-control " name="group_id" aria-label="Default select example">
                                                                     <option selected>Select Group</option>
-                                                                    @foreach($group as $groups)
+                                                                    @foreach($groups as $groups)
                                                                     <option value="{{$groups->id}}">{{$groups->name}}</option>
                                                                     @endforeach
                                                                 </select>
@@ -66,7 +81,7 @@
                                                                 <label for="">Category</label>
                                                                 <select class="form-select form-control validate" name="category_id" aria-label="Default select example">
                                                                     <option selected>Select Category</option>
-                                                                    @foreach($category as $categories) 
+                                                                    @foreach($categorys as $categories) 
                                                                     <option value="{{$categories->id}}">{{$categories->name}}</option>
                                                                     @endforeach
                                                                 </select>
@@ -76,7 +91,7 @@
                                                                 <label for="">Unit</label> 
                                                                 <select class="form-select form-control validate" name="unit_id" aria-label="Default select example">
                                                                     <option selected>Select Unit</option>
-                                                                    @foreach($unit as $units) 
+                                                                    @foreach($units as $units) 
                                                                     <option value="{{$units->id}}">{{$units->unit}}</option>
                                                                     @endforeach
                                                                 </select>
@@ -95,13 +110,13 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm3" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
                                                             @csrf
-                                                            <div class="form-group col-4"> 
+                                                            <div class="form-group position-relative  col-4"> 
                                                                 <label for="">Ingredient Name (En)</label> 
-                                                                <input type="text" class="form-control validate" value="" name="name" id="name"> 
-                                                                <p class="text-danger text-small" id="nameError"></p> 
+                                                                <input type="text" class="form-control  validate" value="" name="name" id="name" maxlength="20"> 
+                                                                <p class="text-danger error m-0 text-small" id="nameError"></p> 
                                                             </div>
-                                                              <div class="form-group col-4">
-                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small" id="name_arError"></p>
+                                                              <div class="form-group position-relative  col-4">
+                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger error m-0 text-small" id="name_arError" maxlength="20"></p>
                                                               </div>
                                                                 <div class="form-group col-4"> 
                                                                 <label for="">Group</label>
@@ -141,15 +156,15 @@
                                                             <div class="col">
                                                                 <h2>Ingredients Management</h2>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <!-- <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
                                                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name"  style="margin-top: 12px;">
                                                                       <i class="far fa-search"></i>
                                                                    </div>
                                                                 </form>
-                                                             </div>
-                                                            <div class="col-auto text-end">
+                                                             </div> -->
+                                                            <!-- <div class="col-auto text-end">
                                                                 <div class="dropdown more_filters"> <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
                                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <form action="">
@@ -161,12 +176,12 @@
                                                                         </form>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-12 comman_table_design bg-white px-0">
-                                                                <div class="table-responsive">
-                                                                    <table class="table mb-0">
+                                                            <div class="col-12 comman_table_design bg-white px-0" >
+                                                                <div class="table-responsive" id="printableArea">
+                                                                    <table class="table mb-0" id="example2" >
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>S.No.</th>  
@@ -248,9 +263,9 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
                                                             @csrf
-                                                            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" ><p class="text-danger text-small" id="groupError"></p> </div>
-                                                            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" ><p class="text-danger text-small" id="group_arError"></p> </div>
-                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger text-small" id="imageError"></p> </div>
+                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" maxlength="20" ><p class="text-danger m-0 error text-small" id="groupError"></p> </div>
+                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" maxlength="20"><p class="text-danger m-0 error text-small" id="group_arError"></p> </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger m-0 error text-small" id="images1Error"></p> </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
@@ -265,9 +280,9 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
                                                             @csrf
-                                                            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" ><p class="text-danger text-small" id="groupError"></p> </div>
-                                                            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" ><p class="text-danger text-small" id="group_arError"></p> </div>
-                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger text-small" id="imageError"></p> </div>
+                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" maxlength="20"><p class="text-danger m-0 error text-small" id="groupError"></p> </div>
+                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" maxlength="20"><p class="text-danger m-0 error text-small" id="group_arError"></p> </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger m-0 error text-small" id="images1Error"></p> </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
@@ -278,15 +293,15 @@
                                                             <div class="col">
                                                                 <h2>Groups Management</h2>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <!-- <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
                                                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name"  style="margin-top: 12px;">
                                                                       <i class="far fa-search"></i>
                                                                    </div>
                                                                 </form>
-                                                             </div>
-                                                            <div class="col-auto text-end">
+                                                             </div> -->
+                                                            <!-- <div class="col-auto text-end">
                                                                 <div class="dropdown more_filters"> <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
                                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                         <form action="">
@@ -299,12 +314,12 @@
                                                                         </form>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-12 comman_table_design bg-white px-0">
                                                                 <div class="table-responsive">
-                                                                    <table class="table mb-0">
+                                                                    <table class="table mb-0" id="example1" >
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>S.No.</th> 
@@ -381,12 +396,12 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForms" enctype="multipart/form-data" action="{{url('admin/category/submit')}}">
                                                             @csrf
-															<div class="form-group mb-0 col">
+															<div class="form-group position-relative mb-0 col">
 																<label for="">Ingredient Categories (En)</label>
-																<input type="text" class="form-control validate" value="" name="category" > <p class="text-danger text-small" id="categoryError"></p> </div>
-															<div class="form-group mb-0 col">
+																<input type="text" class="form-control validate" value="" name="category" maxlength="20"> <p class="text-danger text-small error m-0" id="categoryError"></p> </div>
+															<div class="form-group position-relative mb-0 col">
 																<label for="">Ingredient Categories (Ar)</label>
-																<input type="text" class="form-control validate" value="" name="category_ar" >  <p class="text-danger text-small" id="category_arError"></p></div>
+																<input type="text" class="form-control validate" value="" name="category_ar"maxlength="20" >  <p class="text-danger error text-small m-0" id="category_arError"></p></div>
 															<div class="form-group mb-0 col-auto">
 																<button type="button" onclick="validate1(this);" class="comman_btn" >Create</button>
 															</div>
@@ -403,12 +418,12 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForms" enctype="multipart/form-data" action="{{url('admin/category/submit')}}">
                                                             @csrf
-															<div class="form-group mb-0 col">
+															<div class="form-group position-relative mb-0 col">
 																<label for="">Ingredient Categories (En)</label>
-																<input type="text" class="form-control validate" value="" name="category" > <p class="text-danger text-small" id="categoryError"></p> </div>
-															<div class="form-group mb-0 col">
+																<input type="text" class="form-control validate" value="" name="category" maxlength="20"> <p class="text-danger error m-0 text-small" id="categoryError"></p> </div>
+															<div class="form-group position-relative mb-0 col">
 																<label for="">Ingredient Categories (Ar)</label>
-																<input type="text" class="form-control validate" value="" name="category_ar" >  <p class="text-danger text-small" id="category_arError"></p></div>
+																<input type="text" class="form-control validate" value="" name="category_ar" maxlength="20" >  <p class="text-danger error m-0 text-small" id="category_arError"></p></div>
 															<div class="form-group mb-0 col-auto">
 																<button type="button" onclick="validate1(this);" class="comman_btn" >Create</button>
 															</div>
@@ -421,15 +436,15 @@
                                 <div class="col">
                                   <h2>Categories</h2>
                                 </div>
-                                <div class="col-3">
+                                <!-- <div class="col-3">
                                   <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                       <i class="far fa-search"></i>
                                     </div>
                                   </form>
-                                </div>
-                                <div class="col-auto text-end">
+                                </div> -->
+                                <!-- <div class="col-auto text-end">
                                   <div class="dropdown more_filters">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -445,12 +460,12 @@
                                       </form>
                                     </div>
                                   </div>
-                                </div>
+                                </div> -->
                               </div>
                               <div class="row">
                                 <div class="col-12 comman_table_design bg-white px-0">
                                   <div class="table-responsive">
-                                    <table class="table mb-0">
+                                    <table class="table mb-0" id="example4">
                                       <thead>
                                         <tr>
                                           <th>S.No.</th>
@@ -526,15 +541,15 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/unit_submit')}}">
                                                          {{ csrf_field() }} 
-                                                            <div class="form-group mb-0 col ">
+                                                            <div class="form-group position-relative  mb-0 col ">
                                                                  <label for="">Ingredient Unit (En)</label>
-                                                                  <input type="text" class="form-control validate" value="" name="name" id="name">
-                                                                   <p class="text-danger text-small" id="nameError"></p>
+                                                                  <input type="text" class="form-control validate" value="" name="unit" id="name" maxlength="20">
+                                                                   <p class="text-danger error text-small m-0" id="unitError"></p>
                                                             </div>
-                                                            <div class="form-group mb-0 col "> 
+                                                            <div class="form-group position-relative mb-0 col "> 
                                                                 <label for="">Ingredient Unit (Ar)</label> 
-                                                                <input type="text" class="form-control validate" value="" name="name_ar" id="name">
-                                                                 <p class="text-danger text-small" id="name_arError"></p>
+                                                                <input type="text" class="form-control validate" value="" name="unit_ar" id="name" maxlength="20">
+                                                                 <p class="text-danger error text-small m-0" id="unit_arError"></p>
                                                              </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                  <button type="button" onclick="validate(this);" class="comman_btn" >Create</button> 
@@ -552,15 +567,15 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/unit_submit')}}">
                                                          {{ csrf_field() }} 
-                                                            <div class="form-group mb-0 col ">
+                                                            <div class="form-group position-relative mb-0 col ">
                                                                  <label for="">Ingredient Unit (En)</label>
-                                                                  <input type="text" class="form-control validate" value="" name="name" id="name">
-                                                                   <p class="text-danger text-small" id="nameError"></p>
+                                                                  <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20">
+                                                                   <p class="text-danger error m-0 text-small" id="nameError"></p>
                                                             </div>
-                                                            <div class="form-group mb-0 col "> 
+                                                            <div class="form-group position-relative mb-0 col "> 
                                                                 <label for="">Ingredient Unit (Ar)</label> 
-                                                                <input type="text" class="form-control validate" value="" name="name_ar" id="name">
-                                                                 <p class="text-danger text-small" id="name_arError"></p>
+                                                                <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
+                                                                 <p class="text-danger error m-0 text-small" id="name_arError"></p>
                                                              </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                  <button type="button" onclick="validate(this);" class="comman_btn" >Create</button> 
@@ -574,15 +589,15 @@
                                   <div class="col">
                                     <h2>Unit</h2>
                                   </div>
-                                  <div class="col-3">
+                                  <!-- <div class="col-3">
                                     <form class="form-design" action="">
                                       <div class="form-group mb-0 position-relative icons_set">
                                         <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                         <i class="far fa-search"></i>
                                       </div>
                                     </form>
-                                  </div>
-                                  <div class="col-auto text-end">
+                                  </div> -->
+                                  <!-- <div class="col-auto text-end">
                                     <div class="dropdown more_filters">
                                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
                                       <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -598,12 +613,12 @@
                                         </form>
                                       </div>
                                     </div>
-                                  </div>
+                                  </div> -->
                                 </div>
                                 <div class="row">
                                   <div class="col-12 comman_table_design bg-white px-0">
                                     <div class="table-responsive">
-                                      <table class="table mb-0">
+                                      <table class="table mb-0" id="example5">
                                         <thead>
                                           <tr>
                                             <th>S.No.</th>
@@ -693,11 +708,11 @@
           <input type="hidden" class="form-control"  id="id" name="id" >
             <div class="form-group col-4"> 
                 <label for="">Category Name (En)</label> 
-                <input type="text" class="form-control" value="" id="category_name" name="category_name" > 
+                <input type="text" class="form-control" value="" id="category_name" name="category_name" maxlength="20" > 
             </div>
             <div class="form-group col-4"> 
                 <label for="">Category Name (Ar)</label> 
-                <input type="text" class="form-control" value="" id="category_name_ar" name="category_name_ar" > 
+                <input type="text" class="form-control" value="" id="category_name_ar" name="category_name_ar" maxlength="20"> 
             </div>
              <div class="form-group mb-0 col-auto">
                 <button type="button" class="comman_btn" onclick="updateCategory(this);" >Save</button>
@@ -723,11 +738,11 @@
           <input type="hidden" class="form-control"  id="ids" name="id" >
             <div class="form-group col-4"> 
                 <label for="">Unit Name (En)</label> 
-                <input type="text" class="form-control" value="" id="unit_name" name="unit_name" > 
+                <input type="text" class="form-control" value="" id="unit_name" name="unit_name" maxlength="20"> 
             </div>
             <div class="form-group col-4"> 
                 <label for="">Unit Name (Ar)</label> 
-                <input type="text" class="form-control" value="" id="unit_name_ar" name="unit_name_ar" > 
+                <input type="text" class="form-control" value="" id="unit_name_ar" name="unit_name_ar" maxlength="20"> 
             </div>
              <div class="form-group mb-0 col-auto">
                 <button type="button" class="comman_btn" onclick="updateUnit(this);" >Save</button>
@@ -752,8 +767,8 @@
           <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="carForm"> 
          @csrf
          <input type="hidden" class="form-control"  id="id" name="id" >
-            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  id="group_name" name="group_name" > </div>
-            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  id="group_name_ar" name="group_name_ar" > </div>
+            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  id="group_name" name="group_name" maxlength="20"> </div>
+            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  id="group_name_ar" name="group_name_ar" maxlength="20"> </div>
            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="image1"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control" id="image1"  name="images" ></div>
             <div class="form-group mb-0 col-auto"> <button type="button"  onclick="updateCar(this);" name="submit-form"   class="comman_btn">Save</button> </div>
           </form>
@@ -866,7 +881,25 @@
     </div>
 </div>
 @endforeach
+<script src="assets/vendor/jquery.min.js"></script>
+      <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+      <script>
+function printableDiv(printableAreaDivId) {
+     var printContents = document.getElementById(printableAreaDivId).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
+
+</script>
 @endsection
+
 <script>
    function showmodal(obj,id) {
     

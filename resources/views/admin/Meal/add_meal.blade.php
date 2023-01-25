@@ -31,33 +31,33 @@
                                  <div class="row">
                                     <div class="form-group col-6">
                                        <label for=""> Title (English) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name" id="name"   maxlength ="20">
                                        <p class="text-danger text-small" id="nameError"></p>
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
-                                       <input type="text" class="form-control validate" value="" name="side_dish" id="name">
-                                       <p class="text-danger text-small" id="side_dishError"></p>
+                                       <input type="text" class="form-control validate" value="" name="side_dish" id="name"  maxlength ="20">
+                                       <!-- <p class="text-danger text-small" id="side_dishError"></p> -->
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name"  maxlength ="20">
                                        <p class="text-danger text-small" id="name_arError"></p>
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
-                                       <input type="text" class="form-control validate" value="" name="side_dish_ar" id="name">
-                                       <p class="text-danger text-small" id="side_dish_arError"></p>
+                                       <input type="text" class="form-control validate" value="" name="side_dish_ar" id="name"   maxlength ="20">
+                                       <!-- <p class="text-danger text-small" id="side_dish_arError"></p> -->
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (English) :</label>
-                                       <textarea class="form-control validate" name="description" id=""></textarea>
-                                       <p class="text-danger text-small" id="descriptionError"></p>
+                                       <textarea class="form-control validate" name="description" maxlength ="100" ></textarea>
+                                       <!-- <p class="text-danger text-small" id="descriptionError"></p> -->
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (Arabic) :</label>
-                                       <textarea class="form-control validate" name="description_ar" id=""></textarea>
-                                       <p class="text-danger text-small" id="description_arError"></p>
+                                       <textarea class="form-control validate" name="description_ar" maxlength ="100" ></textarea>
+                                       <!-- <p class="text-danger text-small" id="description_arError"></p> -->
                                     </div>
                                     <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                                         <input type="file" id="uploadimg" class="validate dropify" name="image">
@@ -101,7 +101,7 @@
                                        <div class="row">
                                           <div class="form-group col-12">
                                              <label for="">Meal Group :</label>
-                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Choose anything" multiple name="meal_schedule_id[]"> 
+                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="meal_schedule_id[]"> 
                                              @foreach($meal_schedule as $meal_schedules) 
                                                 <option value="{{$meal_schedules->id}}">{{$meal_schedules->name}}</option>
                                              @endforeach
@@ -109,7 +109,7 @@
                                           </div>
                                           <div class="form-group col-12">
                                              <label for="">Tags :</label>
-                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Choose anything" multiple name="week_days_id[]">
+                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
                                                @foreach($tags as $tag)
                                                 <option value="{{$tag->week_days_id}}">{{ucfirst($tag->week_days_id)}}</option>
                                               @endforeach
@@ -117,7 +117,7 @@
                                           </div>
                                           <div class="form-group col-12">
                                              <label for="">Plan Type :</label>
-                                             <select class="w-100 selct_comman" data-placeholder="Choose anything" multiple name="diet_plan_type_id[]"> 
+                                             <select class="w-100 selct_comman" data-placeholder="Select" multiple name="diet_plan_type_id[]"> 
                                              @foreach($diet_plan as $diet_plans) 
                                                 <option value="{{$diet_plans->id}}">{{$diet_plans->name}}</option>
                                                @endforeach 
@@ -125,7 +125,7 @@
                                           </div>
                                           <div class="form-group col-12">
                                              <label for="">Department :</label>
-                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Choose anything" multiple name="department_id[]"> 
+                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="department_id[]"> 
                                              @foreach($department as $departments) 
                                                 <option value="{{$departments->id}}">{{$departments->name}}</option>
                                                @endforeach 
@@ -148,7 +148,7 @@
                                                 </div>
                                                 <div class="col-4 pe-0">
                                                    <div class="action_filter filter_check">
-                                                      <input class="d-none" type="radio" id="v3" value="none" name="check11">
+                                                      <input class="d-none" type="radio" id="v3" value="none" name="check11" checked>
                                                       <label for="v3">None</label>
                                                    </div>
                                                 </div>
@@ -182,9 +182,9 @@
                                              </thead>
                                              <tbody>
                                                 <tr class="clonetr">
-                                                 
                                                 <td>
-                                                      <select class="form-select table_input table_select adjust_lenth" aria-label="Default select example" id="fname"  name="ingredient[]">
+                                                      <!-- <select class="form-select table_input table_select adjust_lenth" id="categoryList" onchange="getSubcategory(this);" aria-label="Default select example" id="fname"  name="ingredient[]"> -->
+                                                      <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="ingredient[]" style="width:180px"> 
                                                       @foreach($ingredients as $ingredient)
                                                          <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option>
                                                          @endforeach
@@ -192,14 +192,16 @@
                                                    </td>
                                                 
                                                    <td>
-                                                      <input class="form-control table_input table_select adjust_lenth" type="number" id="fname" name="qty[]" value="">
+                                                      <input class="form-control table_input  adjust_lenth" type="number" id="fname" name="qty[]" value="">
                                                    </td>
                                                    <td>
-                                                      <select class="form-select table_input table_select adjust_lenth" aria-label="Default select example" id="fname" name="unit[]">
+                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos" name="unit[]" value="">
+                                                      <!-- <select class="form-select table_input table_select adjust_lenth" id="subcategoryList" aria-label="Default select example" id="fname" name="unit[]">
+                                                      <option value=''>select </option>
                                                       @foreach($unit as $units)
                                                          <option value='{{$units->id}}'>{{$units->unit}}</option>
                                                          @endforeach
-                                                     </select>
+                                                     </select> -->
                                                    </td>
                                                    <!-- <td><input type="button" class=" btn btn-danger deleteButton " value="delete"/></td> -->
                                                    <!-- <td>
@@ -292,28 +294,34 @@
                                                 </tr>
                                              </thead>
                                              <tbody>
-                                                <tr>
+                                                <tr >
                                                    <td>
                                                       <strong>1000 cal</strong>
                                                    </td>
                                                    <td>
                                                    <input class="form-control table_input" type="hidden" value="1000" name="user_calorie1">
-                                                      <input class="form-control table_input" type="text" placeholder="S" name="size1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="S" name="size1">
+                                                      <p class="text-danger text-small" id="size1Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="50%" name="recipe_yield1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="50%" name="recipe_yield1">
+                                                      <p class="text-danger text-small" id="recipe_yield1Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="150" name="meal_calorie1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="150" name="meal_calorie1">
+                                                      <p class="text-danger text-small" id="meal_calorie1Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="28" name="protein1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="28" name="protein1">
+                                                      <p class="text-danger text-small" id="protein1Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="6" name="carb1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="6" name="carb1">
+                                                      <p class="text-danger text-small" id="carb1Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="5" name="fat1">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="5" name="fat1">
+                                                      <p class="text-danger text-small" id="fat1Error"></p>
                                                    </td>
                                                 </tr>
                                                 <tr>
@@ -322,22 +330,28 @@
                                                    </td>
                                                    <td>
                                                    <input class="form-control table_input" type="hidden" value="1200" name="user_calorie2">
-                                                      <input class="form-control table_input" type="text" placeholder="S" name="size2"> 
+                                                      <input class="form-control table_input validatee" type="text" placeholder="S" name="size2"> 
+                                                      <p class="text-danger text-small" id="size2Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="50%" name="recipe_yield2">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="50%" name="recipe_yield2">
+                                                      <p class="text-danger text-small" id="recipe_yield2Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="150" name="meal_calorie2">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="150" name="meal_calorie2">
+                                                      <p class="text-danger text-small" id="meal_calorie2Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="28"  name="protein2">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="28"  name="protein2">
+                                                      <p class="text-danger text-small" id="protein2Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="6" name="carb2">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="6" name="carb2">
+                                                      <p class="text-danger text-small" id="carb2Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="5" name="fat2">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="5" name="fat2">
+                                                      <p class="text-danger text-small" id="fat2Error"></p>
                                                    </td>
                                                 </tr>
                                                 <tr>
@@ -346,22 +360,28 @@
                                                    </td>
                                                    <td>
                                                    <input class="form-control table_input" type="hidden" value="1500" name="user_calorie3">
-                                                      <input class="form-control table_input" type="text" placeholder="S" name="size3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="S" name="size3">
+                                                      <p class="text-danger text-small" id="size3Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="50%" name="recipe_yield3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="50%" name="recipe_yield3">
+                                                      <p class="text-danger text-small" id="recipe_yield3Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="150" name="meal_calorie3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="150" name="meal_calorie3">
+                                                      <p class="text-danger text-small" id="meal_calorie3Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="28" name="protein3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="28" name="protein3">
+                                                      <p class="text-danger text-small" id="protein3Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="6" name="carb3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="6" name="carb3">
+                                                      <p class="text-danger text-small" id="carb3Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="5" name="fat3">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="5" name="fat3">
+                                                      <p class="text-danger text-small" id="fat3Error"></p>
                                                    </td>
                                                 </tr>
                                                 <tr>
@@ -370,22 +390,28 @@
                                                    </td>
                                                    <td>
                                                    <input class="form-control table_input" type="hidden" value="1800" name="user_calorie4">
-                                                      <input class="form-control table_input" type="text" placeholder="L" name="size4">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="L" name="size4">
+                                                      <p class="text-danger text-small" id="size4Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="100%" name="recipe_yield4">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="100%" name="recipe_yield4">
+                                                      <p class="text-danger text-small" id="recipe_yield4Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="200" name="meal_calorie4"> 
+                                                      <input class="form-control table_input validatee" type="text" placeholder="200" name="meal_calorie4"> 
+                                                      <p class="text-danger text-small" id="meal_calorie4Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="32" name="protein4">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="32" name="protein4">
+                                                      <p class="text-danger text-small" id="protein4Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="6" name="carb4">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="6" name="carb4">
+                                                      <p class="text-danger text-small" id="carb4Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="8" name="fat4">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="8" name="fat4">
+                                                      <p class="text-danger text-small" id="fat4Error"></p>
                                                    </td>
                                                 </tr>
                                                 <tr>
@@ -394,22 +420,28 @@
                                                    </td>
                                                    <td>
                                                    <input class="form-control table_input" type="hidden" value="2000" name="user_calorie5">
-                                                      <input class="form-control table_input" type="text" placeholder="L" name="size5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="L" name="size5">
+                                                      <p class="text-danger text-small" id="size5Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="100%" name="recipe_yield5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="100%" name="recipe_yield5">
+                                                      <p class="text-danger text-small" id="recipe_yield5Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="200" name="meal_calorie5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="200" name="meal_calorie5">
+                                                      <p class="text-danger text-small" id="meal_calorie5Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="32" name="protein5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="32" name="protein5">
+                                                      <p class="text-danger text-small" id="protein5Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="6" name="carb5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="6" name="carb5">
+                                                      <p class="text-danger text-small" id="carb5Error"></p>
                                                    </td>
                                                    <td>
-                                                      <input class="form-control table_input" type="text" placeholder="8" name="fat5">
+                                                      <input class="form-control table_input validatee" type="text" placeholder="8" name="fat5">
+                                                      <p class="text-danger text-small" id="fat5Error"></p>
                                                    </td>
                                                 </tr>
                                              </tbody>
@@ -451,6 +483,28 @@
     });
 });
 
+
+function getSubcategory(obj, level) {
+   var allList =<?= \GuzzleHttp\json_encode($ingredients)?>;
+   var allLists =<?= \GuzzleHttp\json_encode($unit)?>;
+  
+   var ingredientId =$('#categoryList').find('option:selected').val();
+   alert(ingredientId);
+            $(allList).each(function (a, ingredients) {
+               if (ingredients.id == ingredientId) {
+                  var unit_id = ingredients.unit_id;
+                  $(allLists).each(function (a, unit) {
+                   if (unit.id == unit_id) {
+                     $("#upload_videos").val(unit.unit);
+                     // <input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'">
+                     // html += '<option value='" + unit.unit + "'>" + unit.unit + "</option>';
+                      }
+      
+                   });
+                  //  $("#upload_videos_" + level).append(html);
+                } 
+            });
+}
 // function insRow(id) {
 //     var filas = document.getElementById("myTable").rows.length;
 //     alert(filas);
@@ -506,6 +560,7 @@
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            var formDatas = $("#addForm").find(".validatee:input").not(':input[type=button]');
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();
@@ -513,6 +568,20 @@
                 if (val == "" || val == "0" || val == null) {
                     
                 $("#" + name + "Error").html("This field is required");
+                flag = false;
+                    
+                    
+                } else {
+
+                }
+            });
+            $(formDatas).each(function () {
+                var element = $(this);
+                var val = element.val();
+                var name = element.attr("name");
+                if (val == "" || val == "0" || val == null) {
+                    
+                $("#" + name + "Error").html("Required field");
                 flag = false;
                     
                     
