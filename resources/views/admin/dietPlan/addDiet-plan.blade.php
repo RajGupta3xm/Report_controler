@@ -31,25 +31,29 @@
                                  <div class="row">
                                     <div class="form-group col-6">
                                        <label for=""> Title (English) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20">
                                        <p class="text-danger text-small" id="nameError">
                                     </div> 
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
                                        <p class="text-danger text-small" id="name_arError">
                                     </div> 
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Englsih) :</label>
-                                       <textarea class="form-control validate" name="description" id=""></textarea>
+                                       <textarea class="form-control validate" name="description" id="" maxlength="100"></textarea>
                                        <p class="text-danger text-small" id="descriptionError">
                                     </div>
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Arabic) :</label>
-                                       <textarea class="form-control validate"  name="description_ar" id=""></textarea>
+                                       <textarea class="form-control validate"  name="description_ar" id="" maxlength="100"></textarea>
                                        <p class="text-danger text-small" id="description_arError">
                                     </div>
-                                    <div class="form-group col-6 uploadimg_box">
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (English) :</span>
+                                       <input type="file" id="uploadimg4" class="dropify validate" name="image" data-default-file="" accept="image/*">
+                                       <p class="text-danger text-small" id="imageError"></p>
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (English):</span>
                                        <input type="file" id="uploadimg" name="image" class="d-none validate">
                                        <label for="uploadimg">
@@ -59,8 +63,12 @@
                                           </div>
                                        </label>
                                        <p class="text-danger text-small" id="imageError">
-                                    </div> 
-                                    <div class="form-group col-6 uploadimg_box">
+                                    </div>  -->
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (Arabic) :</span>
+                                       <input type="file" id="uploadimg5" class="dropify validate" name="image_ar" data-default-file="" accept="image/*">
+                                       <p class="text-danger text-small" id="image_arError"></p>
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (Arabic):</span>
                                        <input type="file" id="uploadimg1" name="image_ar" class="d-none validate">
                                        <label for="uploadimg1">
@@ -70,7 +78,7 @@
                                           </div>
                                        </label>
                                        <p class="text-danger text-small" id="image_arError">
-                                    </div> 
+                                    </div>  -->
                                  </div>
                               </div>  
                               <div class="col-12 comman_table_design New_tabledesign mb-4">
@@ -92,25 +100,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname1"  onchange="autofill3(1)" name="protein_default_min" placeholder="20">
+                                                   <input class="form-control table_input validatee" type="text" id="pname1"  onchange="autofill3(1)" name="protein_default_min" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="protein_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname7"  onchange="autofill3(7)" type="text" name="protein_min_divisor" placeholder="4">
-                                                    
+                                                   <input class="form-control table_input validatee" id="pname7"  onchange="autofill3(7)" type="text" name="protein_min_divisor" placeholder="--">
+                                                   <p class="text-danger text-small" id="protein_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname2"  onchange="autofill3(2)" type="text" name="protein_default_max" placeholder="35">
+                                                   <input class="form-control table_input validatee" id="pname2"  onchange="autofill3(2)" type="text" name="protein_default_max" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="protein_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname8"  onchange="autofill3(8)" name="protein_max_divisor" placeholder="4"> 
+                                                   <input class="form-control table_input validatee" type="text" id="pname8"  onchange="autofill3(8)" name="protein_max_divisor" placeholder="--"> 
+                                                   <p class="text-danger text-small" id="protein_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -120,26 +131,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname3"  onchange="autofill3(3)" type="text" name="carb_default_min" placeholder="40">
+                                                   <input class="form-control table_input validatee" id="pname3"  onchange="autofill3(3)" type="text" name="carb_default_min" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="carb_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname9"  onchange="autofill3(9)" name="carb_min_divisor" placeholder="4">
-                                                   
+                                                   <input class="form-control table_input validatee" type="text" id="pname9"  onchange="autofill3(9)" name="carb_min_divisor" placeholder="--">
+                                                   <p class="text-danger text-small" id="carb_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname4"  onchange="autofill3(4)" type="text" name="carb_default_max" placeholder="55">
+                                                   <input class="form-control table_input validatee" id="pname4"  onchange="autofill3(4)" type="text" name="carb_default_max" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="carb_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname10"  onchange="autofill3(10)" name="carb_max_divisor" placeholder="4">
-                                                   
+                                                   <input class="form-control table_input validatee" type="text" id="pname10"  onchange="autofill3(10)" name="carb_max_divisor" placeholder="--">
+                                                   <p class="text-danger text-small" id="carb_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -149,26 +162,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname5"  onchange="autofill3(5)" type="text" name="fat_default_min" placeholder="20">
+                                                   <input class="form-control table_input validatee" id="pname5"  onchange="autofill3(5)" type="text" name="fat_default_min" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="fat_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname11"  onchange="autofill3(11)" name="fat_min_divisor" placeholder="9">
-                                                    
+                                                   <input class="form-control table_input validatee" type="text" id="pname11"  onchange="autofill3(11)" name="fat_min_divisor" placeholder="--">
+                                                   <p class="text-danger text-small" id="fat_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname6"  onchange="autofill3(6)" type="text" name="fat_default_max" placeholder="30">
+                                                   <input class="form-control table_input validatee" id="pname6"  onchange="autofill3(6)" type="text" name="fat_default_max" placeholder="--">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="fat_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname12"  onchange="autofill3(12)" name="fat_max_divisor" placeholder="9">
-                                                    
+                                                   <input class="form-control table_input validatee" type="text" id="pname12"  onchange="autofill3(12)" name="fat_max_divisor" placeholder="--">
+                                                   <p class="text-danger text-small" id="fat_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -252,9 +267,15 @@
                </div>
             </div>
          </div>
-      </div> 
-   @endsection
-
+      </div>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+      @endsection
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
       <script>
  $(window).load(function(){
@@ -284,6 +305,7 @@ var inps = document.getElementById('pname'+ count).value;
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            var formDataa = $("#addForm").find(".validatee:input").not(':input[type=button]');
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();
@@ -291,6 +313,20 @@ var inps = document.getElementById('pname'+ count).value;
                 if (val == "" || val == "0" || val == null) {
                     
                 $("#" + name + "Error").html("This field is required");
+                flag = false;
+                    
+                    
+                } else {
+
+                }
+            });
+            $(formDataa).each(function () {
+                var element = $(this);
+                var val = element.val();
+                var name = element.attr("name");
+                if (val == "" || val == "0" || val == null) {
+                    
+                $("#" + name + "Error").html("Required field");
                 flag = false;
                     
                     

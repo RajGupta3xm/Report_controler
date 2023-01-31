@@ -91,10 +91,12 @@ class MealPlanController extends Controller {
 
                 $dates = [];
                 $date = Carbon::now();
-                for ($i = 0; $i < $request->no_of_days; $i++) {
+//        $request->no_of_days
+                for ($i = 0; $i < 28; $i++) {
                     $dates[] = $date->addDay()->format('y-m-d');
                 }
                 $meal_groups=$request->meal_groups_hidden;
+                $variant_id=2;
                 $returnHTML = view('admin.MealPlan.default',compact('dates','meal_groups'))->render();
                 return response()->json(['html' => $returnHTML]);
     }
@@ -191,6 +193,8 @@ class MealPlanController extends Controller {
         }
     }
 
+
+
     public function edit_update($id,Request $request){
 
         $id = base64_decode($id);
@@ -205,6 +209,8 @@ if(isset($request->images)){
     $url = url('/uploads/meal_image/');
     $images = $url.'/'. $imageName;
     $meal_plan->image=$images;
+}else{
+    $meal_plan->image=null;
 }
 
 $meal_plan->name=$request->title;
@@ -241,8 +247,8 @@ $meal_plan->save();
 
 
         if(isset($request->selectionvariant) && count($request->selectionvariant) > 0){
-            foreach ($request->selectionvariant as $key=> $variant){
-
+            foreach ($request->selectionvariant as $key=> $variant)
+               {
                 foreach ($variant as $key1=>$varian){
                     foreach ($varian as $key2=> $value){
 
@@ -254,6 +260,7 @@ $meal_plan->save();
                             $is_exists->save();
                         }
                     }
+
                 }
             }
         }

@@ -46,7 +46,7 @@
                                 <div class="row">
                                     <div class="col-12 px-0 comman_tabs">
                                         <nav>
-                                            <div class="nav nav-tabs" id="nav-tab" role="tablist"> <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Ingredients</button> <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Groups</button> <button class="nav-link" id="nav-profile2-tab" data-bs-toggle="tab" data-bs-target="#nav-profile2" type="button" role="tab" aria-controls="nav-profile2" aria-selected="false">Categories</button> <button class="nav-link" id="nav-profile1-tab" data-bs-toggle="tab" data-bs-target="#nav-profile1" type="button" role="tab" aria-controls="nav-profile1" aria-selected="false">Unit</button> </div>
+                                            <div class="nav nav-tabs" id="nav-tab" role="tablist"> <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Ingredients</button> <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Groups</button> <button class="nav-link" id="nav-profile2-tab" data-bs-toggle="tab" data-bs-target="#nav-profile2" type="button" role="tab" aria-controls="nav-profile2" aria-selected="false">Categories</button> <button class="nav-link" id="nav-profile1-tab" data-bs-toggle="tab" data-bs-target="#nav-profile1" type="button" role="tab" aria-controls="nav-profile1" aria-selected="false">Unit</button> </div>
                                         </nav>
                                         <div class="tab-content" id="nav-tabContent">
                                             <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
@@ -66,7 +66,7 @@
                                                                 <p class="text-danger text-small error m-0" id="nameError"></p> 
                                                             </div>
                                                               <div class="form-group position-relative col-4">
-                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small error m-0" id="name_arError" maxlength="20"></p>
+                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20"><p class="text-danger text-small error m-0" id="name_arError" ></p>
                                                               </div>
                                                                 <div class="form-group col-4"> 
                                                                 <label for="">Group</label>
@@ -116,7 +116,7 @@
                                                                 <p class="text-danger error m-0 text-small" id="nameError"></p> 
                                                             </div>
                                                               <div class="form-group position-relative  col-4">
-                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger error m-0 text-small" id="name_arError" maxlength="20"></p>
+                                                                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20"><p class="text-danger error m-0 text-small" id="name_arError" ></p>
                                                               </div>
                                                                 <div class="form-group col-4"> 
                                                                 <label for="">Group</label>
@@ -265,7 +265,7 @@
                                                             @csrf
                                                             <div class="form-group position-relative mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" maxlength="20" ><p class="text-danger m-0 error text-small" id="groupError"></p> </div>
                                                             <div class="form-group position-relative mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" maxlength="20"><p class="text-danger m-0 error text-small" id="group_arError"></p> </div>
-                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video"><p class="text-danger m-0 error text-small" id="images1Error"></p> </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video" accept="image/*"><p class="text-danger m-0 error text-small" id="images1Error"></p> </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
@@ -714,7 +714,7 @@
                 <label for="">Category Name (Ar)</label> 
                 <input type="text" class="form-control" value="" id="category_name_ar" name="category_name_ar" maxlength="20"> 
             </div>
-             <div class="form-group mb-0 col-auto">
+             <div class="form-group mb-20 col-auto">
                 <button type="button" class="comman_btn" onclick="updateCategory(this);" >Save</button>
              </div>
           </form>
@@ -744,7 +744,7 @@
                 <label for="">Unit Name (Ar)</label> 
                 <input type="text" class="form-control" value="" id="unit_name_ar" name="unit_name_ar" maxlength="20"> 
             </div>
-             <div class="form-group mb-0 col-auto">
+             <div class="form-group mb-20 col-auto">
                 <button type="button" class="comman_btn" onclick="updateUnit(this);" >Save</button>
              </div>
           </form>
@@ -844,10 +844,10 @@
           <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="queryForm1_<?=$ingredients->id?>"> 
             <div class="form-group col-4"> 
                 <label for="">Ingredient Name (En)</label> 
-                <input type="text" class="form-control" value="{{$ingredients->name}}" name="name" > 
+                <input type="text" class="form-control" value="{{$ingredients->name}}" name="name" maxlength="20"> 
             </div>
             <div class="form-group col-4">
-                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control" value="{{$ingredients->name_ar}}" name="name_ar" > </div>
+                 <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control" value="{{$ingredients->name_ar}}" name="name_ar" maxlength="20"> </div>
                 <div class="form-group col-4"> 
                 <label for="">Group</label>
                 <select class="form-select form-control" name="group_id" aria-label="Default select example"> 
@@ -1372,7 +1372,11 @@ if (flag) {
                                            title: "Success!",
                                             text : "Group Status has been Updated ",
                                             icon : "success",
-                                        })
+                                        }).then(function() {
+                                           location.reload();
+                                         
+                                           
+                                        });
                                     }
                                 });
                             } else {
@@ -1467,7 +1471,10 @@ if (flag) {
                                            title: "Success!",
                                             text : "category Status has been Updated ",
                                             icon : "success",
-                                        })
+                                        }).then(function() {
+                                           location.reload();
+                                           
+                                        });
                                     }
                                 });
                             } else {
@@ -1515,7 +1522,10 @@ if (flag) {
                                            title: "Success!",
                                             text : "Unit Status has been Updated ",
                                             icon : "success",
-                                        })
+                                        }).then(function() {
+                                           location.reload();
+                                           
+                                        });
                                     }
                                 });
                             } else {

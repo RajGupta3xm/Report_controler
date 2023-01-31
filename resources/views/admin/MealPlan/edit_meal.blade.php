@@ -14,6 +14,7 @@
                                 </div>
                                 <form class="form-design py-4 px-4 row align-items-start justify-content-start" id="AddVariantsForms" action="{{url('admin/edit-mealplan/edit_update',[base64_encode($edit_mealPlan->id)])}}" enctype="multipart/form-data" method="post">
                                     @csrf
+                                    <input type="hidden" name="images" value="{{$edit_mealPlan->image}}" id="images_hidden">
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="form-group col-6">
@@ -86,8 +87,8 @@
                                                                     <td>
                                                                         <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value" style="    width: 157px !important;">
                                                                             <option value="">Select Text</option>
-                                                                            <option value="weekend">With Weekend</option>
-                                                                            <option value="withoutweekend">Without Weekend</option>
+                                                                            <option value="weekend" data-id="With Weekend">With Weekend</option>
+                                                                            <option value="withoutweekend" data-id="Without Weekend">Without Weekend</option>
                                                                         </select>
                                                                         <p class="text-danger text-small" id="option2Error"></p>
                                                                     </td>
@@ -387,7 +388,7 @@
             $('.option1').on('change',function(){
                 var value=$(this).val();
                 if(value=="weekly"){
-                    var option2=$('.option2').val();
+                    var option2=$(this).find(":selected").data('id');
                     if(option2=="weekend"){
                         $("#days_value").text(7);
                         $("#no_of_days").val(7);
@@ -399,7 +400,7 @@
                     }
                     $('#option2').text(value+' '+option2)
                 }else if(value=="monthly"){
-                    var option2=$('.option2').val();
+                    var option2=$(this).find(":selected").data('id');
                     if(option2=="weekend"){
                         $("#days_value").text(28);
                         $("#no_of_days").val(28);
@@ -414,7 +415,7 @@
             })
 
             $('.option2').on('change',function(){
-                var value=$(this).val();
+                var value=$(this).find(":selected").data('id');
                 if(value=="weekend"){
                     var option1=$('.option1').val();
                     if(option1=="weekly"){
@@ -548,6 +549,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        $('.dropify').dropify();
+        var certificateDropify = $('.dropify').dropify();
+         certificateDropify.on('dropify.afterClear', function (event, element) {
+            $('#images_hidden').val("");
+        });
     </script>
 @endsection

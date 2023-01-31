@@ -758,7 +758,7 @@ class ApiController extends Controller {
                                 $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                                 $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
 
-                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->first()){
+                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->get()){
                                     if($plan_type == 1 || $plan_type == 2){
                                         $subscription->delivery_day_type="Week";
                                     }else{
@@ -767,9 +767,9 @@ class ApiController extends Controller {
                                           $deliveryDay=DeliveryDay::find($plan_type);
 
                 
-                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option1'=>$deliveryDay->type])->first()){
-                                            if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
-                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->get();
+                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'option1'=>$deliveryDay->type,'option2'=>$deliveryDay->including_weekend])->first()){
+                                            // if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
+                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->get();
                                           foreach($costss as $costs){
 
                                           $subscription->cost=$costs['plan_price'];
@@ -792,7 +792,7 @@ class ApiController extends Controller {
                 
                                         }
                                      }
-                                    }
+                                    //}
                                 }
                                 
                             }
@@ -977,7 +977,7 @@ class ApiController extends Controller {
             if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'diet_plan_type_id'=>$plan_types->id])->first()){
                 $plan_types->selected=true;
             }
-        });;
+        });
         $response = new \Lib\PopulateResponse($plan_types);
         $this->status = true;
         $this->data = $response->apiResponse();

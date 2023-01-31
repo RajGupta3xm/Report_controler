@@ -19,10 +19,10 @@
                                          <div class="row">
                                              <div class="form-group col-6">
                                                  <label for=""> Title (English) :</label>
-                                                 <input type="text" class="form-control validate" value="" name="title" id="name"> <p class="text-danger text-small" id="titleError"></p></div>
+                                                 <input type="text" class="form-control validate" value="" name="title" id="name" maxlength="20"> <p class="text-danger text-small" id="titleError" maxlength="20" ></p></div>
                                              <div class="form-group col-6">
                                                  <label for=""> Title (Arabic) :</label>
-                                                 <input type="text" class="form-control validate" value="" name="title_ar" id="name"> <p class="text-danger text-small" id="title_arError"></p></div>
+                                                 <input type="text" class="form-control validate" value="" name="title_ar" id="name" maxlength="20"> <p class="text-danger text-small" id="title_arError" maxlength="20"></p></div>
                                              <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                                                  <input type="file" id="uploadimg" class="validate dropify" name="images">
 
@@ -91,8 +91,8 @@
                                                                      <td>
                                                                          <select class="form-select table_input table_select option2" aria-label="Default select example" name="option2" id="option2_value" style="    width: 157px !important;">
                                                                              <option value="">Select Text</option>
-                                                                             <option value="weekend">With Weekend</option>
-                                                                             <option value="withoutweekend">Without Weekend</option>
+                                                                             <option value="weekend" data-id="With Weekend">With Weekend</option>
+                                                                             <option value="withoutweekend" data-id="Without Weekend">Without Weekend</option>
                                                                          </select>
                                                                          <p class="text-danger text-small" id="option2Error"></p>
                                                                      </td>
@@ -287,7 +287,7 @@
             })
 
             $('.option2').on('change',function(){
-                var value=$(this).val();
+                var value=$(this).find(":selected").data('id');
                 if(value=="weekend"){
                     var option1=$('.option1').val();
                     if(option1=="weekly"){

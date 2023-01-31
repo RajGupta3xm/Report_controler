@@ -31,25 +31,29 @@
                                  <div class="row">
                                     <div class="form-group col-6">
                                        <label for=""> Title (English) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20">
                                        <p class="text-danger text-small" id="nameError">
                                     </div> 
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
                                        <p class="text-danger text-small" id="name_arError">
                                     </div> 
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Englsih) :</label>
-                                       <textarea class="form-control validate" name="description" id=""></textarea>
+                                       <textarea class="form-control validate" name="description" id="" maxlength="100"></textarea>
                                        <p class="text-danger text-small" id="descriptionError">
                                     </div>
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Arabic) :</label>
-                                       <textarea class="form-control validate" name="description_ar" id=""></textarea>
+                                       <textarea class="form-control validate" name="description_ar" id="" maxlength="100"></textarea>
                                        <p class="text-danger text-small" id="description_arError">
                                     </div>
-                                    <div class="form-group col-6 uploadimg_box">
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (English) :</span>
+                                       <input type="file" id="uploadimg4" class="dropify validate" name="image" data-default-file="" accept="image/*">
+                                       <p class="text-danger text-small" id="imageError"></p>
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (English):</span>
                                        <input type="file" id="uploadimg" name="image" class="d-none validate">
                                        <label for="uploadimg">
@@ -59,8 +63,12 @@
                                           </div>
                                        </label>
                                        <p class="text-danger text-small" id="imageError">
-                                    </div> 
-                                    <div class="form-group col-6 uploadimg_box">
+                                    </div>  -->
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (Arabic) :</span>
+                                       <input type="file" id="uploadimg5" class="dropify validate" name="image_ar" data-default-file="" accept="image/*">
+                                       <p class="text-danger text-small" id="image_arError"></p>
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (Arabic):</span>
                                        <input type="file" id="uploadimg1" name="image_ar" class="d-none validate">
                                        <label for="uploadimg1">
@@ -70,7 +78,7 @@
                                           </div>
                                        </label>
                                        <p class="text-danger text-small" id="image_arError">
-                                    </div> 
+                                    </div>  -->
                                  </div>
                               </div>  
                               <div class="col-12 comman_table_design New_tabledesign mb-4">
@@ -90,13 +98,13 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname1"  onchange="autofill3(1)"  name="default_protein" placeholder="20-35">
+                                                   <input class="form-control table_input validatee" type="text" id="pname1"  onchange="autofill3(1)"  name="default_protein" placeholder="20-35">
                                                    <label>%</label>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id='field1' name="actual_protein" readonly="true" placeholder="27.50">
+                                                   <input class="form-control table_input validatee" type="text" id='field1' name="actual_protein" readonly="true" placeholder="27.50">
                                                    <label>%</label>
                                                 </div>
                                              </td>
@@ -107,13 +115,13 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname2"  onchange="autofill3(2)"  type="text" name="default_carb" placeholder="40-55">
+                                                   <input class="form-control table_input validatee" id="pname2"  onchange="autofill3(2)"  type="text" name="default_carb" placeholder="40-55">
                                                    <label>%</label>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id='field2' name="actual_carb" readonly="true" placeholder="47.50">
+                                                   <input class="form-control table_input validatee" type="text" id='field2' name="actual_carb" readonly="true" placeholder="47.50">
                                                    <label>%</label>
                                                 </div>
                                              </td>
@@ -124,13 +132,13 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" id="pname3"   onchange="autofill3(3)"  type="text" name="default_fat" placeholder="20-30">
+                                                   <input class="form-control table_input validatee" id="pname3"   onchange="autofill3(3)"  type="text" name="default_fat" placeholder="20-30">
                                                    <label>%</label>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id='field3' name="actual_fat" readonly="true" placeholder="25">
+                                                   <input class="form-control table_input validatee" type="text" id='field3' name="actual_fat" readonly="true" placeholder="25">
                                                    <label>%</label>
                                                 </div>
                                              </td>

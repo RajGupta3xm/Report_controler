@@ -174,7 +174,15 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::get('/fitnessGoal-management', 'Admin\FitnessGoalController@index');
     Route::post('/fitness_goal/change_status','Admin\FitnessGoalController@change_status');
     Route::post('/fitness-goal/submit','Admin\FitnessGoalController@submit');
-
+    Route::post('/fitness-goal-delete','Admin\FitnessGoalController@fitnessGoalDelete');
+    Route::get('/get_fitnessGoal/data/{id}', [
+        'uses' => 'Admin\FitnessGoalController@get_fitnessGoal',
+        'as' => 'admin.get_fitnessGoal.data'
+    ]);
+    Route::post('/edit_fitnessGoal/update/{id}', [
+        'uses' => 'Admin\FitnessGoalController@update_fitnessGoal',
+        'as' => 'admin.edit_fitnessGoal.update'
+    ]);
     /*******End Fitness Goal Management */
 
     /*******Diet Plan Management */
@@ -184,7 +192,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/diet-plan/submit','Admin\DietPlanController@submit');
     Route::any('edit-dietPlan/{id}', 'Admin\DietPlanController@edit_dietPlan');
     Route::post('/dietPlan/edit_update/{id}','Admin\DietPlanController@edit_update');
-
+    Route::post('/diet-plan-delete','Admin\DietPlanController@dietPlanDelete');
     /*******End Diet Plan Management */
 
 
@@ -255,6 +263,13 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::get('/add-meal', 'Admin\MealController@add_meal');
     Route::post('/meal/submit', 'Admin\MealController@meal_submit');
     Route::post('/meal/change_status', 'Admin\MealController@change_status');
+    Route::post('/meal/filter', [
+        'uses' => 'Admin\MealController@filter_meal',
+        'as' => 'admin.meal.filter'
+      ]);
+      Route::post('/meal-delete','Admin\MealController@meal_delete');
+      Route::any('edit-meal/{id}', 'Admin\MealController@edit_meal');
+      Route::post('/meal/meal_update/{id}','Admin\MealController@meal_update');
      /*******End Meal Management */
 
         /*******Meal Plan Management */

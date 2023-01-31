@@ -18,21 +18,29 @@
                                  <div class="row">
                                     <div class="form-group col-6">
                                        <label for=""> Title (English) :</label>
-                                       <input type="text" class="form-control"  value="{{$edit_dietPlan->name}}" name="name" id="name">
+                                       <input type="text" class="form-control validate"  value="{{$edit_dietPlan->name}}" name="name" id="name">
+                                       <p class="text-danger text-small" id="nameError"></p>
                                     </div> 
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
-                                       <input type="text" class="form-control"  value="{{$edit_dietPlan->name_ar}}"  name="name_ar" id="name">
+                                       <input type="text" class="form-control validate"  value="{{$edit_dietPlan->name_ar}}"  name="name_ar" id="name">
+                                       <p class="text-danger text-small" id="name_arError"></p>
                                     </div>  
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Englsih) :</label>
-                                       <textarea class="form-control" name="description" id=""  > {{$edit_dietPlan->description}}</textarea>
+                                       <textarea class="form-control validate" name="description" id=""  > {{$edit_dietPlan->description}}</textarea>
+                                       <p class="text-danger text-small" id="descriptionError"></p>
                                     </div>
                                     <div class="form-group col-6 textarea_height">
                                        <label for="">Description (Arabic) :</label>
-                                       <textarea class="form-control" name="description_ar" id=""> {{$edit_dietPlan->description}}</textarea>
+                                       <textarea class="form-control validate" name="description_ar" id=""> {{$edit_dietPlan->description}}</textarea>
+                                       <p class="text-danger text-small" id="description_arError"></p>
                                     </div>
-                                    <div class="form-group col-6 uploadimg_box">
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (English) :</span>
+                                       <input type="file" id="uploadimg4" class="dropify " name="image" data-default-file="{{$edit_dietPlan->image}}" accept="image/*">
+                                       <!-- <p class="text-danger text-small" id="imageError"></p> -->
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (English):</span>
                                        <input type="file" id="uploadimg" name="image" class="d-none">
                                        <label for="uploadimg">
@@ -41,8 +49,12 @@
                                              <span>Upload File</span>
                                           </div>
                                        </label>
-                                    </div> 
-                                    <div class="form-group col-6 uploadimg_box">
+                                    </div>  -->
+                                    <div class="form-group col-6 uploadimg_box"> <span>Media (Arabic) :</span>
+                                       <input type="file" id="uploadimg5" class="dropify " name="image_ar" data-default-file="{{$edit_dietPlan->image_ar}}" accept="image/*">
+                                       <!-- <p class="text-danger text-small" id="image_arError"></p> -->
+                                    </div>
+                                    <!-- <div class="form-group col-6 uploadimg_box">
                                        <span>Media (Arabic):</span>
                                        <input type="file" id="uploadimg" name="image_ar" class="d-none">
                                        <label for="uploadimg">
@@ -51,7 +63,7 @@
                                              <span>Upload File</span>
                                           </div>
                                        </label>
-                                    </div> 
+                                    </div>  -->
                                  </div>
                               </div>  
                               <div class="col-12 comman_table_design New_tabledesign mb-4">
@@ -73,25 +85,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname1" onchange="autofill3(1)" name="protein_default_min" value="{{$edit_dietPlan->protein_default_min}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname1" onchange="autofill3(1)" name="protein_default_min" value="{{$edit_dietPlan->protein_default_min}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="protein_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname7"  onchange="autofill3(7)" name="protein_min_divisor" value="{{$edit_dietPlan->protein_min_divisor}}">
-                                                    
+                                                   <input class="form-control table_input validatee" type="text" id="pname7"  onchange="autofill3(7)" name="protein_min_divisor" value="{{$edit_dietPlan->protein_min_divisor}}">
+                                                   <p class="text-danger text-small" id="protein_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname2"  onchange="autofill3(2)" name="protein_default_max" value="{{$edit_dietPlan->protein_default_max}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname2"  onchange="autofill3(2)" name="protein_default_max" value="{{$edit_dietPlan->protein_default_max}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="protein_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname8"  onchange="autofill3(8)" name="protein_max_divisor" value="{{$edit_dietPlan->protein_max_divisor}}"> 
+                                                   <input class="form-control table_input validatee" type="text" id="pname8"  onchange="autofill3(8)" name="protein_max_divisor" value="{{$edit_dietPlan->protein_max_divisor}}"> 
+                                                   <p class="text-danger text-small" id="protein_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -101,26 +116,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname3"  onchange="autofill3(3)" name="carb_default_min" value="{{$edit_dietPlan->carb_default_min}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname3"  onchange="autofill3(3)" name="carb_default_min" value="{{$edit_dietPlan->carb_default_min}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="carb_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname9"  onchange="autofill3(9)" name="carb_min_divisor" value="{{$edit_dietPlan->carb_min_divisor}}">
-                                                   
+                                                   <input class="form-control table_input validatee" type="text" id="pname9"  onchange="autofill3(9)" name="carb_min_divisor" value="{{$edit_dietPlan->carb_min_divisor}}">
+                                                   <p class="text-danger text-small" id="carb_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname4"  onchange="autofill3(4)" name="carb_default_max" value="{{$edit_dietPlan->carb_default_max}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname4"  onchange="autofill3(4)" name="carb_default_max" value="{{$edit_dietPlan->carb_default_max}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="carb_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname10"  onchange="autofill3(10)" name="carb_max_divisor" value="{{$edit_dietPlan->carb_max_divisor}}">
-                                                   
+                                                   <input class="form-control table_input validatee" type="text" id="pname10"  onchange="autofill3(10)" name="carb_max_divisor" value="{{$edit_dietPlan->carb_max_divisor}}">
+                                                   <p class="text-danger text-small" id="carb_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -130,26 +147,28 @@
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname5"  onchange="autofill3(5)" name="fat_default_min" value="{{$edit_dietPlan->fat_default_min}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname5"  onchange="autofill3(5)" name="fat_default_min" value="{{$edit_dietPlan->fat_default_min}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="fat_default_minError"></p>
                                                 </div>
                                              </td>
                                              <td>
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname11" onchange="autofill3(11)" name="fat_min_divisor" value="{{$edit_dietPlan->fat_min_divisor}}">
-                                                    
+                                                   <input class="form-control table_input validatee" type="text" id="pname11" onchange="autofill3(11)" name="fat_min_divisor" value="{{$edit_dietPlan->fat_min_divisor}}">
+                                                   <p class="text-danger text-small" id="fat_min_divisorError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname6"  onchange="autofill3(6)" name="fat_default_max" value="{{$edit_dietPlan->fat_default_max}}">
+                                                   <input class="form-control table_input validatee" type="text" id="pname6"  onchange="autofill3(6)" name="fat_default_max" value="{{$edit_dietPlan->fat_default_max}}">
                                                    <label>%</label>
+                                                   <p class="text-danger text-small" id="fat_default_maxError"></p>
                                                 </div>
                                              </td>
                                              <td> 
                                                 <div class="form-group position-relative percentage_box mb-0">
-                                                   <input class="form-control table_input" type="text" id="pname12"  onchange="autofill3(12)" name="fat_max_divisor" value="{{$edit_dietPlan->fat_max_divisor}}">
-                                                    
+                                                   <input class="form-control table_input validatee" type="text" id="pname12"  onchange="autofill3(12)" name="fat_max_divisor" value="{{$edit_dietPlan->fat_max_divisor}}">
+                                                   <p class="text-danger text-small" id="fat_max_divisorError"></p>
                                                 </div>
                                              </td>
                                           </tr>
@@ -233,7 +252,14 @@
                </div>
             </div>
          </div>
-      </div> 
+      </div>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.dropify').dropify();
+    </script> 
  @endsection
 
  <script>
@@ -252,6 +278,7 @@ var inps = document.getElementById('pname'+ count).value;
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            var formDataa = $("#addForm").find(".validatee:input").not(':input[type=button]');
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();
@@ -259,6 +286,20 @@ var inps = document.getElementById('pname'+ count).value;
                 if (val == "" || val == "0" || val == null) {
                     
                 $("#" + name + "Error").html("This field is required");
+                flag = false;
+                    
+                    
+                } else {
+
+                }
+            });
+            $(formDataa).each(function () {
+                var element = $(this);
+                var val = element.val();
+                var name = element.attr("name");
+                if (val == "" || val == "0" || val == null) {
+                    
+                $("#" + name + "Error").html("Required field");
                 flag = false;
                     
                     

@@ -183,4 +183,16 @@ else {
 
 }
 
+
+public function dietPlanDelete(Request $request ){
+    $id = $request->input('id');
+     $dietplan_delete = DietPlanType::find($id);
+    $delete = $dietplan_delete->delete();
+    if ($delete) {
+      return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Diet plan deleted successfully']);
+  } else {
+      return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting diet plan']);
+  }
+}
+
 }

@@ -42,24 +42,24 @@
                                                 <tr>
                                                     <th></th>
                                                     <th>S.No.</th>
-                                                    <th>
-                                                        <form class="table_btns d-flex align-items-center justify-content-center">
-                                                            <div class="check_radio">
-                                                                <input type="checkbox" name="table5" id="table5" class="d-none">
-                                                                <label for="table5"></label>
-                                                            </div>
-                                                        </form>
-                                                    </th>
+{{--                                                    <th>--}}
+{{--                                                        <form class="table_btns d-flex align-items-center justify-content-center">--}}
+{{--                                                            <div class="check_radio">--}}
+{{--                                                                <input type="checkbox" name="table5" id="table5" class="d-none">--}}
+{{--                                                                <label for="table5"></label>--}}
+{{--                                                            </div>--}}
+{{--                                                        </form>--}}
+{{--                                                    </th>--}}
                                                     <th>Media</th>
                                                     <th>Plan Name</th>
                                                     <th>Plan Type</th>
                                                     @if(Session::get('admin_logged_in')['type']=='0')
-                                                    <th>Status</th>
+{{--                                                    <th>Status</th>--}}
                                                     <th>Action</th>
                                                     @endif
                                                     @if(Session::get('admin_logged_in')['type']=='1')
                                                     @if(Session::get('staff_logged_in')['meal_plan_mgmt']!='1')
-                                                    <th>Status</th>
+{{--                                                    <th>Status</th>--}}
                                                     <th>Action</th>
                                                     @endif
                                                     @endif
@@ -70,14 +70,6 @@
                                                     <tr draggable="true" ondragstart="start()" ondragover="dragover()" class="draggable">
                                                         <td class="tb_bg"></td>
                                                         <td>{{$key+1}}</td>
-                                                        <td>
-                                                            <form class="table_btns d-flex align-items-center justify-content-center">
-                                                                <div class="check_radio td_check_radio">
-                                                                    <input type="checkbox" name="v1" id="v1" class="d-none">
-                                                                    <label for="v1"></label>
-                                                                </div>
-                                                            </form>
-                                                        </td>
                                                         <td><img class="table_img" src="{{$fitness_goals->image}}" alt=""></td>
                                                         <td><a class="text-dark" href="add-meal-plan.html">{{$fitness_goals->name}}</a></td>
                                                         @php
@@ -93,13 +85,7 @@
                                                         @endphp
                                                         <td>{{isset($diet_plan_list)?implode(',',$diet_plan_list):'-'}}</td>
                                                         @if(Session::get('admin_logged_in')['type']=='0')
-                                                        <td>
-                                                            <div class="mytoggle">
-                                                                <label class="switch">
-                                                                    <input type="checkbox" onchange="changeStatus(this, '<?= $fitness_goals->id ?>');" <?= ( $fitness_goals->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span>
-                                                                </label>
-                                                            </div>
-                                                        </td>
+
                                                         <td>
                                                             <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-mealplan/' . base64_encode($fitness_goals->id)); ?>">Edit</a>
                                                         </td>

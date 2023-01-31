@@ -40,43 +40,53 @@
                               </div>  -->
                               <div class="col-auto">
                                  <div class="dropdown more_filters">
+                                 <a href="<?= url('admin/meal-management') ?>" class="comman_btn me-2">Reset</a>
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                        More Filters 
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1"> 
-                                       <form action="">
+                                       <form method="post" action="{{route('admin.meal.filter')}}">
+                                          @csrf
                                           <div class="form-group mb-2">
                                              <label for="">Tagged With :</label>
-                                             <select class="form-select form-control" aria-label="Default select example">
+                                             <select class="form-select form-control" aria-label="Default select example" name="meal_day" id="meal_day">
                                                 <option selected disabled>Tagged With</option>
-                                                <option value="1">All Sunday</option>
-                                                <option value="2">All Monday</option>
-                                                <option value="3">All Wednesday</option>
+                                                @foreach($mealWeekDay as $mealWeekDays)
+                                                <option value="{{$mealWeekDays->week_days_id}}">All {{ucwords($mealWeekDays->week_days_id)}}</option>
+                                                @endforeach
                                               </select>
                                           </div>
                                           <div class="form-group mb-2">
                                              <label for="">Status :</label>
-                                             <select class="form-select form-control" aria-label="Default select example">
+                                             <select class="form-select form-control" aria-label="Default select example" name="status" id="status">
                                                 <option selected disabled>Status</option>
-                                                <option value="1">Active</option>
-                                                <option value="2">Draft</option> 
+                                                <option value="active">Active</option>
+                                                <option value="draft">Draft</option> 
                                               </select>
                                           </div>
                                           <div class="form-group mb-2">
                                              <label for="">Meal Type :</label>
-                                             <select class="form-select form-control" aria-label="Default select example">
+                                             <select class="form-select form-control" aria-label="Default select example" name="meal_type" id="meal_type">
                                                 <option selected disabled>Meal Type</option>
-                                                <option value="1">Breakfast</option>
-                                                <option value="2">Snack</option> 
+                                                @foreach($mealSchedule as $mealSchedules)
+                                                <option value="{{$mealSchedules->id}}">{{$mealSchedules->name}}</option>
+                                              @endforeach
                                               </select>
                                           </div>
                                           <div class="form-group mb-0">
                                              <label for="">Plan Type :</label>
-                                             <select class="form-select form-control" aria-label="Default select example">
+                                             <select class="form-select form-control" aria-label="Default select example" name="plan_type" id="plan_type">
                                                 <option selected disabled>Plan Type</option>
-                                                <option value="1">Low Carb</option>
-                                                <option value="2">Balanced Diet</option> 
+                                                @foreach($dietPlanType as $dietPlanTypes)
+                                                <option value="{{$dietPlanTypes->id}}">{{$dietPlanTypes->name}}</option>
+                                               @endforeach
                                               </select>
+                                          </div>
+                                          <div class="col-md-12 col-xs-12">
+                                              <p id="formError" class="text-danger"></p>
+                                           </div>
+                                          <div class="col-12 mb-4 pe-0">
+                                          <a href="#filter" onclick="filterList(this)"; class="btn btn-primary pt-2 pb-2 w-100 mt-1">Search</a>
                                           </div>
                                        </form>
                                     </div>
@@ -108,15 +118,18 @@
                                            <th>Rating</th> 
                                            @if(Session::get('admin_logged_in')['type']=='0')
                                            <th>Status</th>
+                                           <th>Action</th>
                                            @endif
                                            @if(Session::get('admin_logged_in')['type']=='1')
                                             @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
                                              <th>Status</th>
+                                             <th>Action</th>
                                            @endif
                                            @endif
                                          </tr>
                                        </thead>
                                        <tbody>
+                                         @if(count($meals) > 0)
                                           @foreach($meals as $meal)
                                          <tr>
                                            <!-- <td>
@@ -140,6 +153,10 @@
                                              </label>
                                          </div>
                                            </td>
+                                           <td> 
+                                             <a class="comman_btn table_viewbtn" href="<?= url('admin/edit-meal/' . base64_encode($meal->id)); ?>">Edit</a>
+                                             <a class="comman_btn table_viewbtn delete_btn" onclick="deleteMeal(this,'{{$meal->id}}');" href="javscript:;">Delete</a> 
+                                           </td>
                                          @endif
                                          @if(Session::get('admin_logged_in')['type']=='1')
                                             @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
@@ -154,6 +171,13 @@
                                            @endif
                                          </tr> 
                                        @endforeach
+                                       @else
+                                       <tr>
+                                          <td>
+                                            <p>  No Plan Found...</p>
+                                          </td> 
+                                        </tr>
+                                        @endif
                                        </tbody>
                                      </table>
                                  </div>
@@ -167,6 +191,73 @@
          </div>
       </div>
       @endsection
+      <script>
+      function deleteMeal(obj, id){
+            //var csrf_token=$('meta[name="csrf_token"]').attr('content');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url : "<?= url('admin/meal-delete') ?>",
+                        type : "POST",
+                        data : 'id=' + id + '&_token=<?= csrf_token() ?>',
+                        success: function(data){
+                            swal({
+                                title: "Success!",
+                                text : "Meal has been deleted \n Click OK to refresh the page",
+                                icon : "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error : function(){
+                            swal({
+                                title: 'Opps...',
+                                text : data.message,
+                                type : 'error',
+                                timer : '1500'
+                            })
+                        }
+                    })
+                } else {
+                swal("Your  file is safe!");
+                }
+            });
+        }
+        
+</script>
+      <script>
+       function filterList(obj){
+        if ($('#meal_day').find('option:selected').val() == '' && $('#status').find('option:selected').val()  == ''  && $('#meal_type').find('option:selected').val() == '' && $('#plan_type').find('option:selected').val() == ''){
+        $("#formError").html('Select filter attribute');
+        } else{
+
+        if ($('#meal_day').find('option:selected').val() != '' && $('#status').find('option:selected').val() != '' &&  $('#meal_type').find('option:selected').val() != '' && $('#plan_type').find('option:selected').val() != ''){
+        $('form').submit();
+        } else{
+        if ($('#meal_day').find('option:selected').val() != ''){
+        $("#formError").html('meal day is required');
+        } else if ($('#status').find('option:selected').val() != ''){
+        $("#formError").html('status is required');
+        } else if ($('#meal_type').find('option:selected').val() != ''){
+        $("#formError").html('meal type is required');
+        }else if ($('#plan_type').find('option:selected').val() != ''){
+        $("#formError").html('plan type is required');
+        }else{
+        $("#formError").html('Select filter attribute');
+        }
+        }
+        }
+
+        }
+    
+ </script>
       <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>

@@ -39,7 +39,6 @@
                                             @php
                                                 $schedule=\App\Models\MealSchedules::where('id',$group)->first();
                                                 $meals=\App\Models\MealGroupSchedule::where('meal_schedule_id',$schedule->id)->get();
-
                                             @endphp
                                             <div class="tab-pane fade @if($key2==0)active show @endif" id="home{{$key}}{{$schedule->id}}" role="tabpanel" aria-labelledby="home-tab{{$key}}{{$schedule->id}}">
                                                 <div class="row">
@@ -55,6 +54,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                 @foreach($meals as $key3=> $meal)
+                                                                    @if(isset($meal->meal_items->name))
                                                                     <tr>
                                                                         <td>{{$meal->meal_items->name??null}}</td>
                                                                         <td>{{$schedule->name}}</td>
@@ -68,6 +68,7 @@
                                                                         <input type="hidden" name="meals[]" value="{{$meal->meal_id}}">
                                                                         <input type="hidden" name="meals_schedule_id[]" value="{{$schedule->id}}">
                                                                     </tr>
+                                                                    @endif
                                                                 @endforeach
                                                                 </tbody>
                                                             </table>

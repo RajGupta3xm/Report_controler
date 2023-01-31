@@ -34,10 +34,10 @@
                                     <div class="col-6 pe-5 border-end mb-4">
                                        <div class="form-group">
                                           <label for=""> Title (English):</label>
-                                          <input type="text" class="form-control validate" value="" name="name" id="name"> 
+                                          <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
                                           <p class="text-danger text-small" id="nameError">
                                        </div> 
-                                       <div class="form-group uploadimg_box">
+                                       <!-- <div class="form-group uploadimg_box">
                                           <span>Media (English):</span>
                                           <input type="file" id="uploadimg" name="image" class="d-none ">
                                           <label for="uploadimg">
@@ -46,16 +46,22 @@
                                                 <span>Upload File</span>
                                              </div>
                                           </label>
-                                        
-                                       </div>  
+                                       </div>   -->
+                                       <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                                        <input type="file" id="uploadimg" class="validate dropify" name="image" accept="image/*">
+{{--                                       <label for="uploadimg">--}}
+{{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
+{{--                                                </label>--}}
+                                                <p class="text-danger text-small" id="imageError"></p>
+                                          </div>
                                     </div> 
                                     <div class="col-6 ps-5 mb-4">
                                        <div class="form-group">
                                           <label for=""> Title (Arabic):</label>
-                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
                                           <p class="text-danger text-small" id="name_arError">
                                        </div> 
-                                       <div class="form-group uploadimg_box">
+                                       <!-- <div class="form-group uploadimg_box">
                                           <span>Media (Arabic):</span>
                                           <input type="file" id="uploadimg1" name="image_ar" class="d-none ">
                                           <label for="uploadimg1">
@@ -65,7 +71,14 @@
                                              </div>
                                           </label>
                                         
-                                       </div>  
+                                       </div>   -->
+                                       <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                                        <input type="file" id="uploadimg1" class="validate dropify" name="image_ar" accept="image/*">
+{{--                                       <label for="uploadimg1">--}}
+{{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
+{{--                                                </label>--}}
+                                                <p class="text-danger text-small" id="image_arError"></p>
+                                          </div>
                                     </div>  
                                     <div class="form-group mb-0 col-12 text-center">
                                        <button type="button" onclick="validate(this)" class="comman_btn">Save</button>
@@ -92,10 +105,10 @@
                                     <div class="col-6 pe-5 border-end mb-4">
                                        <div class="form-group">
                                           <label for=""> Title (English):</label>
-                                          <input type="text" class="form-control validate" value="" name="name" id="name"> 
+                                          <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
                                           <p class="text-danger text-small" id="nameError">
                                        </div> 
-                                       <div class="form-group uploadimg_box">
+                                       <!-- <div class="form-group uploadimg_box">
                                           <span>Media (English):</span>
                                           <input type="file" id="uploadimg" name="image" class="d-none ">
                                           <label for="uploadimg">
@@ -104,16 +117,30 @@
                                                 <span>Upload File</span>
                                              </div>
                                           </label>
-                                        
-                                       </div>  
+                                       </div>   -->
+                                       <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                                        <input type="file" id="uploadimg" class="validate dropify" name="image" accept="image/*">
+{{--                                       <label for="uploadimg">--}}
+{{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
+{{--                                                </label>--}}
+                                                <p class="text-danger text-small" id="imageError"></p>
+                                          </div>
+                                    </div> 
                                     </div> 
                                     <div class="col-6 ps-5 mb-4">
                                        <div class="form-group">
                                           <label for=""> Title (Arabic):</label>
-                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name">
+                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
                                           <p class="text-danger text-small" id="name_arError">
                                        </div> 
-                                       <div class="form-group uploadimg_box">
+                                       <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                                        <input type="file" id="uploadimg1" class="validate dropify" name="image_ar" accept="image/*">
+{{--                                       <label for="uploadimg1">--}}
+{{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
+{{--                                                </label>--}}
+                                                <p class="text-danger text-small" id="image_arError"></p>
+                                          </div>
+                                       <!-- <div class="form-group uploadimg_box">
                                           <span>Media (Arabic):</span>
                                           <input type="file" id="uploadimg1" name="image_ar" class="d-none ">
                                           <label for="uploadimg1">
@@ -122,8 +149,7 @@
                                                 <span>Upload File</span>
                                              </div>
                                           </label>
-                                        
-                                       </div>  
+                                       </div>   -->
                                     </div>  
                                     <div class="form-group mb-0 col-12 text-center">
                                        <button type="button" onclick="validate(this)" class="comman_btn">Save</button>
@@ -153,10 +179,12 @@
                                                  <th>Media(Ar)</th>
                                                  @if(Session::get('admin_logged_in')['type']=='0')
                                                  <th>Status</th> 
+                                                 <th>Action</th> 
                                                  @endif
                                                  @if(Session::get('admin_logged_in')['type']=='1')
                                                   @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
                                                  <th>Status</th> 
+                                                 <th>Action</th> 
                                                  @endif
                                                  @endif
                                                </tr>
@@ -177,6 +205,11 @@
                                                         </label>
                                                    </div>
                                                 </td>
+                                                <td> 
+                                                   <!-- <a class="comman_btn table_viewbtn" href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop07">Edit</a>  -->
+                                                   <a class="comman_btn table_viewbtn " onclick="getFitnessData(this,'{{$fitness_goals->id}}');"  href="javscript:;"  data-toggle="modal"  >Edit</a> 
+                                                   <a class="comman_btn table_viewbtn delete_btn" onclick="deleteFitnessData(this,'{{$fitness_goals->id}}');" href="javscript:;">Delete</a> 
+                                                </td> 
                                                 @endif
                                                  @if(Session::get('admin_logged_in')['type']=='1')
                                                   @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
@@ -205,7 +238,157 @@
             </div>
          </div>
       </div> 
-      @endsection
+        <!------------------------------------------------- Fitness Goal modal ------------------------------------------>
+        <div class="modal fade comman_modal" id="staticBackdrop09" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Edit Group</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="fitnessGoalForm"> 
+              @csrf
+              <input type="hidden" class="form-control"  id="id" name="id" >
+               <div class="col-md-12">
+                  <div class="row">
+                     <div class="col-6 pe-5 border-end mb-4">
+                           <div class="form-group">
+                              <label for=""> Title (English):</label>
+                              <input type="text" class="form-control validate" value="" name="title_name" id="title_name" maxlength="20"> 
+                              <p class="text-danger text-small" id="nameError">
+                           </div>  
+                           <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                             <input type="file" id="uploadimg4" class="dropify" name="images" data-default-file="" accept="image/*">
+                              <p class="text-danger text-small" id="imagesError"></p>
+                           </div>
+                     </div> 
+                     <div class="col-6 ps-5 mb-4">
+                        <div class="form-group">
+                          <label for=""> Title (Arabic):</label>
+                           <input type="text" class="form-control validate" value="" name="title_name_ar" id="title_name_ar" maxlength="20">
+                            <p class="text-danger text-small" id="name_arError">
+                        </div> 
+                        <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
+                          <input type="file" id="uploadimg5" class="dropify" name="images_ar" data-default-file="" accept="image/*">
+                            <p class="text-danger text-small" id="imagesError"></p>
+                         </div>
+                      </div>  
+                        <div class="form-group mb-0 col-12 text-center">
+                           <button type="button" onclick="updateFitnessGoal(this)" class="comman_btn">Save</button>
+                        </div>
+                   </div>
+               </div>   
+            </form>
+        </div> 
+      </div>
+    </div>
+</div>
+    <!------------------------------------ End Fitness Goal modal ------------------------------------------->
+
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+   
+      <script>
+   function getFitnessData(obj,id) {
+    
+      $.ajax({
+        type : 'get',
+        url  : "<?= url('admin/get_fitnessGoal/data/') ?>/" + id,
+        data : {'id':id},
+        success:function(data){
+            console.log(data);
+          $('#id').val(data.id);
+          $('#title_name').val(data.name);
+          $('#title_name_ar').val(data.name_ar);
+         //  $('#uploadimg4').attr("data-default-file", "imagePath");
+          $('#staticBackdrop09').modal('show');
+        }
+      });
+   }
+</script>
+@endsection
+<script>
+    
+function updateFitnessGoal(obj) {
+    
+var flag = true;
+let  formData = new FormData($("#fitnessGoalForm")[0]);
+formData.append('_token', "{{ csrf_token() }}");
+var id = $('#id').val();
+if (flag) {
+    $.ajax({
+        // _token: _token,
+        url: "<?= url('admin/edit_fitnessGoal/update/') ?>/" + id,
+        type: 'POST',
+        enctype: 'multipart/form-data',
+        // data: $("#carForm_"+id).serialize() + '&_token=<?= csrf_token() ?>',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(data) {
+            swal({
+                title: "Details Updated!",
+                text: data.message,
+                icon: "success",
+                buttons: false,
+            });
+            setTimeout(function() {
+                location.reload();
+            }, 2000);
+        }
+    });
+}
+}               
+</script>
+      <script>
+      function deleteFitnessData(obj, id){
+            //var csrf_token=$('meta[name="csrf_token"]').attr('content');
+            swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url : "<?= url('admin/fitness-goal-delete') ?>",
+                        type : "POST",
+                        data : 'id=' + id + '&_token=<?= csrf_token() ?>',
+                        success: function(data){
+                            swal({
+                                title: "Success!",
+                                text : "Fitness goal has been deleted \n Click OK to refresh the page",
+                                icon : "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error : function(){
+                            swal({
+                                title: 'Opps...',
+                                text : data.message,
+                                type : 'error',
+                                timer : '1500'
+                            })
+                        }
+                    })
+                } else {
+                swal("Your  file is safe!");
+                }
+            });
+        }
+        
+</script>
+     
       <script>
        function changeStatus(obj, id) {
             swal({

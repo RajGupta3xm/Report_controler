@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FitnessGoal;
+use Illuminate\Support\Facades\File;
 
 use DB;
 
@@ -16,7 +17,7 @@ class FitnessGoalController extends Controller
             return redirect()->intended('admin/login');
         } else {
            
-            $data['fitness_goal'] = FitnessGoal::select('*')->get();
+             $data['fitness_goal'] = FitnessGoal::select('*')->get();
              return view('admin.fitnessGoal.fitnessGoal-list')->with($data);
         }
     }
@@ -50,7 +51,7 @@ class FitnessGoalController extends Controller
           base_path() . '/../public/uploads/fitness_goal/', $imageName);
       }
       $url = url('/uploads/fitness_goal/');
-      $data['image'] = $url.'/'. $imageName;
+       $data['image'] = $url.'/'. $imageName;
    
   }
 
@@ -65,7 +66,7 @@ class FitnessGoalController extends Controller
         base_path() . '/../public/uploads/fitness_goal/', $imageName);
     }
     $url = url('/uploads/fitness_goal/');
-    $data['image_ar'] = $url.'/'. $imageName;
+     $data['image_ar'] = $url.'/'. $imageName;
  
 }
   
@@ -78,5 +79,76 @@ class FitnessGoalController extends Controller
       }
  }
 
+
+ public function fitnessGoalDelete(Request $request ){
+    $id = $request->input('id');
+     $fitness_delete = FitnessGoal::find($id);
+    $delete = $fitness_delete->delete();
+    if ($delete) {
+      return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Fitness goal deleted successfully']);
+  } else {
+      return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting fitness goal']);
+  }
+}
+
+public function get_fitnessGoal(Request $request, $id=NULL)
+    {
+        if($request->ajax()){
+            $data = FitnessGoal::Find($request->id);
+            return Response($data);
+        }
+     }
+
+     public function update_fitnessGoal(Request $request, $id=null){
+
+        $update = FitnessGoal::find($id);
+        $update->name = $request->input('title_name');
+        $update->name_ar = $request->input('title_name_ar');
+      
+      
+        if($request->hasFile('images')){
+           $path = '/public/uploads/fitness_goal/'.$update->image;
+           if(File::exists($path)){
+              File::delete($path);
+           }
+          $filename = $request->images->getClientOriginalName();
+          $imageName = time().'.'.$filename;
+          if(env('APP_ENV') == 'local'){
+              $return = $request->images->move(
+              base_path() . '/public/uploads/fitness_goal/', $imageName);
+          }else{
+              $return = $request->images->move(
+              base_path() . '/../public/uploads/fitness_goal/', $imageName);
+          }
+          $url = url('/uploads/fitness_goal/');
+         $update->image = $url.'/'. $imageName;
+      }
+
+      if($request->hasFile('images_ar')){
+        $path = '/public/uploads/fitness_goal/'.$update->image_ar;
+        if(File::exists($path)){
+           File::delete($path);
+        }
+       $filename = $request->images_ar->getClientOriginalName();
+       $imageName = time().'.'.$filename;
+       if(env('APP_ENV') == 'local'){
+           $return = $request->images_ar->move(
+           base_path() . '/public/uploads/fitness_goal/', $imageName);
+       }else{
+           $return = $request->images_ar->move(
+           base_path() . '/../public/uploads/fitness_goal/', $imageName);
+       }
+       $url = url('/uploads/fitness_goal/');
+      $update->image_ar = $url.'/'. $imageName;
+   }
+      $update->save();
+         
+          if($update){
+              return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+          }
+          else {
+              return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+          }
+      }
 
 }
