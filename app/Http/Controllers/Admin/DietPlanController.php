@@ -36,7 +36,7 @@ class DietPlanController extends Controller
         return redirect()->intended('admin/login');
     } else {
 
-         return view('admin.dietPlan.addDiet-Plan');
+         return view('admin.dietPlan.addDiet-plan');
     }
 }
 
@@ -47,7 +47,7 @@ public function edit_dietPlan(Request $request, $id=null){
     //return $id;
      $data['edit_dietPlan'] = DietPlanType::where('id',$id)->first();
     if($data){
-        return view('admin.dietPlan.edit-DietPlan')->with($data);
+        return view('admin.dietPlan.edit-dietPlan')->with($data);
 
     }else{
         return redirect()->back()->with('error','details not found');

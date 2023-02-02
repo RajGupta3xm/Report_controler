@@ -83,8 +83,8 @@
                                                                      <td>
                                                                          <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value" style="    width: 157px !important;">
                                                                              <option value="">Select Text</option>
-                                                                             <option value="weekly">Weekly</option>
-                                                                             <option value="monthly">Monthly</option>
+                                                                             <option value="week">Weekly</option>
+                                                                             <option value="month">Monthly</option>
                                                                          </select>
                                                                          <p class="text-danger text-small" id="option1Error"></p>
                                                                      </td>
@@ -152,7 +152,7 @@
                                                                          <div class="form-group col-12 mb-3 draggable" draggable="true" ondragstart="start()" ondragover="dragover()">
                                                                              <div class="check_radio d-flex">
                                                                                  <div class="tb_bg1"></div>
-                                                                                 <input type="checkbox" name="meal_groups[]" id="v{{$key}}" class="d-none meal_groups" value="{{$group->id}}" data-value="{{$group->name}}" id="meal_groups">
+                                                                                 <input type="checkbox" name="meal_groups[]" id="v{{$key}}" class="d-none meal_groups" value="{{$group->id}}" data-value="{{$group->name}}" id="meal_groups" @if($key==0) checked @endif>
                                                                                  <label for="v{{$key}}">{{$group->name}}</label>
                                                                              </div>
                                                                          </div>
@@ -175,7 +175,7 @@
                                                                              </li>
                                                                          </ul>
                                                                          <div class="form-group mb-0">
-                                                                             <input class="form-control validate" type="text" placeholder="ENTER YOUR CUSTOM TEXT" name="description" id="description_value">
+                                                                             <input class="form-control" type="text" placeholder="ENTER YOUR CUSTOM TEXT" name="description" id="description_value">
                                                                              <p class="text-danger text-small" id="descriptionError"></p>
                                                                          </div>
                                                                      </div>
@@ -260,24 +260,24 @@
             $('.option1').on('change',function(){
                 var value=$(this).val();
                 if(value=="weekly"){
-                    var option2=$('.option2').val();
-                    if(option2=="weekend"){
+                    var option2=$('.option2').find(":selected").data('id');
+                    if(option2=="With Weekend"){
                         $("#days_value").text(7);
                         $("#no_of_days").val(7);
                         $("#DaysCount").text(7);
-                    }else if(option2=="withoutweekend"){
+                    }else if(option2=="Without Weekend"){
                         $("#days_value").text(5);
                         $("#no_of_days").val(5);
                         $("#DaysCount").text(5);
                     }
                     $('#option2').text(value+' '+option2)
-                }else if(value=="monthly"){
-                    var option2=$('.option2').val();
-                    if(option2=="weekend"){
+                }else if(value=="month"){
+                    var option2=$('.option2').find(":selected").data('id');
+                    if(option2=="With Weekend"){
                         $("#days_value").text(28);
                         $("#no_of_days").val(28);
                         $("#DaysCount").text(28);
-                    }else if(option2=="withoutweekend"){
+                    }else if(option2=="Without Weekend"){
                         $("#days_value").text(20);
                         $("#no_of_days").val(20);
                         $("#DaysCount").text(20);
@@ -288,25 +288,25 @@
 
             $('.option2').on('change',function(){
                 var value=$(this).find(":selected").data('id');
-                if(value=="weekend"){
+                if(value=="With Weekend"){
                     var option1=$('.option1').val();
-                    if(option1=="weekly"){
+                    if(option1=="week"){
                         $("#days_value").text(7);
                         $("#no_of_days").val(7);
                         $("#DaysCount").text(7);
-                    }else if(option1=="monthly"){
+                    }else if(option1=="month"){
                         $("#days_value").text(28);
                         $("#no_of_days").val(28);
                         $("#DaysCount").text(28);
                     }
                     $('#option2').text(option1+' '+value)
-                }else if(value=="withoutweekend"){
+                }else if(value=="Without Weekend"){
                     var option1=$('.option1').val();
-                    if(option1=="weekly"){
+                    if(option1=="week"){
                         $("#days_value").text(5);
                         $("#no_of_days").val(5);
                         $("#DaysCount").text(5);
-                    }else if(option1=="monthly"){
+                    }else if(option1=="month"){
                         $("#days_value").text(20);
                         $("#no_of_days").val(20);
                         $("#DaysCount").text(20);
@@ -408,6 +408,7 @@
                             cache: false,
                             success:function(data)
                             {
+                                alert('Plan Added Successfully');
                                 $('#DefaultSelection').html(data.html);
                                 $('#variantsShow').css('display','block');
                                 $('#tbody').append('<tr><td><div class="check_radio td_check_radio"><input type="checkbox" checked name="table2" id="table2" class="d-none"><label for="table2"></label></div></td><td>'+variant_name+'</td><td>'+diet_plan_id+'</td><td>'+meal_groups_hidden_name+'</td><td>'+ option1_value+'</td><td>'+option2_value+'</td><td>'+no_of_days+'</td><td>'+calorie_value+'</td><td>'+serving_calorie_value+'</td><td>'+delivery_price_value+'</td><td>'+plan_price_value+'</td><td>'+compare_price_value+'</td><td>'+description_value+'</td><input type="hidden" name="variant_name_hidden[]" value="'+variant_name+'"><input type="hidden" name="diet_plan_hidden[]" value="'+diet_plan+'"><input type="hidden" name="option1_hidden[]" value="'+option1_value+'"><input type="hidden" name="option2_hidden[]" value="'+option2_value+'"><input type="hidden" name="no_of_days_hidden[]" value="'+no_of_days+'"><input type="hidden" name="serving_calorie_hidden[]" value="'+serving_calorie_value+'"><input type="hidden" name="meal_groups_hidden_name[]" value="'+meal_groups_hidden_name+'"><input type="hidden" name="calorie_hidden[]" value="'+calorie_value+'"><input type="hidden" name="delivery_price_hidden[]" value="'+delivery_price_value+'"><input type="hidden" name="plan_price_hidden[]" value="'+plan_price_value+'"><input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'"><input type="hidden" name="is_charge_vat_hidden[]" value="'+is_charge_vat+'"><input type="hidden" name="description_value_hidden[]" value="'+description_value+'"></tr>');

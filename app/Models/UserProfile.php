@@ -11,6 +11,7 @@ class UserProfile extends Model
             'user_id',
             'available_credit',
             'subscription_id',
+            'variant_id',
             'height',
             'initial_body_weight',
             'dob',

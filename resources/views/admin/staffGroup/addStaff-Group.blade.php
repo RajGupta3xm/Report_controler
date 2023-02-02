@@ -10,11 +10,10 @@
                 </div>
                 @else 
                 @if(session()->has('error'))  
-                <div class="alert alert-danger">
-                    <strong class="close" ></strong>
-                    {{ session()->get('error') }}
-                </div>
-                @endif 
+                    <script>
+                     swal('Error!', '{{ session()->get('error') }}', 'error');
+                    </script>
+                @endif
                 @endif
                <div class="row add_staff justify-content-center">
                   <div class="col-12 mb-4 design_outter_comman recent_orders shadow">
@@ -25,9 +24,9 @@
                      </div>
                      <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/staff_group/submit')}}">
                         @csrf
-                         <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="name" id="name"><p class="text-danger text-small" id="nameError"></p> </div>
-                         <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name"><p class="text-danger text-small" id="name_arError"></p> </div>
-                         <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="image" id="upload_video"> <p class="text-danger text-small" id="imageError"></p></div>
+                         <div class="form-group mb-0 position-relative col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"><p class="text-danger error text-small m-0" id="nameError" ></p> </div>
+                         <div class="form-group mb-0 col position-relative "> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20"><p class="text-danger error text-small m-0" id="name_arError" ></p> </div>
+                         <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="image" id="upload_video"> <p class="text-danger error text-small m-0" id="imageError"></p></div>
                          <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate(this)" class="comman_btn">Save</button> </div>
                      </form>
                   </div>
@@ -36,22 +35,25 @@
                          <div class="col">
                              <h2>Staff Groups Management</h2>
                          </div>
-                         <div class="col-3">
+                         <!-- <div class="col-3">
                              <form class="form-design" action="">
                                 <div class="form-group mb-0 position-relative icons_set">
                                    <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                    <i class="far fa-search"></i>
                                 </div>
                              </form>
-                          </div>
-                         <div class="col-auto text-end">
+                          </div> -->
+                          
+                         <div class="col-auto  d-flex align-items-center text-end">
+                         <a href="<?= url('admin/add_staff_group') ?>" class="comman_btn me-2">Reset</a>
                              <div class="dropdown more_filters"> <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> Filters </button>
                                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                     <form action="">
-                                         <div class="form-group mb-2"> <label for="">Status :</label> <select class="form-select form-control" aria-label="Default select example">
+                                   <form method="post" id="filterGroupForm" action="{{url('admin/staffgroup/filterStaffGroupData')}}">
+                                          @csrf
+                                         <div class="form-group mb-2"> <label for="">Status :</label> <select class="form-select form-control" aria-label="Default select example" name="level" id="loadStaffData">
                                                  <option selected="" disabled="">Status</option>
-                                                 <option value="1">Active</option>
-                                                 <option value="2">Draft</option>
+                                                 <option value="active">Active</option>
+                                                 <option value="inactive">Draft</option>
                                              </select> 
                                          </div>
                                      </form>
@@ -62,7 +64,7 @@
                      <div class="row">
                          <div class="col-12 comman_table_design bg-white px-0">
                              <div class="table-responsive">
-                                 <table class="table mb-0">
+                                 <table class="table mb-0" id="example1">
                                      <thead>
                                          <tr>
                                              <th>S.No.</th> 
@@ -115,9 +117,9 @@
        <div class="modal-body">
          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="queryForms"> 
          @csrf
-         <input type="text" class="form-control"  id="id" name="id" >
-           <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  name="name" id="namee"> </div>
-           <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  name="name_ar" id="name_ar"> </div>
+         <input type="hidden" class="form-control"  id="id" name="id" >
+           <div class="form-group mb-0 col position-relative"> <label for="">Group Name (En)</label> <input type="text" class="form-control group_name"  name="name" id="namee" maxlength="20"> <p class="text-danger error m-0 text-small" id='errorShow' ></p></div>
+           <div class="form-group mb-0 col position-relative"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control group_name1"  name="name_ar" id="name_ar"  maxlength="20"><p class="text-danger error m-0 text-small" id='errorShow1' > </div>
            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="img1"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control" name="images" id="img1"> </div>
            <div class="form-group mb-0 col-auto"> <button type="button" onclick="sendReply(this)" class="comman_btn">Save</button> </div>
          </form>
@@ -125,9 +127,21 @@
      </div>
    </div>
 </div>
-
-@endsection
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+      jQuery(document).ready(function($) {
+    $("#loadStaffData").on('change', function() {
+        var level = $(this).val();
+        alert(level);
+        if(level){
+         $("#filterGroupForm").submit();
+          
+        }
+    });
+});
+   </script>
+@endsection
+
       <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
@@ -164,7 +178,22 @@ var flag = true;
 let  formData = new FormData($("#queryForms")[0]);
 formData.append('_token', "{{ csrf_token() }}");
 var id = $('#id').val();
+$('.group_name').each(function () {
+    if($(this).val() == '' || $(this).val() == 0) {                
+        $('#errorShow').text("This field is required");
+        flag = false;
+        }else {
 
+        }
+    });
+        $('.group_name1').each(function () {
+        if($(this).val() == '' || $(this).val() == 0) {                
+              $('#errorShow1').text("This field is required");
+              flag = false;
+            }else {
+
+               }
+        });
 if (flag) {
     $.ajax({
         url: "<?= url('admin/edit_staff_group/update/') ?>/" + id,

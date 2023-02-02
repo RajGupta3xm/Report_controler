@@ -2086,9 +2086,10 @@ public function sample_daily_meals(Request $request) {
                    ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
                     ->where('meal_group_schedule.meal_schedule_id',$category->id)
-                    ->where('meals.status','=', 'active')
-                   ->where('meal_week_days.week_days_id','=', $dates)
-                   ->orWhere('meal_week_days.week_days_id','=', $day)
+                    ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
+                        $q->where('meal_week_days.week_days_id','=', $dates)
+                        ->orWhere('meal_week_days.week_days_id','=', $day);
+                      })
                 //    ->where(['meals.meal_schedule_id'=>$category->id])
                     
                    ->get()->each(function($meals) {
@@ -2142,17 +2143,19 @@ return $this->populateResponse();
 public function balance_sample_daily_meals(Request $request) {
           $dates = $request->date;
           $datess = Carbon::createFromFormat('Y-m-d',$dates);
-          $day = strtolower($datess->format('l'));
+           $day = strtolower($datess->format('l'));
 
+                 $user_diet_plan = UserProfile::select('diet_plan_type_id')->where('user_id',Auth::guard('api')->id())->first();
                 $user_custom_calorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                 $targetCalorie = CalorieRecommend::select('recommended')->where('id',$user_custom_calorie->custom_result_id)->first();
                    $meals =Meal::
                 //    join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
                    join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
                    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+                   ->join('meal_diet_plan','meals.id','=','meal_diet_plan.meal_id')
                    ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
-                //    ->where('meal_week_days.week_days_id','=', $dates)
+                   ->where('meal_diet_plan.diet_plan_type_id','=', $user_diet_plan->diet_plan_type_id)
                 //    ->orWhere('meal_week_days.week_days_id','=', $day)
                     ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
                      $q->where('meal_week_days.week_days_id','=', $dates)

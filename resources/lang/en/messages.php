@@ -66,6 +66,7 @@ return [
 	'custom_calorie'=>'Your custom calorie ',
 	'repeat_plan'=>'Your plan repeat successfully',
 	'unskip_delivery'=>'Your delivery unskip successfully',
+	'date_update'=>'Plan date update successfully',
 ];
 
 ?>

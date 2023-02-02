@@ -10,11 +10,10 @@
                 </div>
                 @else 
                 @if(session()->has('error'))  
-                <div class="alert alert-danger">
-                    <strong class="close" ></strong>
-                    {{ session()->get('error') }}
-                </div>
-                @endif 
+                    <script>
+                     swal('Error!', '{{ session()->get('error') }}', 'error');
+                    </script>
+                @endif
                 @endif
                <div class="row staff-management justify-content-center">
                   <div class="col-12"> 
@@ -32,7 +31,7 @@
                               @csrf
                               <div class="form-group col-4">
                                  <label for="">Staff Name</label>
-                                 <input type="text" class="form-control validate" value="" name="name" id="name">
+                                 <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20">
                                  <p class="text-danger text-small" id="nameError"></p>
                               </div>
                               <div class="form-group col-4 choose_file position-relative">
@@ -44,16 +43,17 @@
                               <div class="form-group col-4">
                                  <label for="">Staff Group</label>
                                  <select class="form-select form-control validate" name="group_id" aria-label="Default select example">
-                                    <option selected>Select Group</option>
+                                    <option selected="" disabled>Select Group</option>
                                     @foreach($staff_group as $staff_groups)
                                     <option value="{{$staff_groups->id}}">{{$staff_groups->name}}</option>
                                   @endforeach
                                   </select>
+                                  <p class="text-danger text-small" id="group_idError"></p>
                               </div> 
                               <div class="form-group col-6">
                                  <label for="">Staff Email</label>
-                                 <input type="text" class="form-control validate" name="email" id="name">
-                                 <p class="text-danger text-small" id="emailError"></p>
+                                 <input type="email"  class="form-control emailvalidate" name="email" id="email">
+                                 <p class="text-danger text-small" id='error_email' ></p>
                               </div> 
                               <div class="form-group col-6">
                                  <label for="">Create Password</label>
@@ -475,28 +475,30 @@
                               <div class="col">
                                  <h2>Staff Management</h2>
                               </div>
-                              <div class="col-3">
+                              <!-- <div class="col-3">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name" style="margin-top: 12px;">
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
-                              </div> 
+                              </div>  -->
                               <div class="col-auto d-flex align-items-center">
+                              <a href="<?= url('admin/staff-management') ?>" class="comman_btn me-2">Reset</a>
                                  <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> 
                                  <div class="dropdown more_filters">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                        More Filters 
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1"> 
-                                       <form action=""> 
+                                    <form method="post" id="filterForm" action="{{url('admin/staff/filterStaffData')}}">
+                                          @csrf
                                           <div class="form-group mb-2">
                                              <label for="">Status :</label>
-                                             <select class="form-select form-control" aria-label="Default select example">
+                                             <select class="form-select form-control" aria-label="Default select example" name="level"  id="loadStaffData">
                                                 <option selected="" disabled="">Status</option>
-                                                <option value="1">Active</option>
-                                                <option value="2">Draft</option> 
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Draft</option> 
                                               </select>
                                           </div> 
                                        </form>
@@ -507,7 +509,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
                                  <div class="table-responsive">
-                                    <table class="table mb-0">
+                                    <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
                                            <th>S.No.</th>
@@ -521,12 +523,13 @@
                                          </tr>
                                        </thead>
                                        <tbody>
+                                          @if(count($staff_member)>0)
                                           @foreach($staff_member as $key=>$staff_members)
                                          <tr>
                                            <td>{{$key+1}}</td> 
                                            <td>{{date('d/m/Y', strtotime($staff_members->created_at))}}</td>
                                            <td>
-                                             <img class="table_img" src="{{$staff_members->image?$staff_members->image:asset('assets/img/bg-img.jpg')}}" alt="">
+                                             <img class="table_img" src="{{$staff_members->admin?$staff_members->admin['image']:asset('assets/img/bg-img.jpg')}}" alt="">
                                            </td>
                                            <td>{{$staff_members->name}}</td>
                                            <td>{{$staff_members->email}}</td> 
@@ -545,6 +548,7 @@
                                           </td>
                                          </tr> 
                                        @endforeach
+                                       @endif
                                        </tbody>
                                      </table>
                                  </div>
@@ -572,8 +576,8 @@
          <input type="hidden" class="form-control"  id="id" name="id" >
             <div class="form-group col-12 text-center">
                <div class="account_profile d-inline-block position-relative">
-                  <div class="circle">
-                     <img class="profile-pic" src="{{$staff_members->image?$staff_members->image:asset('assets/img/profile_img1.png')}}"> 
+                  <div class="circle" id="imageModal">
+                    
                   </div>
                   <div class="p-image">
                      <i class="upload-button fas fa-camera"></i> 
@@ -581,16 +585,15 @@
                   </div>
                </div>
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col-6 ">
                <label for="">Staff Name</label>
-               <input type="text" class="form-control"  name="name" id="namee">
+               <input type="text" class="form-control "  name="name" id="namee" maxlength="20">
+               
             </div> 
-            <div class="form-group col-6">
+            <div class="form-group col-6" id="getstaffGroup">
                <label for="">Staff Group</label>
-               <select class="form-select form-control" name="group_id" aria-label="Default select example">
-                  @foreach($staff_group as $staff_groups)
-                  <option value="{{$staff_groups->id}}"  @if($staff_members->group['id'] == $staff_groups['id'])  selected  @endif >{{$staff_groups->name}}</option>
-                  @endforeach
+               <select class="form-select form-control" name="group_id" aria-label="Default select example" id="nation_id">
+                  
                 </select>
             </div> 
             <div class="form-group col-6">
@@ -1019,7 +1022,18 @@
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>
       <script src="assets/js/main.js"></script>
-   
+   <script>
+      jQuery(document).ready(function($) {
+    $("#loadStaffData").on('change', function() {
+        var level = $(this).val();
+        alert(level);
+        if(level){
+         $("#filterForm").submit();
+          
+        }
+    });
+});
+   </script>
       <script> 
         $('#disablee').on('click', function (e) { 
             // $('.Access_part_main').toggleClass('access_solve'); 
@@ -1085,6 +1099,8 @@
         success:function(data){
             console.log(data);
           $('#id').val(data.id);
+          $('#imageModal').html('<img class="profile-pic" src="'+data.admin.image+'">')
+          $("#nation_id").append('@foreach($staff_group as $staff_groups)<option  value="{{$staff_groups->id}}" @if($staff_groups->id == "'+data.group_id+'") selected  @endif>{{$staff_groups->name}}</option> @endforeach');
           $('#namee').val(data.name);
           $('#email').val(data.email);
           $('input[name^="check11"][value="'+data.user_mgmt+'"').prop('checked',true);
@@ -1115,6 +1131,7 @@ var flag = true;
 let  formData = new FormData($("#queryForms")[0]);
 formData.append('_token', "{{ csrf_token() }}");
 var id = $('#id').val();
+
 if (flag) {
     $.ajax({
         url: "<?= url('admin/edit_staff_member/update/') ?>/" + id,
@@ -1158,6 +1175,16 @@ if (flag) {
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            $('.emailvalidate').each(function () {
+             var mailformat =  /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if($(this).val().match(mailformat)) {                
+            //   alert(message);
+            }else {
+               $('#error_email').text("Please Enter valid Email");
+              flag = false;
+               }
+            });
+           
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();

@@ -188,7 +188,7 @@
                                        <h2>Recipe</h2>
                                     </div>
                                     <div class="col-auto">
-                                       <a class="comman_btn yellow-btn add_row_btn addButton " href="javscript:;" onclick="insRow('myTable')" value="Insert row">
+                                    <a class="comman_btn yellow-btn add_row_btn addButton " href="javscript:;" onclick="addButton();" value="Insert row">
                                          Add Row
                                        </a>
                                     </div>
@@ -204,23 +204,26 @@
                                                    <th>Unit</th>
                                                 </tr>
                                              </thead>
-                                             <tbody>
-                                                <tr class="clonetr">
+                                             <tbody id="AddContainer">
+                                               
+                                             <tr >
                                                 <td>
-                                                      <!-- <select class="form-select table_input table_select adjust_lenth" id="categoryList" onchange="getSubcategory(this);" aria-label="Default select example" id="fname"  name="ingredient[]"> -->
-                                                      <!-- <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="ingredient[]" style="width:180px">  -->
-                                                      <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos" name="ingredient[]" value="">
-                                                  
-                                                         <option value=''></option>
-                                                      
+                                                    
+                                                    <!-- Dropdown --> 
+                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
+                                                       <option selected="" disabled>Select User</option> 
+                                                       @foreach($ingredients as $ingredient)
+                                                        <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option> 
+                                                        @endforeach
                                                      </select>
+                                                    
                                                    </td>
                                                 
                                                    <td>
-                                                      <input class="form-control table_input  adjust_lenth" type="number" id="fname" name="qty[]" value="">
+                                                      <input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items[0][qty]" value="">
                                                    </td>
                                                    <td>
-                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos" name="unit[]" value="">
+                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_0" name="items[0][unit]" value="">
                                                    </td>
                                                 </tr>
                                            
@@ -481,35 +484,60 @@
         $('.dropify').dropify();
     </script>
      <script>
-   $(document).ready(function(){
-   var Data_to_clone = $('.cloning-table tbody').html();
-    $(".addButton").click(function(){
-        $(Data_to_clone).appendTo(".cloning-table");
-    });
+//    $(document).ready(function(){
+//    var Data_to_clone = $('.cloning-table tbody').html();
+//     $(".addButton").click(function(){
+//         $(Data_to_clone).appendTo(".cloning-table");
+//     });
 
-    $(".cloning-table").on('click','.deleteButton',function(){
-        $(this).parents(".clonetr").remove();
-    });
-});
+//     $(".cloning-table").on('click','.deleteButton',function(){
+//         $(this).parents(".clonetr").remove();
+//     });
+// });
 
+var int = 1;
+   function addButton()
+   {
+      
+      $('#AddContainer')
+      // .find('div')
+      // .remove()
+      // .end()
+      .append(
+            '<tr>'+
+            '<td>' +
+              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth" onchange="getSubcategory(this,'+ (int) +');" >@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
+            '</td>'+
+            '<td>'+
+            '<input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items['+ (int) +'][qty]" value="">' +
+            '</td>'+
+            '<td>'+
+            '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
+            '</td>'+
+            '</tr>');
 
-function getSubcategory(obj, level) {
+            int++;
+   }
 
+count= 0;
+function getSubcategory(obj,count) {
+   // alert(count);
+   var allList =<?= \GuzzleHttp\json_encode($ingredients)?>;
+   var allLists =<?= \GuzzleHttp\json_encode($unit)?>;
   
-   var ingredientId =$('#categoryList').find('option:selected').val();
-   alert(ingredientId);
+   var ingredientId =$('#selUser_'+count).find('option:selected').val();
+   // alert(ingredientId);
             $(allList).each(function (a, ingredients) {
                if (ingredients.id == ingredientId) {
                   var unit_id = ingredients.unit_id;
                   $(allLists).each(function (a, unit) {
                    if (unit.id == unit_id) {
-                     $("#upload_videos").val(unit.unit);
-                     // <input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'">
-                     // html += '<option value='" + unit.unit + "'>" + unit.unit + "</option>';
+                     $("#upload_videos_"+count).val(unit.unit);
+                    
                       }
       
                    });
-                  //  $("#upload_videos_" + level).append(html);
+                  
                 } 
             });
 }

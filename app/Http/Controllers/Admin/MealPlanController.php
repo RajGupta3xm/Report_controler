@@ -193,10 +193,7 @@ class MealPlanController extends Controller {
         }
     }
 
-
-
     public function edit_update($id,Request $request){
-
         $id = base64_decode($id);
         $meal_plan=SubscriptionPlan::find($id);
 if(isset($request->images)){
@@ -210,7 +207,7 @@ if(isset($request->images)){
     $images = $url.'/'. $imageName;
     $meal_plan->image=$images;
 }else{
-    $meal_plan->image=null;
+    $meal_plan->image=$request->images_hidden;
 }
 
 $meal_plan->name=$request->title;
@@ -247,8 +244,8 @@ $meal_plan->save();
 
 
         if(isset($request->selectionvariant) && count($request->selectionvariant) > 0){
-            foreach ($request->selectionvariant as $key=> $variant)
-               {
+            foreach ($request->selectionvariant as $key=> $variant){
+
                 foreach ($variant as $key1=>$varian){
                     foreach ($varian as $key2=> $value){
 

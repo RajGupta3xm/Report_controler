@@ -46,10 +46,10 @@
                                 <div class="row">
                                     <div class="col-12 px-0 comman_tabs">
                                         <nav>
-                                            <div class="nav nav-tabs" id="nav-tab" role="tablist"> <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Ingredients</button> <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Groups</button> <button class="nav-link" id="nav-profile2-tab" data-bs-toggle="tab" data-bs-target="#nav-profile2" type="button" role="tab" aria-controls="nav-profile2" aria-selected="false">Categories</button> <button class="nav-link" id="nav-profile1-tab" data-bs-toggle="tab" data-bs-target="#nav-profile1" type="button" role="tab" aria-controls="nav-profile1" aria-selected="false">Unit</button> </div>
+                                            <div class="nav nav-tabs" id="nav-tab" role="tablist"> <button class="nav-link @if(Session::get('success')=='') active @endif @if(Session::get('success')=='Ingredient added successfully') active @endif" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Ingredients</button> <button class="nav-link  @if(Session::get('success')=='Group added successfully') active @endif" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Groups</button> <button class="nav-link @if(Session::get('success')=='Category added successfully') active @endif" id="nav-profile2-tab" data-bs-toggle="tab" data-bs-target="#nav-profile2" type="button" role="tab" aria-controls="nav-profile2" aria-selected="false">Categories</button> <button class="nav-link  @if(Session::get('success')=='Unit added successfully') active @endif" id="nav-profile1-tab" data-bs-toggle="tab" data-bs-target="#nav-profile1" type="button" role="tab" aria-controls="nav-profile1" aria-selected="false">Unit</button> </div>
                                         </nav>
                                         <div class="tab-content" id="nav-tabContent">
-                                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                            <div class="tab-pane fade  @if(Session::get('success') == '') show active @endif  @if(Session::get('success')=='Ingredient added successfully') show active @endif" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                                                 <div class="row p-4 mx-0">
                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
@@ -252,7 +252,7 @@
                                                 </div>
                                             </div>
                                           
-                                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                            <div class="tab-pane fade @if(session::get('success') == 'Group added successfully') show active @endif" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                                                 <div class="row p-4 mx-0">
                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
@@ -385,7 +385,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane fade" id="nav-profile2" role="tabpanel" aria-labelledby="nav-profile2-tab">
+                                            <div class="tab-pane fade @if(Session::get('success')=='Category added successfully') show active @endif " id="nav-profile2" role="tabpanel" aria-labelledby="nav-profile2-tab">
                                                 <div class="row p-4 mx-0">
                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
@@ -530,7 +530,7 @@
                             </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane fade" id="nav-profile1" role="tabpanel" aria-labelledby="nav-profile1-tab">
+                                            <div class="tab-pane fade @if(Session::get('success') == 'Unit added successfully') show active @endif" id="nav-profile1" role="tabpanel" aria-labelledby="nav-profile1-tab">
                                                 <div class="row p-4 mx-0">
                                                 @if(Session::get('admin_logged_in')['type']=='0')
                                                     <div class="col-12 mb-4 inner_design_comman border">
@@ -1564,10 +1564,10 @@ if (flag) {
                         success: function(data){
                             swal({
                                 title: "Success!",
-                                text : "Ingredient has been deleted \n Click OK to refresh the page",
+                                text : "Unit has been deleted \n Click OK to refresh the page",
                                 icon : "success",
-                            }).then(function() {
-                                location.reload();
+                            // }).then(function() {
+                            //     location.reload();
                             });
                         },
                         error : function(){

@@ -21,8 +21,8 @@ class StaffController extends Controller
             return redirect()->intended('admin/login');
         } else {
            
-             $data['staff_group'] = StaffGroup::select('id','name')->orderBy('id','Asc')->get();
-             $data['staff_member'] = StaffMembers::with('group')->select('*')->orderBy('id','Asc')->get();
+             $data['staff_group'] = StaffGroup::select('id','name')->where('status','active')->orderBy('id','desc')->get();
+              $data['staff_member'] = StaffMembers::with('group','admin')->select('*')->orderBy('id','desc')->get();
              return view('admin.staffGroup.add_staff')->with($data);
         }
     }
@@ -31,7 +31,7 @@ class StaffController extends Controller
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-               $data['staff_group'] = StaffGroup::orderBy('id','Asc')->get();
+               $data['staff_group'] = StaffGroup::orderBy('id','desc')->get();
              return view('admin.staffGroup.addStaff-Group')->with($data);
         }
     }
@@ -59,6 +59,9 @@ class StaffController extends Controller
 }
 
 public function submit(Request $request){
+    if(StaffGroup::where('name',$request->name)->where('name_ar',$request->name_ar)->exists()){
+        return redirect()->back()->with('error','Record already exist');
+    }else{
     $data=[
      "name" => $request->input('name'),
      "name_ar" => $request->input('name_ar'),
@@ -85,6 +88,7 @@ public function submit(Request $request){
       } else {
         return redirect()->back()->with('error', 'Some error occurred while adding staff group');
       }
+    }
  }
 
  public function get_staff_data(Request $request)
@@ -132,7 +136,9 @@ public function submit(Request $request){
 
 
 public function staff_member_submit(Request $request){
-
+    if(StaffMembers::where('name',$request->name)->orWhere('email',$request->email)->orWhere('password',\Hash::make($request->input('password')))->exists()){
+        return redirect()->back()->with('error','Record already exist');
+    }else{
         $datasubadmin=[
          "name" => $request->input('name'),
          "email" => $request->input('email'),
@@ -226,6 +232,7 @@ public function staff_member_submit(Request $request){
       } else {
         return redirect()->back()->with('error', 'Some error occurred while adding staff member');
       }
+    }
  }
 
  public function staff_member_change_status(Request $request){
@@ -241,7 +248,7 @@ public function staff_member_submit(Request $request){
 
 public function get_staff_member_data(Request $request){
       if($request->ajax()){
-        $data = StaffMembers::find($request->id);
+        $data = StaffMembers::with('admin')->find($request->id);
         return Response($data);
       }
 }
@@ -328,7 +335,7 @@ public function update_member(Request $request, $id=null){
                  base_path() . '/../public/uploads/staff_member_image/', $imageName);
              }
              $url = url('/uploads/staff_member_image/');
-                $updatesubadmin['image'] = $url.'/'. $imageName;
+                 $updatesubadmin['image'] = $url.'/'. $imageName;
           
          }
 $update = Admin::where('id',$id->admin_id)->update($updatesubadmin);
@@ -341,6 +348,22 @@ $update = Admin::where('id',$id->admin_id)->update($updatesubadmin);
    }
 }
 
+public function filterStaffData(Request $request){
+      $status = $request->input('level');
+    $data['staff_group'] = StaffGroup::select('id','name')->orderBy('id','Asc')->get();
+    $data['staff_member'] = StaffMembers::with('group','admin')->select('*')->where('status',$status)->orderBy('id','Asc')->get();
+   if ($data) {
+     return view('admin.staffGroup.add_staff')->with($data);
+   }
+}
+
+public function filterStaffGroupData(Request $request){
+   $status = $request->input('level');
+   $data['staff_group'] = StaffGroup::where('status',$status)->orderBy('id','desc')->get();
+ if ($data) {
+    return view('admin.staffGroup.addStaff-Group')->with($data);
+ }
+}
 
 
 }

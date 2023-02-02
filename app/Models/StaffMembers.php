@@ -53,4 +53,8 @@ class StaffMembers extends Authenticatable
 	public function group(){
 		return $this->hasOne(StaffGroup::class,'id','group_id');
 	}
+
+	public function admin(){
+		return $this->belongsTo(Admin::class,'admin_id','id');
+	}
 }

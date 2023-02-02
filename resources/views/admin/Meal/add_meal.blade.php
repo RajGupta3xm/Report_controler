@@ -51,12 +51,12 @@
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (English) :</label>
-                                       <textarea class="form-control validate" name="description" maxlength ="100" ></textarea>
+                                       <textarea class="form-control " name="description" maxlength ="100" ></textarea>
                                        <!-- <p class="text-danger text-small" id="descriptionError"></p> -->
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (Arabic) :</label>
-                                       <textarea class="form-control validate" name="description_ar" maxlength ="100" ></textarea>
+                                       <textarea class="form-control " name="description_ar" maxlength ="100" ></textarea>
                                        <!-- <p class="text-danger text-small" id="description_arError"></p> -->
                                     </div>
                                     <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
@@ -177,7 +177,7 @@
                                  <div class="row" >
                                     <div class="col-12 comman_table_design New_tabledesign">
                                        <div class="table-responsive">
-                                          <table class="table mb-0 cloning-table" >
+                                          <table class="table mb-0 " id="cloningtable">
                                              <thead>
                                                 <tr>
                                                    <th>Ingredients</th>
@@ -187,11 +187,11 @@
                                              </thead>
                                              <tbody id="AddContainer">
                                              
-                                                <tr >
-                                                <td>
+                                                <tr class="clonetr">
+                                                <td class="searchDrop">
                                                       <!-- <select class="form-select table_input table_select adjust_lenth" id="categoryList" onchange="getSubcategory(this);" aria-label="Default select example" id="fname"  name="ingredient[]"> -->
                                                     <!-- Dropdown --> 
-                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
+                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth selUser "  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
                                                        <option selected="" disabled>Select User</option> 
                                                        @foreach($ingredients as $ingredient)
                                                         <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option> 
@@ -488,7 +488,7 @@
       $(document).ready(function(){
  
  // Initialize select2
- $("#selUser").select2();
+ $(".selUser").select2();
 
  // Read selected option
  $('#but_read').click(function(){
@@ -500,18 +500,12 @@
  });
 })
     </script>
+<script>
+   $("#cloningtable").on('click', '.remCF', function(){
+     $(this).parent().parent().remove();
+   });
+ </script>
      <script>
-//    $(document).ready(function(){
-//    var Data_to_clone = $('.cloning-table tbody').html();
-//     $(".addButton").click(function(){
-//         $(Data_to_clone).appendTo(".cloning-table");
-//     });
-
-//     $(".cloning-table").on('click','.deleteButton',function(){
-//         $(this).parents(".clonetr").remove();
-//     });
-// });
-
 var int = 1;
    function addButton()
    {
@@ -530,6 +524,7 @@ var int = 1;
             '</td>'+
             '<td>'+
             '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
+            '<button class="remCF close" id="remCF"' + (int) +' type="button">-</button>' +
             '</td>'+
             '</tr>');
 

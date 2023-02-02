@@ -332,7 +332,7 @@ public function get_category_data(Request $request)
          $unit_delete = DislikeUnit::find($id);
         $delete = $unit_delete->delete();
         if ($delete) {
-          return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Unit deleted successfully']);
+          return response()->json(['status' => true, 'sucess' => 200, 'message' => 'Unit deleted successfully']);
       } else {
           return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting Unit']);
       }

@@ -6,6 +6,19 @@
                 <div class="row plan-management justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
+                            @if(session()->has('success'))
+                                <div class="alert alert-success">
+                                    <strong class="close" data-dismiss="alert" aria-hidden="true"></strong>
+                                    {{ session()->get('success') }}
+                                </div>
+                            @else
+                                @if(session()->has('error'))
+                                    <div class="alert alert-danger">
+                                        <strong class="close" ></strong>
+                                        {{ session()->get('error') }}
+                                    </div>
+                                @endif
+                            @endif
                         @if(Session::get('admin_logged_in')['type']=='0')
                             <div class="col-12 text-end mb-4 pe-0">
                                 <a href="{{url('admin/add-mealplan')}}" class="comman_btn yellow-btn me-2">Add Plan</a>

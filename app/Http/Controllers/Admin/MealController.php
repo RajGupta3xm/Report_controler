@@ -425,6 +425,8 @@ public function edit_meal(Request $request, $id=null){
     $id = base64_decode($id);
     //return $id;
       $data['meal'] = Meal::where('id',$id)->first();
+      $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
+      $data['ingredients'] = DislikeItem::select('id','name','unit_id')->orderBy('id','Asc')->get(); 
        $data['meal_macro_nutrients'] = MealMacroNutrients::where('meal_id',$id)->get();
          $data['meal_group_schedule'] = MealGroupSchedule::join('meal_schedules','meal_group_schedule.meal_schedule_id','=','meal_schedules.id')
        ->select('meal_schedules.id','meal_schedules.name')

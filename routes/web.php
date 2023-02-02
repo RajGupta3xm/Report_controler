@@ -236,6 +236,10 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\StaffController@update_member',
         'as' => 'admin.edit_staff_member.update'
     ]);
+    Route::post('/staff/filterStaffData','Admin\StaffController@filterStaffData');
+    Route::post('/staffgroup/filterStaffGroupData','Admin\StaffController@filterStaffGroupData');
+
+
      /*****End Staff Management */
 
 
