@@ -82,9 +82,9 @@
                                                                      </td>
                                                                      <td>
                                                                          <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value" style="    width: 157px !important;">
-                                                                             <option value="">Select Text</option>
-                                                                             <option value="week">Weekly</option>
-                                                                             <option value="month">Monthly</option>
+                                                                             <option value="" disabled="" >Select Text</option>
+                                                                             <option value="weekly">Weekly</option>
+                                                                             <option value="monthly">Monthly</option>
                                                                          </select>
                                                                          <p class="text-danger text-small" id="option1Error"></p>
                                                                      </td>
@@ -271,7 +271,7 @@
                         $("#DaysCount").text(5);
                     }
                     $('#option2').text(value+' '+option2)
-                }else if(value=="month"){
+                }else if(value=="monthly"){
                     var option2=$('.option2').find(":selected").data('id');
                     if(option2=="With Weekend"){
                         $("#days_value").text(28);
@@ -290,11 +290,11 @@
                 var value=$(this).find(":selected").data('id');
                 if(value=="With Weekend"){
                     var option1=$('.option1').val();
-                    if(option1=="week"){
+                    if(option1=="weekly"){
                         $("#days_value").text(7);
                         $("#no_of_days").val(7);
                         $("#DaysCount").text(7);
-                    }else if(option1=="month"){
+                    }else if(option1=="monthly"){
                         $("#days_value").text(28);
                         $("#no_of_days").val(28);
                         $("#DaysCount").text(28);
@@ -302,7 +302,7 @@
                     $('#option2').text(option1+' '+value)
                 }else if(value=="Without Weekend"){
                     var option1=$('.option1').val();
-                    if(option1=="week"){
+                    if(option1=="weekly"){
                         $("#days_value").text(5);
                         $("#no_of_days").val(5);
                         $("#DaysCount").text(5);

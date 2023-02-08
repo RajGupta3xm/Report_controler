@@ -11,6 +11,7 @@ class UserChangeDeliveryLocation extends Model
         "user_id",
         "user_address_id",
         "subscription_plan_id",
+        "variant_id",
         "change_location_for_date",
 
     ];

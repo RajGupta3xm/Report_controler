@@ -67,6 +67,7 @@ return [
 	'repeat_plan'=>'Your plan repeat successfully',
 	'unskip_delivery'=>'Your delivery unskip successfully',
 	'date_update'=>'Plan date update successfully',
+	'update_diet_plan'=>'Diet plan update successfully',
 ];
 
 ?>

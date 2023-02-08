@@ -82,6 +82,8 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('paymentAvailableCredit', 'ApiController@paymentAvailableCredit');
     Route::post('helpSupport', 'ApiController@helpSupport');
     Route::post('generateToken', 'ApiController@generateToken');
+    Route::post('updateDietPlanHomeScreen', 'ApiController@updateDietPlanHomeScreen');
+    Route::post('addAddressDeliveryNotConfirm','ApiController@addAddressDeliveryNotConfirm');
 
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 

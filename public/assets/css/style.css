@@ -2874,3 +2874,9 @@ align-items: center;
     .searchDrop .select2-container {
         width: 160px !important;
     }
+
+    .dropify-wrapper .dropify-message span.file-icon {
+        font-size: 50px;
+        color: #CCC;
+        text-align: center;
+    }

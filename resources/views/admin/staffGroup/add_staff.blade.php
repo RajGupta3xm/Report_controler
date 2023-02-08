@@ -42,7 +42,7 @@
                               </div>
                               <div class="form-group col-4">
                                  <label for="">Staff Group</label>
-                                 <select class="form-select form-control validate" name="group_id" aria-label="Default select example">
+                                 <select class="form-select form-control validate" name="group_id" id="groupId" onchange="getGroupCategory(this);" aria-label="Default select example">
                                     <option selected="" disabled>Select Group</option>
                                     @foreach($staff_group as $staff_groups)
                                     <option value="{{$staff_groups->id}}">{{$staff_groups->name}}</option>
@@ -52,6 +52,7 @@
                               </div> 
                               <div class="form-group col-6">
                                  <label for="">Staff Email</label>
+                                 <input type="hidden"  class="form-control " name="groupDriver" id="groupDriver">
                                  <input type="email"  class="form-control emailvalidate" name="email" id="email">
                                  <p class="text-danger text-small" id='error_email' ></p>
                               </div> 
@@ -60,7 +61,7 @@
                                  <input type="text" class="form-control validate" name="password" id="name">
                                  <p class="text-danger text-small" id="passwordError"></p>
                               </div> 
-                              <div class="form-group col-12 Modules_check">
+                              <div class="form-group col-12 Modules_check modules_part_with_admin_access">
                                  <div class="row">
                                  <div class="col-12 mb-3 d-flex align-items-center">
                                        <div class="Modules_head">Modules: </div>
@@ -598,13 +599,13 @@
             </div> 
             <div class="form-group col-6">
                <label for="">Staff Email</label>
-               <input type="text" class="form-control"  name="email" id="email">
+               <input type="text" class="form-control"  name="email" id="emaill">
             </div> 
             <div class="form-group col-6">
                <label for="">Create Password</label>
                <input type="text" class="form-control" value="" name="password" id="name">
             </div> 
-            <div class="form-group col-12 Modules_check">
+            <div class="form-group col-12 Modules_check modules_modal_part_with_admin_access">
                <div class="row">
                <div class="col-12 mb-3 d-flex align-items-center">
                  <div class="Modules_head">Modules: </div>
@@ -617,7 +618,7 @@
                       </div>
                   </div>
                   <div class="col-12">
-                   <div class="row modules_partss">
+                   <div class="row modules_partss ">
                   <div class="col-4">
                      <div class="row">
                         <div class="col-12 mb-3">
@@ -1086,6 +1087,35 @@
           }
          }) 
       </script>
+      <script>
+ function getGroupCategory(obj) {
+   // alert(count);
+   var allList =<?= \GuzzleHttp\json_encode($staff_group)?>;
+   var driverId =$('#groupId').find('option:selected').val();
+            $(allList).each(function (a, staff_group) {
+               if (staff_group.id == driverId) {
+                  var drivername  = staff_group.name;
+                  if(drivername == 'Driver'){
+                     $('#groupDriver').val(staff_group.name)
+                     $('.modules_part_with_admin_access').addClass('disable_all');  
+                     var x = document.getElementsByClassName("checkbox");
+                     var i;
+                      for (i = 0; i < x.length; i++) {
+                       x[i].disabled = true;
+                     }
+                  }else{
+                     $('#groupDriver').val('')
+                     $('.modules_part_with_admin_access').removeClass('disable_all'); 
+                     var x = document.getElementsByClassName("checkbox");
+                     var i;
+                      for (i = 0; i < x.length; i++) {
+                       x[i].disabled = false;
+                     }
+                  }
+                } 
+            });
+}
+      </script>
  @endsection
 
       
@@ -1102,7 +1132,7 @@
           $('#imageModal').html('<img class="profile-pic" src="'+data.admin.image+'">')
           $("#nation_id").append('@foreach($staff_group as $staff_groups)<option  value="{{$staff_groups->id}}" @if($staff_groups->id == "'+data.group_id+'") selected  @endif>{{$staff_groups->name}}</option> @endforeach');
           $('#namee').val(data.name);
-          $('#email').val(data.email);
+          $('#emaill').val(data.email);
           $('input[name^="check11"][value="'+data.user_mgmt+'"').prop('checked',true);
           $('input[name^="checkv4"][value="'+data.order_mgmt+'"').prop('checked',true);
           $('input[name^="checki1"][value="'+data.ingredient_mgmt+'"').prop('checked',true);
@@ -1117,6 +1147,40 @@
           $('input[name^="v7"][value="'+data.refer_earn_mgmt+'"').prop('checked',true);
           $('input[name^="v8"][value="'+data.report_mgmt+'"').prop('checked',true);
           $('input[name^="v10"][value="'+data.content_mgmt+'"').prop('checked',true);
+          if(data.user_mgmt=='3'){
+            $('.vaccine_names').addClass('active'); 
+            $('.vaccine_namess').removeClass('active'); 
+            $('.modules_partss').addClass('disable_all');  
+            var x = document.getElementsByClassName("checkbox");
+            var i;
+             for (i = 0; i < x.length; i++) {
+               x[i].disabled = true;
+          }
+          }else{
+            $('.modules_partss').removeClass('disable_all');  
+            var x = document.getElementsByClassName("checkbox");
+            var i;
+             for (i = 0; i < x.length; i++) {
+               x[i].disabled = false;
+          }
+
+          }
+          if(data.user_mgmt=='4'){
+            $('.modules_modal_part_with_admin_access').addClass('disable_all');  
+            var x = document.getElementsByClassName("checkbox");
+            var i;
+             for (i = 0; i < x.length; i++) {
+               x[i].disabled = true;
+          }
+          }else{
+            $('.modules_modal_part_with_admin_access').removeClass('disable_all');  
+            var x = document.getElementsByClassName("checkbox");
+            var i;
+             for (i = 0; i < x.length; i++) {
+               x[i].disabled = false;
+          }
+
+          }
           $('#staticBackdrop').modal('show');
         }
       });

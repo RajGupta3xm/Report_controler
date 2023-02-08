@@ -34,22 +34,22 @@
                                                         </div>
                                                         <form class="form-design notification-form py-4 px-4 row align-items-end justify-content-start mb-3" action="{{url('admin/brodcastnotify/submit')}}" method="post" enctype="multipart/form-data">
                                                             @csrf
-                                                            <div class="form-group col-4">
+                                                            <div class="form-group col-6">
                                                                 <label for="">Notification Label</label>
                                                                 <input type="text" class="form-control" name="notification_label">
                                                             </div>
-                                                            <div class="form-group col-4">
+                                                            <div class="form-group col-6">
                                                                 <label for="">Date & Time</label>
                                                                 <input type="datetime-local" class="form-control" name="date_time">
                                                             </div>
-                                                            <div class="form-group col-4 choose_file position-relative">
+                                                            <div class="form-group col-12 choose_file position-relative">
                                                                 <span>Upload Image</span>
                                                                 <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label>
                                                                 <input type="file" class="dropify" value="" id="upload_video" name="images">
                                                             </div>
                                                             <div class="form-group mb-0 col">
                                                                 <label for="">Enter Text Here :</label>
-                                                                <textarea class="emojionearea1" name="description" id=""></textarea>
+                                                                <textarea class="emojionearea1 form-control" name="description" id=""></textarea>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                 <button class="comman_btn" type="submit">Send</button>
@@ -88,22 +88,22 @@
                                                         </div>
                                                         <form class="form-design notification-form py-4 px-4 row align-items-end justify-content-start mb-3" action="{{url('admin/popupnotify/submit')}}" method="post" enctype="multipart/form-data">
                                                             @csrf
-                                                            <div class="form-group col-4">
+                                                            <div class="form-group col-6">
                                                                 <label for="">Notification Label</label>
                                                                 <input type="text" class="form-control" name="notification_label">
                                                             </div>
-                                                            <div class="form-group col-4">
+                                                            <div class="form-group col-6">
                                                                 <label for="">Date & Time</label>
                                                                 <input type="datetime-local" class="form-control" name="date_time">
                                                             </div>
-                                                            <div class="form-group col-4 choose_file position-relative">
+                                                            <div class="form-group col-12 choose_file position-relative">
                                                                 <span>Upload Image</span>
                                                                 <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label>
                                                                 <input type="file" class="dropify" value="" name="images" id="upload_video">
                                                             </div>
                                                             <div class="form-group mb-0 col">
                                                                 <label for="">Enter Text Here :</label>
-                                                                <textarea class="emojionearea1" name="description" id=""></textarea>
+                                                                <textarea class="emojionearea1 form-control" name="description" id=""></textarea>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                 <button class="comman_btn" type="submit">Send</button>
@@ -143,7 +143,7 @@
                                                         <form class="form-design notification-form py-4 px-4 row align-items-end justify-content-start mb-3" >
                                                             <div class="form-group mb-0 col">
                                                                 <label for="">Enter Text Here :</label>
-                                                                <textarea class="emojionearea1" name="" id=""></textarea>
+                                                                <textarea class="emojionearea1 form-control" name="" id=""></textarea>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                 <button class="comman_btn">Send</button>
@@ -159,7 +159,7 @@
                                                         <form class="form-design notification-form py-4 px-4 row align-items-end justify-content-start mb-3" action="">
                                                             <div class="form-group mb-0 col">
                                                                 <label for="">Enter Text Here :</label>
-                                                                <textarea class="emojionearea1" name="" id=""></textarea>
+                                                                <textarea class="emojionearea1 form-control" name="" id=""></textarea>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                 <button class="comman_btn">Send</button>
@@ -175,7 +175,7 @@
                                                         <form class="form-design notification-form py-4 px-4 row align-items-end justify-content-start mb-3" action="">
                                                             <div class="form-group mb-0 col">
                                                                 <label for="">Enter Text Here :</label>
-                                                                <textarea class="emojionearea1" name="" id=""></textarea>
+                                                                <textarea class="emojionearea1 form-control" name="" id=""></textarea>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto">
                                                                 <button class="comman_btn">Send</button>
@@ -195,6 +195,8 @@
 
         </div>
     </div>
+    <link rel="stylesheet" href="https://rawgit.com/mervick/emojionearea/master/dist/emojionearea.min.css">
+    <script src='https://rawgit.com/mervick/emojionearea/master/dist/emojionearea.js'></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -203,4 +205,5 @@
     <script>
         $('.dropify').dropify();
     </script>
+       <script>  $(document).ready(function() {  $(".emojionearea1").emojioneArea({  pickerPosition: "right",  tonesStyle: "bullet",  events: {  keyup: function (editor, event) {d  console.log(editor.html());  console.log(this.getText());  }  }  });  $('#divOutside').click(function () {  $('.emojionearea-button').click()  })  });  </script>
 @endsection

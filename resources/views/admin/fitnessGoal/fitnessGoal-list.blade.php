@@ -27,15 +27,18 @@
                                  <h2>Fitness Goal Management</h2>
                               </div>
                            </div>
-                           <form class="form-design py-4 px-4 row align-items-start justify-content-start mb-4"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/fitness-goal/submit')}}">
+                           <form class="form-design py-4 px-4 row align-items-start justify-content-start mb-4  needs-validation" novalidate  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/fitness-goal/submit')}}">
                             @csrf
                               <div class="col-md-12">
                                  <div class="row">
                                     <div class="col-6 pe-5 border-end mb-4">
                                        <div class="form-group">
-                                          <label for=""> Title (English):</label>
-                                          <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
-                                          <p class="text-danger text-small" id="nameError">
+                                          <label for="validationCustom01"> Title (English):</label>
+                                          <input type="text" class="form-control validate" value="" name="name" id="validationCustom01" required maxlength="20"> 
+                                          <!-- <p class="text-danger text-small" id="nameError"> -->
+                                          <div class="invalid-feedback">
+                                              Please choose a username.
+                                           </div>
                                        </div> 
                                        <!-- <div class="form-group uploadimg_box">
                                           <span>Media (English):</span>
@@ -81,7 +84,7 @@
                                           </div>
                                     </div>  
                                     <div class="form-group mb-0 col-12 text-center">
-                                       <button type="button" onclick="validate(this)" class="comman_btn">Save</button>
+                                       <button type="submit" onclick="validate(this)" class="comman_btn">Save</button>
                                     </div>
                                  </div>
                               </div>   
@@ -293,7 +296,28 @@
     <script>
         $('.dropify').dropify();
     </script>
-   
+   <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+   </script>
       <script>
    function getFitnessData(obj,id) {
     

@@ -10,7 +10,9 @@ class ReplaceEditPlanRequest extends Model
     protected $fillable = [
     	'user_id',
     	'subscription_id',
+    	'variant_id',
     	'new_subscription_id',
+    	'new_variant_id',
     	'type',
     
    	];

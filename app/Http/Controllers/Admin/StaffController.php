@@ -63,7 +63,7 @@ public function submit(Request $request){
         return redirect()->back()->with('error','Record already exist');
     }else{
     $data=[
-     "name" => $request->input('name'),
+     "name" => ucwords($request->input('name')),
      "name_ar" => $request->input('name_ar'),
 
    ];
@@ -161,7 +161,7 @@ public function staff_member_submit(Request $request){
        }
    $insert = Admin::create($datasubadmin);
    if($insert){
-    if($request->input('check11') == ''){
+    if($request->input('groupDriver') == ''){
          $data=[
         "admin_id" => $insert->id,
         "name" => $request->input('name'),
@@ -183,6 +183,29 @@ public function staff_member_submit(Request $request){
         "report_mgmt" => '3',
         "content_mgmt" => '3',
     ];
+    }elseif($request->input('groupDriver') == 'Driver'){
+        $data=[
+            "admin_id" => $insert->id,
+            "name" => $request->input('name'),
+            "group_id" => $request->input('group_id'),
+            "email" => $request->input('email'),
+            'password' => \Hash::make($request->input('password')),
+            "user_mgmt" => '4',
+            "order_mgmt" => '4',
+            "ingredient_mgmt" => '4',
+            "fitness_goal_mgmt" => '4',
+            "diet_plan_mgmt" => '4',
+            "meal_mgmt" => '4',
+            "meal_plan_mgmt" => '4',
+            "fleet_mgmt" => '4',
+            "promo_code_mgmt" => '4',
+            "gift_card_mgmt" => '4',
+            "notification_mgmt" => '4',
+            "refer_earn_mgmt" => '4',
+            "report_mgmt" => '4',
+            "content_mgmt" => '4',
+        ];
+    
     }else{
        $data=[
     "admin_id" => $insert->id,

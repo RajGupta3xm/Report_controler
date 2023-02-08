@@ -10,6 +10,7 @@ class UserSkipDelivery extends Model
     protected $fillable = [
         "user_id",
         "user_address_id",
+        "variant_id",
         "subscription_plan_id",
         "skip_delivery_date",
 

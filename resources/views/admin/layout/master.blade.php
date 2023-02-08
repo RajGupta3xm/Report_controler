@@ -12,6 +12,7 @@
         <link href="{{asset('assets/img/favicon.png')}}" rel="icon" />
       <link href="{{asset('assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon" />
       <!-- Vendor CSS Files -->
+      
       <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
       <link href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet"/>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
@@ -20,8 +21,10 @@
       <link href="{{asset('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet" />
       <link href="{{asset('assets/vendor/owl/owl.carousel.min.css')}}" rel="stylesheet" />
       <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css"/>
+
      
       <link href="{{asset('assets/css/style.css')}}" rel="stylesheet" />
+      
       
       <!-- <link  href="{{asset('assets/admin/plugins/datatables/css/dataTables.bootstrap.min.css')}}" rel="stylesheet"> -->
       <!-- <link rel="stylesheet" href="{{asset('assets/admin/css/style.css')}}"> -->
@@ -34,7 +37,7 @@
     color: #ffb91d;
 }
 .loader_inner {
-    margin-top: -50px;
+    margin-top: -17px;
 }
 .loading {
     position: fixed;
@@ -257,12 +260,15 @@
                 }
             });
         </script>
+
+
+
          <script src="{{asset('assets/vendor/jquery.min.js')}}"></script>
       <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
       <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
       <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script> 
       <script src="{{asset('assets/js/jquery.multi-select.js')}}"></script>
-      
+    
        <script src="{{asset('assets/js/main.js')}}"></script>
        <script src="{{asset('assets/admin/js/demo.js')}}"></script>
     <!-- filter script  -->
@@ -275,6 +281,7 @@
                $('#dtpickerdemo').datetimepicker();
          });
        </script>
+       
        <script>
          var divs = ["Menu1", "Menu2",];
           var visibleDivId = null;
@@ -524,6 +531,7 @@
                 $("#compose-textarea").wysihtml5();
             });
         </script>
+     
         <!-- <script>
             var imgflag = true;
             $(document).ready(function () {

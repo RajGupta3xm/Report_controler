@@ -125,7 +125,7 @@
                                            @endphp
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
                                              @foreach($meal_day as $k=>$meal_days)
-                                                <option value="{{$meal_days->week_days_id}}" @foreach($mealWeekDay as $mealWeekDays) @if ($mealWeekDays->id == $meal_days->id ) selected @endif   @endforeach> {{ucwords($meal_days->week_days_id)}} </option>
+                                                <option value="{{$meal_days->week_days_id}}" @foreach($mealWeekDay as $mealWeekDays) @if ($mealWeekDays->id == $meal_days->id ) selected @endif @endforeach> {{ucwords($meal_days->week_days_id)}} </option>
                                                 @endforeach
                                              </select>
                                           </div>

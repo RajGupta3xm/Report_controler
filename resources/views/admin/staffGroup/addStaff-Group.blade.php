@@ -140,8 +140,6 @@
     });
 });
    </script>
-@endsection
-
       <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
@@ -152,6 +150,9 @@
    setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
 });
   </script>
+@endsection
+
+   
   <script>
    function showmodal(obj,id) {
 

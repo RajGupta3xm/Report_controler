@@ -709,8 +709,9 @@ class ApiController extends Controller {
                 $data['home_screen_banner'] = HomeScreenBanner::select('*')->get();
 
                    $data['your_subscription'] = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
-                   ->select('subscription_plans.name','subscription_plans.description','subscription_plans.image','subscriptions.*')
-                   ->where('user_id',Auth::guard('api')->id())->where('delivery_status','paused')
+                   ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+                   ->select('subscription_plans.name','subscription_plans.description','subscription_plans.image','subscriptions_meal_plans_variants.variant_name','subscriptions.*')
+                   ->where(['subscriptions.user_id'=>Auth::guard('api')->id(),'subscriptions.variant_id'=>$profile->variant_id,'subscriptions_meal_plans_variants.id'=>$profile->variant_id])->where('delivery_status','paused')
                    ->get();
 
                  $data['promo_codes']=PromoCode::select('id','name','description','image')->where(['status'=>'active'])
@@ -738,7 +739,12 @@ class ApiController extends Controller {
                 ->each(function($selectDietPlan) use($plan_type,$profile) {
                         // $user_recommended_calorie=2200;
                         
-                          $subscriptions=SubscriptionPlan::select('id','name','image')->where('status','active')->where('id', '!=', $profile->subscription_id)->get();
+                           $subscriptions=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+                          ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions_meal_plans_variants.id as variant_id')
+                          ->where('subscriptions_meal_plans_variants.status','active')
+                        //   ->where('subscriptions_meal_plans_variants.meal_plan_id', '!=', $profile->subscription_id)
+                          ->where('subscriptions_meal_plans_variants.id', '!=', $profile->variant_id)
+                          ->get();
                       
                         if($subscriptions){
                             foreach($subscriptions as $subscription){
@@ -748,9 +754,9 @@ class ApiController extends Controller {
                                 // $plan_type= $request->plan_types;
                                 // $plan_type=2;
                                 $subscription->meal_groups=[];
-                                if(userProfile::where(['subscription_id'=>$subscription->id,'user_id'=>Auth::guard('api')->id()])->exists()){
+                                if(userProfile::where(['variant_id'=>$subscription->variant_id,'subscription_id'=>$subscription->id,'user_id'=>Auth::guard('api')->id()])->exists()){
                                     $subscription->buy_status ="buy";
-                                }elseif(userProfile::where(['subscription_id'=>null,'user_id'=>Auth::guard('api')->id()])->exists()){
+                                }elseif(userProfile::where(['variant_id'=>null,'subscription_id'=>null,'user_id'=>Auth::guard('api')->id()])->exists()){
                                     $subscription->buy_status ="buy";
                                 }else{
                                     $subscription->buy_status ="switch";
@@ -758,7 +764,7 @@ class ApiController extends Controller {
                                 $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                                 $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
 
-                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id])->get()){
+                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id])->get()){
                                     if($plan_type == 1 || $plan_type == 2){
                                         $subscription->delivery_day_type="Week";
                                     }else{
@@ -767,9 +773,9 @@ class ApiController extends Controller {
                                           $deliveryDay=DeliveryDay::find($plan_type);
 
                 
-                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'option1'=>$deliveryDay->type,'option2'=>$deliveryDay->including_weekend])->first()){
+                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'option1'=>$deliveryDay->type,'option2'=>$deliveryDay->including_weekend])->first()){
                                             // if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
-                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->get();
+                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->get();
                                           foreach($costss as $costs){
 
                                           $subscription->cost=$costs['plan_price'];
@@ -804,13 +810,16 @@ class ApiController extends Controller {
 
                 $data['select_diet_plan'] = $selectDietPlan;
                 
-        
+                $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+                $targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
                  $dietPlanType = DietPlanType:: select('diet_plan_types.name','diet_plan_types.id')
                 ->get()
                 // ->toArray();
-                ->each(function($dietPlanType) {
+                ->each(function($dietPlanType) use($targetCalorie){
                    $meals= $dietPlanType->meals= Meal::join('meal_diet_plan','meals.id','=','meal_diet_plan.meal_id')
+                   ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
                    ->where('meal_diet_plan.diet_plan_type_id', $dietPlanType->id)
+                   ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
                    ->select('meals.id as meal_id','meals.name as meal_name','meals.food_type','image','meals.created_at as date')->get()
                  ->each(function($meals){
                     $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
@@ -1925,72 +1934,76 @@ public function select_delivery_location(Request $request) {
 
 public function resume_meal_plan(Request $request) {
 
-if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->subscription_plan_id)->exists()){
+if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id'=>$request->variant_id])->exists()){
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'plan_id' => $request->subscription_plan_id,
+        'variant_id' => $request->variant_id,
          ],
         [
             'plan_id'=> $request->subscription_plan_id,
             'resume_date'=> $request->resume_date,
+            'variant_id' => $request->variant_id,
             // 'start_date'=> $request->starting_date,
             'delivery_status'=> 'active',
 
         ]
     );
-    if($request->subscription_plan_id == $request->old_subscription_plan_id){
-        Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'active']);
+    if($request->subscription_plan_id == $request->old_subscription_plan_id && $request->variant_id == $request->old_variant_id){
+        Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'active']);
     }else{
-        Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'terminted']);
+        Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
     }
   
 }else{
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'plan_id' => $request->subscription_plan_id,
+        'variant_id' => $request->variant_id,
          ],
         [
             'plan_id'=> $request->subscription_plan_id,
+            'variant_id' => $request->variant_id,
             'start_date'=> $request->starting_date,
             'delivery_status'=> 'active',
 
         ]
     );
-    Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$request->old_subscription_plan_id)->update(['delivery_status'=>'terminted']);
+    Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
     
     if(!empty($request->old_subscription_plan_id)){
-         $getAvailableCredit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
-        if($getAvailableCredit){
-                $newPlanPrice = SubscriptionMealPlanVariant::select('no_days','plan_price')->where('meal_plan_id',$request->subscription_plan_id)->first();
-                 $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where('meal_plan_id',$request->old_subscription_plan_id)->first();
-                  $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
-                   $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
-               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
-               $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,])->first();
-               $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,])->first();
-                $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
-                 $old_pause_date = Carbon::createFromFormat('Y-m-d',$pause_date->pause_date);
-                 $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
-                 $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
+        $getAvailableCredit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
+       if($getAvailableCredit){
+               $newPlanPrice = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->subscription_plan_id, 'id' => $request->variant_id,])->first();
+                $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->old_subscription_plan_id,'id'=>$request->old_variant_id])->first();
+                 $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
+                  $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
+              if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
+              $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+              $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+               $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
+                $old_pause_date = Carbon::createFromFormat('Y-m-d',$pause_date->pause_date);
+                $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
+                $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
 
-                 $newDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'delivery_status'=>'active'])->first();
-                 $dates = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
-                 $next_date = $dates->addDays($remainingDayFromOldPlan);
+                $newDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id,'delivery_status'=>'active'])->first();
+                $dates = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
+                $next_date = $dates->addDays($remainingDayFromOldPlan);
 
-               
-                $new_date = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
-                // $old_date = Carbon::createFromFormat('Y-m-d',$next_date);
-                 $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
-                //  $remaingDaysOfPlan = $oldNumberOfDays->no_days-$usedPlanForDays;
-                 $getRequiredAmount = $perDayRequiredCredit*$usedPlanForDays;
-                 $UserPay = $getRequiredAmount-$getAvailableCredit->available_credit;
-                     $data['pay'] = $UserPay;
-               }else{
-                    $data['pay'] = '';
-               }
-               
-        }
-      }
+              
+               $new_date = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
+               // $old_date = Carbon::createFromFormat('Y-m-d',$next_date);
+                $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
+               //  $remaingDaysOfPlan = $oldNumberOfDays->no_days-$usedPlanForDays;
+                $getRequiredAmount = $perDayRequiredCredit*$usedPlanForDays;
+                $UserPay = $getRequiredAmount-$getAvailableCredit->available_credit;
+                   $data['pay'] = $UserPay;
+              }else{
+                   $data['pay'] = '';
+              }
+              
+       }
+     }
      
 }
     if($data){
@@ -2001,6 +2014,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
             [
                 'diet_plan_type_id'=> $request->diet_plan_type_id,
                 'subscription_id'=> $request->subscription_plan_id,
+                'variant_id' => $request->variant_id,
 
             ]
         );
@@ -2008,6 +2022,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
                Subscription::updateOrCreate(
                    ['user_id' =>  Auth::guard('api')->id(),
                    'plan_id' => $request->subscription_plan_id,
+                   'variant_id' => $request->variant_id,
                     ],
                    [
                        'no_of_days_pause_plan'=>  $diff,
@@ -2030,33 +2045,56 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where( 'plan_id',$re
 }
 
 public function meal_plan_listing(Request $request){
-   $userprofile = UserProfile::select('subscription_id')->where('user_id',Auth::guard('api')->id())->first();
+   $userprofile = UserProfile::select('subscription_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+   $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+    $userCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
    $diet_plan = DietPlanType::select('id','name')->get()
-   ->each(function($diet_plan){
+   ->each(function($diet_plan)use($userCustomCalorie){
    $diet_plan->meal_plan =SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
-    ->select('subscription_plans.id','subscription_plans.name','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days')
-    ->where('subscriptions_meal_plans_variants.diet_plan_id',$diet_plan->id)->get();
-    // $meal_plan->remainingDays = Subscription::where('user_id',Auth::guard('api')->id())->where('plan_id',$userprofile->subscription_id)->first();
-    // if($remainingDays){
-    //     $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
-    //     $date = $dates->addDays($remainingDays->no_days);
-    //     $diff = now()->diffInDays(Carbon::parse($date));
-    //     if($diff == 0){
-    //         $days_remaining  = "Your plan is expire";
-    //      }else{
-    //          $days_remaining  = $diff .' days left to expire ';
-    //      }
-     
-    //    }
-      
+    ->select('subscription_plans.id','subscription_plans.name','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.variant_name')
+    ->where('subscriptions_meal_plans_variants.diet_plan_id',$diet_plan->id)
+    ->where('subscriptions_meal_plans_variants.calorie',$userCustomCalorie->recommended)
+    ->get();
+   
     });
+     $remainingDays = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$userprofile->subscription_id,'variant_id'=>$userprofile->variant_id])->first();
+    if($remainingDays){
+         $getNoOfDays = SubscriptionMealPlanVariant::select('no_days')->where('id',$remainingDays->variant_id)->first();
+          $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+           $date = $dates->addDays($getNoOfDays->no_days);
+            $diff = now()->diffInDays(Carbon::parse($date));
+
+            $datess = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+          if($datess->gt(now())){
+            $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+            $days_remaining  = 'Your plan start from'.' '.date('d-m-Y',strtotime($dates));
+          }else{
+            if($diff == 0){
+                $days_remaining  = "Your plan is expire";
+            }else{
+                $days_remaining  = $diff .' days ';
+            }
+        
+        }
+     
+        //   $date = Carbon::createFromFormat('Y-m-d', $remainingDays->start_date);
+        //    for ($i = 0; $i < $getNoOfDays->no_days; $i++) {
+        //         $alldate = $date->addDay()->format('y-m-d');
+        //        if($diff == 0){
+        //          $days_remaining  = "Your plan is expire";
+        //         }else{
+        //             $days_remaining  = $diff .' days  ';
+                   
+        //         }
+        //    }
+    }
     $data['diet_plan'] = $diet_plan;
-    $available_credit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
+     $available_credit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
     if($available_credit){
         $available_credit->available_days = 0;
         $data['description'] = "You have $available_credit->available_credit credit valid for  $available_credit->available_days Days";
         $data['available_credit'] = $available_credit->available_credit;
-        $data['available_days'] = $available_credit->available_days;
+        $data['available_days'] = $days_remaining;
        
     }
   
@@ -2366,56 +2404,24 @@ public function paymentAvailableCredit(Request $request) {
     $status=[];
      $available_credit = UserProfile::select('available_credit')->where('user_id', Auth::guard('api')->id())->first();
      $available_referral = UserProfile::select('available_referral')->where('user_id', Auth::guard('api')->id())->first();
+     
+     $getNoOfDays = SubscriptionMealPlanVariant::select('no_days')->where('id',$remainingDays->variant_id)->first();
+     $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+      $date = $dates->addDays($getNoOfDays->no_days);
+       $diff = now()->diffInDays(Carbon::parse($date));
 
-    // $referral_plan_purchase = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-    //  ->select('refer_and_earn.*')
-    //  ->where('refer_and_earn.status','active')
-    //  ->where('refer_and_earn_used.status','active')
-    //  ->where('refer_and_earn_used.referral_id',Auth::guard('api')->id())
-    //  ->where('refer_and_earn_used.used_for','plan_purchase')
-    //  ->get();
-    //  $totalCostPlan = 0; 
-    //  foreach($referral_plan_purchase as $cost){
-    //     $totalCostPlan += $cost->plan_purchase_referral;
-    // }
-    // $referral_registration = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-    //  ->select('refer_and_earn.*')
-    //  ->where('refer_and_earn.status','active')
-    //  ->where('refer_and_earn_used.status','active')
-    //  ->where('refer_and_earn_used.referral_id',Auth::guard('api')->id())
-    //  ->where('refer_and_earn_used.used_for','registration')
-    //  ->get();
-    //  $totalCostRegistration = 0; 
-    //  foreach($referral_registration as $cost){
-    //     $totalCostRegistration += $cost->register_referral;
-    // }
-//     $referee_plan_purchase = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-//     ->select('refer_and_earn.*')
-//     ->where('refer_and_earn.status','active')
-//     ->where('refer_and_earn_used.status','active')
-//     ->where('refer_and_earn_used.referee_id',Auth::guard('api')->id())
-//     ->where('refer_and_earn_used.used_for','plan_purchase')
-//     ->get();
-//     $totalCostPlanReferee = 0; 
-//     foreach($referee_plan_purchase as $cost){
-//        $totalCostPlanReferee += $cost->plan_purchase_referee;
-//    }
-//    $referee_registration = ReferAndEarnUsed::join('refer_and_earn','refer_and_earn_used.refer_and_earn_id','=','refer_and_earn.id')
-//    ->select('refer_and_earn.*')
-//    ->where('refer_and_earn.status','active')
-//    ->where('refer_and_earn_used.status','active')
-//    ->where('refer_and_earn_used.referee_id',Auth::guard('api')->id())
-//    ->where('refer_and_earn_used.used_for','registration')
-//    ->get();
-//    $totalCostRegisterReferee = 0; 
-//    foreach($referee_registration as $cost){
-//       $totalCostRegisterReferee += $cost->register_referee;
-//   }
-    // $available_referrals = $totalCostPlan+$totalCostRegistration;
-    // $available_referees = $totalCostPlanReferee+$totalCostRegisterReferee;
-    // $available_referral = $available_referrals+$available_referees;
-    
-
+       $datess = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+     if($datess->gt(now())){
+       $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
+       $days_remaining  = 'Your plan start from'.' '.date('d-m-Y',strtotime($dates));
+     }else{
+       if($diff == 0){
+           $days_remaining  = "Your plan is expire";
+       }else{
+           $days_remaining  = $diff .' days ';
+       }
+   
+   }
      $data['available_credit'] = $available_credit;
      $data['available_referral'] = $available_referral;
     $response = new \Lib\PopulateResponse($data);
@@ -2568,5 +2574,52 @@ public function helpSupport(Request $request)
       
        
     }
+
+    public function updateDietPlanHomeScreen(Request $request) {
+  
+        $update= UserProfile::where('user_id',Auth::guard('api')->id())->update(['diet_plan_type_id'=>$request->diet_plan_type_id]);
+        $this->status = true;
+        $this->message = trans('messages.update_diet_plan');
+        return $this->populateResponse();
+    }
+
+    public function addAddressDeliveryNotConfirm(Request $request){
+        $validate = Validator::make($request->all(), [
+            'area' => 'required',
+    
+    
+        ], [
+            'area.required' => trans('validation.required', ['attribute' => 'area']),
+           
+
+    
+        ]);
+        if ($validate->fails()) {
+            $this->status_code = 201;
+            $this->message = $validate->errors();
+        } else {
+             $data=[
+              "area" => $request->input('area'),
+              "latitude" => $request->input('latitude'),
+              "longitude" => $request->input('longitude'),
+             
+    
+          ];
+    
+        
+            $insert = UserAddress::create($data);
+           
+            if($insert){
+             $response = new \Lib\PopulateResponse($insert);
+             $this->data = $response->apiResponse();
+             $this->message = trans('messages.add_address');
+            } else {
+                $this->message = trans('messages.server_error');
+                $this->status_code = 202;
+            }
+            $this->status = true;
+        }
+        return $this->populateResponse();
+    } 
 
 }

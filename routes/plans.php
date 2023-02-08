@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 \App::setlocale(!empty(request()->header('Lang')) ? request()->header('Lang') : 'en');
 
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){    
-    Route::post('subscriptionPlans', 'SubscriptionController@planListing');
+    Route::post('subscriptionPlans', 'SubscriptionController@planListing');  // this API is not anywhere
     Route::get('calculateCalorie', 'SubscriptionController@calculateCalorie');  //api for bar 1000-1200-1500 etc
     Route::get('calculateKcal', 'SubscriptionController@calculateKcal');// api for on balance detail page -> calculte calorie in circle
     Route::post('macrosCalculator', 'SubscriptionController@macrosCalculator'); //api for calculate result page ->target calorie required in a day
@@ -32,7 +32,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('buySubscriptionPlan', 'SubscriptionController@buySubscriptionPlan');
     Route::post('sample_daily_meals_with_schedule', 'SubscriptionController@sample_daily_meals_with_schedule'); 
     Route::get('selectStartDayCircle', 'SubscriptionController@selectStartDayCircle');
-    Route::get('paymentPlan_detail/{plan_id}', 'SubscriptionController@paymentPlan_detail');
+    Route::get('paymentPlan_detail/{plan_id}/{variant_id}', 'SubscriptionController@paymentPlan_detail');
     Route::post('getSwapMeal', 'SubscriptionController@getSwapMeal');
     Route::post('apply_gift_card', 'SubscriptionController@apply_gift_card');
     Route::post('apply_promo_code', 'SubscriptionController@apply_promo_code');
