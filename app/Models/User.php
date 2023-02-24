@@ -50,7 +50,7 @@ class User extends Authenticatable {
     }
 
     public function user_address(){
-        return $this->belongsTo(UserAddress::class,'id','user_id');
+        return $this->belongsTo(UserAddress::class,'id','user_id')->where('day_selection_status','=', 'active');
     }
 
     

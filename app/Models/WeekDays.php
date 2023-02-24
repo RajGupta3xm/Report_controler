@@ -10,7 +10,6 @@ class WeekDays extends Model
     protected $fillable = [
         "name",
         "name_ar",
-        
         "status",
 
     ];

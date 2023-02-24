@@ -80,31 +80,38 @@ class AdminController extends Controller {
             $inactiveUser = 0;
 
 
-             $data['activeUser'] = Subscription::where('delivery_status','active')->count();
+             $data['activeUser'] = Subscription::where('delivery_status','active')->where('plan_status','plan_active')->count();
              $data['pausedUser'] = Subscription::where('delivery_status','paused')->count();
              $data['expiredUser'] = Subscription::where('delivery_status','terminted')->count();
              $data['inactiveUser'] = User::where('status','0')->count();
-              $data['totalOrder'] = SubscriptionOrder::where('payment_status','completed')->count();
+              $data['totalOrder'] = Order::where('payment_status','paid')->where('plan_status','plan_active')->count();
               $userList = [];
-             $recent_order = User::join('user_profile','users.id','=','user_profile.user_id')
-            ->join('subscriptions','Users.id','=','subscriptions.user_id')
-            ->join('orders','Users.id','=','orders.user_id')
-            ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','subscriptions.start_date','orders.id as order_id')
+
+
+            //     $recent_orders = Subscription::join('users','subscriptions.user_id','=','users.id')
+            // ->join('user_profile','subscriptions.user_id','=','user_profile.user_id')
+            // ->join('orders','subscriptions.variant_id','=','orders.variant_id')
+            // ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+            // ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+            // ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','orders.id as order_id','user_profile.variant_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            // ->where('subscriptions.delivery_status','active')
+            // ->where('subscriptions.plan_status','plan_active')
+            // ->get();
+
+             $recent_orders = Order::join('users','orders.user_id','=','users.id')
+            ->join('user_profile','orders.user_id','=','user_profile.user_id')
+            ->join('subscriptions','orders.variant_id','=','subscriptions.variant_id')
+            ->join('subscription_plans','orders.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','orders.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','orders.id as order_id','user_profile.variant_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            ->where('orders.payment_status','paid')
+            ->where('orders.plan_status','plan_active')
             ->where('subscriptions.delivery_status','active')
+            ->where('subscriptions.plan_status','plan_active')
             ->get();
-            if(!empty($recent_order)){
-                foreach($recent_order as $recent_orders){
-                $recent_orders->get_plan = SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
-                           ->select('subscriptions_meal_plans_variants.option1','subscription_plans.name')
-                           ->where('subscription_plans.id',$recent_orders->subscription_id)
-                           ->get();
-
-                           array_push($userList,$recent_orders);
-                }
-
-            }
+        
            
-            $data['recent_order'] = $userList;
+             $data['recent_order'] = $recent_orders;
             return view('admin.dashboard')->with($data);
         }
     }

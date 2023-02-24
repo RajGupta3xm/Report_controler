@@ -18,7 +18,10 @@ class CreateSubscriptionsTable extends Migration
             $table->integer('user_id');
             // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('plan_id');
+            $table->integer('variant_id');
             $table->date('start_date');
+            $table->date('end_date');
+            $table->date('switch_plan_start_date');
             $table->integer('is_weekend')->default(0)->comment("1= including weekends");
             $table->float('price');
             $table->float('discount')->nullable();
@@ -26,6 +29,7 @@ class CreateSubscriptionsTable extends Migration
             $table->float('total_amount');
             $table->enum('delivery_status',['upcoming','active','paused','terminted'])->default('active');
             $table->enum('status',['payment_pending','active','terminted'])->default('payment_pending');
+            $table->enum('plan_status',['plan_active','plan_inactive'])->default('plan_active');
             $table->timestamps();
         });
     }

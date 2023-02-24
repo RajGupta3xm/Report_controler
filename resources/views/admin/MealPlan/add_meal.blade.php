@@ -4,6 +4,19 @@
       <div class="admin_main">
          <div class="admin_main_inner">
              <div class="admin_panel_data height_adjust">
+                 @if(session()->has('success'))
+                     <div class="alert alert-success">
+                         <strong class="close" data-dismiss="alert " aria-hidden="true"></strong>
+                         {{ session()->get('success') }}
+                     </div>
+                 @else
+                     @if(session()->has('error'))
+                         <div class="alert alert-danger">
+                             <strong class="close" ></strong>
+                             {{ session()->get('error') }}
+                         </div>
+                     @endif
+                 @endif
                  <div class="row addmeal_plann justify-content-center">
                      <div class="col-12">
                          <div class="row mx-0">
@@ -82,7 +95,7 @@
                                                                      </td>
                                                                      <td>
                                                                          <select class="form-select table_input table_select option1" aria-label="Default select example" name="option1" id="option1_value" style="    width: 157px !important;">
-                                                                             <option value="" disabled="" >Select Text</option>
+                                                                             <option value="">Select Text</option>
                                                                              <option value="weekly">Weekly</option>
                                                                              <option value="monthly">Monthly</option>
                                                                          </select>
@@ -226,6 +239,7 @@
                                                      <th>Plan Enter price</th>
                                                      <th>Compare price</th>
                                                      <th>Description</th>
+                                                     <th>Action</th>
                                                  </tr>
                                                  </thead>
                                                  <tbody id="tbody">
@@ -260,7 +274,7 @@
             $('.option1').on('change',function(){
                 var value=$(this).val();
                 if(value=="weekly"){
-                    var option2=$('.option2').find(":selected").data('id');
+                    var option2=$(this).find(":selected").data('id');
                     if(option2=="With Weekend"){
                         $("#days_value").text(7);
                         $("#no_of_days").val(7);
@@ -272,7 +286,7 @@
                     }
                     $('#option2').text(value+' '+option2)
                 }else if(value=="monthly"){
-                    var option2=$('.option2').find(":selected").data('id');
+                    var option2=$(this).find(":selected").data('id');
                     if(option2=="With Weekend"){
                         $("#days_value").text(28);
                         $("#no_of_days").val(28);
@@ -306,7 +320,7 @@
                         $("#days_value").text(5);
                         $("#no_of_days").val(5);
                         $("#DaysCount").text(5);
-                    }else if(option1=="month"){
+                    }else if(option1=="monthly"){
                         $("#days_value").text(20);
                         $("#no_of_days").val(20);
                         $("#DaysCount").text(20);
@@ -374,6 +388,7 @@
                             meal_groups_hidden.push($(this).val());
                         });
 
+
                         var meal_groups_hidden_name=[];
                         var arr1 = $("input:checkbox[name*=meal_groups]:checked").each(function(){
                             meal_groups_hidden_name.push($(this).data('value'));
@@ -401,7 +416,7 @@
                                 plan_price_value:plan_price_value,
                                 meal_groups_hidden:meal_groups_hidden,
                                 description_value:description_value,
-                                meal_groups_hidden_name:meal_groups_hidden_name
+                                meal_groups_hidden_name:meal_groups_hidden_name,
                             },
                             dataType:'json',
                             type: "post",

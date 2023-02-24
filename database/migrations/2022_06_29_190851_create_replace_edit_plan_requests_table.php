@@ -18,7 +18,9 @@ class CreateReplaceEditPlanRequestsTable extends Migration
             $table->integer('user_id');
             // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('subscription_id');
+            $table->integer('variant_id');
             $table->integer('new_subscription_id');
+            $table->integer('new_variant_id');
             $table->enum('type',['edit','replace'])->default('replace');
             $table->timestamps();
         });

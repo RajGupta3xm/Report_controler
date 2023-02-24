@@ -17,6 +17,7 @@ class CreateUserChangeDeliveryLocationTable extends Migration
             $table->bigIncrements('id');
             $table->integer('user_id');
             $table->integer('subscription_plan_id');
+            $table->integer('variant_id');
             $table->integer('user_address_id');
             $table->date('change_location_for_date');
             $table->timestamps();

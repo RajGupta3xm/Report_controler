@@ -19,6 +19,7 @@ class CreateUserProfileTable extends Migration
             // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('available_credit')->default(0);
             $table->integer('subscription_id')->nullable();
+            $table->integer('variant_id')->nullable();
             $table->float('initial_body_weight')->nullable()->comment("in kgs");
             $table->float('height')->nullable()->comment("in cms");
             $table->date('dob')->nullable();

@@ -19,6 +19,7 @@ use App\Models\DislikeItem;
 use App\Models\Order;
 use App\Models\SubscriptionPlan;
 use App\Models\UserAddress;
+use App\Models\CalorieRecommend;
 use App\Models\UserCaloriTarget;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
@@ -50,7 +51,11 @@ class UserController extends Controller {
             return redirect()->intended('admin/login');
         } else {
             // $userList = [];
-            $user = User::select('*')->orderBy('id', 'DESC')->get();
+               $user = User::select('*')->orderBy('id', 'DESC')->get()
+              ->each(function($user){
+                $user->user_address = UserAddress::select('area')->where('user_id',$user->id)->where('day_selection_status','active')->take(2)->get();
+              });
+             
         //   ->each(function($user){
         //     $users->totalOrder = Order::where('user_id',$users->id)->count();
         //     $users->user_address = UserAddress::select('area')->where(['user_id'=>$users->id, 'status'=>'active'])->get();
@@ -72,7 +77,8 @@ class UserController extends Controller {
             // $user_dislikes =[];
             if($user){
                    $user_detail = UserProfile::with('fitness','dietplan')->where('user_id',$user->id)->first();
-                    $userCalorieTarget = UserCaloriTarget::where('user_id',$user->id)->first(); 
+                     $userCalorieTarget = UserCaloriTarget::where('user_id',$user->id)->first(); 
+                    //  $calorie = CalorieRecommend::select('recommended')->where('id',$userCalorieTarget->custom_result_id)->first(); 
                      $item_id = UserDislike::where('user_id',$user->id)->get();
                    if($item_id){
                     foreach($item_id as $item_ids){
@@ -102,35 +108,19 @@ class UserController extends Controller {
             $user_previous_plan->expired_on = date('d M', strtotime($expired_on));
         
            });
-        //     $userList = [];
-        //      $user_previous_plan = UserProfile::join('subscriptions','user_profile.subscription_id','=','subscriptions.plan_id')
-        //     ->join('orders','user_profile.user_id','=','orders.user_id')
-        //     ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
-        //     ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
-        //     ->select('subscriptions.start_date','orders.id as order_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','user_profile.available_credit','subscriptions_meal_plans_variants.no_days','subscriptions.id','subscriptions.status')
-        //     ->where('subscriptions.delivery_status','terminted')
-        //     ->where('subscriptions.user_id',$id)
-        //     ->get();
-        //     if($user_previous_plan){
-        //         foreach($user_previous_plan as $user_previous_plans){
-        //          $puchase_on = $user_previous_plans->start_date;
-        //           $user_previous_plans->puchase_on = date('d/m/Y', strtotime($puchase_on));
-        //          $dates = Carbon::createFromFormat('Y-m-d',$user_previous_plans->start_date);
-        //          $user_previous_plans->expired_on = $dates->addDays($user_previous_plans->no_days);
-
-        //          array_push($userList,$user_previous_plans);
-        //     }
-           
-        // }
+     
             $data['user_previous_plan'] = $user_previous_plan;
-                 $userDetail = UserProfile::select('variant_id')->where('user_id',$id)->first();
-                 $user_current_plan = UserProfile::join('subscriptions','user_profile.variant_id','=','subscriptions.variant_id')
+
+                   $userDetail = UserProfile::select('user_id','subscription_id','variant_id')->where('user_id',$id)->first();
+              
+                   $user_current_plan = UserProfile::join('subscriptions','user_profile.variant_id','=','subscriptions.variant_id')
             ->join('orders','user_profile.user_id','=','orders.user_id')
             ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
             ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
             ->select('subscriptions.start_date','orders.id as order_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','user_profile.available_credit','subscriptions_meal_plans_variants.no_days','subscriptions.id','subscriptions.status','user_profile.user_id','user_profile.subscription_id')
             ->where('user_profile.user_id',$id)
-            ->where('subscriptions.variant_id',$userDetail->variant_id)
+            ->where(['orders.plan_id'=>$userDetail->subscription_id,'orders.variant_id'=>$userDetail->variant_id])
+            ->where('subscriptions.plan_id',$userDetail->subscription_id)
             ->where('subscriptions_meal_plans_variants.id',$userDetail->variant_id)
             ->where(function($q){
                 $q->where('subscriptions.delivery_status','active')

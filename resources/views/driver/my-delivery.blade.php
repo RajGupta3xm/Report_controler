@@ -54,21 +54,22 @@
                         </nav>
                         <div class="tab-content" id="nav-tabContent">
                             @foreach($dates1 as $key2=> $date)
+
                                 @php
                                         $date=\Carbon\Carbon::parse($date)->format('Y-m-d');
                                         $pending_orders=\App\Models\FleetDriver::wherehas('orders',function($q) use($date){
                                             $q->wheredate('created_at',$date);
                                             $q->where('status','=','order_placed');
-                                        })->where('priority',1)->get();
+                                        })->where('staff_member_id',auth()->guard('staff_members')->user()->id)->where('priority',1)->get();
                                         $completed_orders=\App\Models\FleetDriver::wherehas('orders',function($q) use($date){
                                             $q->wheredate('created_at',$date);
                                             $q->where('is_deliver',1);
                                             $q->where('status','=','delivered');
-                                        })->where('priority',1)->get();
+                                        })->where('staff_member_id',auth()->guard('staff_members')->user()->id)->where('priority',1)->get();
                                         $priority_orders=\App\Models\FleetDriver::wherehas('orders',function($q) use($date){
                                             $q->wheredate('created_at',$date);
                                             $q->where('status','=','order_placed');
-                                        })->where('priority',2)->get();
+                                        })->where('staff_member_id',auth()->guard('staff_members')->user()->id)->where('priority',2)->get();
                                 @endphp
                                 <div class="tab-pane fade @if($key2==0) show active @endif" id="nav-home{{$key2}}" role="tabpanel" aria-labelledby="nav-home-tab{{$key2}}">
                                     <form action="" class="row py-2 search_design">
@@ -276,4 +277,3 @@
         </div>
     </div>
 @endsection
-

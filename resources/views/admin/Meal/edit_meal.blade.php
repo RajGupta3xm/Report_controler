@@ -60,11 +60,11 @@
                                        <!-- <p class="text-danger text-small" id="description_arError"></p> -->
                                     </div>
                                     <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
-                                        <input type="file" id="uploadimg" class="validate dropify" name="image" data-default-file="{{$meal->image}}">
+                                        <input type="file" id="uploadimg" class=" dropify" name="image" data-default-file="{{$meal->image}}">
 {{--                                       <label for="uploadimg">--}}
 {{--                                        <div class="uploadimg_inner"> <i class="fas fa-upload me-2"></i> <span>Upload File</span> </div>--}}
 {{--                                                </label>--}}
-                                                <p class="text-danger text-small" id="imageError"></p>
+                                                <!-- <p class="text-danger text-small" id="imageError"></p> -->
                                           </div>
                                     <!-- <div class="form-group col-12 uploadimg_box">
                                        <span>Media :</span>
@@ -123,9 +123,18 @@
                                            $meal_day=\App\Models\MealWeekDay::select('id','meal_id','week_days_id')->get();
                                         
                                            @endphp
+                                           @php 
+                                           $meal_id = [];
+                                           foreach($mealWeekDay as $mealWeekDays) {
+                                                      array_push($meal_id,$mealWeekDays->id);
+                                         
+                                         
+                                              }
+                                              $cate= $meal_id;
+                                           @endphp
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
                                              @foreach($meal_day as $k=>$meal_days)
-                                                <option value="{{$meal_days->week_days_id}}" @foreach($mealWeekDay as $mealWeekDays) @if ($mealWeekDays->id == $meal_days->id ) selected @endif @endforeach> {{ucwords($meal_days->week_days_id)}} </option>
+                                                <option value="{{$meal_days->week_days_id}}" <?php echo in_array($meal_days->id,$cate)?"selected" :"" ;?> > {{ucwords($meal_days->week_days_id)}} </option>
                                                 @endforeach
                                              </select>
                                           </div>

@@ -276,6 +276,9 @@
     <script src="{{asset('assets/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/admin/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
 <!-- end filter script -->
+
+
+
       <script type="text/javascript">
          $(function () {
                $('#dtpickerdemo').datetimepicker();

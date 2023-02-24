@@ -18,6 +18,7 @@ class CreateUserSkipDeliveryTable extends Migration
             $table->integer('user_id');
             $table->integer('user_address_id')->nullable();
             $table->integer('subscription_plan_id');
+            $table->integer('varinat_id');
             $table->date('skip_delivery_date');
             $table->timestamps();
         });

@@ -284,7 +284,9 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/mealplan/change_status', 'Admin\MealPlanController@change_status');
     Route::any('edit-mealplan/{id}', 'Admin\MealPlanController@editMealPlan');
     Route::post('/edit-mealplan/edit_update/{id}','Admin\MealPlanController@edit_update');
-
+    Route::post('mealplanvariants/edit', 'Admin\MealPlanController@editArea')->name('mealplanvariants.edit');
+    Route::post('/mealplanvariants/edit_update/{id}','Admin\MealPlanController@edit_update_variants');
+    Route::post('/mealplanvariants-delete','Admin\MealPlanController@meal_plan_delete');
      /*******End Meal Plan Management */
 
  /*******upcoming deliveries Management */

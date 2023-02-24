@@ -737,13 +737,18 @@ class ApiController extends Controller {
                 // ->toArray();
                 
                 ->each(function($selectDietPlan) use($plan_type,$profile) {
-                        // $user_recommended_calorie=2200;
-                        
+                    $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+                    $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
+
+                        $deliveryDay=DeliveryDay::find($plan_type);
                            $subscriptions=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
                           ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions_meal_plans_variants.id as variant_id')
                           ->where('subscriptions_meal_plans_variants.status','active')
-                        //   ->where('subscriptions_meal_plans_variants.meal_plan_id', '!=', $profile->subscription_id)
                           ->where('subscriptions_meal_plans_variants.id', '!=', $profile->variant_id)
+                          ->where('subscriptions_meal_plans_variants.diet_plan_id', $selectDietPlan->id)
+                          ->where('subscriptions_meal_plans_variants.option1',$deliveryDay->type)
+                          ->where('subscriptions_meal_plans_variants.option2',$deliveryDay->including_weekend)
+                          ->where('subscriptions_meal_plans_variants.calorie',$getUerCustomCalorie->recommended)
                           ->get();
                       
                         if($subscriptions){
@@ -753,6 +758,7 @@ class ApiController extends Controller {
                                 $subscription->delivery_day_type="N/A";
                                 // $plan_type= $request->plan_types;
                                 // $plan_type=2;
+                             
                                 $subscription->meal_groups=[];
                                 if(userProfile::where(['variant_id'=>$subscription->variant_id,'subscription_id'=>$subscription->id,'user_id'=>Auth::guard('api')->id()])->exists()){
                                     $subscription->buy_status ="buy";
@@ -763,22 +769,24 @@ class ApiController extends Controller {
                                 }
                                 $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                                 $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
-
+                              
                                 if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id])->get()){
                                     if($plan_type == 1 || $plan_type == 2){
                                         $subscription->delivery_day_type="Week";
                                     }else{
                                         $subscription->delivery_day_type="Month";
                                     }
-                                          $deliveryDay=DeliveryDay::find($plan_type);
+                                        //   $deliveryDay=DeliveryDay::find($plan_type);
 
                 
                                         if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'option1'=>$deliveryDay->type,'option2'=>$deliveryDay->including_weekend])->first()){
                                             // if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
                                           $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->get();
+                                       
                                           foreach($costss as $costs){
-
+                                          
                                           $subscription->cost=$costs['plan_price'];
+                                          $subscription->variant_name=$costs['variant_name'];
                 
                                         $meals=[];
                                         $meal_des=[];
@@ -799,8 +807,8 @@ class ApiController extends Controller {
                                         }
                                      }
                                     //}
-                                }
                                 
+                            }
                             }
                         }
                     
@@ -820,6 +828,7 @@ class ApiController extends Controller {
                    ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
                    ->where('meal_diet_plan.diet_plan_type_id', $dietPlanType->id)
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+                 
                    ->select('meals.id as meal_id','meals.name as meal_name','meals.food_type','image','meals.created_at as date')->get()
                  ->each(function($meals){
                     $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
@@ -828,9 +837,13 @@ class ApiController extends Controller {
                 });       
                 })->toArray(); 
                 $data['our_preview_plan'] = $dietPlanType;
+
+                $oldvariant = userProfile::select('subscription_id','variant_id')->where(['user_id'=>Auth::guard('api')->id()])->first();
+                $data['old_subscription_id'] = $oldvariant->subscription_id;
+                $data['old_variant_id'] = $oldvariant->variant_id;
                 // echo '<pre>';print_r($category);
                 // die;
-
+              
                 $this->message = trans('messages.homescreen_success');
                 $response = new \Lib\PopulateResponse($data);
                 $this->data = $response->apiResponse();
@@ -1346,6 +1359,14 @@ public function addAddress(Request $request){
         'delivery_slot_id.required' => trans('validation.required', ['attribute' => 'delivery slot id  ']),
 
     ]);
+    $validate->after(function ($validate) use ($request) {
+            $countUser = UserAddress::where('user_id',Auth::guard('api')->id())->count();
+            if ($countUser == '3') {
+                $validate->errors()->add('countUser', 'You can not add more than 3 address');
+             
+                
+            }
+    });
     if ($validate->fails()) {
         $this->status_code = 201;
         $this->message = $validate->errors();
@@ -1474,6 +1495,8 @@ public function editAddress(Request $request){
 
       }
 
+      if( UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->where('day_selection_status','inactive')->exists()){
+
       if($request->monday == "1"){
          $data['monday'] = "1";
       }else{
@@ -1514,11 +1537,91 @@ public function editAddress(Request $request){
       }else{
         $data['sunday'] = "0";
       }
+      
+      UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->where('day_selection_status','inactive')->update($data);
+    }else{
 
-        $update = UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->update($data);
-       
-        if($update){
+              if($request->monday == "1"){
+                    $update['monday'] = "0";
+                 }
+           
+                 if($request->tuesday == "1"){
+                   $update['tuesday'] = "0";
+                 }
+           
+                  if($request->wednesday == "1"){
+                   $update['wednesday'] = "0";
+                 } 
+           
+                 if($request->thursday == "1"){
+                   $update['thursday'] = "0";
+                 } 
+        
+                 if($request->friday == "1"){
+                   $update['friday'] = "0";
+                 } 
+           
+                 if($request->saturday == "1"){
+                   $update['saturday'] = "0";
+                 } 
+           
+                 if($request->sunday == "1"){
+                   $update['sunday'] = "0";
+                 }
+
+                 if(UserAddress::where('user_id',Auth::guard('api')->id())->where('id','!=', $request->address_id)->where('day_selection_status','active')->exists()){
+                    $updateDay=UserAddress::where('user_id',Auth::guard('api')->id())->where('id','!=', $request->address_id)->where('day_selection_status','active')->update($update);
+                 }
+
+                 if( UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->where('day_selection_status','active')->exists()){
+
+                    if($request->monday == "1"){
+                       $data['monday'] = "1";
+                    }else{
+                      $data['monday'] = "0";
+                    }
+              
+                    if($request->tuesday == "1"){
+                      $data['tuesday'] = "1";
+                    }else{
+                      $data['tuesday'] = "0";
+                    }
+              
+                     if($request->wednesday == "1"){
+                      $data['wednesday'] = "1";
+                    } else{
+                      $data['wednesday'] = "0";
+                    }
+              
+                    if($request->thursday == "1"){
+                      $data['thursday'] = "1";
+                    } else{
+                      $data['thursday'] = "0";
+                    }
+                    if($request->friday == "1"){
+                      $data['friday'] = "1";
+                    } else{
+                      $data['friday'] = "0";
+                    }
+              
+                    if($request->saturday == "1"){
+                      $data['saturday'] = "1";
+                    } else{
+                      $data['saturday'] = "0";
+                    }
+              
+                    if($request->sunday == "1"){
+                      $data['sunday'] = "1";
+                    }else{
+                      $data['sunday'] = "0";
+                    }
+                    
+                    UserAddress::where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->where('day_selection_status','active')->update($data);
+                  }
+                }
+
          $data = UserAddress::select('id as user_address_id' ,'user_address.*')->where('id',$request->user_address_id)->where('user_id',Auth::guard('api')->id())->get();
+        if($data){
          $response = new \Lib\PopulateResponse($data);
          $this->data = $response->apiResponse();
          $this->message = trans('messages.update_address');
@@ -1533,7 +1636,7 @@ public function editAddress(Request $request){
 
 
 public function addressListing(Request $request) {
-  
+   
      $address_data = UserAddress::where('user_address.user_id', Auth::guard('api')->id())->where('user_address.status','active')
    ->select('user_address.id as address_id','user_address.*','delivery_slots.*' )
    ->join('delivery_slots', 'delivery_slots.id','=','user_address.delivery_slot_id')
@@ -1542,6 +1645,9 @@ public function addressListing(Request $request) {
    ->get();
 
    $data = $address_data;
+   
+
+   
    if($data){
        $this->status = true;
        $this->message = trans('messages.address_detail');
@@ -1933,7 +2039,15 @@ public function select_delivery_location(Request $request) {
 }
 
 public function resume_meal_plan(Request $request) {
+    $getOldWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2','option1')->where(['meal_plan_id'=>$request->old_subscription_plan_id,'id'=>$request->old_variant_id])->first();
+    $getNewWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2','option1')->where(['meal_plan_id'=>$request->subscription_plan_id,'id'=>$request->variant_id])->first();
+if($getOldWeekend->option1 == 'monthly'  && $getNewWeekend->option1 == 'weekly'){
+  return response()->json([
+    'status' => true,
+    'error'  => "You can not switch plan from monthly to weekly",
 
+  ]);
+}else{
 if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id'=>$request->variant_id])->exists()){
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
@@ -1954,8 +2068,11 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
     }else{
         Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
     }
-  
+  $data->pay = '';
 }else{
+     $oldStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->where('delivery_status','paused')->first();
+    $getWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2')->where(['meal_plan_id'=>$request->subscription_plan_id,'id'=>$request->variant_id])->first();
+    
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'plan_id' => $request->subscription_plan_id,
@@ -1964,48 +2081,55 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
         [
             'plan_id'=> $request->subscription_plan_id,
             'variant_id' => $request->variant_id,
-            'start_date'=> $request->starting_date,
+            'start_date'=> $oldStartDate->start_date,
+            'end_date'=> $oldStartDate->end_date,
+            'is_weekend'=> $getWeekend->option2,
+            'price'=> $getWeekend->plan_price,
+            'resume_date'=> $request->resume_date,
             'delivery_status'=> 'active',
 
         ]
     );
-    Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
+    Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted','plan_status'=>'plan_inactive']);
     
     if(!empty($request->old_subscription_plan_id)){
         $getAvailableCredit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
        if($getAvailableCredit){
                $newPlanPrice = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->subscription_plan_id, 'id' => $request->variant_id,])->first();
                 $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->old_subscription_plan_id,'id'=>$request->old_variant_id])->first();
-                 $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
-                  $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
+                   $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
+                   $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
-              $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+              $oldDate = Subscription::select('start_date','no_of_days_pause_plan')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
               $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
-               $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
+                $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
                 $old_pause_date = Carbon::createFromFormat('Y-m-d',$pause_date->pause_date);
-                $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
+                 $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
                 $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
 
-                $newDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id,'delivery_status'=>'active'])->first();
-                $dates = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
-                $next_date = $dates->addDays($remainingDayFromOldPlan);
+                 $resumeDaysMinus = $remainingDayFromOldPlan - $oldDate->no_of_days_pause_plan;
+                   $totalDays = $resumeDaysMinus + $oldDate->no_of_days_pause_plan;
+
+                $newDate = Subscription::select('resume_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
+                $dates = Carbon::createFromFormat('Y-m-d',$newDate->resume_date);
+                $next_date = $dates->addDays($totalDays);
 
               
-               $new_date = Carbon::createFromFormat('Y-m-d',$newDate->start_date);
+               $new_date = Carbon::createFromFormat('Y-m-d',$newDate->resume_date);
                // $old_date = Carbon::createFromFormat('Y-m-d',$next_date);
-                $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
+                  $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
                //  $remaingDaysOfPlan = $oldNumberOfDays->no_days-$usedPlanForDays;
-                $getRequiredAmount = $perDayRequiredCredit*$usedPlanForDays;
-                $UserPay = $getRequiredAmount-$getAvailableCredit->available_credit;
+                  $totalRequiredAmountForRemainingDay = $perDayRequiredCredit*$usedPlanForDays;
+                 $totalRequiredAmountForRemainingDayOldPlan = $perDayRequiredCreditForOldPlan*$usedPlanForDays;
+                $UserPay = $totalRequiredAmountForRemainingDay-$getAvailableCredit->available_credit;
                    $data['pay'] = $UserPay;
               }else{
                    $data['pay'] = '';
               }
               
        }
-     }
-     
-}
+     }   
+   }
     if($data){
         UserProfile::updateOrCreate(
             ['user_id' =>  Auth::guard('api')->id(),
@@ -2018,7 +2142,9 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
 
             ]
         );
-             $diff = Carbon::parse($data->resume_date)->diffInDays(Carbon::parse($data->pause_date));
+        $oldStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+         $newstart_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
+          $diff = Carbon::parse($newstart_date->resume_date)->diffInDays(Carbon::parse($oldStartDate->pause_date));
                Subscription::updateOrCreate(
                    ['user_id' =>  Auth::guard('api')->id(),
                    'plan_id' => $request->subscription_plan_id,
@@ -2031,7 +2157,34 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
                    ]
                );
     }
-     
+    $newresume_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
+    $oldstart_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+    $noOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->old_subscription_plan_id, 'id' => $request->old_variant_id,])->first();
+     $dates = Carbon::createFromFormat('Y-m-d',$oldstart_date->start_date);
+     $pausedates = Carbon::createFromFormat('Y-m-d',$oldstart_date->pause_date);
+     $resumeDated = Carbon::createFromFormat('Y-m-d',$newresume_date->resume_date);
+      $diffnowpausedate = now()->diffInDays(Carbon::parse($pausedates));
+      $date = $dates->addDays($noOfDays->no_days);
+     if(now()->gte($pausedates) && now()->lt($resumeDated )){
+           $diffrsuemdays = now()->diffInDays(Carbon::parse($newresume_date->resume_date));
+           $currentToNowDiff = now()->diffInDays(Carbon::parse($date));
+           $diff = $currentToNowDiff - $diffrsuemdays;
+     }else{
+          $diff = now()->diffInDays(Carbon::parse($date));
+     }
+   
+      if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->where(['plan_status'=>'plan_active'])->exists());
+      {
+        $dayResume = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+        $data->remaining_days = $diff+$dayResume->no_of_days_pause_plan;
+      }
+      if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->exists());
+      {
+        $dayResume = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->first();
+        $data->remaining_days = $diff+$dayResume->no_of_days_pause_plan;
+      }
+   
+    
     if($data){
     $response = new \Lib\PopulateResponse($data);
     $this->data = $response->apiResponse();
@@ -2042,6 +2195,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
     }
     $this->status = true;
     return $this->populateResponse();
+}
 }
 
 public function meal_plan_listing(Request $request){
@@ -2621,5 +2775,278 @@ public function helpSupport(Request $request)
         }
         return $this->populateResponse();
     } 
+
+
+    public function mantainAddressStatus(request $request) {
+
+        $address_id = $request->address_id;
+        $unselect_address_id = $request->unselect_address_id;
+        if(!empty($address_id)){
+         $active_address =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->count();
+         if($active_address == '2'){
+             return response()->json([
+                    'status' => true,
+                     'error'=> 'You can select only 2 address for delivery'
+                ]);
+         }
+         $getDayDetail =UserAddress::where(['id'=>$request->address_id,'user_id'=>Auth::guard('api')->id()])->first();
+         if($getDayDetail->monday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->monday == $getAllDayDetails->monday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['monday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect monday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->tuesday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->tuesday == $getAllDayDetails->tuesday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['tuesday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect tuesday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->wednesday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->wednesday == $getAllDayDetails->wednesday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['wednesday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect wednesday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->thursday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->thursday == $getAllDayDetails->thursday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['thursday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect thursday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->friday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->friday == $getAllDayDetails->friday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['friday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect friday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->saturday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->saturday == $getAllDayDetails->saturday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['saturday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect saturday first'
+                // ]);
+               }
+            }
+           }
+        }
+        if($getDayDetail->sunday=='1'){
+            $getAllDayDetail =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+            $getAllDayDetails = [];
+           if(!empty($getAllDayDetail))
+           {
+            foreach($getAllDayDetail as $getAllDayDetails)
+            {
+                if($getDayDetail->sunday == $getAllDayDetails->sunday){
+                    $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['sunday'=>'0']);
+                // return response()->json([
+                //     'status' => true,
+                //      'error'=> 'Please unselect sunday first'
+                // ]);
+               }
+            }
+           }
+        }
+
+          if($address_id){
+            $updateVaccine=UserAddress::where(['id'=>$address_id,'user_id'=>Auth::guard('api')->id()])->update(['day_selection_status'=>'active']);
+          }
+        }
+          if($unselect_address_id){
+            $updateVaccine=UserAddress::where(['id'=>$unselect_address_id,'user_id'=>Auth::guard('api')->id()])->update(['day_selection_status'=>'inactive']);
+          }
+        
+        $this->message = trans('messages.status_update');
+        $this->status = true;
+        
+        return $this->populateResponse();
+    }
+    
+    
+
+    public function checkDaySelectedOrNot(Request $request){
+
+        if($request->monday == "1"){
+            $data['monday'] = "1";
+         }
+   
+         if($request->tuesday == "1"){
+           $data['tuesday'] = "1";
+         }
+   
+          if($request->wednesday == "1"){
+           $data['wednesday'] = "1";
+         } 
+   
+         if($request->thursday == "1"){
+           $data['thursday'] = "1";
+         }
+
+         if($request->friday == "1"){
+           $data['friday'] = "1";
+         } 
+   
+         if($request->saturday == "1"){
+           $data['saturday'] = "1";
+         } 
+   
+         if($request->sunday == "1"){
+           $data['sunday'] = "1";
+         }
+
+
+         if($request->monday == "0"){
+            $data['monday'] = "0";
+         }
+   
+         if($request->tuesday == "0"){
+           $data['tuesday'] = "0";
+         }
+   
+          if($request->wednesday == "0"){
+           $data['wednesday'] = "0";
+         } 
+   
+         if($request->thursday == "0"){
+           $data['thursday'] = "0";
+         }
+
+         if($request->friday == "0"){
+           $data['friday'] = "0";
+         } 
+   
+         if($request->saturday == "0"){
+           $data['saturday'] = "0";
+         } 
+   
+         if($request->sunday == "0"){
+           $data['sunday'] = "0";
+         }
+           if(UserAddress::where(['id'=>$request->address_id,'user_id'=>Auth::guard('api')->id()])->where('day_selection_status','active')->exists()){
+
+            $updateVaccine=UserAddress::where(['id'=>$request->address_id,'user_id'=>Auth::guard('api')->id()])->update($data);
+           }else{
+
+            return response()->json([
+                'status' => true,
+                 'error'=> 'Please select an address'
+            ]);
+
+           }
+                if($request->monday == "1"){
+                    $update['monday'] = "0";
+                 }
+           
+                 if($request->tuesday == "1"){
+                   $update['tuesday'] = "0";
+                 }
+           
+                  if($request->wednesday == "1"){
+                   $update['wednesday'] = "0";
+                 } 
+           
+                 if($request->thursday == "1"){
+                   $update['thursday'] = "0";
+                 } 
+        
+                 if($request->friday == "1"){
+                   $update['friday'] = "0";
+                 } 
+           
+                 if($request->saturday == "1"){
+                   $update['saturday'] = "0";
+                 } 
+           
+                 if($request->sunday == "1"){
+                   $update['sunday'] = "0";
+                 }
+               
+                 if(UserAddress::where('user_id',Auth::guard('api')->id())->where('id','!=', $request->address_id)->where('day_selection_status','active')->exists()){
+                    $updateDay=UserAddress::where('user_id',Auth::guard('api')->id())->where('id','!=', $request->address_id)->where('day_selection_status','active')->update($update);
+        
+                     }
+
+
+       $this->status = true; 
+       $this->message = trans('messages.day_update');
+   
+       return $this->populateResponse();
+   }
+
+ public function updateTimeSlotFromAddress(Request $request) {
+
+   $address_id = $request->address_id;
+  $delivery_slot_id = $request->delivery_slot_id;
+
+   if(!empty($address_id)){
+    $updateDay=UserAddress::where('user_id',Auth::guard('api')->id())->where('id', $request->address_id)->where('day_selection_status','active')->update(['delivery_slot_id'=>$delivery_slot_id]);
+   }
+
+    $this->status = true;
+    $this->message = trans('messages.time_slot_update');
+    return $this->populateResponse();
+}
 
 }

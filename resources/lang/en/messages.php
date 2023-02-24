@@ -68,6 +68,10 @@ return [
 	'unskip_delivery'=>'Your delivery unskip successfully',
 	'date_update'=>'Plan date update successfully',
 	'update_diet_plan'=>'Diet plan update successfully',
+	'status_update'=>'address select successfully',
+	'day_update'=>'Day update successfully',
+	'time_slot_update'=>'Time slot update successfully',
+	'update_recommended'=>' update successfully',
 ];
 
 ?>

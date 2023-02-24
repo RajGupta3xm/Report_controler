@@ -23,7 +23,7 @@ class IngredientController extends Controller
              $data['group'] = DislikeGroup::select('*')->orderBy('id','desc')->get();
              $data['category'] = DislikeCategory::select('*')->orderBy('id','desc')->get();
              $data['unit'] = Unit::select('*')->orderBy('id','desc')->get();
-             $data['ingredient'] = DislikeItem::with('group','category','unit')->select('*')->orderBy('id','desc')->get();
+             $data['ingredient'] = DislikeItem::with('group','category','unit')->select('*')->orderBy('name')->get();
 
              $data['groups'] = DislikeGroup::select('*')->orderBy('id','desc')->where('status','active')->get();
              $data['categorys'] = DislikeCategory::select('*')->orderBy('id','desc')->where('status','active')->get();

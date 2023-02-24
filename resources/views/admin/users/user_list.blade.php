@@ -94,18 +94,14 @@
                                             @endphp
                                            <td>{{$totalOrder}}</td> 
                                            <td>22</td> 
-                                           @php
-                                                $deliveryLocationOne =\App\Models\UserAddress::where(['user_id'=>$user->id, 'status'=>'active'])->get();
-                                               
-                                            @endphp
-                                            @foreach($deliveryLocationOne as $key1=> $deliveryLocationOnes)
-                                            @if($key1 == 0)
-                                           <td>{{$deliveryLocationOnes['area'] ?? '-' }}</td>
+                                           @foreach($user->user_address as $ke=>$address)
+                                           @if ( $loop->index == 0)
+                                           <td>{{$address['area']}}</td>
                                            @endif
-                                           @if($key1 == 1)
-                                           <td>{{$deliveryLocationOnes['area'] ?? '-' }}</td>
+                                           @if ( $loop->index != 0)
+                                           <td>{{$address['area'] ?: '' }}</td>
                                            @endif
-                                            @endforeach
+                                           @endforeach
                                            <td>
                                            Active
                                            </td> 

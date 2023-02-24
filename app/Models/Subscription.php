@@ -13,7 +13,9 @@ class Subscription extends Model
     	'variant_id',
     	'start_date',
     	'pause_date',
+		'switch_plan_start_date',
     	'resume_date',
+    	'end_date',
     	'no_of_days_pause_plan',
     	'no_of_days_resume_plan',
     	'is_weekend',
@@ -23,6 +25,7 @@ class Subscription extends Model
     	'total_amount',
     	'delivery_status',
     	'status',
+    	'plan_status',
 
    	];
 

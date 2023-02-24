@@ -31,9 +31,16 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" action="{{url('admin/fleetarea/submit')}}" method="post" id="addForm">
                                                             @csrf
+                                                           
                                                             <div class="form-group mb-0 col">
+                                                            <select id='selUser'class="form-select table_input table_select adjust_lenth selUser " name="area">
+                                                        
+                                                    
+                                                          <!-- <option value=''></option>  -->
+                                                     
+                                                          </select>
                                                                 <label for="">Area (En)</label>
-                                                                <input class="form-control validate" value="lorem" type="text" name="area">
+                                                                <input class="form-control validate google"  id="search_box" type="text" >
                                                                 <p class="text-danger text-small" id="areaError"></p>
                                                             </div>
                                                             <div class="form-group mb-0 col">
@@ -41,16 +48,17 @@
                                                                 <input class="form-control validate" value=" عربى" type="text" name="area_ar">
                                                                 <p class="text-danger text-small" id="area_arError"></p>
                                                             </div>
-                                                            <div class="form-group mb-0 col">
+                                                            <div class="form-group col-4">
                                                                 <label for="">Slot</label>
-                                                                <select class="form-select multiple-select-custom-field" aria-label="Default select example" data-placeholder="Please Select Slot" multiple name="delivery_slot_id[]">
+                                                                <select class="form-select form-control" aria-label="Default select example" name="delivery_slot_id">
+                                                                    <option value="">Select Slot</option>
                                                                     @foreach(\App\Models\DeliverySlot::get() as $value)
                                                                         <option value="{{$value->id}}">{{$value->name}}</option>
                                                                     @endforeach
                                                                 </select>
-
                                                             </div>
-                                                            <div class="form-group mb-0 col-auto">
+
+                                                            <div class="form-group col-2">
                                                                 <button class="comman_btn" type="button" onclick="validate(this);">Save</button>
                                                             </div>
                                                         </form>
@@ -85,22 +93,25 @@
                                                                                 <td>
                                                                                     <form action="">
                                                                                         <div class="form-group">
-                                                                                            <select class="form-select multiple-select-custom-field driverselection" aria-label="Default select example" multiple="multiple" data-placeholder="Please Select Driver" data-id="{{$area->id}}">
+                                                                                            <select class="form-select select_tabls" aria-label="Default select example" name="staff_ids" style="width: 200px !important;">
+                                                                                                <option value="">Select Driver Group</option>
                                                                                                 @foreach(\App\Models\StaffMembers::wherehas('group',function ($q){
-                                                                                                            $q->where('name','=','Driver');
-                                                                                                        })->get() as $value)
-                                                                                                    <option value="{{$value->id}}"  @if(is_array(json_decode($area->staff_ids)))@if(in_array($value->id,json_decode($area->staff_ids))) selected @endif @endif>{{$value->name}}</option>
+                                                                                                                                               $q->where('name','=','Driver');
+                                                                                                                                           })->get() as $value)
+                                                                                                    <option value="{{$value->id}}" @if($area->staff_ids == $value->id)selected @endif>{{$value->name}}</option>
                                                                                                 @endforeach
                                                                                             </select>
+
                                                                                         </div>
                                                                                     </form>
                                                                                 </td>
                                                                                 <td>
                                                                                     <form action="">
-                                                                                        <div class="form-group multiple_select_design">
-                                                                                            <select class="form-select multiple-select-custom-field deliveryslot" aria-label="Default select example" data-placeholder="Please Select Slot" multiple data-id="{{$area->id}}">
+                                                                                        <div class="form-group">
+                                                                                            <select class="form-select slot_select" aria-label="Default select example" name="delivery_slot_id" style="width: 200px !important;">
+                                                                                                <option value="">Select Slot</option>
                                                                                                 @foreach(\App\Models\DeliverySlot::get() as $value)
-                                                                                                    <option value="{{$value->id}}"  @if(is_array(json_decode($area->delivery_slot_ids)))@if(in_array($value->id,json_decode($area->delivery_slot_ids))) selected @endif @endif>{{$value->name}}</option>
+                                                                                                    <option value="{{$value->id}}" @if($area->delivery_slot_ids==$value->id) selected @endif>{{$value->name}}</option>
                                                                                                 @endforeach
                                                                                             </select>
                                                                                         </div>
@@ -156,10 +167,73 @@
             </div>
         </div>
     </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+      $(document).ready(function(){
+ 
+ // Initialize select2
+ $(".selUser").select2();
 
+ // Read selected option
+ $('#but_read').click(function(){
+     var username = $('#selUser option:selected').text();
+     var userid = $('#selUser').val();
+
+     $('#result').html("id : " + userid + ", name : " + username);
+
+ });
+})
+    </script>
+<script>
+    $('.google').on('change',function(e){
+    var id2 = document.getElementById('search_box').value
+ alert(id2);
+ if(id2){
+    $.ajax({
+ 
+ // Our sample url to make request 
+ url: 
+'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBfnznJ2gE8vjoNP6f3pYzeRxzd-Ha5Yo8&input='+id2,
+
+ // Type of Request
+ type: "GET",
+
+ // Function to call when to
+ // request is ok 
+ success: function (data) {
+    $.each(data.predictions, function (key, value) {
+        $("#selUser").append($("<option></option>")
+                    .attr("value",JSON.stringify(value))
+                    .text(JSON.stringify(value))); 
+
+            // $("#selUser").append('<option value='+JSON.stringify(value)+'>'+JSON.stringify(value)+'</option>' );  
+
+           
+        });
+        console.log(JSON.stringify(value));
+   
+  
+    //  var x = JSON.stringify(data.predictions[0].terms);
+     
+     console.log(data);
+ },
+    
+ // Error handling 
+ error: function (error) {
+     console.log(`Error ${error}`);
+ }
+});
+}
+});
+
+
+   
+</script>
 @endsection
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 
 <script>
     $(document).ready(function() {

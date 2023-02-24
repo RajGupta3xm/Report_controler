@@ -112,12 +112,18 @@ class MealPlanController extends Controller {
             $url = url('/uploads/meal_image/');
             $images = $url.'/'. $imageName;
         }
-        $meal_plan=SubscriptionPlan::create([
-             'name'=>$request->title,
-             'name_ar'=>$request->title_ar,
-             'image'=>$images,
+        $is_section=SubscriptionPlan::where('name',$request->title)->first();
+        if ($is_section) {
+            return back()->with('error','Meal Plan name already exists');
+        }else{
+            $meal_plan=SubscriptionPlan::create([
+                'name'=>$request->title,
+                'name_ar'=>$request->title_ar,
+                'image'=>$images,
 
-        ]);
+            ]);
+        }
+
         if(isset($request->variant_name_hidden)){
             foreach ($request->variant_name_hidden as $key=>$value){
                 $meal_variant=SubscriptionMealPlanVariant::create([
@@ -139,7 +145,7 @@ class MealPlanController extends Controller {
             }
 
         }
-        if(count($request->meal_group_name) > 0){
+        if(isset($request->meal_group_name) && count($request->meal_group_name) > 0){
             foreach (array_unique($request->meal_group_name) as $value){
                 SubscriptionMealGroup::create([
                     'plan_id'=>$meal_plan->id,
@@ -150,7 +156,8 @@ class MealPlanController extends Controller {
 
 
 
-        if(count($request->plan_date) > 0){
+        if(isset($request->plan_date) && count($request->plan_date) > 0){
+
             foreach ($request->plan_date as $key=>$value){
 
 
@@ -193,27 +200,65 @@ class MealPlanController extends Controller {
         }
     }
 
+    public function editArea(Request $request){
+
+        $clients=SubscriptionMealPlanVariant::where('id',$request->tour_id)->first();
+        $returnHTML =view('admin.MealPlan.editvariants', compact('clients'))->render();
+        return response()->json(['html'=>$returnHTML]);
+
+    }
+
+    public function edit_update_variants($id,Request $request){
+        $is_section=SubscriptionMealPlanVariant::where('variant_name',$request->variant_name)->first();
+        if ($is_section) {
+            return back()->with('error','Variant name already exists');
+        }else{
+            SubscriptionMealPlanVariant::where('id',$id)->update([
+                'diet_plan_id'=>$request->diet_plan,
+                'variant_name'=>$request->variant_name,
+                'meal_group_name'=> implode(',', $request->staff_ids),
+                'option1'=>$request->option1,
+                'option2'=>$request->option2,
+                'no_days'=>$request->no_of_days,
+                'calorie'=>$request->calorie,
+                'serving_calorie'=>$request->serving_calorie,
+                'delivery_price'=>$request->delivery_price,
+                'plan_price'=>$request->plan_price,
+                'compare_price'=>$request->compare_price,
+                'custom_text'=>$request->description,
+            ]);
+            return redirect()->back()->with('success','Variant updated successfully');
+        }
+
+    }
+
     public function edit_update($id,Request $request){
         $id = base64_decode($id);
-        $meal_plan=SubscriptionPlan::find($id);
-if(isset($request->images)){
-    $filename = $request->images->getClientOriginalName();
-    $imageName = time().'.'.$filename;
-    if(env('APP_ENV') == 'local'){
-        $return = $request->images->move(
-            base_path() . '/public/uploads/meal_image/', $imageName);
-    }
-    $url = url('/uploads/meal_image/');
-    $images = $url.'/'. $imageName;
-    $meal_plan->image=$images;
-}else{
-    $meal_plan->image=$request->images_hidden;
-}
+        $is_section=SubscriptionPlan::where('id','!=',$id)->where('name',$request->title)->first();
+        if ($is_section) {
+            return back()->with('error','Meal Plan name already exists');
+        }else{
+            $meal_plan=SubscriptionPlan::find($id);
+            if(isset($request->images)){
+                $filename = $request->images->getClientOriginalName();
+                $imageName = time().'.'.$filename;
+                if(env('APP_ENV') == 'local'){
+                    $return = $request->images->move(
+                        base_path() . '/public/uploads/meal_image/', $imageName);
+                }
+                $url = url('/uploads/meal_image/');
+                $images = $url.'/'. $imageName;
+                $meal_plan->image=$images;
+            }else{
+                $meal_plan->image=$request->images_hidden;
+            }
 
-$meal_plan->name=$request->title;
-$meal_plan->name_ar=$request->title_ar;
+            $meal_plan->name=$request->title;
+            $meal_plan->name_ar=$request->title_ar;
 
-$meal_plan->save();
+            $meal_plan->save();
+        }
+
 
         if(isset($request->variant_name_hidden)){
             foreach ($request->variant_name_hidden as $key=>$value){
@@ -262,6 +307,17 @@ $meal_plan->save();
             }
         }
         return redirect('admin/meal-plan-management')->with('success', ' Update successfully.');
+    }
+
+    public function meal_plan_delete(Request $request ){
+        $id = $request->input('id');
+        $ingredient_delete = SubscriptionMealPlanVariant::find($id);
+        $delete = $ingredient_delete->delete();
+        if ($delete) {
+            return response()->json(['status' => true, 'error_code' => 200, 'message' => 'meal plan variant deleted successfully']);
+        } else {
+            return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting meal plan variant']);
+        }
     }
 
 }

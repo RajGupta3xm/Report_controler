@@ -160,19 +160,19 @@
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Calories</label>
-                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->calori_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->calori_per_day:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Protein</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->protein_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->protein_per_day:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Carbs</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->carbs_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->carbs_per_day:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Fat</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->fat_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->fat_per_day:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                    </div>
                                                 </div>
@@ -209,12 +209,12 @@
                                                          <tbody>
                                                            <tr>
                                                              <td>1</td>   
-                                                             <td>{{$user_current_plan['name'] ?: '-'}}</td>   
-                                                             <td>{{$user_current_plan['order_id'] ?: '-' }}</td>   
-                                                             <td>{{$user_current_plan['plan_price'] ?: '-' }}/<?php if($user_current_plan['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>   
-                                                             <td>{{$user_current_plan['puchase_on'] ?: '-' }}</td>   
-                                                             <td>{{$user_current_plan['expired_on'] ?: '-' }}</td>   
-                                                             <td>{{$user_current_plan['available_credit'] ?: '-' }} SAR</td>   
+                                                             <td>{{$user_current_plan['name'] ?: '--'}}</td>   
+                                                             <td>{{$user_current_plan['order_id'] ?: '--' }}</td>   
+                                                             <td>{{$user_current_plan['plan_price'] ?: '--' }}/<?php if($user_current_plan['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>   
+                                                             <td>{{$user_current_plan['puchase_on'] ?: '--' }}</td>   
+                                                             <td>{{$user_current_plan['expired_on'] ?: '--' }}</td>   
+                                                             <td>{{$user_current_plan['available_credit'] ?: '--' }} SAR</td>   
                                                              <td>
                                                              <div class="mytoggle">
                                                                 <label class="switch">

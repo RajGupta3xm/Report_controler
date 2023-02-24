@@ -112,10 +112,10 @@
                                            <td>{{$users_order->mobile}}</td>
                                            <td>{{date('d-m-Y',strtotime($users_order->start_date))}}</td>
                                            <td>{{$users_order->order_id}}</td>
-                                           @foreach($users_order->get_plan as $plan)
-                                           <td>{{$plan->name}}</td>
-                                           <td>{{$plan->option1}}</td>
-                                           @endforeach
+                                        
+                                           <td>{{$users_order->name}}</td>
+                                           <td>{{$users_order->option1}}</td>
+
                                            <td>
                                            <a class="comman_btn table_viewbtn" href="{{url('admin/user-details/'.base64_encode($users_order->id))}}">View</a>
                                           </td>

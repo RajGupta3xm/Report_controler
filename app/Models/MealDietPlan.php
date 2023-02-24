@@ -11,6 +11,9 @@ class MealDietPlan extends Model
         "meal_id",
         "diet_plan_type_id",
         "status",
-
     ];
+
+    public function meal_items(){
+        return $this->belongsTo(Meal::class,'meal_id','id');
+    }
 }

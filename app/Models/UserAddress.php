@@ -27,6 +27,9 @@ class UserAddress extends Model
         "friday",
         "saturday",
         "sunday",
+        "status",
+        "day_selection_status",
+
 
 
 

@@ -19,6 +19,7 @@ class CreateUserSkipTimeSlotTable extends Migration
             $table->integer('user_address_id')->nullable();
             $table->integer('delivery_slot_id');
             $table->integer('subscription_plan_id');
+            $table->integer('variant_id');
             $table->date('skip_date');
             $table->timestamps();
         });

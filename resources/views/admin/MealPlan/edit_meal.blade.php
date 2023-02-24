@@ -4,6 +4,19 @@
     <div class="admin_main">
         <div class="admin_main_inner">
             <div class="admin_panel_data height_adjust">
+                @if(session()->has('success'))
+                    <div class="alert alert-success">
+                        <strong class="close" data-dismiss="alert " aria-hidden="true"></strong>
+                        {{ session()->get('success') }}
+                    </div>
+                @else
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger">
+                            <strong class="close" ></strong>
+                            {{ session()->get('error') }}
+                        </div>
+                    @endif
+                @endif
                 <div class="row addmeal_plann justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
@@ -208,15 +221,16 @@
                                         <div class="col-12 comman_table_design mb-4 New_tabledesign">
                                             <div class="row mx-0">
                                                 <div class="col-12 default_meal_selection border">
-                                                    <div class="row comman_header justify-content-between rounded-top">
+                                                    <div class="row comman_header mx-0 justify-content-between rounded-top">
                                                         <div class="col">
                                                             <h2>Default Meal Selection</h2>
                                                         </div>
                                                     </div>
                                                     <div class="row mx-0">
-                                                        <div class="col-12 px-0 text-center" id="main">
+                                                        <div class="col-12 px-0 text-center">
                                                             <nav>
                                                                 <div class="mealoutter_tabs nav nav-tabs border-0 justify-content-center shadow d-inline-flex" id="nav-tab" role="tablist">
+
                                                                     @foreach($dates as $key=> $date)
                                                                         <button class="nav-link @if($key==0)active @endif" id="nav-home-tab{{$key}}" data-bs-toggle="tab" data-bs-target="#nav-home{{$key}}" type="button" role="tab" aria-controls="nav-home" aria-selected="true" data-value="{{$date}}">
                                                                             {{\Carbon\Carbon::parse($date)->format('d-F')}}</button>
@@ -226,70 +240,90 @@
                                                             </nav>
                                                             <div class="tab-content mt-4" id="nav-tabContent">
                                                                 @foreach($dates as $key=> $date)
-                                                                    <div class="tab-pane fade @if($key==0)active show @endif" id="nav-home{{$key}}" role="tabpanel" aria-labelledby="nav-home-tab{{$key}}">
-                                                                        <div class="row meal_innerpart">
+                                                                    <div class="tab-pane fade @if($key==0)active show @endif" id="nav-home{{$key}}" role="tabpanel" aria-labelledby="nav-home-tab">
+                                                                        <div class="row meal_innerpart justify-content-center">
                                                                             <div class="col-12 text-center">
-                                                                                <ul class="nav nav-tabs mealinner_tabs d-inline-flex justify-content-center rounded-pill shadow overflow-hidden" id="myTab" role="tablist">
-
-                                                                                    @foreach($edit_mealPlan->meal_schedule as $key1=> $group)
-
-                                                                                        @php
-                                                                                            $schedule=\App\Models\MealSchedules::where('id',$group->meal_schedule_id)->first();
-                                                                                        @endphp
-                                                                                        <li class="nav-item" role="presentation">
-                                                                                            <button class="nav-link @if($key1==0)active @endif" id="home-tab{{$key}}{{$schedule->id}}" data-bs-toggle="tab" data-bs-target="#home{{$key}}{{$schedule->id}}" type="button" role="tab" aria-controls="home" aria-selected="true" data-value="{{$schedule->id}}">
-                                                                                                {{$schedule->name}}</button>
-                                                                                        </li>
-                                                                                    @endforeach
-
-                                                                                </ul>
-                                                                                <div class="tab-content mt-4" id="myTabContent">
-                                                                                    @foreach($edit_mealPlan->meal_schedule as $key2=> $group)
-
-                                                                                        @php
-                                                                                                $schedule=\App\Models\MealSchedules::where('id',$group->meal_schedule_id)->first();
-                                                                                                $meals=\App\Models\MealGroupSchedule::where('meal_schedule_id',$schedule->id)->get();
-                                                                                        @endphp
-                                                                                        <div class="tab-pane fade @if($key2==0)active show @endif" id="home{{$key}}{{$schedule->id}}" role="tabpanel" aria-labelledby="home-tab{{$key}}{{$schedule->id}}">
+                                                                                <nav>
+                                                                                    <div class="nav nav-tabs justify-content-center mid_tabsdesign border-0" id="nav-tab" role="tablist">
+                                                                                        @foreach(\App\Models\DietPlanType::get() as $key1=>$value)
+                                                                                            <button class="nav-link @if($key1 == 0)active @endif shadow border-0" id="vj1-tab" data-bs-toggle="tab" data-bs-target="#vj1{{$key}}{{$key1}}" type="button" role="tab" aria-controls="vj1" aria-selected="false">{{$value->name}}</button>
+                                                                                        @endforeach
+                                                                                    </div>
+                                                                                </nav>
+                                                                                <div class="tab-content mt-4 pt-2" id="nav-tabContent">
+                                                                                    @foreach(\App\Models\DietPlanType::get() as $key2=>$value)
+                                                                                        <div class="tab-pane fade @if($key2 == 0)active show @endif" id="vj1{{$key}}{{$key2}}" role="tabpanel" aria-labelledby="vj1-tab">
                                                                                             <div class="row">
-                                                                                                <div class="col-12 comman_table_design New_tabledesign">
-                                                                                                    <div class="table-responsive">
-                                                                                                        <table class="table mb-0">
-                                                                                                            <thead>
-                                                                                                            <tr>
-                                                                                                                <th>Item Name</th>
-                                                                                                                <th>Meal Group</th>
-                                                                                                                <th>Default Selection</th>
-                                                                                                            </tr>
-                                                                                                            </thead>
-                                                                                                            <tbody>
-                                                                                                            @foreach($meals as $key3=> $meal)
-                                                                                                                @if(isset($meal->meal_items->name))
-                                                                                                                @php
+                                                                                                <div class="col-12">
+                                                                                                    <ul class="nav nav-tabs mealinner_tabs d-inline-flex justify-content-center rounded-pill shadow overflow-hidden" id="myTab" role="tablist">
+                                                                                                        @foreach($edit_mealPlan->meal_schedule as $key1=> $group)
 
-                                                                                                                        $is_default=\App\Models\SubscriptionMealVariantDefaultMeal::where('meal_plan_id',$group->plan_id)->where('meal_schedule_id',$schedule->id)->where('item_id',$meal->meal_id)->where('date',$date)->where('is_default',1)->first();
+                                                                                                            @php
+                                                                                                                $schedule=\App\Models\MealSchedules::where('id',$group->meal_schedule_id)->first();
+                                                                                                            @endphp
+                                                                                                            <li class="nav-item" role="presentation">
+                                                                                                                <button class="nav-link @if($key1==0)active @endif" id="home-tab" data-bs-toggle="tab" data-bs-target="#home{{$key}}{{$key2}}{{$schedule->id}}" type="button" role="tab" aria-controls="home" aria-selected="true" data-value="{{$schedule->id}}">
+                                                                                                                    {{$schedule->name}}</button>
+                                                                                                            </li>
+                                                                                                        @endforeach
+                                                                                                    </ul>
+                                                                                                    <div class="tab-content mt-4" id="myTabContent">
+                                                                                                        @foreach($edit_mealPlan->meal_schedule as $key3=> $group)
+                                                                                                            @php
+                                                                                                                $day = \Carbon\Carbon::parse($date)->format('l');
+                                                                                                                     $schedule=\App\Models\MealSchedules::where('id',$group->meal_schedule_id)->first();
 
-                                                                                                                        @endphp
-                                                                                                                <tr>
-                                                                                                                <td>{{$meal->meal_items->name??'-'}}</td>
-                                                                                                                    <td>{{$schedule->name}}</td>
-                                                                                                                    <td>
-                                                                                                                        <div class="check_radio td_check_radio">
-                                                                                                                            <input type="checkbox" name="selectionvariant[{{$date}}][{{$schedule->name}}][{{$meal->meal_id}}]" id="t{{$key}}{{$key2}}{{$key3}}{{$schedule->id}}" class="d-none defaultSelection" data-id="1" @if(isset($is_default) && $is_default->is_default == 1) checked @endif>
-                                                                                                                            <label for="t{{$key}}{{$key2}}{{$key3}}{{$schedule->id}}"></label>
+                                                                                                                      $meals_id=\App\Models\MealGroupSchedule::where('meal_schedule_id',$schedule->id)->pluck('meal_id')->toArray();
+
+                                                                                                                      $meals=\App\Models\MealDietPlan::whereIn('meal_id',$meals_id)->where('diet_plan_type_id',$value->id)->pluck('meal_id')->toArray();
+                                                                                                                        $meals=\App\Models\MealWeekDay::whereIn('meal_id',$meals)->where('week_days_id',strtolower($day))->orWhere('week_days_id','=',$date)->get();
+
+                                                                                                            @endphp
+                                                                                                            <div class="tab-pane fade @if($key3==0)active show @endif" id="home{{$key}}{{$key2}}{{$schedule->id}}" role="tabpanel" aria-labelledby="home-tab{{$key}}{{$key2}}{{$schedule->id}}">
+                                                                                                                <div class="row">
+                                                                                                                    <div class="col-12 comman_table_design New_tabledesign">
+                                                                                                                        <div class="table-responsive">
+                                                                                                                            <table class="table mb-0">
+                                                                                                                                <thead>
+                                                                                                                                <tr>
+                                                                                                                                    <th>Item Name</th>
+                                                                                                                                    <th>Meal Group</th>
+                                                                                                                                    <th>Default Selection</th>
+                                                                                                                                </tr>
+                                                                                                                                </thead>
+                                                                                                                                <tbody>
+                                                                                                                                @foreach($meals as $key3=> $meal)
+                                                                                                                                    @if(isset($meal->meal_items->name))
+                                                                                                                                        @php
+
+                                                                                                                                            $is_default=\App\Models\SubscriptionMealVariantDefaultMeal::where('meal_plan_id',$group->plan_id)->where('meal_schedule_id',$schedule->id)->where('item_id',$meal->meal_id)->where('date',$date)->where('is_default',1)->first();
+
+                                                                                                                                        @endphp
+                                                                                                                                        <tr>
+                                                                                                                                            <td>{{$meal->meal_items->name??'-'}}</td>
+                                                                                                                                            <td>{{$schedule->name}}</td>
+                                                                                                                                            <td>
+                                                                                                                                                <div class="check_radio td_check_radio">
+                                                                                                                                                    <input type="checkbox" name="selectionvariant[{{$date}}][{{$schedule->name}}][{{$meal->meal_id}}]" id="t{{$key}}{{$key2}}{{$key3}}{{$schedule->id}}" class="d-none defaultSelection" data-id="1" @if(isset($is_default) && $is_default->is_default == 1) checked @endif>
+                                                                                                                                                    <label for="t{{$key}}{{$key2}}{{$key3}}{{$schedule->id}}"></label>
+                                                                                                                                                </div>
+                                                                                                                                            </td>
+                                                                                                                                        </tr>
+                                                                                                                                    @endif
+                                                                                                                                @endforeach
+                                                                                                                                </tbody>
+                                                                                                                            </table>
                                                                                                                         </div>
-                                                                                                                    </td>
-                                                                                                                </tr>
-                                                                                                                @endif
-                                                                                                            @endforeach
-
-                                                                                                            </tbody>
-                                                                                                        </table>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        @endforeach
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     @endforeach
+
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -303,6 +337,7 @@
                                         </div>
                                     </div>
                                     @if(count($edit_mealPlan->mealplan_variant) > 0)
+
                                         <div class="col-12 comman_table_design mb-4 New_tabledesign" id="variantsShow">
                                             <div class="row mx-0 comman_header justify-content-between rounded-top">
                                                 <div class="col">
@@ -333,6 +368,7 @@
                                                         <th>Plan Enter price</th>
                                                         <th>Compare price</th>
                                                         <th>Description</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody id="tbody">
@@ -347,7 +383,7 @@
 
                                                          </td>
                                                          <td>{{$value1->variant_name}}</td>
-                                                         <td>{{$value1->diet_plan_id}}</td>
+                                                         <td>{{$value1->dietPlan->name}}</td>
                                                          <td>{{$value1->meal_group_name}}</td>
                                                          <td>{{$value1->option1}}</td>
                                                          <td>{{$value1->option2}}</td>
@@ -358,8 +394,54 @@
                                                          <td>{{$value1->plan_price}}</td>
                                                          <td>{{$value1->compare_price}}</td>
                                                          <td>{{$value1->custom_text}}</td>
+                                                             <td>
+                                                                 <a class="comman_btn table_viewbtn showEdit" data-id="{{$value1->id}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javscript:;" >Edit</a>
+                                                                 <a class="comman_btn table_viewbtn delete_btn" onclick="deleteData1(this,'{{$value1->id}}');" href="javscript:;">Delete</a>
+                                                             </td>
                                                          </tr>
                                                      @endforeach
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    @else
+
+                                        <div class="col-12 comman_table_design mb-4 New_tabledesign" id="variantsShow" style="display: none;">
+                                            <div class="row mx-0 comman_header justify-content-between rounded-top">
+                                                <div class="col">
+                                                    <h2>VARIANTS</h2>
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive border rounded-bottom variants_table">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <form class="table_btns d-flex align-items-center justify-content-center">
+                                                                <div class="check_radio">
+                                                                    <input type="checkbox" name="table5" id="table5" class="d-none">
+                                                                    <label for="table5"></label>
+                                                                </div>
+                                                            </form>
+                                                        </th>
+                                                        <th>VARIANT Name</th>
+                                                        <th>Diet plan</th>
+                                                        <th>Meal Group</th>
+                                                        <th>Option 1</th>
+                                                        <th>Option 2</th>
+                                                        <th>No.of Days</th>
+                                                        <th>Calorie</th>
+                                                        <th>Serving Calorie</th>
+                                                        <th>Delivery Price</th>
+                                                        <th>Plan Enter price</th>
+                                                        <th>Compare price</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody id="tbody">
+
 
                                                     </tbody>
                                                 </table>
@@ -538,9 +620,9 @@
                         success:function(data)
                         {
                           //  $('#DefaultSelection').html(data.html);
-                           // $('#variantsShow').css('display','block');
-                            $('#tbody').append('<tr><td><div class="check_radio td_check_radio"><input type="checkbox" checked name="table2" id="table2" class="d-none"><label for="table2"></label></div></td><td>'+variant_name+'</td><td>'+diet_plan_id+'</td><td>'+meal_groups_hidden_name+'</td><td>'+ option1_value+'</td><td>'+option2_value+'</td><td>'+no_of_days+'</td><td>'+calorie_value+'</td><td>'+serving_calorie_value+'</td><td>'+delivery_price_value+'</td><td>'+plan_price_value+'</td><td>'+compare_price_value+'</td><td>'+description_value+'</td><input type="hidden" name="variant_name_hidden[]" value="'+variant_name+'"><input type="hidden" name="diet_plan_hidden[]" value="'+diet_plan+'"><input type="hidden" name="option1_hidden[]" value="'+option1_value+'"><input type="hidden" name="option2_hidden[]" value="'+option2_value+'"><input type="hidden" name="no_of_days_hidden[]" value="'+no_of_days+'"><input type="hidden" name="serving_calorie_hidden[]" value="'+serving_calorie_value+'"><input type="hidden" name="meal_groups_hidden_name[]" value="'+meal_groups_hidden_name+'"><input type="hidden" name="calorie_hidden[]" value="'+calorie_value+'"><input type="hidden" name="delivery_price_hidden[]" value="'+delivery_price_value+'"><input type="hidden" name="plan_price_hidden[]" value="'+plan_price_value+'"><input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'"><input type="hidden" name="is_charge_vat_hidden[]" value="'+is_charge_vat+'"><input type="hidden" name="description_value_hidden[]" value="'+description_value+'"></tr>');
-                            alert('Plan Added Successfully');
+                           $('#variantsShow').css('display','block');
+                           $('#tbody').append('<tr><td><div class="check_radio td_check_radio"><input type="checkbox" checked name="table2" id="table2" class="d-none"><label for="table2"></label></div></td><td>'+variant_name+'</td><td>'+diet_plan_id+'</td><td>'+meal_groups_hidden_name+'</td><td>'+ option1_value+'</td><td>'+option2_value+'</td><td>'+no_of_days+'</td><td>'+calorie_value+'</td><td>'+serving_calorie_value+'</td><td>'+delivery_price_value+'</td><td>'+plan_price_value+'</td><td>'+compare_price_value+'</td><td>'+description_value+'</td><input type="hidden" name="variant_name_hidden[]" value="'+variant_name+'"><input type="hidden" name="diet_plan_hidden[]" value="'+diet_plan+'"><input type="hidden" name="option1_hidden[]" value="'+option1_value+'"><input type="hidden" name="option2_hidden[]" value="'+option2_value+'"><input type="hidden" name="no_of_days_hidden[]" value="'+no_of_days+'"><input type="hidden" name="serving_calorie_hidden[]" value="'+serving_calorie_value+'"><input type="hidden" name="meal_groups_hidden_name[]" value="'+meal_groups_hidden_name+'"><input type="hidden" name="calorie_hidden[]" value="'+calorie_value+'"><input type="hidden" name="delivery_price_hidden[]" value="'+delivery_price_value+'"><input type="hidden" name="plan_price_hidden[]" value="'+plan_price_value+'"><input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'"><input type="hidden" name="is_charge_vat_hidden[]" value="'+is_charge_vat+'"><input type="hidden" name="description_value_hidden[]" value="'+description_value+'"></tr>');
+                           alert('Plan Added Successfully');
                         }
                     })
                 }
@@ -560,10 +642,53 @@
     </script>
 
 
+    <div class="modal fade comman_modal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Edit Meal Plan Variant</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="smallBody">
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(document).on('click','.showEdit',function(){
+
+        var tour_id= $(this).data('id');
+
+        $.ajax({
+            url:'{{ url("admin/mealplanvariants/edit") }}',
+            method:'post',
+            data: {
+                tour_id:tour_id,
+            },
+            dataType:'json',
+            type: "post",
+            cache: false,
+            success:function(data)
+            {
+                $('#staticBackdrop').modal("show");
+                $('#smallBody').html(data.html).show();
+                $( '.multiple-select-custom-field' ).select2( {
+                    theme: "bootstrap-5",
+                    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                    placeholder: $( this ).data( 'placeholder' ),
+                    closeOnSelect: false,
+                    tags: true
+                } );
+            }
+        })
 
 
+    });
+</script>
 @endsection
 <script>
+
     function validate(obj) {
         $(".text-danger").html('');
         var flag = true;
@@ -597,4 +722,45 @@
 
 
     }
+</script>
+<script>
+    function deleteData1(obj, id){
+        //var csrf_token=$('meta[name="csrf_token"]').attr('content');
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this record!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url : "<?= url('admin/mealplanvariants-delete') ?>",
+                        type : "POST",
+                        data : 'id=' + id + '&_token=<?= csrf_token() ?>',
+                        success: function(data){
+                            swal({
+                                title: "Success!",
+                                text : "Meal Plan Variant has been deleted \n Click OK to refresh the page",
+                                icon : "success",
+                            }).then(function() {
+                                location.reload();
+                            });
+                        },
+                        error : function(){
+                            swal({
+                                title: 'Opps...',
+                                text : data.message,
+                                type : 'error',
+                                timer : '1500'
+                            })
+                        }
+                    })
+                } else {
+                    swal("Your  file is safe!");
+                }
+            });
+    }
+
 </script>

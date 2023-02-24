@@ -84,7 +84,9 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('generateToken', 'ApiController@generateToken');
     Route::post('updateDietPlanHomeScreen', 'ApiController@updateDietPlanHomeScreen');
     Route::post('addAddressDeliveryNotConfirm','ApiController@addAddressDeliveryNotConfirm');
-
+    Route::post('mantainAddressStatus', 'ApiController@mantainAddressStatus');
+    Route::post('checkDaySelectedOrNot', 'ApiController@checkDaySelectedOrNot');
+    Route::post('updateTimeSlotFromAddress', 'ApiController@updateTimeSlotFromAddress');
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 

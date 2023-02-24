@@ -22,5 +22,6 @@ class VerifyCsrfToken extends Middleware
         'admin/add_variants',
         'admin/fleetarea/edit',
         'driver/storeLocation',
+        'admin/mealplanvariants/edit',
     ];
 }

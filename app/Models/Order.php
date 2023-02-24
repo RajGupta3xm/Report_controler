@@ -12,6 +12,7 @@ class Order extends Model
     	'address_id',
     	'delivery_slot_id',
     	'plan_id',
+		'variant_id',
     	'meals_count',
     	'item_total',
     	'discount',
@@ -23,6 +24,7 @@ class Order extends Model
     	'payment_status',
     	'cancel_reason',
     	'status',
+    	'plan_status',
 
    	];
 

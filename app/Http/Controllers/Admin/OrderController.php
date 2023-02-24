@@ -193,7 +193,7 @@ class OrderController extends Controller {
  
  
      // $dates = '2023-01-20';
-    $getDate = DB::table('subscription_meal_plan_variant_default_meal')->select('date')->where('meal_plan_id',$getUserSubscriptionId->subscription_id)->where('is_default','1')->groupBy('date')->get()
+    $getDate = DB::table('subscription_meal_plan_variant_default_meal')->select('date')->where(['meal_plan_id'=>$getUserSubscriptionId->subscription_id])->where('is_default','1')->groupBy('date')->get()
    ->each(function($getDate)use($id){
      $customCalorie = UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
      ->select('calorie_recommend.recommended')

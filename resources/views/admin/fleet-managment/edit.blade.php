@@ -10,21 +10,25 @@
     </div>
     <div class="form-group mb-0 col">
         <label for="">Driver Group</label>
-        <select class="form-select multiple-select-custom-field" aria-label="Default select example" data-placeholder="Please Select Slot" multiple name="staff_ids[]">
+
+        <select class="form-select form-control" aria-label="Default select example" name="staff_ids">
+            <option value="">Select Driver Group</option>
             @foreach(\App\Models\StaffMembers::wherehas('group',function ($q){
-                                                            $q->where('name','=','Driver');
-                                                        })->get() as $value)
-                <option value="{{$value->id}}"@if(is_array(json_decode($clients->staff_ids)))@if(in_array($value->id,json_decode($clients->staff_ids))) selected @endif @endif>{{$value->name}}</option>
+                                                           $q->where('name','=','Driver');
+                                                       })->get() as $value)
+                <option value="{{$value->id}}" @if($clients->staff_ids == $value->id)selected @endif>{{$value->name}}</option>
             @endforeach
         </select>
     </div>
     <div class="form-group mb-0 col">
         <label for="">Slot</label>
-        <select class="form-select multiple-select-custom-field" aria-label="Default select example" data-placeholder="Please Select Slot" multiple name="delivery_slot_id[]">
+        <select class="form-select form-control" aria-label="Default select example" name="delivery_slot_id">
+            <option value="">Select Slot</option>
             @foreach(\App\Models\DeliverySlot::get() as $value)
-                <option value="{{$value->id}}" @if(is_array(json_decode($clients->delivery_slot_ids)))@if(in_array($value->id,json_decode($clients->delivery_slot_ids))) selected @endif @endif>{{$value->name}}</option>
+                <option value="{{$value->id}}" @if($clients->delivery_slot_ids==$value->id) selected @endif>{{$value->name}}</option>
             @endforeach
         </select>
+
     </div>
     <div class="form-group mb-0 col-auto">
         <button class="comman_btn">Save</button>

@@ -76,9 +76,9 @@
                                 </div>
                                 <div class="modal-body">
                                    <div class="form-group">
-                                      <input name="transaction_payment_id" type="hidden" value="36">
+                                      <input  id="input_id"  type="hidden" value="{{$contents->id}}">
                                        <label for="account_id">{{$contents->name}}</label>
-                                        <textarea type="text" rows="4" id="privacy" name="reply" class="form-control mt-200  " style="height: 140px;">{{$contents->content}}</textarea>
+                                        <textarea type="text" id="editt_<?=$contents->id?>"  rows="4" id="privacy" name="reply" class="form-control mt-200  " style="height: 140px;">{{$contents->content}}</textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -200,6 +200,18 @@
             </div>
          </div>
       </div>
+      <script src="https://cdn.ckeditor.com/4.17.1/standard-all/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('editt_2', {
+      fullPage: true,
+      extraPlugins: 'docprops',
+      allowedContent: true,
+      height: 220,
+      width: 800,
+      removeButtons: 'PasteFromWord'
+    });
+
+  </script>
       <script>
    document.getElementById('form1')
    .addEventListener('keyup', function(event) {
@@ -320,9 +332,11 @@ if (flag) {
 
 <script>
   function sendReply(obj, id) {
+  
 	if (id) {
-
+   
 		if (id) {
+     
 			$.ajax({
 				url: "<?= url('admin/content/update/') ?>/" + id,
 				type: 'post',
