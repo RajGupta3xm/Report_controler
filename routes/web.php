@@ -318,6 +318,18 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
  Route::get('/notification-management', 'Admin\NotificationController@index');
     Route::post('/brodcastnotify/submit', 'Admin\NotificationController@storeBroadCastNotification');
     Route::post('/popupnotify/submit', 'Admin\NotificationController@storePopupNotification');
+    Route::post('/edit_invoiceEmail/update/{id}', [
+        'uses' => 'Admin\NotificationController@update',
+        'as' => 'admin.edit_invoiceEmail.update'
+    ]);
+    Route::post('/edit_deliveryEmail/delivery_update/{id}', [
+        'uses' => 'Admin\NotificationController@delivery_update',
+        'as' => 'admin.edit_deliveryEmail.delivery_update'
+    ]);
+    Route::post('/edit_giftCardEmail/giftCard_update/{id}', [
+        'uses' => 'Admin\NotificationController@giftCard_update',
+        'as' => 'admin.edit_giftCardEmail.giftCard_update'
+    ]);
 
 /*******End Notification Management */
 

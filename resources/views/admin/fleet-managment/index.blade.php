@@ -5,6 +5,19 @@
     <div class="admin_main">
         <div class="admin_main_inner">
             <div class="admin_panel_data height_adjust">
+            @if(session()->has('success'))
+                <div class="alert alert-success">
+                    <strong class="close" data-dismiss="alert " aria-hidden="true"></strong>
+                    {{ session()->get('success') }}
+                </div>
+                @else 
+                @if(session()->has('error'))  
+                    <script>
+                     swal('Error!', '{{ session()->get('error') }}', 'error');
+                    </script>
+                @endif
+                @endif
+
                 <div class="row area-slot-management justify-content-center">
                     <div class="col-12">
                         <div class="row mx-0">
@@ -32,13 +45,15 @@
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" action="{{url('admin/fleetarea/submit')}}" method="post" id="addForm">
                                                             @csrf
                                                            
-                                                            <div class="form-group mb-0 col">
-                                                            <select id='selUser'class="form-select table_input table_select adjust_lenth selUser " name="area">
-                                                        
+                                                            <div class="form-group mb-0 col" style="display:none;">
+                                                              <select id='selUser'class="form-select table_input table_select adjust_lenth selUser " name="area"  >
+                                                            
                                                     
                                                           <!-- <option value=''></option>  -->
                                                      
                                                           </select>
+                                                          </div>
+                                                          <div class="form-group mb-0 col" >
                                                                 <label for="">Area (En)</label>
                                                                 <input class="form-control validate google"  id="search_box" type="text" >
                                                                 <p class="text-danger text-small" id="areaError"></p>
@@ -88,7 +103,12 @@
                                                                         @foreach($area as $key=>$area)
                                                                             <tr>
                                                                                 <td>{{$key+1}}</td>
-                                                                                <td>{{$area->area}}</td>
+                                                                                @php
+                                                                                 $data = json_decode($area->area,true);
+                                                                             
+                                                                                $print = preg_replace('/^([^,]*).*$/', '$1', $data['description']);
+                                                                                @endphp
+                                                                                <td>{{$print}}</td>
                                                                                 <td>{{$area->area_ar}}</td>
                                                                                 <td>
                                                                                     <form action="">
@@ -232,6 +252,16 @@
 
    
 </script>
+<script>
+ $(window).load(function(){
+   setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
+});
+  </script>
+   <script>
+ $(window).load(function(){
+   setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
+});
+  </script>
 @endsection
 
 

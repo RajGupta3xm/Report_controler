@@ -8,8 +8,8 @@ class WeekDays extends Model
 {
     protected $table="week_days";
     protected $fillable = [
-        "name",
-        "name_ar",
+        "week_days_id",
+        "week_days_id_ar",
         "status",
 
     ];

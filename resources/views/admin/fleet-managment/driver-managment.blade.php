@@ -2,7 +2,7 @@
 <form class="form-design filter_check" action="{{url('admin/fleetdriver/submit')}}" method="post">
     @csrf
 <div class="row p-4 mx-0 driver_management">
-    <div class="col-12 mb-4">
+    <!-- <div class="col-12 mb-4">
         <form class="form-design filter_check" action="">
             <div class="check_toggle d-flex">
                 <span>Filter : </span>
@@ -10,7 +10,7 @@
                 <label class="onclk" for="check1"></label>
             </div>
         </form>
-    </div>
+    </div> -->
     <div class="col-12 px-0 inner_design_comman rounded border text-center">
         @php
         $date = \Carbon\Carbon::now();
@@ -33,41 +33,41 @@
                 <div class="row mx-0">
                     <div class="col-12 comman_table_design border bg-white px-0 search_show_tables">
                         <div class="table-responsive">
-                            <table class="table mb-0">
+                            <table class="table mb-0" id="example1">
                                 <thead>
                                 <tr>
                                     <th>user Id<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>User Name<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Driver name<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Time Slot<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Area<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
-                                    <th>Street<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                    <!-- <th>Street<br> -->
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Priority<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Status<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Remark<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>View<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                     <th>Notes<br>
-                                        <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text">
+                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
                                     </th>
                                 </tr>
                                 </thead>
@@ -105,7 +105,7 @@
                                                 </div>
                                             </td>
                                             <td>{{$order->user->user_address->area??null}}</td>
-                                            <td>{{$order->user->user_address->street??null}}</td>
+                                            <!-- <td>{{$order->user->user_address->street??null}}</td> -->
                                             <td>
 
 

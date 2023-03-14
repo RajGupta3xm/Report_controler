@@ -142,6 +142,7 @@ return array(
     'App\\Models\\UserFollowing' => $baseDir . '/app/Models/UserFollowing.php',
     'App\\Models\\UserGiftCard' => $baseDir . '/app/Models/UserGiftCard.php',
     'App\\Models\\UserProfile' => $baseDir . '/app/Models/UserProfile.php',
+    'App\\Models\\UserSelectDeliveryLocation' => $baseDir . '/app/Models/UserSelectDeliveryLocation.php',
     'App\\Models\\UserSelectedDaysForAddress' => $baseDir . '/app/Models/UserSelectedDaysForAddress.php',
     'App\\Models\\UserSkipDelivery' => $baseDir . '/app/Models/UserSkipDelivery.php',
     'App\\Models\\UserSkipTimeSlot' => $baseDir . '/app/Models/UserSkipTimeSlot.php',

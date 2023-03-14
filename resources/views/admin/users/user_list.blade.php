@@ -25,10 +25,10 @@
                               </div>
                               <div class="col-6">
                                  <form class="form-design row align-items-center justify-content-end"  method="post"  action="{{route('admin.query.filter')}}">
-                                    <div class="form-group col-6 mb-0 position-relative icons_set">
+                                    <!-- <div class="form-group col-6 mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name" style="margin-top: 12px;">
                                        <i class="far fa-search"></i>
-                                    </div>
+                                    </div> -->
                                     <div class="form-group mb-0 col-4 ps-0" style="margin-top: 12px;"> 
                                        <select class="form-select form-control" aria-label="Default select example">
                                           <option selected="" disabled="">Users Status</option>
@@ -61,7 +61,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
                                  <div class="table-responsive">
-                                    <table class="table mb-0">
+                                 <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
                                            <th>S.No.</th>
@@ -152,6 +152,7 @@
       </div>
    </div>
 </div>
+
 @endsection
 <script>
        function filterList(obj){

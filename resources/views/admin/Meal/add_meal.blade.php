@@ -110,7 +110,7 @@
                                              <p class="text-danger text-small" id='errorShow' ></p>
                                           </div>
                                           <div class="form-group col-12">
-                                             <label for="">Tags : Date format: dd/mm/YY</label>
+                                             <label for="">Tags : Date format: YY-mm-dd</label>
                                              <select class="w-100 multiple-select-custom-field required1"  data-placeholder="Select" multiple name="week_days_id[]">
                                                @foreach($tags as $tag)
                                                 <option value="{{$tag->week_days_id}}">{{ucfirst($tag->week_days_id)}}</option>
@@ -191,7 +191,7 @@
                                                 <td class="searchDrop">
                                                       <!-- <select class="form-select table_input table_select adjust_lenth" id="categoryList" onchange="getSubcategory(this);" aria-label="Default select example" id="fname"  name="ingredient[]"> -->
                                                     <!-- Dropdown --> 
-                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth selUser "  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
+                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth selUsers"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
                                                        <option selected="" disabled>Select User</option> 
                                                        @foreach($ingredients as $ingredient)
                                                         <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option> 
@@ -205,7 +205,8 @@
                                                       <input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items[0][qty]" value="">
                                                    </td>
                                                    <td>
-                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_0" name="items[0][unit]" value="">
+                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_0"  value="">
+                                                   <input class="form-control table_input  adjust_lenth" type="hidden" id="upload_videos_id_0" name="items[0][unit]" value="">
                                                       <!-- <select class="form-select table_input table_select adjust_lenth" id="subcategoryList" aria-label="Default select example" id="fname" name="unit[]">
                                                       <option value=''>select </option>
                                                       @foreach($unit as $units)
@@ -488,8 +489,7 @@
       $(document).ready(function(){
  
  // Initialize select2
- $(".selUser").select2();
-
+ $(".selUsers").select2();
  // Read selected option
  $('#but_read').click(function(){
      var username = $('#selUser option:selected').text();
@@ -516,14 +516,15 @@ var int = 1;
       // .end()
       .append(
             '<tr>'+
-            '<td>' +
-              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth" onchange="getSubcategory(this,'+ (int) +');" >@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
+            '<td class="searchDrop">' +
+              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth selUsers" onchange="getSubcategory(this,'+ (int) +');" style="width: 159px;" >@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
             '</td>'+
             '<td>'+
             '<input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items['+ (int) +'][qty]" value="">' +
             '</td>'+
             '<td>'+
-            '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
+            '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'"  value="">' +
+            '<input class="form-control table_input  adjust_lenth" type="hidden" id="upload_videos_id_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
             '<button class="remCF close" id="remCF"' + (int) +' type="button">-</button>' +
             '</td>'+
             '</tr>');
@@ -545,6 +546,7 @@ function getSubcategory(obj,count) {
                   $(allLists).each(function (a, unit) {
                    if (unit.id == unit_id) {
                      $("#upload_videos_"+count).val(unit.unit);
+                     $("#upload_videos_id_"+count).val(unit.id);
                      // <input type="hidden" name="compare_price_hidden[]" value="'+compare_price_value+'">
                      // html += '<option value='" + unit.unit + "'>" + unit.unit + "</option>';
                       }

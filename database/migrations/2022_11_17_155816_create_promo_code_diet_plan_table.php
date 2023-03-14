@@ -17,6 +17,7 @@ class CreatePromoCodeDietPlanTable extends Migration
             $table->bigIncrements('id');
             $table->string('promo_code_id');
             $table->string('meal_plan_id');
+            $table->string('variant_id');
             $table->enum('status',['active','inactive'])->default('active');
             $table->timestamps();
         });

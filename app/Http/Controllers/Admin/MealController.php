@@ -114,7 +114,8 @@ class MealController extends Controller {
 
              $data['meal_schedule'] = MealSchedules::select('id','name')->orderBy('id','Asc')->get();
               $data['diet_plan'] = DietPlanType::select('id','name')->orderBy('id','Asc')->get(); 
-               $data['tags'] = MealWeekDay::select('id','week_days_id')->orderBy('id','Asc')->take(7)->get(); 
+            //    $data['tags'] = MealWeekDay::select('id','week_days_id')->orderBy('id','Asc')->take(7)->get(); 
+               $data['tags'] = WeekDays::select('id','week_days_id')->orderBy('id','Asc')->get(); 
                $data['department'] = MealAllocationDepartment::select('id','name')->orderBy('id','Asc')->get(); 
                 $data['ingredients'] = DislikeItem::select('id','name','unit_id')->orderBy('id','Asc')->get(); 
                  $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
@@ -227,7 +228,7 @@ foreach($request->week_days_id  as $id)
         // $date = Carbon::parse($id);
          MealWeekDay::create([
             'meal_id' => $insert->id,
-             'week_days_id'  => Carbon::createFromFormat('d/m/Y', $id)->format('Y-m-d')
+             'week_days_id'  => Carbon::createFromFormat('Y-m-d', $id)->format('Y-m-d')
          ]);
         }
 
@@ -348,11 +349,12 @@ else {
 
 
 public function filter_meal(Request $request) {
-      $mealDay = $request->meal_day;
+     $mealDay = $request->meal_day;
      $status = $request->status;
-     $mealType = $request->meal_type;
+      $mealType = $request->meal_type;
      $planType = $request->plan_type;
-     $data['mealWeekDay'] = MealWeekDay::select('id','week_days_id')->where('status','active')->take(7)->get();
+     $start_date = $request->start_date;
+      $data['mealWeekDay'] = WeekDays::select('id','week_days_id')->where('status','active')->take(7)->get();
      $data['dietPlanType'] = DietPlanType::select('id','name')->where('status','active')->get();
      $data['mealSchedule'] = MealSchedules::select('id','name')->where('status','active')->get();
      if($status){
@@ -373,13 +375,16 @@ public function filter_meal(Request $request) {
         });
     }
         if($mealDay){
-           return $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->where('status',$status)->get()
+            $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+            ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->where('meal_week_days.week_days_id',$mealDay)
+            ->orderBy('id','desc')->get()
            ->each(function($meal){
                  $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
-                 ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+                //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
                     ->select('meal_schedules.name')
                     ->where('meal_group_schedule.meal_id',$meal->id)
-                    ->where('meal_week_days.week_days_id',$mealDay)
+                    // ->where('meal_week_days.week_days_id',$mealDay)
                     ->get();
    
                     $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
@@ -390,53 +395,579 @@ public function filter_meal(Request $request) {
                   $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
              
            });
-    //    return  $meal = Meal::join('meal_week_days','meals.id','=','meal_week_days.meal_id')
-    //     ->select('meals.id','meals.name','meals.image','meals.status')
-    //     ->where('meals.status','active')
-    //     ->where('meal_week_days.week_days_id',$mealDay)
-    //     ->orderBy('meals.id','desc')->get()
-    //     ->each(function($meal)use($mealType,$planType){
-    //           $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
-    //              ->select('meal_schedules.name')
-    //              ->where('meal_group_schedule.meal_id',$meal->id)
-    //              ->where('meal_schedules.id',$mealType)
-    //              ->get();
-   
-    //              $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
-    //              ->select('diet_plan_types.name')
-    //              ->where('meal_diet_plan.meal_id',$meal->id)
-    //              ->where('diet_plan_types.id',$planType)
-    //              ->get();
-   
-    //            $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
-          
-    //     });
 
       }
-    //   if($status == 'draft'){
-    //     $meal = Meal::join('meal_week_days','meals.id','=','meal_week_days.meal_id')
-    //     ->select('meals.id','meals.name','meals.image','meals.status')
-    //     ->where('meals.status','inactive')
-    //     ->where('meal_week_days.week_days_id',$mealDay)
-    //     ->orderBy('meals.id','desc')->get()
-    //     ->each(function($meal)use($mealType,$planType){
-    //           $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
-    //              ->select('meal_schedules.name')
-    //              ->where('meal_group_schedule.meal_id',$meal->id)
-    //              ->where('meal_schedules.id',$mealType)
-    //              ->get();
-   
-    //              $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
-    //              ->select('diet_plan_types.name')
-    //              ->where('meal_diet_plan.meal_id',$meal->id)
-    //              ->where('diet_plan_types.id',$planType)
-    //              ->get();
-   
-    //            $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
-          
-    //     });
+      if($mealType){
+        $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+       ->each(function($meal) use($mealType){
+             $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+                ->select('meal_schedules.name')
+                ->where('meal_group_schedule.meal_id',$meal->id)
+                ->where('meal_schedules.id',$mealType)
+                ->get();
 
-    //   }
+                $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+                ->select('diet_plan_types.name')
+                ->where('meal_diet_plan.meal_id',$meal->id)
+                ->get();
+
+              $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+         
+       });
+   }
+   if($planType){
+    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+   ->each(function($meal) use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+if($status && $mealDay){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+            ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->where('meal_week_days.week_days_id',$mealDay)
+            ->where('meals.status',$status)
+            ->orderBy('id','desc')->get()
+   ->each(function($meal){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($status && $mealType){
+    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->where('status',$status)->get()
+   ->each(function($meal)use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($status && $planType){
+    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->where('status',$status)->get()
+   ->each(function($meal)use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+if($status && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($mealDay && $mealType ){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+if($mealDay && $planType ){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $start_date ){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealType && $planType){
+    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType,$planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($mealType && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($planType && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($mealDay && $status && $mealType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $status && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+if($mealDay && $status && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+          
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $mealType && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType,$planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+if($mealDay && $mealType && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $planType && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $status && $mealType && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType,$planType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($mealDay && $status && $mealType && $start_date){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal) use($mealType){
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+        //  ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+
+}
+
+if($status && $mealType && $start_date && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($mealType,$planType) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($status && $mealDay && $start_date && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($planType) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($mealType && $mealDay && $start_date && $planType){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($planType,$mealType) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+
+if($mealType && $mealDay && $start_date && $planType && $status){
+    $meal = Meal::select('meals.id','meals.name','meals.image','meals.status')
+    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+    ->where('meal_week_days.week_days_id',$start_date)
+    ->where('meal_week_days.week_days_id',$mealDay)
+    ->where('meals.status',$status)
+    ->orderBy('id','desc')->get()
+   ->each(function($meal)use($planType,$mealType) {
+         $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+            ->select('meal_schedules.name')
+            ->where('meal_group_schedule.meal_id',$meal->id)
+            ->where('meal_schedules.id',$mealType)
+            ->get();
+
+            $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+            ->select('diet_plan_types.name')
+            ->where('meal_diet_plan.meal_id',$meal->id)
+            ->where('diet_plan_types.id',$planType)
+            ->get();
+
+          $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+     
+   });
+}
+    
 
     
      $data['meals'] = $meal;
@@ -465,11 +996,17 @@ public function edit_meal(Request $request, $id=null){
          $data['meal_group_schedule'] = MealGroupSchedule::join('meal_schedules','meal_group_schedule.meal_schedule_id','=','meal_schedules.id')
        ->select('meal_schedules.id','meal_schedules.name')
        ->where('meal_group_schedule.meal_id',$id)->get();
-        $data['mealWeekDay'] = MealWeekDay::select('id','week_days_id')->where('meal_id',$id)->get();
+         $data['mealWeekDay'] = MealWeekDay::select('id','week_days_id')->where('meal_id',$id)->get();
          $data['meal_diet_plan'] = MealDietPlan::join('diet_plan_types','meal_diet_plan.diet_plan_type_id','=','diet_plan_types.id')
         ->select('diet_plan_types.id','diet_plan_types.name')
         ->where('meal_diet_plan.meal_id',$id)
         ->get();
+        
+          $data['mealIngrdients'] = MealIngredientList::join('dislike_units','meal_ingredient_list.unit_id','=','dislike_units.id')
+        ->join('dislike_items','meal_ingredient_list.item_id','=','dislike_items.id')
+        ->select('meal_ingredient_list.id','meal_ingredient_list.quantity','dislike_units.unit','dislike_items.name')
+        ->where('meal_ingredient_list.meal_id',$id)->get();
+
          $data['mealDepartment'] = MealDepartment::select('id','department_id')->where('meal_id',$id)->get();
     if($data){
         return view('admin.Meal.edit_meal')->with($data);
@@ -584,7 +1121,7 @@ foreach($request->week_days_id  as $name)
         // $date = Carbon::parse($id);
          MealWeekDay::create([
             'meal_id' => $id,
-             'week_days_id'  => Carbon::createFromFormat('d/m/Y', $name)->format('Y-m-d')
+             'week_days_id'  => Carbon::createFromFormat('Y-m-d', $name)->format('Y-m-d')
          ]);
         }
 

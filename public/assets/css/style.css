@@ -2880,3 +2880,24 @@ align-items: center;
         color: #CCC;
         text-align: center;
     }
+
+    img#image {
+        /* margin-bottom: -53px; */
+        /* position: absolute; */
+        /* display: block; */
+        position: absolute;
+        top: 203px;
+        left: 62px;
+        height: 134px;
+        width: 344px;
+    }
+    img#image1 {
+        /* margin-bottom: -53px; */
+        /* position: absolute; */
+        /* display: block; */
+        position: absolute;
+        top: 203px;
+        left: 593px;
+        height: 134px;
+        width: 344px;
+    }

@@ -34,7 +34,7 @@ class IngredientController extends Controller
     }
 
     public function unit_submit(Request $request){
-        if(Unit::where('unit',$request->unit)->where('unit_ar',$request->unit_ar)->exists()){
+        if(Unit::where('unit',$request->unit)->orWhere('unit_ar',$request->unit_ar)->exists()){
             return redirect()->back()->with('error','Record already exist');
         }else{
          $data=[
@@ -79,7 +79,7 @@ class IngredientController extends Controller
    }
 
     public function category_submit(Request $request){
-        if(DislikeCategory::where('name',$request->category)->where('name_ar',$request->category_ar)->exists()){
+        if(DislikeCategory::where('name',$request->category)->orWhere('name_ar',$request->category_ar)->exists()){
             return redirect()->back()->with('error', 'Record already exist');
         }else{
         $data=[
@@ -99,7 +99,7 @@ class IngredientController extends Controller
    }
 
     public function group_submit(Request $request){
-    if(DislikeGroup::where('name',$request->group)->where('name_ar',$request->group_ar)->exists()){
+    if(DislikeGroup::where('name',$request->group)->orWhere('name_ar',$request->group_ar)->exists()){
         return redirect()->back()->with('error', 'Record already exist');
     }else{
       $data=[
@@ -227,7 +227,7 @@ public function group_delete(Request $request ){
      $group_delete = DislikeGroup::find($id);
     $delete = $group_delete->delete();
     if ($delete) {
-      return response()->json(['status' => true, 'error_code' => 200, 'message' => 'group deleted successfully']);
+      return response()->json(['status' => true, 'success_code' => 200, 'message' => 'group deleted successfully']);
   } else {
       return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting group']);
   }

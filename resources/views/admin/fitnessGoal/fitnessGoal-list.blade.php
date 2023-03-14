@@ -36,20 +36,11 @@
                                           <label for="validationCustom01"> Title (English):</label>
                                           <input type="text" class="form-control validate" value="" name="name" id="validationCustom01" required maxlength="20"> 
                                           <!-- <p class="text-danger text-small" id="nameError"> -->
-                                          <div class="invalid-feedback">
-                                              Please choose a username.
+                                          <div class="invalid-feedback text-small">
+                                              Please choose a title.
                                            </div>
                                        </div> 
-                                       <!-- <div class="form-group uploadimg_box">
-                                          <span>Media (English):</span>
-                                          <input type="file" id="uploadimg" name="image" class="d-none ">
-                                          <label for="uploadimg">
-                                             <div class="uploadimg_inner">
-                                                <i class="fas fa-upload me-2"></i>
-                                                <span>Upload File</span>
-                                             </div>
-                                          </label>
-                                       </div>   -->
+
                                        <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                                         <input type="file" id="uploadimg" class="validate dropify" name="image" accept="image/*">
 {{--                                       <label for="uploadimg">--}}
@@ -60,9 +51,12 @@
                                     </div> 
                                     <div class="col-6 ps-5 mb-4">
                                        <div class="form-group">
-                                          <label for=""> Title (Arabic):</label>
-                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
-                                          <p class="text-danger text-small" id="name_arError">
+                                          <label for="validationCustom01"> Title (Arabic):</label>
+                                          <input type="text" class="form-control validate " value="" name="name_ar" id="validationCustom01" required maxlength="20">
+                                          <!-- <p class="text-danger text-small" id="name_arError"> -->
+                                          <div class="invalid-feedback text-small">
+                                              Please choose a title.
+                                           </div>
                                        </div> 
                                        <!-- <div class="form-group uploadimg_box">
                                           <span>Media (Arabic):</span>
@@ -101,15 +95,18 @@
                            @endif
                            @if(Session::get('admin_logged_in')['type']=='1')
                            @if(Session::get('staff_logged_in')['fitness_goal_mgmt']!='1')
-                           <form class="form-design py-4 px-4 row align-items-start justify-content-start mb-4"  method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/fitness-goal/submit')}}">
+                           <form class="form-design py-4 px-4 row align-items-start justify-content-start mb-4 needs-validation" novalidate   method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/fitness-goal/submit')}}">
                             @csrf
                               <div class="col-md-12">
                                  <div class="row">
                                     <div class="col-6 pe-5 border-end mb-4">
                                        <div class="form-group">
-                                          <label for=""> Title (English):</label>
-                                          <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
-                                          <p class="text-danger text-small" id="nameError">
+                                          <label for="validationCustom01"> Title (English):</label>
+                                          <input type="text" class="form-control validate" value="" name="name" id="validationCustom01" maxlength="20"> 
+                                          <!-- <p class="text-danger text-small" id="nameError"> -->
+                                          <div class="invalid-feedback text-small">
+                                              Please choose a title.
+                                           </div>
                                        </div> 
                                        <!-- <div class="form-group uploadimg_box">
                                           <span>Media (English):</span>
@@ -132,9 +129,12 @@
                                     </div> 
                                     <div class="col-6 ps-5 mb-4">
                                        <div class="form-group">
-                                          <label for=""> Title (Arabic):</label>
-                                          <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20">
-                                          <p class="text-danger text-small" id="name_arError">
+                                          <label for="validationCustom01"> Title (Arabic):</label>
+                                          <input type="text" class="form-control validate" value="" name="name_ar" id="validationCustom01" maxlength="20">
+                                          <!-- <p class="text-danger text-small" id="name_arError"> -->
+                                          <div class="invalid-feedback text-small">
+                                              Please choose a title.
+                                           </div>
                                        </div> 
                                        <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                                         <input type="file" id="uploadimg1" class="validate dropify" name="image_ar" accept="image/*">
@@ -250,7 +250,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="fitnessGoalForm"> 
+        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" enctype="multipart/form-data" id="fitnessGoalForm"> 
               @csrf
               <input type="hidden" class="form-control"  id="id" name="id" >
                <div class="col-md-12">
@@ -258,26 +258,27 @@
                      <div class="col-6 pe-5 border-end mb-4">
                            <div class="form-group">
                               <label for=""> Title (English):</label>
-                              <input type="text" class="form-control validate" value="" name="title_name" id="title_name" maxlength="20"> 
-                              <p class="text-danger text-small" id="nameError">
+                              <input type="text" class="form-control validate required" value="" name="title_name" id="title_name" required maxlength="20"> 
+                              <p class="text-danger text-small" id="title_nameError">
                            </div>  
                            <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
-                             <input type="file" id="uploadimg4" class="dropify" name="images" data-default-file="" accept="image/*">
-                              <p class="text-danger text-small" id="imagesError"></p>
-                           </div>
+                            <input type="file" id="uploadimg4" class="dropify" name="images" data-default-file="" accept="image/*">
+                           <img src="image" name="image" id="image" /> 
+                         </div> 
                      </div> 
                      <div class="col-6 ps-5 mb-4">
                         <div class="form-group">
                           <label for=""> Title (Arabic):</label>
-                           <input type="text" class="form-control validate" value="" name="title_name_ar" id="title_name_ar" maxlength="20">
-                            <p class="text-danger text-small" id="name_arError">
+                           <input type="text" class="form-control validate required" value="" name="title_name_ar" id="title_name_ar" maxlength="20" required>
+                            <p class="text-danger text-small" id="title_name_arError">
                         </div> 
                         <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                           <input type="file" id="uploadimg5" class="dropify" name="images_ar" data-default-file="" accept="image/*">
-                            <p class="text-danger text-small" id="imagesError"></p>
+                          <img src="image_ar" name="images_ar" id="image1" />
                          </div>
                       </div>  
                         <div class="form-group mb-0 col-12 text-center">
+                        <button style="display: none;" type="submit" id="submit-button">Not Shown</button>
                            <button type="button" onclick="updateFitnessGoal(this)" class="comman_btn">Save</button>
                         </div>
                    </div>
@@ -330,7 +331,8 @@
           $('#id').val(data.id);
           $('#title_name').val(data.name);
           $('#title_name_ar').val(data.name_ar);
-         //  $('#uploadimg4').attr("data-default-file", "imagePath");
+          $('#image').attr('src', data.image);
+          $('#image1').attr('src', data.image_ar);
           $('#staticBackdrop09').modal('show');
         }
       });
@@ -342,6 +344,8 @@
 function updateFitnessGoal(obj) {
     
 var flag = true;
+$("#submit-button").click();
+
 let  formData = new FormData($("#fitnessGoalForm")[0]);
 formData.append('_token', "{{ csrf_token() }}");
 var id = $('#id').val();

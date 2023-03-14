@@ -117,7 +117,7 @@
                                              </select>
                                           </div>
                                           <div class="form-group col-12">
-                                             <label for="">Tags :</label>
+                                             <label for="">Tags : Date format: YY-mm-dd</label>
                                              @php 
                                            
                                            $meal_day=\App\Models\MealWeekDay::select('id','meal_id','week_days_id')->get();
@@ -134,6 +134,7 @@
                                            @endphp
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
                                              @foreach($meal_day as $k=>$meal_days)
+  
                                                 <option value="{{$meal_days->week_days_id}}" <?php echo in_array($meal_days->id,$cate)?"selected" :"" ;?> > {{ucwords($meal_days->week_days_id)}} </option>
                                                 @endforeach
                                              </select>
@@ -205,7 +206,7 @@
                                  <div class="row" >
                                     <div class="col-12 comman_table_design New_tabledesign">
                                        <div class="table-responsive">
-                                          <table class="table mb-0 cloning-table" >
+                                          <table class="table mb-0 cloning-table" id="cloningtable">
                                              <thead>
                                                 <tr>
                                                    <th>Ingredients</th>
@@ -216,10 +217,10 @@
                                              <tbody id="AddContainer">
                                                
                                              <tr >
-                                                <td>
+                                                <td class="searchDrop">
                                                     
                                                     <!-- Dropdown --> 
-                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
+                                                    <select id='selUser_0'class="form-select table_input table_select adjust_lenth selUser"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" style="width: 159px;">
                                                        <option selected="" disabled>Select User</option> 
                                                        @foreach($ingredients as $ingredient)
                                                         <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option> 
@@ -492,6 +493,27 @@
     <script>
         $('.dropify').dropify();
     </script>
+    <script>
+   $("#cloningtable").on('click', '.remCF', function(){
+     $(this).parent().parent().remove();
+   });
+ </script>
+  <script>
+      $(document).ready(function(){
+ 
+ // Initialize select2
+ $(".selUser").select2();
+
+ // Read selected option
+ $('#but_read').click(function(){
+     var username = $('#selUser option:selected').text();
+     var userid = $('#selUser').val();
+
+     $('#result').html("id : " + userid + ", name : " + username);
+
+ });
+})
+    </script>
      <script>
 //    $(document).ready(function(){
 //    var Data_to_clone = $('.cloning-table tbody').html();
@@ -515,13 +537,14 @@ var int = 1;
       .append(
             '<tr>'+
             '<td>' +
-              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth" onchange="getSubcategory(this,'+ (int) +');" >@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
+              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth" onchange="getSubcategory(this,'+ (int) +');"  style="width: 159px;">@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
             '</td>'+
             '<td>'+
             '<input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items['+ (int) +'][qty]" value="">' +
             '</td>'+
             '<td>'+
             '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
+            '<button class="remCF close" id="remCF"' + (int) +' type="button">-</button>' +
             '</td>'+
             '</tr>');
 
@@ -571,6 +594,7 @@ function getSubcategory(obj,count) {
    setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
 });
   </script>
+  
       @endsection
       <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

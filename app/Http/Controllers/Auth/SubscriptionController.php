@@ -17,6 +17,7 @@ use App\Models\SubscriptionDietPlan;
 use App\Models\SubscriptionMealGroup;
 use App\Models\Meal;
 use App\Models\FleetArea;
+use App\Models\UserSelectDeliveryLocation;
 use App\Models\SubscriptionMealVariantDefaultMeal;
 use App\Models\ReplaceEditPlanRequest;
 use App\Models\UserSkipDelivery;
@@ -43,6 +44,7 @@ use App\Models\MealIngredientList;
 use App\Models\UserAddress;
 use App\Models\UserSkipTimeSlot;
 use App\Models\SelectDeliveryLocation;
+use App\Models\DietPlanTypesMealCalorieMinMax;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Str;
@@ -130,6 +132,14 @@ class SubscriptionController extends Controller {
         // $data=['recommended_colorie'=>1500];
         $data['description'] = $dietPlan->description;
         $data['recommended_colorie'] = $caloriRecommended;
+
+        $getUserCalorie = UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'status'=>'ongoing'])->first();
+        if($getUserCalorie){
+          $caloriRecommended = CalorieRecommend::select('id','recommended')->where('id',$getUserCalorie->recommended_result_id)->first();
+          $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$user->diet_plan_type_id)->where('meal_calorie',$caloriRecommended->recommended)->first();
+          }
+          $data['getMinMaxValue'] = $getMinMax;
+
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -203,26 +213,34 @@ class SubscriptionController extends Controller {
 
          }
         
+
         UserCaloriTarget::updateOrCreate(['user_id'=>Auth::guard('api')->id()],$update);
 
 
      /*********Calculation for protein carb and fat */
-     $protein_min = (($recommended_result['recommended']*$dietPlan->protein_default_min)/100)/$dietPlan->protein_min_divisor;
-     $protein_max = (($recommended_result['recommended']*$dietPlan->protein_default_max)/100)/$dietPlan->protein_max_divisor;
-     $protien = ($protein_min+$protein_max)/2;
-      $carb_min = (($recommended_result['recommended']*$dietPlan->carb_default_min)/100)/$dietPlan->carb_min_divisor;
-      $carb_max = (($recommended_result['recommended']*$dietPlan->carb_default_max)/100)/$dietPlan->carb_max_divisor;
-      $carbs = ($carb_min+$carb_max)/2;
-      $fat_min = (($recommended_result['recommended']*$dietPlan->fat_default_min)/100)/$dietPlan->fat_min_divisor;
-      $fat_max = (($recommended_result['recommended']*$dietPlan->fat_default_max)/100)/$dietPlan->fat_max_divisor;
-      $fat = ($fat_min+$fat_max)/2;
+     if(round($total_recommended_Kcal<2000,0)){
+          $total_recommended_Kcal = round($total_recommended_Kcal,0);
+          $recommended_result=CalorieRecommend::where('min_range','<=',$total_recommended_Kcal)->where('max_range','>=',$total_recommended_Kcal)->first();
+          $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$dietPlan->id)->where('meal_calorie',$recommended_result->recommended)->first();
+      }else{
+        $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$dietPlan->id)->where('meal_calorie','2000')->first();
+   }
+    //  $protein_min = (($recommended_result['recommended']*$dietPlan->protein_default_min)/100)/$dietPlan->protein_min_divisor;
+    //  $protein_max = (($recommended_result['recommended']*$dietPlan->protein_default_max)/100)/$dietPlan->protein_max_divisor;
+    //  $protien = ($protein_min+$protein_max)/2;
+    //   $carb_min = (($recommended_result['recommended']*$dietPlan->carb_default_min)/100)/$dietPlan->carb_min_divisor;
+    //   $carb_max = (($recommended_result['recommended']*$dietPlan->carb_default_max)/100)/$dietPlan->carb_max_divisor;
+    //   $carbs = ($carb_min+$carb_max)/2;
+    //   $fat_min = (($recommended_result['recommended']*$dietPlan->fat_default_min)/100)/$dietPlan->fat_min_divisor;
+    //   $fat_max = (($recommended_result['recommended']*$dietPlan->fat_default_max)/100)/$dietPlan->fat_max_divisor;
+    //   $fat = ($fat_min+$fat_max)/2;
    
-     $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat)];
+    //  $data=['protein'=>round($protien),'carbs'=>round($carbs),'fat'=>round($fat)];
 
      /*********End Calculation for protein carb and fat */
 
         
-        
+       $data['getMinMaxValue'] = $getMinMax;
         $data['recommended_colorie'] = round($total_recommended_Kcal,0);
          $data['description'] = $dietPlan->description;
         $response = new \Lib\PopulateResponse($data);
@@ -386,6 +404,17 @@ class SubscriptionController extends Controller {
         $data=['diet_id'=>$diet_id];
         $data['recommended_colorie'] = $caloriRecommended;
         $data['status'] = $status;
+
+        /*********Calorie, protein, fat, carbs addition */
+   $getUserCalorie = UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'status'=>'ongoing'])->first();
+   if($getUserCalorie){
+     $caloriRecommended = CalorieRecommend::select('id','recommended')->where('id',$getUserCalorie->recommended_result_id)->first();
+     $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$user->diet_plan_type_id)->where('meal_calorie',$caloriRecommended->recommended)->first();
+     }
+     $data['getMinMaxValue'] = $getMinMax;
+
+   /*********end Calorie, protein, fat, carbs addition */
+
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -445,10 +474,19 @@ class SubscriptionController extends Controller {
      
            }
        }
+     
 
         $data=['diet_id'=>$diet_id];
         $data=['diet_id'=>$diet_id];
         $data['recommended_colorie'] = $caloriRecommended;
+
+        $getUserCalorie = UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'status'=>'ongoing'])->first();
+        if($getUserCalorie){
+          $caloriRecommended = CalorieRecommend::select('id','recommended')->where('id',$getUserCalorie->custom_result_id)->first();
+          $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$user->diet_plan_type_id)->where('meal_calorie',$caloriRecommended->recommended)->first();
+          }
+          $data['getMinMaxValue'] = $getMinMax;
+
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -942,7 +980,7 @@ class SubscriptionController extends Controller {
 
     $step = '';
     if($request->step=='1'){
-        $user=SelectDeliveryLocation::updateOrCreate(
+        $user=UserSelectDeliveryLocation::updateOrCreate(
             ['user_id' =>  Auth::guard('api')->id()],
             [
                 'user_id' =>  Auth::guard('api')->id(),
@@ -1244,6 +1282,7 @@ class SubscriptionController extends Controller {
             'voucher_code' => $request['voucher_code'],
             'voucher_pin' => $request['voucher_pin'],
           ]);
+          
         }else{
 
         }
@@ -1349,18 +1388,20 @@ public function sample_daily_meals_with_schedule(Request $request) {
     $custom_calorie = $request->custom_calorie;
     // $plan_id = $request->subscription_plan_id;
         $checkPlan = UserProfile::select('id','user_id','subscription_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
-        $startDate= Subscription::select('start_date','end_date')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id,'user_id'=>$checkPlan->user_id])->first();
+        $startDate= Subscription::select('start_date','end_date')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id,'user_id'=>$checkPlan->user_id])->where('delivery_status','active')->first();
          $no_of_day = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$checkPlan->subscription_id,'id'=>$checkPlan->variant_id])->first();
          if($no_of_day){
             if($no_of_day->option2 == 'withoutweekend'){
                    $fourtyHourDate= date('Y-m-d H:i:s',strtotime(' +2day '));
                    $date = Carbon::createFromFormat('Y-m-d',$startDate->start_date);
                     $dadte = Carbon::parse($fourtyHourDate);
-                      $diff = $dadte->diffInDays($date);
+                     $diff = $dadte->diffInDays($date);
                      $weekdays = 0;
                      $weekdayss = 0;
+                     $f=[];
                   for ($i = 0; $i < $no_of_day->no_days; $i++) {
                        $alldate = $date->addDay()->format('y-m-d');
+                    //   array_push($f,$alldate);
                        $dd = Carbon::createFromFormat('Y-m-d',$alldate);
                         $dayStr = strtolower($dd->format('l'));
                         if ($dayStr == 'friday' ) {
@@ -1370,6 +1411,7 @@ public function sample_daily_meals_with_schedule(Request $request) {
                            $weekdayss++;
                        }
                   }
+                //  dd($f);
 
                   $leftDays = 0;
                   $leftDayss = 0;
@@ -1390,9 +1432,9 @@ public function sample_daily_meals_with_schedule(Request $request) {
                  $totalDays = $weekdays+$weekdayss;
                  $totalBeforeDays = $leftDays+$leftDayss;
                   $noOfDays = $no_of_day->no_days+$diff;
-                $no_dayss = $noOfDays+$totalDays+$totalBeforeDays;
+                $no_dayss = $noOfDays+$totalDays;
                 }else{
-                 $fourtyHourDate= date('Y-m-d H:i:s',strtotime(' +2day '));
+                   $fourtyHourDate= date('Y-m-d H:i:s',strtotime(' +2day '));
                  $date = Carbon::createFromFormat('Y-m-d',$startDate->start_date);
                  $dadte = Carbon::parse($fourtyHourDate);
                  $diff = $dadte->diffInDays($date);
@@ -1475,6 +1517,7 @@ foreach($category as $key=>$calories){
    $data['diet_plan_type_id'] = $checkPlan->diet_plan_type_id;
   $data['subscription_id'] = $checkPlan->subscription_id;
   $data['withoutOrWithweekend'] = $no_of_day->option2;
+  $data['start_date'] = $startDate->start_date;
 
    if($data){
     $response = new \Lib\PopulateResponse($data);
@@ -1542,17 +1585,24 @@ public function selectStartDayCircle(){
         $text = 'custom';
     }
 
-   /*********Calorie, protein, fat, carbs addition */
-
-   /*********end Calorie, protein, fat, carbs addition */
-
-
+   
  $data=['protein'=>'21','carbs'=>'34','fat'=>'28'];
 
     $data['caloriRecommended'] = $caloriRecommended;
     $data['diet_plan_type_id'] = $users->diet_plan_type_id;
     $data['remaining_day'] = $meal;
     $data['text'] = $text;
+
+    /*********Calorie, protein, fat, carbs addition */
+   $getUserCalorie = UserCaloriTarget::where(['user_id'=>Auth::guard('api')->id(),'status'=>'ongoing'])->first();
+   if($getUserCalorie){
+     $caloriRecommended = CalorieRecommend::select('id','recommended')->where('id',$getUserCalorie->custom_result_id)->first();
+     $getMinMax = DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$users->diet_plan_type_id)->where('meal_calorie',$caloriRecommended->recommended)->first();
+     }
+     $data['getMinMaxValue'] = $getMinMax;
+
+   /*********end Calorie, protein, fat, carbs addition */
+
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
@@ -1670,7 +1720,7 @@ public function apply_gift_card(Request $request){
                $giftCard->deducted_amount = ($giftCard->discount/100)*$request->meal_amount;
 
             }elseif(!empty($giftCard->amount)){
-                $giftCard->deducted_amount = $giftCard->purchase_amount;
+                $giftCard->deducted_amount = $giftCard->amount;
             }
           
         if($giftCard){
@@ -1801,7 +1851,7 @@ public function apply_promo_code(Request $request){
                     if ($countUser) {
                         return response()->json([
                             'status' => true,
-                             'message'=> 'This Code  is already used'
+                             'error'=> 'This Code  is already used'
                            ]);
                     }
                 }else{
@@ -1809,7 +1859,7 @@ public function apply_promo_code(Request $request){
                     if($countUsers == $count_used->maximum_discount_uses){
                         return response()->json([
                             'status' => true,
-                             'message'=> 'You used your max limit'
+                             'error'=> 'You used your max limit'
                            ]);
                     }
                 }
@@ -1818,7 +1868,7 @@ public function apply_promo_code(Request $request){
              if($countTicket == $count_used->maximum_discount_uses){
                  return response()->json([
                     'status' => true,
-                     'message'=> 'This code is expired '
+                     'error'=> 'This code is expired '
                    ]);
               }
             }
@@ -2234,7 +2284,7 @@ public function switchPlan(Request $request){
   {
     return response()->json([
         'status' => true,
-        'error'  => "You can switch plan from monthly to weekly",
+        'error'  => "You can not  switch plan from monthly to weekly",
     
       ]);
 
@@ -2267,20 +2317,24 @@ public function switchPlan(Request $request){
         $getAvailableCredit = UserProfile::select('available_credit')->where('user_id',Auth::guard('api')->id())->first();
        if($getAvailableCredit){
                 $newPlanPrice = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->new_subscription_plan_id, 'id' => $request->new_variant_id,])->first();
-                 $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->subscription_plan_id,'id'=>$request->variant_id])->first();
+                  $oldNumberOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->subscription_plan_id,'id'=>$request->variant_id])->first();
                    $perDayRequiredCredit = $newPlanPrice->plan_price/$newPlanPrice->no_days;
                     $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
                $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
-                  $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+                 $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
                    $used_plan = carbon::parse($oldDate->start_date)->diffInDays($fourtyHourDate);
 
-                  $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
+                   $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
 
                     $totalRequiredAmountForRemainingOldDay = $perDayRequiredCreditForOldPlan*$remainingDayFromOldPlan;
-                    $totalRequiredAmountForRemainingDayNewPlan = $perDayRequiredCredit*$remainingDayFromOldPlan;
-                  $UserPay = $totalRequiredAmountForRemainingDayNewPlan-$totalRequiredAmountForRemainingOldDay;
+                     $totalRequiredAmountForRemainingDayNewPlan = $perDayRequiredCredit*$remainingDayFromOldPlan;
+                   $UserPay = $totalRequiredAmountForRemainingDayNewPlan-$totalRequiredAmountForRemainingOldDay;
+                  if($UserPay > 0){
                    $data['pay'] = $UserPay;
+                  }else{
+                    $data['pay'] = '';
+                  }
               }else{
                    $data['pay'] = '';
               }
@@ -2354,7 +2408,6 @@ public function savedAddressListing(Request $request) {
           $now = date('Y-m-d');
            $fourtyHourDate= $request->pause_date;
            $getDiff = carbon::parse($now)->diffIndays($fourtyHourDate);
-       if($getDiff > "2"){
         $data =Subscription::updateOrCreate(
             ['user_id' =>  Auth::guard('api')->id(),
             'plan_id' => $request->subscription_plan_id,
@@ -2370,7 +2423,8 @@ public function savedAddressListing(Request $request) {
         );
 
         if($data){
-         $diff = now()->diffInDays(Carbon::parse($data->start_date));
+             $pause_date = Carbon::createFromFormat('Y-m-d',$request->pause_date);
+          $diff = $pause_date->diffInDays(Carbon::parse($data->start_date));
             Subscription::updateOrCreate(
                 ['user_id' =>  Auth::guard('api')->id(),
                 'plan_id' => $request->subscription_plan_id,
@@ -2383,15 +2437,6 @@ public function savedAddressListing(Request $request) {
                 ]
             );
         }
-       
-    }else{
-      return response()->json([
-        'status' => true,
-        'error' => "You can not pause plan before 48 hours",
-
-      ]);
-    }
-       
         if($data){
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
@@ -2862,9 +2907,33 @@ public function savedAddressListing(Request $request) {
         $plan_id = $request->plan_id;
         $variant_id = $request->variant_id;
 
-         Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$plan_id,'variant_id'=>$variant_id])->update(['start_date'=>$startDate]);
+        $noOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price','option2')->where(['meal_plan_id'=>$request->plan_id, 'id' => $request->variant_id,])->first();
+        $dates = Carbon::createFromFormat('Y-m-d',$request->start_date);
+        $date = $dates->addDays($noOfDays->no_days);
+         $endDate = date('Y-m-d',strtotime($date));
 
+         if($noOfDays->option2 == 'withoutweekend'){
+            $date = Carbon::createFromFormat('Y-m-d',$request->start_date);
+             $day = strtolower($date->format('l'));
+             if ($day == 'friday' )
+              {
+                return response()->json([
+                    'status' => true,
+                    'error'=> 'Your plan is without weekend you can not add friday'
+                   ]);
+                }
+                if ($day == 'saturday' ) {
+                    return response()->json([
+                        'status' => true,
+                        'error'=> 'Your plan is without weekend you can not add saturday'
+                       ]);
+                     }
+                     Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$plan_id,'variant_id'=>$variant_id])->update(['start_date'=>$startDate, 'end_date'=>$endDate]);
+           }else{
 
+         Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$plan_id,'variant_id'=>$variant_id,'delivery_status'=>'active'])->update(['start_date'=>$startDate, 'end_date'=>$endDate]);
+
+           }
         $this->status = true; 
         $this->status_code = 200;
         $this->message = trans('messages.date_update');

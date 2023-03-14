@@ -1095,7 +1095,7 @@
             $(allList).each(function (a, staff_group) {
                if (staff_group.id == driverId) {
                   var drivername  = staff_group.name;
-                  if(drivername == 'Driver'){
+                  if(drivername == 'Drivers' || drivername == 'Driver' ){
                      $('#groupDriver').val(staff_group.name)
                      $('.modules_part_with_admin_access').addClass('disable_all');  
                      var x = document.getElementsByClassName("checkbox");

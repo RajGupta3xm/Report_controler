@@ -72,16 +72,9 @@ class FleetController extends Controller {
 
     public function addArea(Request $request){
 
-        // $r = $request->area;
-        // dd($r);
-        // die;
-
-        // $r = "czo5OTE6InsKICAiZGVzY3JpcHRpb24iOiAiQWwgQWFyaWQsIFJpeWFkaCBTYXVkaSBBcmFiaWEiLAogICJtYXRjaGVkX3N1YnN0cmluZ3MiOiBbCiAgICB7CiAgICAgICJsZW5ndGgiOiA4LAogICAgICAib2Zmc2V0IjogMAogICAgfSwKICAgIHsKICAgICAgImxlbmd0aCI6IDYsCiAgICAgICJvZmZzZXQiOiAxMAogICAgfSwKICAgIHsKICAgICAgImxlbmd0aCI6IDEyLAogICAgICAib2Zmc2V0IjogMTcKICAgIH0KICBdLAogICJwbGFjZV9pZCI6ICJDaElKLTZUdmw2WGxMajRSaGw0TU1ja1Q3TG8iLAogICJyZWZlcmVuY2UiOiAiQ2hJSi02VHZsNlhsTGo0UmhsNE1NY2tUN0xvIiwKICAic3RydWN0dXJlZF9mb3JtYXR0aW5nIjogewogICAgIm1haW5fdGV4dCI6ICJBbCBBYXJpZCIsCiAgICAibWFpbl90ZXh0X21hdGNoZWRfc3Vic3RyaW5ncyI6IFsKICAgICAgewogICAgICAgICJsZW5ndGgiOiA4LAogICAgICAgICJvZmZzZXQiOiAwCiAgICAgIH0KICAgIF0sCiAgICAic2Vjb25kYXJ5X3RleHQiOiAiUml5YWRoIFNhdWRpIEFyYWJpYSIsCiAgICAic2Vjb25kYXJ5X3RleHRfbWF0Y2hlZF9zdWJzdHJpbmdzIjogWwogICAgICB7CiAgICAgICAgImxlbmd0aCI6IDYsCiAgICAgICAgIm9mZnNldCI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJsZW5ndGgiOiAxMiwKICAgICAgICAib2Zmc2V0IjogNwogICAgICB9CiAgICBdCiAgfSwKICAidGVybXMiOiBbCiAgICB7CiAgICAgICJvZmZzZXQiOiAwLAogICAgICAidmFsdWUiOiAiQWwgQWFyaWQiCiAgICB9LAogICAgewogICAgICAib2Zmc2V0IjogMTAsCiAgICAgICJ2YWx1ZSI6ICJSaXlhZGgiCiAgICB9LAogICAgewogICAgICAib2Zmc2V0IjogMTcsCiAgICAgICJ2YWx1ZSI6ICJTYXVkaSBBcmFiaWEiCiAgICB9CiAgXSwKICAidHlwZXMiOiBbCiAgICAic3VibG9jYWxpdHlfbGV2ZWxfMSIsCiAgICAic3VibG9jYWxpdHkiLAogICAgInBvbGl0aWNhbCIsCiAgICAiZ2VvY29kZSIKICBdCn0iOw==";
-        // $a2=unserialize(base64_decode($r));
-        // print_r($a2);
-        // die;
-        // $a1=base64_encode(serialize($request->area));
-
+    // $data = json_decode($request->area,true);
+    // $print = preg_replace('/^([^,]*).*$/', '$1', $data['description']);
+    //   dd($print);
         FleetArea::create([
             'area'=>$request->area,
             'area_ar'=>$request->area_ar,
@@ -102,10 +95,10 @@ class FleetController extends Controller {
     public function edit_update($id,Request $request){
 
         FleetArea::where('id',$id)->update([
-            'area'=>$request->area,
-            'area_ar'=>$request->area_ar,
-            'delivery_slot_ids'=>$request->delivery_slot_id,
-            'staff_ids'=>isset($request->staff_ids)?$request->staff_ids:null,
+            'area'=>$request->area_edit,
+            'area_ar'=>$request->area_ar_edit,
+            'delivery_slot_ids'=>$request->delivery_slot_id_edit,
+            'staff_ids'=>isset($request->staff_ids_edit)?$request->staff_ids_edit:null,
         ]);
         return redirect()->back()->with('success','FleetArea added successfully');
     }

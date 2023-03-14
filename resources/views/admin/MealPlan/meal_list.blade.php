@@ -22,14 +22,14 @@
                         @if(Session::get('admin_logged_in')['type']=='0')
                             <div class="col-12 text-end mb-4 pe-0">
                                 <a href="{{url('admin/add-mealplan')}}" class="comman_btn yellow-btn me-2">Add Plan</a>
-                                <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a>
+                                <!-- <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a> -->
                             </div>
                             @endif
                         @if(Session::get('admin_logged_in')['type']=='1')
                         @if(Session::get('staff_logged_in')['meal_plan_mgmt']!='1')
                             <div class="col-12 text-end mb-4 pe-0">
                                 <a href="{{url('admin/add-mealplan')}}" class="comman_btn yellow-btn me-2">Add Plan</a>
-                                <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a>
+                                <!-- <a href="edit-meal-plan.html" class="comman_btn">Edit Plan</a> -->
                             </div>
                             @endif
                             @endif
@@ -38,19 +38,19 @@
                                     <div class="col">
                                         <h2>Meal Plan Management</h2>
                                     </div>
-                                    <div class="col-3">
+                                    <!-- <div class="col-3">
                                         <form class="form-design" action="">
                                             <div class="form-group mb-0 position-relative icons_set">
                                                 <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                                 <i class="far fa-search"></i>
                                             </div>
                                         </form>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <div class="row">
                                     <div class="col-12 comman_table_design px-0">
                                         <div class="table-responsive">
-                                            <table class="table mb-0 sortable-table">
+                                            <table class="table mb-0 sortable-table" id="example1">
                                                 <thead>
                                                 <tr>
                                                     <th></th>
@@ -87,6 +87,7 @@
                                                         <td><a class="text-dark" href="add-meal-plan.html">{{$fitness_goals->name}}</a></td>
                                                         @php
                                                             $diet_plan=$fitness_goals->mealplan_variant;
+                                                           
                                                             $diet_plan_list=[];
                                                             if(count($diet_plan) > 0){
                                                                 foreach ($diet_plan as $value){
@@ -95,8 +96,12 @@
                                                                     }
                                                                 }
                                                             }
+                                                            
                                                         @endphp
-                                                        <td>{{isset($diet_plan_list)?implode(',',$diet_plan_list):'-'}}</td>
+                                                        @if(implode(',',$diet_plan_list) == 'Low Carbs')<td> Low Carbs</td>
+                                                         @elseif(implode(',',$diet_plan_list) == 'Balanced Diet')<td>Balance Diet </td>
+                                                          @else(implode(',',$diet_plan_list) == 'Low Carbs' || implode(',',$diet_plan_list) == 'Balanced Carbs') <td> Low Carbs,Balanced Diet </td>
+                                                           @endif
                                                         @if(Session::get('admin_logged_in')['type']=='0')
 
                                                         <td>

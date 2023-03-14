@@ -28,6 +28,7 @@ use App\Models\WeekDays;
 use App\Models\MealWeekDay;
 use App\Models\MealDepartment;
 use App\Models\MealDietPlan;
+use App\Models\EmailNotification;
 use App\Models\MealGroupSchedule;
 use App\Models\MealMacroNutrients;
 use App\Models\MealIngredientList;
@@ -67,7 +68,10 @@ class NotificationController extends Controller {
         } else {
             $brodcastNotification=BrodcastNotification::get();
             $popupNotification=PopUpNotification::get();
-            return view('admin.notification-managment.index',compact('brodcastNotification','popupNotification'));
+              $invoiceEmailNotification=EmailNotification::where('identifier','invoice email')->first();
+              $deliveryEmailNotification=EmailNotification::where('identifier','delivery email')->first();
+              $giftCardEmailNotification=EmailNotification::where('identifier','gift card email')->first();
+            return view('admin.notification-managment.index',compact('brodcastNotification','popupNotification','invoiceEmailNotification','deliveryEmailNotification','giftCardEmailNotification'));
         }
     }
 
@@ -112,6 +116,49 @@ class NotificationController extends Controller {
         \Illuminate\Support\Facades\Session::flash('popup');
         return redirect('admin/notification-management')->with('success', ' Insert successfully.');
     }
+
+
+    public function update(Request $request, $id=null){
+
+        $update = EmailNotification::find($id);
+        $update->description = $request->input('invoiceEmail'); 
+         $update->save();  
+     
+          if($update){
+              return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+          }
+          else {
+              return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+          }
+      }
+
+      public function delivery_update(Request $request, $id=null){
+
+         $update = EmailNotification::find($id);
+        $update->description = $request->input('delivery_email'); 
+         $update->save();  
+     
+          if($update){
+              return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+          }
+          else {
+              return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+          }
+      }
+
+      public function giftCard_update(Request $request, $id=null){
+
+         $update = EmailNotification::find($id);
+       $update->description = $request->input('giftCardEmail'); 
+        $update->save();  
+    
+         if($update){
+             return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your content update successfully']);
+         }
+         else {
+             return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update content']);
+         }
+     }
 
 
 }

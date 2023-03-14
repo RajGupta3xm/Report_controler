@@ -15,8 +15,8 @@ class CreateWeekDaysTable extends Migration
     {
         Schema::create('week_days', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('name_ar'); 
+            $table->string('week_days_id');
+            $table->string('week_days_id_ar'); 
             $table->enum('type',['working','weekend']);
             $table->enum('status',['active','inactive','trahsed']);
             $table->timestamps();

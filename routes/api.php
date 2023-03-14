@@ -67,12 +67,12 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('availableCredit', 'ApiController@availableCredit');
     Route::get('creditTransactionList', 'ApiController@creditTransactionList');
     Route::post('basicInfo', 'ApiController@basicInfo');
-    Route::get('promoCodeListing/{meal_plan_id}', 'ApiController@promoCodeListings');
+    Route::get('promoCodeListing/{meal_plan_id}/{variant_id}', 'ApiController@promoCodeListings');
     Route::get('basicInfoDetail', 'ApiController@basicInfoDetail');
     Route::get('cities_listing', 'ApiController@cities_listing');
     Route::post('select_delivery_location', 'ApiController@select_delivery_location');
     Route::post('resume_meal_plan', 'ApiController@resume_meal_plan');
-    Route::get('meal_plan_listing', 'ApiController@meal_plan_listing');
+    Route::get('meal_plan_listing/{plan_types}', 'ApiController@meal_plan_listing');
     Route::post('sample_daily_meals', 'ApiController@sample_daily_meals'); 
     Route::post('balance_sample_daily_meals', 'ApiController@balance_sample_daily_meals'); 
     Route::any('updateBasicInfo', 'ApiController@updateBasicInfo'); 
@@ -87,6 +87,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('mantainAddressStatus', 'ApiController@mantainAddressStatus');
     Route::post('checkDaySelectedOrNot', 'ApiController@checkDaySelectedOrNot');
     Route::post('updateTimeSlotFromAddress', 'ApiController@updateTimeSlotFromAddress');
+    Route::post('getPriceCalculation', 'ApiController@getPriceCalculation');
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 

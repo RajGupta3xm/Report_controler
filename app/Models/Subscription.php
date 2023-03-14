@@ -13,6 +13,7 @@ class Subscription extends Model
     	'variant_id',
     	'start_date',
     	'pause_date',
+		'resume_date',
 		'switch_plan_start_date',
     	'resume_date',
     	'end_date',

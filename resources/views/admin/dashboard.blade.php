@@ -46,7 +46,7 @@
                               </div>
                            </a>
                         </div>
-                        <div class="col d-flex align-items-stretch pe-0">
+                        <!-- <div class="col d-flex align-items-stretch pe-0">
                            <a href="{{url('admin/upcoming-deliveries')}}" class="row dashboard_box box_design me-0 w-100">
                               <div class="col-auto px-0">
                                  <span class="dashboard_icon"><i class="fas fa-biking-mountain"></i></span>
@@ -58,7 +58,7 @@
                                  </div>
                               </div>
                            </a>
-                        </div> 
+                        </div>  -->
                      </div>
                      <div class="row mx-0">
                         <div class="col-12 design_outter_comman recent_orders shadow">
@@ -66,14 +66,14 @@
                               <div class="col-auto">
                                  <h2>Recent Orders</h2>
                               </div>
-                              <div class="col-3">
+                              <!-- <div class="col-3">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search Recent Orders" name="name" >
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
-                              </div>
+                              </div> -->
                            </div>
                            <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" action="">
                               <div class="form-group mb-0 col-5">
@@ -91,7 +91,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
                                  <div class="table-responsive">
-                                    <table class="table mb-0" >
+                                    <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
                                            <th>S.No.</th>

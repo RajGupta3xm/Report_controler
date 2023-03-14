@@ -61,7 +61,7 @@
                                              <select class="form-select form-control" aria-label="Default select example" name="status" id="status">
                                                 <option selected disabled>Status</option>
                                                 <option value="active">Active</option>
-                                                <option value="draft">Draft</option> 
+                                                <option value="inactive">Draft</option> 
                                               </select>
                                           </div>
                                           <div class="form-group mb-2">
@@ -73,7 +73,7 @@
                                               @endforeach
                                               </select>
                                           </div>
-                                          <div class="form-group mb-0">
+                                          <div class="form-group mb-2">
                                              <label for="">Plan Type :</label>
                                              <select class="form-select form-control" aria-label="Default select example" name="plan_type" id="plan_type">
                                                 <option selected disabled>Plan Type</option>
@@ -81,6 +81,10 @@
                                                 <option value="{{$dietPlanTypes->id}}">{{$dietPlanTypes->name}}</option>
                                                @endforeach
                                               </select>
+                                          </div>
+                                          <div class="form-group mb-0">
+                                          <label for="">Select Date</label>
+                                          <input type="date" onchange="$('#start_date').attr('min', $(this).val());" max="<?= date('Y-m-d') ?>"  value="{{isset($start_date)?$start_date:''}}"  name="start_date" class="form-select form-control">
                                           </div>
                                           <div class="col-md-12 col-xs-12">
                                               <p id="formError" class="text-danger"></p>

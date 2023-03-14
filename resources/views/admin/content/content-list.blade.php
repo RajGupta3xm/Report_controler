@@ -202,7 +202,8 @@
       </div>
       <script src="https://cdn.ckeditor.com/4.17.1/standard-all/ckeditor.js"></script>
 <script>
-    CKEDITOR.replace('editt_2', {
+
+    CKEDITOR.replace('editt_', {
       fullPage: true,
       extraPlugins: 'docprops',
       allowedContent: true,

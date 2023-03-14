@@ -17,14 +17,14 @@
                               <div class="col-auto">
                                  <h2>Order Management</h2>
                               </div>
-                              <div class="col-3">
+                              <!-- <div class="col-3">
                                  <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                        <i class="far fa-search"></i>
                                     </div>
                                  </form>
-                              </div>
+                              </div> -->
                            </div>
                            <form class="form-design py-4 px-3 row align-items-end justify-content-between" action="">
                               <div class="form-group mb-0 col-5">
@@ -42,7 +42,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0"  >
                                  <div class="table-responsive" id="printableArea">
-                                    <table class="table mb-0" >
+                                    <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
                                           <th>

@@ -60,41 +60,44 @@
                                                         </div>
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm3" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
                                                             @csrf
-                                                            <div class="form-group position-relative col-4" > 
-                                                                <label for="">Ingredient Name (En)</label> 
-                                                                <input type="text" class="form-control validate" value="" name="name" id="name" maxlength="20"> 
-                                                                <p class="text-danger text-small error m-0" id="nameError"></p> 
+                                                           
+                                                            <div class="form-group  position-relative col-4" > 
+                                                                <label for="name">Ingredient Name (En)</label> 
+                                                                <input type="text" class="form-control "  value="" name="name" id="name"  maxlength="20" required> 
+                                                                <!-- <p class="text-danger text-small error m-0" id="nameError"></p>  -->
                                                             </div>
                                                               <div class="form-group position-relative col-4">
                                                                  <label for="">Ingredient Name (Ar)</label> <input type="text" class="form-control validate" value="" name="name_ar" id="name" maxlength="20"><p class="text-danger text-small error m-0" id="name_arError" ></p>
                                                               </div>
-                                                                <div class="form-group col-4"> 
+                                                                <div class="form-group  position-relative col-4"> 
                                                                 <label for="">Group</label>
-                                                                <select class="form-select form-control " name="group_id" aria-label="Default select example">
-                                                                    <option selected>Select Group</option>
+                                                                <select class="form-select form-control validate" name="group_id" aria-label="Default select example">
+                                                                    <option selected disabled >Select Group</option>
                                                                     @foreach($groups as $groups)
                                                                     <option value="{{$groups->id}}">{{$groups->name}}</option>
                                                                     @endforeach
                                                                 </select>
+                                                                <p class="text-danger text-small error m-0" id="group_idError" ></p>
                                                             </div>
-                                                            <div class="form-group mb-0 col"> 
+                                                            <div class="form-group mb-0 position-relative col"> 
                                                                 <label for="">Category</label>
-                                                                <select class="form-select form-control validate" name="category_id" aria-label="Default select example">
-                                                                    <option selected>Select Category</option>
+                                                                <select class="form-select form-control  validate" name="category_id" aria-label="Default select example">
+                                                                    <option selected disabled>Select Category</option>
                                                                     @foreach($categorys as $categories) 
                                                                     <option value="{{$categories->id}}">{{$categories->name}}</option>
                                                                     @endforeach
                                                                 </select>
-                                                              
+                                                                <p class="text-danger text-small error m-0" id="category_idError" ></p>
                                                             </div>
-                                                            <div class="form-group mb-0 col"> 
+                                                            <div class="form-group mb-0 position-relative col"> 
                                                                 <label for="">Unit</label> 
                                                                 <select class="form-select form-control validate" name="unit_id" aria-label="Default select example">
-                                                                    <option selected>Select Unit</option>
+                                                                    <option selected disabled>Select Unit</option>
                                                                     @foreach($units as $units) 
                                                                     <option value="{{$units->id}}">{{$units->unit}}</option>
                                                                     @endforeach
                                                                 </select>
+                                                                <p class="text-danger text-small error m-0" id="unit_idError" ></p>
                                                             </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate3(this)" class="comman_btn">Save</button> </div>
                                                         </form>
@@ -108,7 +111,7 @@
                                                                 <h2>Add New Ingredient</h2>
                                                             </div>
                                                         </div>
-                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm3" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm33" enctype="multipart/form-data" action="{{url('admin/ingredient/submit')}}">
                                                             @csrf
                                                             <div class="form-group position-relative  col-4"> 
                                                                 <label for="">Ingredient Name (En)</label> 
@@ -261,12 +264,34 @@
                                                                 <h2>Add New Group</h2>
                                                             </div>
                                                         </div>
-                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between needs-validation" novalidate  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
                                                             @csrf
-                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" maxlength="20" ><p class="text-danger m-0 error text-small" id="groupError"></p> </div>
-                                                            <div class="form-group position-relative mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" maxlength="20"><p class="text-danger m-0 error text-small" id="group_arError"></p> </div>
-                                                            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control validate" value="" name="images1" id="upload_video" accept="image/*"><p class="text-danger m-0 error text-small" id="images1Error"></p> </div>
-                                                            <div class="form-group mb-0 col-auto"> <button type="button" onclick="validate2(this)" class="comman_btn">Save</button> </div>
+                                                            <div class="form-group position-relative mb-0 col"> 
+                                                                <label for="validationCustom01">Group Name (En)</label>
+                                                                 <input type="text" class="form-control validate" value="" name="group" maxlength="20" id="validationCustom01" required>
+                                                             <!-- <p class="text-danger m-0 error text-small" id="groupError"></p>  -->
+                                                             <div class="invalid-feedback error text-small">
+                                                                  Please choose a group name.
+                                                              </div>
+                                                        </div>
+                                                            <div class="form-group position-relative mb-0 col"> 
+                                                                <label for="validationCustom01">Group Name (Ar)</label>
+                                                                 <input type="text" class="form-control validate" value="" name="group_ar" id="validationCustom01" maxlength="20" required>
+                                                                 <!-- <p class="text-danger m-0 error text-small" id="group_arError"></p> -->
+                                                                 <div class="invalid-feedback error text-small">
+                                                                  Please choose a group name_ar.
+                                                              </div>
+                                                            </div>
+                                                            <div class="form-group mb-0 col choose_file position-relative">
+                                                                <span>Upload Image</span>
+                                                                <label for="validationCustom01"><i class="fal fa-camera me-1"></i>Choose File</label>
+                                                                <input type="file" class="form-control validate" value="" name="images1" id="validationCustom01" accept="image/*" required>
+                                                                <!-- <p class="text-danger m-0 error text-small" id="images1Error"></p> -->
+                                                                <div class="invalid-feedback error text-small">
+                                                                  Please choose a image.
+                                                              </div>
+                                                            </div>
+                                                            <div class="form-group mb-0 col-auto"> <button type="submit" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
                                                     </div>
                                                     @endif
@@ -278,7 +303,7 @@
                                                                 <h2>Add New Group</h2>
                                                             </div>
                                                         </div>
-                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForm22" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
                                                             @csrf
                                                             <div class="form-group position-relative mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control validate" value="" name="group" maxlength="20"><p class="text-danger m-0 error text-small" id="groupError"></p> </div>
                                                             <div class="form-group position-relative mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control validate" value="" name="group_ar" maxlength="20"><p class="text-danger m-0 error text-small" id="group_arError"></p> </div>
@@ -320,7 +345,7 @@
                                                             <div class="col-12 comman_table_design bg-white px-0">
                                                                 <div class="table-responsive">
                                                                     <table class="table mb-0" id="example1" >
-                                                                        <thead>
+                                                                        <thead >
                                                                             <tr>
                                                                                 <th>S.No.</th> 
                                                                                 <th>Media</th>
@@ -338,7 +363,7 @@
                                                                                 @endif
                                                                             </tr>
                                                                         </thead>
-                                                                        <tbody>
+                                                                        <tbody >
                                                                             @foreach($group as $key=>$groups)
                                                                             <tr>
                                                                                 <td>{{$key+1}}</td>
@@ -394,11 +419,16 @@
                                                                 <h2>Categories</h2>
                                                             </div>
                                                         </div>
-                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between"  method="POST" id="addForms" enctype="multipart/form-data" action="{{url('admin/category/submit')}}">
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between  needs-validation" novalidate   method="POST" id="addForms" enctype="multipart/form-data" action="{{url('admin/category/submit')}}">
                                                             @csrf
 															<div class="form-group position-relative mb-0 col">
-																<label for="">Ingredient Categories (En)</label>
-																<input type="text" class="form-control validate" value="" name="category" maxlength="20"> <p class="text-danger text-small error m-0" id="categoryError"></p> </div>
+																<label for="validationCustom01">Ingredient Categories (En)</label>
+																<input type="text" class="form-control validate" value="" name="category" id="validationCustom01" maxlength="20"> 
+                                                                <!-- <p class="text-danger text-small error m-0" id="categoryError"></p>  -->
+                                                                <div class="invalid-feedback text-small">
+                                                                   Please choose a title.
+                                                              </div>
+                                                            </div>
 															<div class="form-group position-relative mb-0 col">
 																<label for="">Ingredient Categories (Ar)</label>
 																<input type="text" class="form-control validate" value="" name="category_ar"maxlength="20" >  <p class="text-danger error text-small m-0" id="category_arError"></p></div>
@@ -764,13 +794,25 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" id="carForm"> 
+          <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between  needs-validation" novalidate id="carForm"> 
          @csrf
          <input type="hidden" class="form-control"  id="id" name="id" >
-            <div class="form-group mb-0 col"> <label for="">Group Name (En)</label> <input type="text" class="form-control"  id="group_name" name="group_name" maxlength="20"> </div>
-            <div class="form-group mb-0 col"> <label for="">Group Name (Ar)</label> <input type="text" class="form-control"  id="group_name_ar" name="group_name_ar" maxlength="20"> </div>
+            <div class="form-group mb-0 col position-relative"> 
+              <label for="group_name">Group Name (En)</label> 
+              <input type="text" class="form-control required"  id="group_name" name="group_name" maxlength="20" required>
+              <div class="invalid-feedback error m-0 text-small">
+                  Please choose a group name.
+              </div>
+          </div>
+            <div class="form-group mb-0 col position-relative"> 
+                <label for="">Group Name (Ar)</label>
+                <input type="text" class="form-control required"  id="group_name_ar" name="group_name_ar" maxlength="20" required>
+                <div class="invalid-feedback error m-0 text-small">
+                  Please choose a group name_ar.
+              </div>
+            </div>
            <div class="form-group mb-0 col choose_file position-relative"> <span>Upload Image</span> <label for="image1"><i class="fal fa-camera me-1"></i>Choose File</label> <input type="file" class="form-control" id="image1"  name="images" ></div>
-            <div class="form-group mb-0 col-auto"> <button type="button"  onclick="updateCar(this);" name="submit-form"   class="comman_btn">Save</button> </div>
+            <div class="form-group mb-0 col-auto"><button type="button"  onclick="updateCar(this);" name="submit-form"   class="comman_btn">Save</button> </div>
           </form>
         </div> 
       </div>
@@ -881,11 +923,74 @@
     </div>
 </div>
 @endforeach
+
+
 <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+      <script>
+ $(window).load(function(){
+   setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
+});
+  </script>
+   <script>
+ $(window).load(function(){
+   setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
+});
+  </script>
+    <script>
+        $('.dropify').dropify();
+    </script>
+      <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+   </script>
+      <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('click', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+   </script>
       <script>
 function printableDiv(printableAreaDivId) {
      var printContents = document.getElementById(printableAreaDivId).innerHTML;
@@ -898,6 +1003,7 @@ function printableDiv(printableAreaDivId) {
 }
 
 </script>
+
 @endsection
 
 <script>
@@ -975,14 +1081,22 @@ if (flag) {
         cache: false,
         success: function(data) {
             swal({
-                title: "Details Updated!",
-                text: data.message,
-                icon: "success",
-                buttons: false,
-            });
-            setTimeout(function() {
-                location.reload();
-            }, 2000);
+               title: "Success!",
+                text : "Details Updated! \n Click OK to refresh the page",
+                icon : "success",
+           }).then(function() {
+            $('#example1').load(document.URL +  ' #example1');                
+             });
+             $('#staticBackdrop08').modal('hide');
+            // swal({
+            //     title: "Details Updated!",
+            //     text: data.message,
+            //     icon: "success",
+            //     buttons: false,
+            // })
+            // setTimeout(function() {
+            //     location.reload();
+            // }, 2000);
         }
     });
 }
@@ -1068,14 +1182,45 @@ if (flag) {
                 var element = $(this);
                 var val = element.val();
                 var name = element.attr("name");
-                if (val == "" || val == "0" || val == null) {
-                    
-                $("#" + name + "Error").html("This field is required");
-                flag = false;
-                    
-                    
-                } else {
+                if(name == 'name'){
+                  if (val == "" || val == "0" || val == null) {     
+                      $("#" + name + "Error").html("This name is required");
+                       flag = false;      
+                    } else {
 
+                  }
+                }
+                if(name == 'name_ar'){
+                  if (val == "" || val == "0" || val == null) {     
+                      $("#" + name + "Error").html("This name_ar is required");
+                       flag = false;      
+                    } else {
+
+                  }
+                }
+                if(name == 'group_id'){
+                  if (val == "" || val == "0" || val == null) {     
+                      $("#" + name + "Error").html("This group field is required");
+                       flag = false;      
+                    } else {
+
+                  }
+                }
+                if(name == 'category_id'){
+                  if (val == "" || val == "0" || val == null) {     
+                      $("#" + name + "Error").html("This category field is required");
+                       flag = false;      
+                    } else {
+
+                  }
+                }
+                if(name == 'unit_id'){
+                  if (val == "" || val == "0" || val == null) {     
+                      $("#" + name + "Error").html("This unit field is required");
+                       flag = false;      
+                    } else {
+
+                  }
                 }
             });
            
@@ -1147,13 +1292,17 @@ if (flag) {
                         type : "POST",
                         data : 'id=' + id + '&_token=<?= csrf_token() ?>',
                         success: function(data){
+                          
                             swal({
                                 title: "Success!",
                                 text : "Group has been deleted \n Click OK to refresh the page",
                                 icon : "success",
                             }).then(function() {
-                                location.reload();
+                                $('#example1').load(document.URL +  ' #example1');
+                               
+                             
                             });
+                         
                         },
                         error : function(){
                             swal({
@@ -1245,17 +1394,7 @@ if (flag) {
             }
         }
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-      <script>
- $(window).load(function(){
-   setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
-});
-  </script>
-   <script>
- $(window).load(function(){
-   setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
-});
-  </script>
+
 <script>
             function validate(obj) {
             $(".text-danger").html('');

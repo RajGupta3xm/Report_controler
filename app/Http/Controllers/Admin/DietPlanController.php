@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DietPlanType;
+use App\Models\DietPlanTypesMealCalorieMinMax;
 
 use DB;
 
@@ -77,9 +78,6 @@ public function submit(Request $request){
    
   ];
 
-//  $data['protein'] = round($request->input('actual_protein')/$request->input('total1'),2);
-//  $data['carbs'] = round($request->input('actual_carb')/$request->input('total2'),2);
-//  $data['fat'] = round($request->input('actual_fat')/$request->input('total3'),2);
 
   if(!empty($request->image)){
      $filename = $request->image->getClientOriginalName();
@@ -111,8 +109,55 @@ public function submit(Request $request){
 
 }
  
-
   $insert = DietPlanType::create($data);
+  if($insert){
+     $protein_min = (($insert->protein_default_min/100)*1000)/$insert->protein_min_divisor;
+     $protein_max = (($insert->protein_default_max/100)*1000)/$insert->protein_max_divisor;
+     $carb_min = (($insert->carb_default_min/100)*1000)/$insert->carb_min_divisor;
+     $carb_max = (($insert->carb_default_max/100)*1000)/$insert->carb_max_divisor;
+     $fat_min = (($insert->fat_default_min/100)*1000)/$insert->fat_min_divisor;
+     $fat_max = (($insert->fat_default_max/100)*1000)/$insert->fat_max_divisor;
+
+     $protein_min1 = (($insert->protein_default_min/100)*1200)/$insert->protein_min_divisor;
+     $protein_max1 = (($insert->protein_default_max/100)*1200)/$insert->protein_max_divisor;
+     $carb_min1 = (($insert->carb_default_min/100)*1200)/$insert->carb_min_divisor;
+     $carb_max1 = (($insert->carb_default_max/100)*1200)/$insert->carb_max_divisor;
+     $fat_min1 = (($insert->fat_default_min/100)*1200)/$insert->fat_min_divisor;
+     $fat_max1 = (($insert->fat_default_max/100)*1200)/$insert->fat_max_divisor;
+
+     $protein_min2 = (($insert->protein_default_min/100)*1500)/$insert->protein_min_divisor;
+     $protein_max2 = (($insert->protein_default_max/100)*1500)/$insert->protein_max_divisor;
+     $carb_min2 = (($insert->carb_default_min/100)*1500)/$insert->carb_min_divisor;
+     $carb_max2 = (($insert->carb_default_max/100)*1500)/$insert->carb_max_divisor;
+     $fat_min2 = (($insert->fat_default_min/100)*1500)/$insert->fat_min_divisor;
+     $fat_max2 = (($insert->fat_default_max/100)*1500)/$insert->fat_max_divisor;
+
+     $protein_min3 = (($insert->protein_default_min/100)*1800)/$insert->protein_min_divisor;
+     $protein_max3 = (($insert->protein_default_max/100)*1800)/$insert->protein_max_divisor;
+     $carb_min3 = (($insert->carb_default_min/100)*1800)/$insert->carb_min_divisor;
+     $carb_max3 = (($insert->carb_default_max/100)*1800)/$insert->carb_max_divisor;
+     $fat_min3 = (($insert->fat_default_min/100)*1800)/$insert->fat_min_divisor;
+     $fat_max3 = (($insert->fat_default_max/100)*1800)/$insert->fat_max_divisor;
+
+     $protein_min4 = (($insert->protein_default_min/100)*2000)/$insert->protein_min_divisor;
+     $protein_max4 = (($insert->protein_default_max/100)*2000)/$insert->protein_max_divisor;
+     $carb_min4 = (($insert->carb_default_min/100)*2000)/$insert->carb_min_divisor;
+     $carb_max4 = (($insert->carb_default_max/100)*2000)/$insert->carb_max_divisor;
+     $fat_min4 = (($insert->fat_default_min/100)*2000)/$insert->fat_min_divisor;
+     $fat_max4 = (($insert->fat_default_max/100)*2000)/$insert->fat_max_divisor;
+
+    $data_calorie=[
+        ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1000','protein_max' => round($protein_max,0), 'protein_min' => round($protein_min,0), 'carbs_min' => round($carb_min,0), 'carbs_max' => round($carb_max,0),   'fat_min' => round($fat_min,0),  'fat_max' => round($fat_max,0)],
+        ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1200', 'protein_max' => round($protein_max1,0), 'protein_min' => round($protein_min1,0), 'carbs_min' => round($carb_min1,0), 'carbs_max' => round($carb_max1,0),   'fat_min' => round($fat_min1,0),  'fat_max' => round($fat_max1,0)],
+        ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1500', 'protein_max' => round($protein_max2,0), 'protein_min' => round($protein_min2,0), 'carbs_min' => round($carb_min2,0), 'carbs_max' => round($carb_max2,0),   'fat_min' => round($fat_min2,0),  'fat_max' => round($fat_max2,0)],
+        ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1800', 'protein_max' => round($protein_max3,0), 'protein_min' => round($protein_min3,0), 'carbs_min' => round($carb_min3,0), 'carbs_max' => round($carb_max3,0),   'fat_min' => round($fat_min3,0),  'fat_max' => round($fat_max3,0)],
+        ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '2000', 'protein_max' => round($protein_max4,0), 'protein_min' => round($protein_min4,0), 'carbs_min' => round($carb_min4,0), 'carbs_max' => round($carb_max4,0),   'fat_min' => round($fat_min4,0),  'fat_max' => round($fat_max4,0)],
+      
+     ];
+     
+     DietPlanTypesMealCalorieMinMax::insert($data_calorie);
+    
+  }
    if ($insert) {
        return redirect()->back()->with('success','Diet Plan added successfully');
      } else {
@@ -174,6 +219,58 @@ public function edit_update(Request $request, $id=null){
     }
 
 $update = DietPlanType::find($id)->update($data);
+$insert = DietPlanType::find($id);
+if($insert){
+    $protein_min = (($insert->protein_default_min/100)*1000)/$insert->protein_min_divisor;
+    $protein_max = (($insert->protein_default_max/100)*1000)/$insert->protein_max_divisor;
+    $carb_min = (($insert->carb_default_min/100)*1000)/$insert->carb_min_divisor;
+    $carb_max = (($insert->carb_default_max/100)*1000)/$insert->carb_max_divisor;
+    $fat_min = (($insert->fat_default_min/100)*1000)/$insert->fat_min_divisor;
+    $fat_max = (($insert->fat_default_max/100)*1000)/$insert->fat_max_divisor;
+
+    $protein_min1 = (($insert->protein_default_min/100)*1200)/$insert->protein_min_divisor;
+    $protein_max1 = (($insert->protein_default_max/100)*1200)/$insert->protein_max_divisor;
+    $carb_min1 = (($insert->carb_default_min/100)*1200)/$insert->carb_min_divisor;
+    $carb_max1 = (($insert->carb_default_max/100)*1200)/$insert->carb_max_divisor;
+    $fat_min1 = (($insert->fat_default_min/100)*1200)/$insert->fat_min_divisor;
+    $fat_max1 = (($insert->fat_default_max/100)*1200)/$insert->fat_max_divisor;
+
+    $protein_min2 = (($insert->protein_default_min/100)*1500)/$insert->protein_min_divisor;
+    $protein_max2 = (($insert->protein_default_max/100)*1500)/$insert->protein_max_divisor;
+    $carb_min2 = (($insert->carb_default_min/100)*1500)/$insert->carb_min_divisor;
+    $carb_max2 = (($insert->carb_default_max/100)*1500)/$insert->carb_max_divisor;
+    $fat_min2 = (($insert->fat_default_min/100)*1500)/$insert->fat_min_divisor;
+    $fat_max2 = (($insert->fat_default_max/100)*1500)/$insert->fat_max_divisor;
+
+    $protein_min3 = (($insert->protein_default_min/100)*1800)/$insert->protein_min_divisor;
+    $protein_max3 = (($insert->protein_default_max/100)*1800)/$insert->protein_max_divisor;
+    $carb_min3 = (($insert->carb_default_min/100)*1800)/$insert->carb_min_divisor;
+    $carb_max3 = (($insert->carb_default_max/100)*1800)/$insert->carb_max_divisor;
+    $fat_min3 = (($insert->fat_default_min/100)*1800)/$insert->fat_min_divisor;
+    $fat_max3 = (($insert->fat_default_max/100)*1800)/$insert->fat_max_divisor;
+
+    $protein_min4 = (($insert->protein_default_min/100)*2000)/$insert->protein_min_divisor;
+    $protein_max4 = (($insert->protein_default_max/100)*2000)/$insert->protein_max_divisor;
+    $carb_min4 = (($insert->carb_default_min/100)*2000)/$insert->carb_min_divisor;
+    $carb_max4 = (($insert->carb_default_max/100)*2000)/$insert->carb_max_divisor;
+    $fat_min4 = (($insert->fat_default_min/100)*2000)/$insert->fat_min_divisor;
+    $fat_max4 = (($insert->fat_default_max/100)*2000)/$insert->fat_max_divisor;
+
+    DietPlanTypesMealCalorieMinMax::where('diet_plan_type_id',$insert->id)->delete();
+   $data_calorie=[
+       ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1000','protein_max' => round($protein_max,0), 'protein_min' => round($protein_min,0), 'carbs_min' => round($carb_min,0), 'carbs_max' => round($carb_max,0),   'fat_min' => round($fat_min,0),  'fat_max' => round($fat_max,0)],
+       ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1200', 'protein_max' => round($protein_max1,0), 'protein_min' => round($protein_min1,0), 'carbs_min' => round($carb_min1,0), 'carbs_max' => round($carb_max1,0),   'fat_min' => round($fat_min1,0),  'fat_max' => round($fat_max1,0)],
+       ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1500', 'protein_max' => round($protein_max2,0), 'protein_min' => round($protein_min2,0), 'carbs_min' => round($carb_min2,0), 'carbs_max' => round($carb_max2,0),   'fat_min' => round($fat_min2,0),  'fat_max' => round($fat_max2,0)],
+       ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '1800', 'protein_max' => round($protein_max3,0), 'protein_min' => round($protein_min3,0), 'carbs_min' => round($carb_min3,0), 'carbs_max' => round($carb_max3,0),   'fat_min' => round($fat_min3,0),  'fat_max' => round($fat_max3,0)],
+       ['diet_plan_type_id'=> $insert->id,  'meal_calorie' => '2000', 'protein_max' => round($protein_max4,0), 'protein_min' => round($protein_min4,0), 'carbs_min' => round($carb_min4,0), 'carbs_max' => round($carb_max4,0),   'fat_min' => round($fat_min4,0),  'fat_max' => round($fat_max4,0)],
+     
+    ];
+    
+    DietPlanTypesMealCalorieMinMax::insert($data_calorie);
+   
+ }
+
+
 if($update){
    return redirect('admin/dietPlan-management')->with('success', ' update successfully.');
 }

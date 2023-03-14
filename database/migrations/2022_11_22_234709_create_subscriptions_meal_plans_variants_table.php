@@ -29,7 +29,7 @@ class CreateSubscriptionsMealPlansVariantsTable extends Migration
                 $table->string('plan_price');
                 $table->string('compare_price');
                 $table->enum('is_charge_vat',['yes','no'])->default('no');
-                $table->string('custom_text');
+                $table->string('custom_text')->nullable();
                 $table->enum('status',['active','inactive']);
                 $table->timestamps();
             });

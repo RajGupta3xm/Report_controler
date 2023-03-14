@@ -765,6 +765,7 @@ class ComposerStaticInit4dd6f25346a5011cf111d34624ead948
         'App\\Models\\UserFollowing' => __DIR__ . '/../..' . '/app/Models/UserFollowing.php',
         'App\\Models\\UserGiftCard' => __DIR__ . '/../..' . '/app/Models/UserGiftCard.php',
         'App\\Models\\UserProfile' => __DIR__ . '/../..' . '/app/Models/UserProfile.php',
+        'App\\Models\\UserSelectDeliveryLocation' => __DIR__ . '/../..' . '/app/Models/UserSelectDeliveryLocation.php',
         'App\\Models\\UserSelectedDaysForAddress' => __DIR__ . '/../..' . '/app/Models/UserSelectedDaysForAddress.php',
         'App\\Models\\UserSkipDelivery' => __DIR__ . '/../..' . '/app/Models/UserSkipDelivery.php',
         'App\\Models\\UserSkipTimeSlot' => __DIR__ . '/../..' . '/app/Models/UserSkipTimeSlot.php',
