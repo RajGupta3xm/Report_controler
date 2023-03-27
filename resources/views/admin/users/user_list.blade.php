@@ -85,23 +85,21 @@
                                            <td>{{$key+1}}</td>
                                            <td>{{$user->id}}</td>
                                            <td>{{$user->name}}</td>
-                                           <td>{{$user->mobile}}</td>
+                                           <td>{{$user->country_code}}&nbsp{{$user->mobile}}</td>
                                            <td>{{$user->email}}</td>
-                                           <td>{{date('d-m-Y', strtotime($user->created_at))}}</td>
+                                           <td>{{date('d/m/Y',strtotime($user->created_at))}}</td>
                                            @php
                                                 $totalOrder=\App\Models\Order::where('user_id',$user->id)->count();
                                                
                                             @endphp
                                            <td>{{$totalOrder}}</td> 
                                            <td>22</td> 
-                                           @foreach($user->user_address as $ke=>$address)
-                                           @if ( $loop->index == 0)
-                                           <td>{{$address['area']}}</td>
-                                           @endif
-                                           @if ( $loop->index != 0)
-                                           <td>{{$address['area'] ?: '' }}</td>
-                                           @endif
-                                           @endforeach
+                                           @forelse ($user->TotalOrder->take(2) as $k=>$order)
+                                           <td>{{$order->area}}</td>
+                                           @empty
+                                           <td>-</td>
+                                           <td>-</td>
+                                           @endforelse
                                            <td>
                                            Active
                                            </td> 

@@ -15,6 +15,7 @@ use App\Models\ReferAndEarnUsed;
 use App\Models\FitnessGoal;
 use App\Models\DislikeItem;
 use App\Models\UserUsedPromoCode;
+use App\Models\Notification;
 use App\Models\MealIngredientList;
 use App\Models\UserProfile;
 use App\Models\SocialLink;
@@ -1075,7 +1076,8 @@ class ApiController extends Controller {
 
 
     public function notificationList() {
-        $notifications = AppNotification::where('user_id', Auth::guard('api')->id())->where('type', '<>', 'post-tag')->orderBy('id', 'DESC')->get();
+      
+        $notifications = Notification::where('user_id', Auth::guard('api')->id())->orderBy('id', 'DESC')->get();
         $response = new \Lib\PopulateResponse($notifications);
         $this->data = $response->apiResponse();
         $this->status = true;
@@ -1086,17 +1088,17 @@ class ApiController extends Controller {
     public function clearNotifications(Request $request) {
         if ($request->notification_id) {
             $this->message = trans('messages.notification_delete_success');
-            $notifications = AppNotification::where('id', $request->notification_id)->where('user_id', Auth::guard('api')->id())->delete();
+            $notifications = Notification::where('id', $request->notification_id)->where('user_id', Auth::guard('api')->id())->delete();
         } else {
             $this->message = trans('messages.notification_clear_success');
-            $notifications = AppNotification::where('user_id', Auth::guard('api')->id())->delete();
+            $notifications = Notification::where('user_id', Auth::guard('api')->id())->delete();
         }
         $this->status = true;
         if ($notifications) {
 
         } else {
-            // $this->status_code = 201;
-            // $this->message = "Server could not get any response. Please try again later.";
+            $this->status_code = 201;
+            $this->message = "Server could not get any response. Please try again later.";
         }
         return $this->populateResponse();
     }
@@ -2073,17 +2075,44 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
             'plan_id'=> $request->subscription_plan_id,
             'resume_date'=> $request->resume_date,
             'variant_id' => $request->variant_id,
+            'resume_plan_plan_id'=> $request->subscription_plan_id,
+            'resume_plan_variant_id' => $request->variant_id,
             // 'start_date'=> $request->starting_date,
             'resume_date'=> $request->resume_date,
             'delivery_status'=> 'active',
+            'plan_status'=> 'plan_active',
 
         ]
     );
+
+       $newDate = Subscription::select('pause_date','end_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+    if($newDate){
+        $pause_date = Carbon::createFromFormat('Y-m-d',$newDate->pause_date);
+        $resume_date = Carbon::createFromFormat('Y-m-d',$request->resume_date);
+        $end_date = Carbon::createFromFormat('Y-m-d',$newDate->end_date);
+          $diff = $pause_date->diffInDays($resume_date);
+          $next_date = $end_date->addDays($diff);
+         Subscription::updateOrCreate(
+            ['user_id' =>  Auth::guard('api')->id(),
+            'plan_id' => $request->subscription_plan_id,
+            'variant_id' => $request->variant_id,
+             ],
+            [
+                'end_date'=> $next_date,
+                'no_of_days_pause_plan'=>  $diff,
+    
+            ]
+        );
+    }
+    
+
+    
     if($request->subscription_plan_id == $request->old_subscription_plan_id && $request->variant_id == $request->old_variant_id){
         Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'active']);
-    }else{
-        Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
     }
+    // else{
+    //     Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'terminted']);
+    // }
   $data->pay = '';
 }else{
      $oldStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->where('delivery_status','paused')->first();
@@ -2091,22 +2120,39 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
     
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
-        'plan_id' => $request->subscription_plan_id,
-        'variant_id' => $request->variant_id,
+        'plan_id' => $request->old_subscription_plan_id,
+        'variant_id' => $request->old_variant_id,
          ],
         [
-            'plan_id'=> $request->subscription_plan_id,
-            'variant_id' => $request->variant_id,
+            'resume_plan_plan_id'=> $request->subscription_plan_id,
+            'resume_plan_variant_id' => $request->variant_id,
             'start_date'=> $oldStartDate->start_date,
             // 'end_date'=> $oldStartDate->end_date,
-            'pause_date'=> $oldStartDate->pause_date,
+            // 'pause_date'=> $oldStartDate->pause_date,
             'is_weekend'=> $getWeekend->option2,
             'price'=> $getWeekend->plan_price,
             'resume_date'=> $request->resume_date,
-            'delivery_status'=> 'upcoming',
+            // 'delivery_status'=> 'active',
 
         ]
     );
+
+    $oldStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id,'delivery_status'=>'paused'])->first();
+    $pause_date = Carbon::createFromFormat('Y-m-d',$oldStartDate->pause_date);
+    $resume_date = Carbon::createFromFormat('Y-m-d',$request->resume_date);
+      $diff = $pause_date->diffInDays($resume_date);
+           Subscription::updateOrCreate(
+               ['user_id' =>  Auth::guard('api')->id(),
+               'plan_id' => $request->old_subscription_plan_id,
+               'variant_id' => $request->old_variant_id,
+                ],
+               [
+                   'no_of_days_pause_plan'=>  $diff,
+
+       
+               ]
+           );
+
     Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->update(['delivery_status'=>'active','plan_status'=>'plan_active']);
     
     if(!empty($request->old_subscription_plan_id)){
@@ -2118,7 +2164,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
                     $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
                $oldDate = Subscription::select('start_date','no_of_days_pause_plan')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
-              $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+               $pause_date = Subscription::select('pause_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
                 $old_start_date = Carbon::createFromFormat('Y-m-d',$oldDate->start_date);
                 $old_pause_date = Carbon::createFromFormat('Y-m-d',$pause_date->pause_date);
                $used_plan = $old_pause_date->diffInDays(Carbon::parse($old_start_date));
@@ -2127,14 +2173,14 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
                  $resumeDaysMinus = $remainingDayFromOldPlan - $oldDate->no_of_days_pause_plan;
                     $totalDays = $resumeDaysMinus + $oldDate->no_of_days_pause_plan;
 
-                $newDate = Subscription::select('resume_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
-                $dates = Carbon::createFromFormat('Y-m-d',$newDate->resume_date);
+                // $newDate = Subscription::select('resume_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
+                $dates = Carbon::createFromFormat('Y-m-d',$request->resume_date);
                 $next_date = $dates->addDays($totalDays);
 
                  $data =Subscription::updateOrCreate(
                     ['user_id' =>  Auth::guard('api')->id(),
-                    'plan_id' => $request->subscription_plan_id,
-                    'variant_id' => $request->variant_id,
+                    'plan_id' => $request->old_subscription_plan_id,
+                    'variant_id' => $request->old_variant_id,
                      ],
                     [
                         'end_date'=> $next_date,
@@ -2143,7 +2189,7 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
                 );
 
               
-               $new_date = Carbon::createFromFormat('Y-m-d',$newDate->resume_date);
+               $new_date = Carbon::createFromFormat('Y-m-d',$request->resume_date);
                // $old_date = Carbon::createFromFormat('Y-m-d',$next_date);
                    $usedPlanForDays = $new_date->diffInDays(Carbon::parse($next_date));
                //  $remaingDaysOfPlan = $oldNumberOfDays->no_days-$usedPlanForDays;
@@ -2159,45 +2205,33 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
        }
      }   
    }
-    if($data){
-        UserProfile::updateOrCreate(
-            ['user_id' =>  Auth::guard('api')->id(),
-            // 'subscription_id' => $request->subscription_plan_id,
-            ],
-            [
-                'diet_plan_type_id'=> $request->diet_plan_type_id,
-                'subscription_id'=> $request->subscription_plan_id,
-                'variant_id' => $request->variant_id,
+    // if($data){
+        /**********Chrone job********** */
+        // UserProfile::updateOrCreate(
+        //     ['user_id' =>  Auth::guard('api')->id(),
+        //     // 'subscription_id' => $request->subscription_plan_id,
+        //     ],
+        //     [
+        //         'diet_plan_type_id'=> $request->diet_plan_type_id,
+        //         'subscription_id'=> $request->subscription_plan_id,
+        //         'variant_id' => $request->variant_id,
 
-            ]
-        );
-        $oldStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
-         $newstart_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
-          $diff = Carbon::parse($newstart_date->resume_date)->diffInDays(Carbon::parse($oldStartDate->pause_date));
-        //   $totalpausePlan = 0;
-        //   $totalpausePlan =  $oldStartDate->no_of_days_pause_plan += $diff;
-               Subscription::updateOrCreate(
-                   ['user_id' =>  Auth::guard('api')->id(),
-                   'plan_id' => $request->subscription_plan_id,
-                   'variant_id' => $request->variant_id,
-                    ],
-                   [
-                       'no_of_days_pause_plan'=>  $diff,
-   
-           
-                   ]
-               );
-    }
-    $newresume_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
+        //     ]
+        // );
+          /**********Chrone job********** */
+
+       
+    // }
+    // $newresume_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
     $oldstart_date = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
     $noOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->old_subscription_plan_id, 'id' => $request->old_variant_id,])->first();
      $dates = Carbon::createFromFormat('Y-m-d',$oldstart_date->start_date);
      $pausedates = Carbon::createFromFormat('Y-m-d',$oldstart_date->pause_date);
-     $resumeDated = Carbon::createFromFormat('Y-m-d',$newresume_date->resume_date);
+     $resumeDated = Carbon::createFromFormat('Y-m-d',$request->resume_date);
       $diffnowpausedate = now()->diffInDays(Carbon::parse($pausedates));
       $date = $dates->addDays($noOfDays->no_days);
      if(now()->gte($pausedates) && now()->lt($resumeDated )){
-           $diffrsuemdays = now()->diffInDays(Carbon::parse($newresume_date->resume_date));
+           $diffrsuemdays = now()->diffInDays(Carbon::parse($request->resume_date));
            $currentToNowDiff = now()->diffInDays(Carbon::parse($date));
            $diff = $currentToNowDiff - $diffrsuemdays;
      }else{
@@ -2209,11 +2243,11 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
         $dayResume = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->old_subscription_plan_id,'variant_id' => $request->old_variant_id])->first();
         $data->remaining_days = $diff+$dayResume->no_of_days_pause_plan;
       }
-      if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->exists());
-      {
-        $dayResume = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->first();
-        $data->remaining_days = $diff+$dayResume->no_of_days_pause_plan;
-      }
+    //   if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->exists());
+    //   {
+    //     $dayResume = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['plan_status'=>'plan_active'])->first();
+    //     $data->remaining_days = $diff+$dayResume->no_of_days_pause_plan;
+    //   }
    
     
     if($data){
@@ -3146,7 +3180,6 @@ public function helpSupport(Request $request)
     return $this->populateResponse();
 }
 
-
 public function getPriceCalculation(Request $request) {
  
     if(!empty($request->old_subscription_plan_id)){
@@ -3205,6 +3238,8 @@ public function getPriceCalculation(Request $request) {
     $this->status = true;
     return $this->populateResponse();
 }
+
+
 
 
 }

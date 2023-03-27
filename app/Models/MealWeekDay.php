@@ -13,4 +13,8 @@ class MealWeekDay extends Model
         "status",
 
     ];
+
+    public function meal_items(){
+        return $this->belongsTo(Meal::class,'meal_id','id');
+    }
 }

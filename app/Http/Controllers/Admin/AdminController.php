@@ -88,32 +88,82 @@ class AdminController extends Controller {
               $userList = [];
 
 
-            //     $recent_orders = Subscription::join('users','subscriptions.user_id','=','users.id')
+             $recent_orders = Subscription::join('users','subscriptions.user_id','=','users.id')
             // ->join('user_profile','subscriptions.user_id','=','user_profile.user_id')
-            // ->join('orders','subscriptions.variant_id','=','orders.variant_id')
-            // ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
-            // ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->join('orders','subscriptions.user_id','=','orders.user_id')
+            ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('users.id','users.name as user_name','users.mobile','orders.id as order_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            ->where('subscriptions.delivery_status','active')
+            ->where('orders.plan_status','plan_active')
+            ->where('subscriptions.plan_status','plan_active')
+            ->where('subscriptions.delivery_status','active')
+            ->get();
+
+            //  $recent_orders = Order::join('users','orders.user_id','=','users.id')
+            // ->join('user_profile','orders.user_id','=','user_profile.user_id')
+            // ->join('subscriptions','orders.variant_id','=','subscriptions.variant_id')
+            // ->join('subscription_plans','orders.plan_id','=','subscription_plans.id')
+            // ->join('subscriptions_meal_plans_variants','orders.variant_id','=','subscriptions_meal_plans_variants.id')
             // ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','orders.id as order_id','user_profile.variant_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            // ->where('orders.payment_status','paid')
+            // ->where('orders.plan_status','plan_active')
             // ->where('subscriptions.delivery_status','active')
             // ->where('subscriptions.plan_status','plan_active')
             // ->get();
-
-             $recent_orders = Order::join('users','orders.user_id','=','users.id')
-            ->join('user_profile','orders.user_id','=','user_profile.user_id')
-            ->join('subscriptions','orders.variant_id','=','subscriptions.variant_id')
-            ->join('subscription_plans','orders.plan_id','=','subscription_plans.id')
-            ->join('subscriptions_meal_plans_variants','orders.variant_id','=','subscriptions_meal_plans_variants.id')
-            ->select('users.id','users.name as user_name','users.mobile','user_profile.subscription_id','orders.id as order_id','user_profile.variant_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
-            ->where('orders.payment_status','paid')
-            ->where('orders.plan_status','plan_active')
-            ->where('subscriptions.delivery_status','active')
-            ->where('subscriptions.plan_status','plan_active')
-            ->get();
         
            
-             $data['recent_order'] = $recent_orders;
+              $data['recent_order'] = $recent_orders;
             return view('admin.dashboard')->with($data);
         }
+    }
+
+    public function filter_list(Request $request) {
+        $activeUser = 0;
+        $pausedUser = 0;
+        $expiredUser = 0;
+        $inactiveUser = 0;
+
+
+         $data['activeUser'] = Subscription::where('delivery_status','active')->where('plan_status','plan_active')->count();
+         $data['pausedUser'] = Subscription::where('delivery_status','paused')->count();
+         $data['expiredUser'] = Subscription::where('delivery_status','terminted')->count();
+         $data['inactiveUser'] = User::where('status','0')->count();
+          $data['totalOrder'] = Order::where('payment_status','paid')->where('plan_status','plan_active')->count();
+          $userList = [];
+
+        $start_date = date('Y-m-d 00:00:00', strtotime($request->input('start_date')));
+        $end_date = date('Y-m-d 23:59:59', strtotime($request->input('end_date')));
+        if ($request->input('start_date') && $request->input('end_date')) {
+            $recent_orders = Subscription::join('users','subscriptions.user_id','=','users.id')
+            // ->join('user_profile','subscriptions.user_id','=','user_profile.user_id')
+            ->join('orders','subscriptions.user_id','=','orders.user_id')
+            ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('users.id','users.name as user_name','users.mobile','orders.id as order_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            ->where('subscriptions.delivery_status','active')
+            ->where('orders.plan_status','plan_active')
+            ->whereBetween('subscriptions.start_date', [$start_date, $end_date])
+            ->where('subscriptions.plan_status','plan_active')
+            ->where('subscriptions.delivery_status','active')
+            ->get();
+        } else {
+            $recent_orders = Subscription::join('users','subscriptions.user_id','=','users.id')
+            // ->join('user_profile','subscriptions.user_id','=','user_profile.user_id')
+            ->join('orders','subscriptions.user_id','=','orders.user_id')
+            ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('users.id','users.name as user_name','users.mobile','orders.id as order_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+            ->where('subscriptions.delivery_status','active')
+            ->where('orders.plan_status','plan_active')
+            ->where('subscriptions.plan_status','plan_active')
+            ->where('subscriptions.delivery_status','active')
+            ->get();
+        }
+        $data['start_date'] = $request->input('start_date');
+        $data['end_date'] = $request->input('end_date');
+         $data['recent_order'] = $recent_orders;
+        return view('admin.dashboard')->with($data);
     }
 
     public function upcomingDeliveriesShow(Request $request) {

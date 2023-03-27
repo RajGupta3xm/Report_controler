@@ -145,8 +145,9 @@
 
                                                                      <td>
                                                                          <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat"  style="    width: 157px !important;">
-                                                                             <option selected>Yes</option>
-                                                                             <option value="1">No</option>
+                                                                           <option selected value="1">No</option>
+                                                                             <option >Yes</option>
+                                                                           
                                                                          </select>
                                                                          <p class="text-danger text-small" id="is_charge_vatError"></p>
                                                                      </td>
@@ -189,7 +190,7 @@
                                                                          </ul>
                                                                          <div class="form-group mb-0">
                                                                              <input class="form-control" type="text" placeholder="ENTER YOUR CUSTOM TEXT" name="description" id="description_value">
-                                                                             <p class="text-danger text-small" id="descriptionError"></p>
+                                                                             <!-- <p class="text-danger text-small" id="descriptionError"></p> -->
                                                                          </div>
                                                                      </div>
                                                                  </div>
@@ -221,7 +222,7 @@
                                                  <tr>
                                                      <th>
                                                          <form class="table_btns d-flex align-items-center justify-content-center">
-                                                             <div class="check_radio">
+                                                             <div class="check_radio ">
                                                                  <input type="checkbox" name="table5" id="table5" class="d-none">
                                                                  <label for="table5"></label>
                                                              </div>
@@ -239,7 +240,7 @@
                                                      <th>Plan Enter price</th>
                                                      <th>Compare price</th>
                                                      <th>Description</th>
-                                                     <th>Action</th>
+                                                     <!-- <th>Action</th> -->
                                                  </tr>
                                                  </thead>
                                                  <tbody id="tbody">

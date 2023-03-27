@@ -33,4 +33,8 @@ class Order extends Model
 	public function user(){
         return $this->belongsTo(User::class , 'user_id','id');
     }
+
+	// public function orderOnAddress(){
+    //     return $this->belongsTo(OrderOnAddress::class ,'id','order_id');
+    // }
 }

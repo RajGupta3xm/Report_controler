@@ -20,7 +20,7 @@
                 @endif 
                 @endif
                    @if(Session::get('admin_logged_in')['type']=='0')
-                        <div class="col-12 design_outter_comman shadow mb-4">
+                        <div class="col-12 design_outter_comman overflow-visible shadow mb-4">
                            <div class="row comman_header justify-content-between">
                               <div class="col-auto">
                                  <h2>Add New Promo Code</h2>
@@ -66,15 +66,21 @@
                                  <input type="datetime-local" class="form-control validate"  name="valid_till">
                                  <p class="text-danger text-small" id="valid_tillError"></p>
                               </div>
-                              <div class="form-group col-6">
-                                 <label for="">Select Meal Plan</label> 
-                                  <select class="form-select multiple-select-custom-field " aria-label="Default select example" data-placeholder="Select Meal Plan" multiple name="diet_plan_type_id[]">
+                              <div class="form-group col-3 position-relative">
+                                 <label for="">Select Meal Plan</label>
+                                 <select class="form-select multiple-select-custom-field" id="selUser"  onchange="getSubcategory(this);" name="items[][meal_plan_id]" aria-label="Default select example" data-placeholder="Select Meal Plan" multiple>
                                     @foreach($dietplan as $dietplans)
                                     <option value="{{$dietplans->id}}">{{$dietplans->name}}</option>
                                     @endforeach
-                                    <!-- <option value="1">Balanced Diet</option>   -->
                                  </select>
                               </div>
+                              <div class="form-group col-3 position-relative">
+                                 <label for="">Select Variants</label>
+                                 <!-- <select class="form-select" id="AddContainer" > -->
+                                 <select class="form-select multiple-select-custom-field select-ajax"  id="AddContainer"  aria-label="" name="" data-placeholder="Select Variants" multiple>
+                                    <!-- <option value="1">Variants 2</option> -->
+                                 </select>
+                              </div> 
                               <div class="form-group col-6 setup_pricing maximum_discount">
                                  <span for="">Maximum Discount Uses</span>
                                  <div class="row">
@@ -314,6 +320,128 @@
          </div>
       </div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+      <script src="assets/vendor/jquery.min.js"></script>
+      <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
+      <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
+      <script src="assets/js/main.js"></script>
+      <script>
+         $( '.multiple-select-custom-field' ).select2( {
+           theme: "bootstrap-5",
+           width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+           placeholder: $( this ).data( 'placeholder' ),
+           closeOnSelect: false,
+           tags: true
+         } );
+      </script>
+      <script>
+      //     function getSubcategory(obj) {
+      //       var id = $(obj).val();
+      //       $("#AddContainer").empty();
+      //    $.ajax({
+      //   type : 'get',
+      //   url  : "<?= url('admin/get_subcategory/') ?>/" + id,
+      //   data : {'id':id},
+      //   success:function(data){
+      //       console.log(data);
+      //        $(data).each(function (i,v) {
+      //          alert(v.variant_name);
+      //          $('.select-ajax').append('<option  value='+ v.variant_name +' > '+v.variant_name+ '</option>');
+      //       });
+      //   }
+      // });
+      //   }
+// function getSubcategory(obj) {
+// var category = $(obj).val();
+// var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+// var newCategoryArray = category.map(v => {
+//   var sub = [];
+//   subcategory.forEach(i => {
+//    console.log(v);
+//     if(i.meal_plan_id == v){
+//       sub.push(i);
+//     }
+//   })
+//   v.subcategory = sub;
+//  console.log(sub);
+// });
+// }
+// const result = category.map(e => {
+//     e.subCategories = subcategory.filter(a => a.meal_plan_id == e);
+//     console.log(e);
+// })
+
+
+// }
+function getSubcategory(obj) {
+var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
+var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+const result = category.map(e => {
+    e.subCategories = subcategory.filter(a => a.meal_plan_id == e.id);
+    return e;
+})
+
+console.log(result);
+yaha vishnu ka phele wala code dalna hai jisme category ke sath subcategory aa rhi thi to ek dropdown me kaam ho jayega
+}
+    </script>
+<!-- <script>
+
+function getSubcategory(obj) {
+   $("#AddContainer").empty();
+   // $('.select-ajax option').remove();
+   // document.getElementById("AddContainer").options.length = 0;
+   // $('#AddContainer').find('option:not(:selected)').remove();
+   var brand_id = $(obj).val();
+   var result = Object.entries(brand_id);
+   $(result).each(function (i, v) {
+         alert(i.v);
+      var variant =<?= json_encode($plan_variant) ?>;
+      $(variant).each(function (j, val) {
+         // if (val.id == v) {
+
+
+         //    }
+            });
+            });
+   // var ingredientId =$('#selUser').find('option:selected').val();
+   //  var allList =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+   //  $(allList).each(function (a, plan_variant) {
+   //             if (ingredientId == plan_variant.meal_plan_id) {
+   //                $.each(plan_variant, function (key, value) {
+   //                if(key=='id'){
+   //                alert(value);
+   //                  $('.select-ajax').append('<option  value='+ value +' > '+value+ '</option>');
+   //                }
+   //             })
+   //              } 
+   //          });
+
+}
+</script> -->
+      <script>
+       function filterList(obj){
+        if ($(':input[name=start_date]').val() == '' && $(':input[name=end_date]').val() == ''){
+        $("#formError").html('Select filter attribute');
+        } else{
+
+        if ($(':input[name=start_date]').val() != '' && $(':input[name=end_date]').val() != ''){
+        $('form').submit();
+        } else{
+        if ($(':input[name=start_date]').val() != ''){
+        $("#formError").html('End date is required');
+        } else if ($(':input[name=end_date]').val() != ''){
+        $("#formError").html('Start date is required');
+        } else{
+        $("#formError").html('Select filter attribute');
+        }
+        }
+        }
+
+        }
+    
+ </script>
+ 
       <script>
  $(window).load(function(){
    setTimeout(function(){ $('.alert-danger').fadeOut('slow') }, 3000);
@@ -451,25 +579,3 @@
         }
         
 </script>
-<script>
-       function filterList(obj){
-        if ($(':input[name=start_date]').val() == '' && $(':input[name=end_date]').val() == ''){
-        $("#formError").html('Select filter attribute');
-        } else{
-
-        if ($(':input[name=start_date]').val() != '' && $(':input[name=end_date]').val() != ''){
-        $('form').submit();
-        } else{
-        if ($(':input[name=start_date]').val() != ''){
-        $("#formError").html('End date is required');
-        } else if ($(':input[name=end_date]').val() != ''){
-        $("#formError").html('Start date is required');
-        } else{
-        $("#formError").html('Select filter attribute');
-        }
-        }
-        }
-
-        }
-    
- </script>

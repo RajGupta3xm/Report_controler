@@ -277,18 +277,19 @@
          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
        </div>
        <div class="modal-body py-4">
-         <form class="Import_export_form px-4" action="">
+       <form class="form-design py-4 px-4 row align-items-start justify-content-start" method="POST" id="addForm" enctype="multipart/form-data" action="{{url('admin/meal/export')}}">
+       @csrf
             <div class="form-group row mb-4">
                <div class="col-12 mb-3 Export_head">
                   <label for="">Exports :</label>
                </div>
                <div class="col-12">
-                  <div class="comman_radio mb-2">
-                     <input class="d-none" type="radio" id="radio1" name="radio1">
+                  <div class="comman_radio mb-2"> 
+                     <input class="d-none" type="radio" id="radio1" value="all" name="radio1">
                      <label for="radio1">All Items</label>
                   </div>
                   <div class="comman_radio mb-2">
-                     <input class="d-none" type="radio" checked id="radio2" name="radio2">
+                     <input class="d-none" type="radio"  id="radio2" value="50" name="radio1">
                      <label for="radio2">Selected 50+ Items</label>
                   </div>
                </div>
@@ -299,11 +300,12 @@
                </div>
                <div class="col-12"> 
                   <div class="comman_radio mb-2">
-                     <input class="d-none" type="radio" checked id="radio2" name="radio2">
-                     <label for="radio2">Excel (In Proper Format)</label>
+                     <input class="d-none" type="radio"  id="radio3" value="allProperFormat" name="radio1">
+                     <label for="radio3">Excel (In Proper Format)</label>
                   </div>
                </div>
             </div>
+            <button type="submit" class="comman_btn me-2 export_to_excel">Export</button>
          </form>
        </div> 
      </div>
@@ -333,6 +335,7 @@
                      <input class="d-none" type="radio" checked id="radio2" name="radio2">
                      <label for="radio2">Selected 50+ Items</label>
                   </div>
+               
                </div>
             </div>
             <div class="form-group row">
@@ -346,11 +349,29 @@
                   </div>
                </div>
             </div>
+            <a  href="<?= url('admin/meal-management') ?>" class="comman_btn me-2" >Import</a>
          </form>
        </div> 
      </div>
    </div>
  </div>
+ <script>
+   $(document).on('click', '.export_to_excel', function() {
+    $.ajax({
+        type: 'get',
+        url: '/export-to-excel',
+        data: {
+            'from_date': from_date,
+            'to_date': to_date
+        },
+        success: function(data) {
+            console.log(data);
+            alertify.set('notifier', 'position', 'bottom-center');
+            alertify.success(data.success);
+        }
+    });
+});
+ </script>
  <script>
        function changeStatus(obj, id) {
             swal({

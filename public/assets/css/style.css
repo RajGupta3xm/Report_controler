@@ -2901,3 +2901,187 @@ align-items: center;
         height: 134px;
         width: 344px;
     }
+
+    /* multi filter  */
+.comboTreeWrapper{
+	position: relative;
+	text-align: left !important;
+}
+
+.comboTreeInputWrapper{
+	position: relative;
+}
+
+.comboTreeArrowBtn {
+	position: absolute;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    box-sizing: border-box;
+    border: 1px solid var(--ct-border-color);
+    border-radius: 0 var(--ct-border-radius) var(--ct-border-radius) 0;
+    background: var(--ct-border-color);
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+}
+.comboTreeArrowBtn:hover {
+    background: var(--ct-btn-hover);
+}
+.comboTreeArrowBtn:active {
+    background: var(--ct-btn-active);
+}
+.comboTreeInputBox:focus + .comboTreeArrowBtn {
+    color: var(--ct-btn-color);
+    border-top: 1px solid var(--ct-selection);
+    border-right: 1px solid var(--ct-selection);
+    border-bottom: 1px solid var(--ct-selection);
+}
+
+.comboTreeArrowBtnImg{
+    font-size: 1.25rem;
+}
+.comboTreeDropDownContainer {
+    display: none;
+    background-color: #f2f2f2;
+    border: 0;
+    position: absolute;
+    padding: 10px;
+    border-radius:4px;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 999;
+    max-height: 242px;
+    overflow-y: auto;
+    box-shadow: 0 10px 10px #bbb1b17d;
+}
+.comboTreeDropDownContainer ul{
+	padding: 0px;
+	margin: 0;
+}
+.comboTreeDropDownContainer li {
+    list-style-type: none;
+    background-color: TRANSPARENT !important;
+    padding-left: 14px;
+    border-bottom: 1px solid #fff;
+    border-radius: 0;
+}
+.ComboTreeItemParent {
+    margin-bottom: 6px;
+    padding: 4px 15px 4px 10px;
+    position: relative;
+}
+.ComboTreeItemParent::after {
+    position: absolute;
+    content: "\f107";
+    font-family: "Font Awesome 5 Pro";
+    top: 6px;
+    right: 10px;
+    font-size: 14px;
+}
+.comboTreeDropDownContainer li .selectable {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: inline-block;
+}
+.comboTreeDropDownContainer li .not-selectable{
+	cursor: not-allowed;
+}
+
+
+.comboTreeDropDownContainer li:hover{
+	background-color: #fff;}
+.comboTreeDropDownContainer li:hover ul{
+	background-color: var(--ct-bg)}
+.comboTreeDropDownContainer li span.comboTreeItemTitle.comboTreeItemHover,
+.comboTreeDropDownContainer label.comboTreeItemHover
+{
+	background-color: var(--ct-selection);
+	color: var(--ct-bg);
+    border-radius: 2px;
+}
+
+span.comboTreeItemTitle, .comboTreeDropDownContainer .selectAll{
+	display: block;
+    padding: 3px var(--ct-padding);
+}
+.comboTreeDropDownContainer label{
+    cursor: pointer;
+	width: 100%;
+    display: block;
+}
+.comboTreeDropDownContainer .comboTreeItemTitle input,
+.comboTreeDropDownContainer .selectAll input {
+	position: relative;
+    top: 2px;
+	margin: 0px 4px 0px 0px;
+}
+.comboTreeParentPlus{
+    position: relative;
+    left: -12px;
+    top: 4px;
+    width: 4px;
+    float: left;
+		cursor: pointer;
+}
+
+.comboTreeInputBox {
+    border-radius: 10px;
+    height: 50px;
+    font-size: 14px;
+    padding: 11px 18px;
+    border: 1px solid #ced4da !important;
+    box-shadow: unset;
+    width: 100%;
+}
+.comboTreeInputBox:focus {
+    border: 1px solid var(--ct-selection);
+    outline-width: 0;
+}
+
+
+.multiplesFilter{
+	width: 100%;
+	padding: 5px;
+	box-sizing: border-box;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid var(--ct-border-color);
+}
+.multiplesFilter {
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    outline: 0;
+}
+.arrow_set {
+    position: absolute;
+    right: 30px;
+    z-index: 1;
+    bottom: 16px;
+}
+.select2-selection.select2-selection--multiple::after {
+    content: "\f107";
+    position: absolute;
+    top: 0;
+    font-family: "Font Awesome 5 Pro";
+    background-color: #fff;
+    height: 48px;
+    width: 40px;
+    right: 0px;
+    font-size: 17px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.v-check {
+    margin-top: -11px;
+}

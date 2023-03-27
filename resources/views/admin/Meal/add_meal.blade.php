@@ -110,7 +110,7 @@
                                              <p class="text-danger text-small" id='errorShow' ></p>
                                           </div>
                                           <div class="form-group col-12">
-                                             <label for="">Tags : Date format: YY-mm-dd</label>
+                                             <label for="">Tags : Date format: dd-mm-YY</label>
                                              <select class="w-100 multiple-select-custom-field required1"  data-placeholder="Select" multiple name="week_days_id[]">
                                                @foreach($tags as $tag)
                                                 <option value="{{$tag->week_days_id}}">{{ucfirst($tag->week_days_id)}}</option>
@@ -192,7 +192,7 @@
                                                       <!-- <select class="form-select table_input table_select adjust_lenth" id="categoryList" onchange="getSubcategory(this);" aria-label="Default select example" id="fname"  name="ingredient[]"> -->
                                                     <!-- Dropdown --> 
                                                     <select id='selUser_0'class="form-select table_input table_select adjust_lenth selUsers"  onchange="getSubcategory(this,0);"  name="items[0][ingredient]" >
-                                                       <option selected="" disabled>Select User</option> 
+                                                       <option selected="" disabled>Select</option> 
                                                        @foreach($ingredients as $ingredient)
                                                         <option value='{{$ingredient->id}}'>{{$ingredient->name}}</option> 
                                                         @endforeach
@@ -240,35 +240,26 @@
                                           <div class="col logo_design">
                                              <img src="{{asset('assets/img/logo.png')}}" alt="Logo">
                                           </div> 
-                                          <div class="col-auto">
+                                          <!-- <div class="col-auto">
                                              <a class="comman_btn yellow-btn add_row_btn" href="javscript:;">
                                                Edit
                                              </a>
-                                          </div>
+                                          </div> -->
                                        </div>
                                        <div class="row p-3 instructions_box position-relative border-bottom">
                                           <span class="head_small mb-1">Instructions:</span>
-                                          <ul class="list-unstyled">
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                          </ul>
+                                          <textarea class="list-unstyled" contenteditable="true" style=" border-style: none;" name="meal_instruction">
+                                              
+                                            </textarea>
                                        </div>
                                        <div class="row p-3 instructions_box position-relative">
                                           <span class="head_small mb-1">Ingredients:</span>
                                           <div class="d-flex flex-wrap">
-                                             <p class="me-2">Onion,</p>
-                                             <p class="me-2">Tomato,</p>
-                                             <p class="me-2">Onion</p>
+                                          <textarea contenteditable="true" class="list-unstyled" style=" border-style: none;" name="meal_ingredients">
+                                            
+                                          </textarea>
+                                             <!-- <p class="me-2">Tomato,</p>
+                                             <p class="me-2">Onion</p> -->
                                           </div>
                                        </div>
                                     </div>
@@ -517,7 +508,7 @@ var int = 1;
       .append(
             '<tr>'+
             '<td class="searchDrop">' +
-              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth selUsers" onchange="getSubcategory(this,'+ (int) +');" style="width: 159px;" >@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
+              '<select id="selUser_'+ (int) +'" name="items['+ (int) +'][ingredient]" class="form-select table_input table_select adjust_lenth selUsers" onchange="getSubcategory(this,'+ (int) +');" style="width: 159px;" ><option selected="" disabled>Select</option>@foreach($ingredients as $ingredient)<option value="{{$ingredient->id}}">{{$ingredient->name}}</option>@endforeach</select>' +
             '</td>'+
             '<td>'+
             '<input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items['+ (int) +'][qty]" value="">' +
@@ -692,4 +683,8 @@ function getSubcategory(obj,count) {
             
         }
     </script>
-   
+   <style>
+[contenteditable] {
+  outline: 0px solid transparent;
+}
+</style>

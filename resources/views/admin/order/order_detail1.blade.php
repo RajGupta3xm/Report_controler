@@ -142,21 +142,26 @@
                                                       <div class="form-group col-12">
                                                          <strong class="head_details">Target Calories & Macro Nutrients</strong>
                                                       </div>
+                                                      @php
+                                                      $userCalorieTargetsProtein = ($userCalorieTargets->protein_min + $userCalorieTargets->protein_max)/2;
+                                                      $userCalorieTargetsCarbs = ($userCalorieTargets->carbs_min + $userCalorieTargets->carbs_max)/2;
+                                                      $userCalorieTargetsFat = ($userCalorieTargets->fat_min + $userCalorieTargets->fat_max)/2;
+                                                      @endphp
                                                       <div class="form-group col-6">
                                                          <label for="">Calories</label>
-                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->calori_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->meal_calorie:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Protein</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->protein_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsProtein) ? $userCalorieTargetsProtein:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Carbs</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->carbs_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsCarbs) ? $userCalorieTargetsCarbs:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Fat</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->fat_per_day:'N/A'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsFat) ? $userCalorieTargetsFat:'N/A'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                    </div>
                                                 </div>
@@ -245,7 +250,7 @@
                                                                      </div>
                                                                      <div class="col">
                                                                   
-                                                                        <a href="javscript:;">{{$date}}, Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
+                                                                        <a href="javscript:;">,fd Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
                                         
                                                                      </div>
                                                                   </div>
@@ -253,10 +258,10 @@
                                                                <div class="col-6">
                                                                   <div class="row">
                                                                      <div class="col-auto">
-                                                                        <span>Slot :</span>
+                                                                        <span>Slot :fdfsf</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">{{$date}}- {{$date}}</a>
+                                                                        <a href="javscript:;">dvf</a>
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -264,50 +269,39 @@
                                                          </div>
                                                       </div>
                                                       <div class="col-12 mt-2 mb-4">
-                                                         <div class="Plan_category_slider owl-carousel">
-                                                          
-                                                         @foreach($getDatess as $k=>$datt)
+                                                         <div class="Plan_category_slider owl-carousel"> 
+                                                         @foreach($getDatess as $k=>$datte)
+                                                         @foreach($datte as $datt)
                                                          @if($k==0)
- 
-                                                         <div ><a class="Plan_datee date_name active" onclick="activeDate(this,'<?= $datt->date ?>');"  href="javscript:;">{{date('d M',strtotime($datt->date))}}</a></div>
+                                                         <div ><a class="Plan_datee date_name active" onclick="activeDate(this,<?=$k?>);"  href="javscript:;"> {{\Carbon\Carbon::parse($datt->date)->format('d M')}}</a></div>
                                                          @else
-                                                     
-                                                            <div><a class="Plan_datee  date_name" onclick="activeDate(this,'<?= $datt->date ?>');" href="javscript:;">{{date('d M', strtotime($datt->date))}} </a></div>
+                                                            <div><a class="Plan_datee  date_name" onclick="activeDate(this,<?=$k?>);" href="javscript:;">{{\Carbon\Carbon::parse($datt->date)->format('d M')}} </a></div>
                                                             @endif
                                                             @endforeach
-                                                          
+                                                            @endforeach
                                                          </div>
                                                       </div>
                                                       <div class="col-12">
-                                                   
                                                          <div class="row">
-                                                         @foreach($getDatess as $k=>$datt)
-                                                        
-                                                            <div class="col-12 current_plan_tabbing date_list" id='date_list_<?= $datt->date ?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
+                                                         @foreach($getDatess as $k=>$datte)
+                                                          @foreach($datte as $datt)
+                                                            <div class="col-12 current_plan_tabbing date_list" id='date_list_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                <nav>
                                                                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                                                  
                                                                     @foreach($datt->category as $y=>$categories)
                                                                     @if($y==0)
-                                                                     <button class="nav-link vaccine_name active" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
+                                                                     <button class="nav-link vaccine_name active" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>,<?=$k?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
                                                                      @else
-                                                                     <button class="nav-link vaccine_name" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
+                                                                     <button class="nav-link vaccine_name" id="nav-home-tab" onclick="activeTab(this,<?=$categories['meal_schedule_id']?>,<?=$k?>);" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">{{$categories['meal_group']['name']}} ({{count($categories['meal_group']['meals'])}}) </button>
                                                                      @endif
                                                                      @endforeach
-                                                                   
-                                                                     <!-- <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Lunch & Dinner</button>
-                                                                     <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Snacks</button>
-                                                                     <button class="nav-link" id="nav-contact1-tab" data-bs-toggle="tab" data-bs-target="#nav-contact1" type="button" role="tab" aria-controls="nav-contact1" aria-selected="false">Dinner</button>
-                                                                     <button class="nav-link" id="nav-contact2-tab" data-bs-toggle="tab" data-bs-target="#nav-contact2" type="button" role="tab" aria-controls="nav-contact2" aria-selected="false">Soup</button> -->
+                                                                     @endforeach
                                                                   </div>
                                                                </nav>
                                                                <div class="tab-content" id="nav-tabContent">
-                                                             
                                                                   <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                                                                
                                                                     @foreach($datt->category as $y=>$categories)
-                                                                   
-                                                                     <div class="row mx-0 plan_tabbing_inner video_list" id='video_list_<?=$categories['meal_schedule_id']?>' <?php if($y!=0)  { ?> style="display:none" <?php }?>>
+                                                                     <div class="row mx-0 plan_tabbing_inner video_list" id='video_list_<?=$categories['meal_schedule_id']?><?=$k?>' <?php if($y!=0)  { ?> style="display:none" <?php }?>>
                                                                         <div class="col-12 p-4">
                                                                         @foreach($categories['meal_group']['meals'] as $v=>$meal)
                                                                            <div class="plan_box mb-4">
@@ -376,12 +370,6 @@
                                                                                                 <p>{{$dislikeItems->name}}</p>
                                                                                              </li>
                                                                                              @endforeach
-                                                                                             <!-- <li>
-                                                                                                <p>Chicken</p>
-                                                                                             </li>
-                                                                                             <li>
-                                                                                                <p>Soy</p>
-                                                                                             </li> -->
                                                                                           </ul>
                                                                                        </div>
                                                                                     </div>
@@ -389,6 +377,82 @@
                                                                               </div>
                                                                            </div> 
                                                                            @endforeach
+                                                                           <!-- <div class="plan_box mb-4">
+                                                                              <div class="row align-items-center">
+                                                                                 <div class="col">
+                                                                                    <div class="plan_img">
+                                                                                       <img src="assets/img/bg-img.jpg" alt="">  
+                                                                                    </div>
+                                                                                 </div>
+                                                                                 <div class="col-4">
+                                                                                    <div class="plan_data text-start">
+                                                                                       <h2>Meal Name</h2>
+                                                                                       <div class="rating_box">
+                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
+                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
+                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
+                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
+                                                                                          <a href="javscript:;"><i class="fas fa-star"></i></a>
+                                                                                       </div>
+                                                                                       <div class="row mx-0 bg-light rounded-custom mt-2 border">
+                                                                                          <div class="col-12">
+                                                                                             <div class="row plan_box_inner py-1 border-bottom">
+                                                                                                <div class="col-6 pe-1 ps-2">
+                                                                                                   <span>Calories :</span>
+                                                                                                </div>
+                                                                                                <div class="col-6 ps-1 pe-2">
+                                                                                                   <strong>500 cal</strong>
+                                                                                                </div>
+                                                                                             </div>
+                                                                                             <div class="row plan_box_inner py-1 border-bottom">
+                                                                                                <div class="col-6 pe-1 ps-2">
+                                                                                                   <span>Protein :</span>
+                                                                                                </div>
+                                                                                                <div class="col-6 ps-1 pe-2">
+                                                                                                   <strong>150 gms</strong>
+                                                                                                </div>
+                                                                                             </div>
+                                                                                             <div class="row plan_box_inner py-1 border-bottom">
+                                                                                                <div class="col-6 pe-1 ps-2">
+                                                                                                   <span>Carbs :</span>
+                                                                                                </div>
+                                                                                                <div class="col-6 ps-1 pe-2">
+                                                                                                   <strong>250 gms</strong>
+                                                                                                </div>
+                                                                                             </div>
+                                                                                             <div class="row plan_box_inner py-1">
+                                                                                                <div class="col-6 pe-1 ps-2">
+                                                                                                   <span>Fat :</span>
+                                                                                                </div>
+                                                                                                <div class="col-6 ps-1 pe-2">
+                                                                                                   <strong>50 gms</strong>
+                                                                                                </div>
+                                                                                             </div>
+                                                                                          </div>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                                 <div class="col-4">
+                                                                                    <div class="meal_discription">
+                                                                                       <strong>Description:</strong>
+                                                                                       <div class="meal_discription_inner border">
+                                                                                          <p class="subhead">This meal contains:</p>
+                                                                                          <ul class="list-circle mb-0">
+                                                                                             <li>
+                                                                                                <p>Gluten</p>
+                                                                                             </li>
+                                                                                             <li>
+                                                                                                <p>Chicken</p>
+                                                                                             </li>
+                                                                                             <li>
+                                                                                                <p>Soy</p>
+                                                                                             </li>
+                                                                                          </ul>
+                                                                                       </div>
+                                                                                    </div>
+                                                                                 </div>
+                                                                              </div>
+                                                                           </div> -->
                                                                         </div>
                                                                         <div class="col-12 text-center mb-4">
                                                                            <!-- <a class="comman_btn me-3" href="javscript:;">Mark as delivered</a> -->
@@ -427,20 +491,19 @@
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>
       <script src="assets/js/main.js"></script>
       <script>
- function activeDate(obj,dat) {
-
+ function activeDate(obj,k) {
    $('.date_list').css('display','none');
-   $('#date_list_'+ dat ).css('display','block');
+   $('#date_list_'+k).css('display','block');
    $('.date_name').removeClass('active');
    $(obj ).addClass('active');
 
     }
     </script>
       <script>
- function activeTab(obj,id) {
-
+ function activeTab(obj,id,key) {
+   alert(key);
    $('.video_list').css('display','none');
-   $('#video_list_'+ id ).css('display','block');
+   $('#video_list_'+id+key).css('display','block');
    $('.vaccine_name').removeClass('active');
    $(obj ).addClass('active');
 

@@ -37,29 +37,21 @@
                                                 <div class="col text-center">
                                                    <span class="selected_date">06/10/2022</span>
                                                 </div>
-                                                <div class="col-auto d-flex">
-                                                   <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
-                                                   <form class="form-design" action="">
-                                                      <div class="form-group mb-0 position-relative only_calender">
-                                                         <input type="date" class="form-control" placeholder="Search Recent Orders" name="name" id="name"> 
-                                                      </div>
-                                                   </form>
-                                                </div>
                                              </div>
                                              <div class="row"> 
                                                 <div class="col-12 comman_table_design border bg-white px-0 search_show_tables">
                                                    <div class="table-responsive">
-                                                      <table class="table mb-0">
+                                                      <table class="table mb-0" id="example1">
                                                          <thead>
                                                            <tr>
-                                                             <th>Customer Name & Mobile Number <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> </th>
-                                                             <th>Diet Plan Name <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> </th>
-                                                             <th>Meal Plan <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> </th>
-                                                             <th>Variant Name <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Order Id <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Location <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th> 
-                                                             <th>Time Slot <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>  
-                                                             <th>Driver <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>  
+                                                             <th>Customer Name & Mobile Number</th>
+                                                             <th>Diet Plan Name</th>
+                                                             <th>Meal Plan</th>
+                                                             <th>Variant Name</th>
+                                                             <th>Order Id</th>
+                                                             <th>Location </th> 
+                                                             <th>Time Slot </th>  
+                                                             <th>Driver</th>  
                                                            </tr>
                                                          </thead>
                                                          <tbody>

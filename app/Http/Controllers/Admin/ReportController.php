@@ -36,6 +36,7 @@ class ReportController extends Controller
               ->orwhere('staff_group.name','=','drivers')
               ->get();
               $data['area'] = FleetArea::select('id','area')->where('status','active')->get();
+
              return view('admin.report.report_list')->with($data);
         }
     }

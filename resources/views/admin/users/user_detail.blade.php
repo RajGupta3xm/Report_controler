@@ -158,21 +158,26 @@
                                                       <div class="form-group col-12">
                                                          <strong class="head_details">Target Calories & Macro Nutrients</strong>
                                                       </div>
+                                                      @php
+                                                      $userCalorieTargetsProtein = ($userCalorieTargets->protein_min + $userCalorieTargets->protein_max)/2;
+                                                      $userCalorieTargetsCarbs = ($userCalorieTargets->carbs_min + $userCalorieTargets->carbs_max)/2;
+                                                      $userCalorieTargetsFat = ($userCalorieTargets->fat_min + $userCalorieTargets->fat_max)/2;
+                                                      @endphp
                                                       <div class="form-group col-6">
                                                          <label for="">Calories</label>
-                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->calori_per_day:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control" value="{{!empty($userCalorieTargets) ? $userCalorieTargets->meal_calorie :'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Protein</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->protein_per_day:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsProtein) ? $userCalorieTargetsProtein:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Carbs</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->carbs_per_day:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsCarbs) ? $userCalorieTargetsCarbs:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Fat</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargets) ? $userCalorieTargets->fat_per_day:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsFat) ? $userCalorieTargetsFat:'--'}}" readonly="true" name="name" id="name">
                                                       </div>
                                                    </div>
                                                 </div>
@@ -208,6 +213,7 @@
                                                          </thead>
                                                          <tbody>
                                                            <tr>
+                                                           @if(isset($user_current_plan) > 0)
                                                              <td>1</td>   
                                                              <td>{{$user_current_plan['name'] ?: '--'}}</td>   
                                                              <td>{{$user_current_plan['order_id'] ?: '--' }}</td>   
@@ -228,7 +234,13 @@
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
                                                              </td>
-                                                      
+                                                             @else
+                                                          <tr>
+                                                            <td>
+                                                           <p> No Plan Found...</p>
+                                                           </td> 
+                                                           </tr>
+                                                         @endif
                                                          </tbody>
                                                        </table>
                                                    </div>
@@ -269,14 +281,14 @@
                                                              <td>{{$key+1}}</td>   
                                                              <td>{{$user_previous_plans['name'] ?: '-'}}</td>  
                                                              @php 
-                                                             $orderId =\App\Models\Order::select('id')->where('user_id',$user_previous_plans['user_id'])->first();
+                                                             $userCredit =\App\Models\UserProfile::select('*')->where('user_id',$user_previous_plans['user_id'])->first();
                                                              @endphp
                                                             
-                                                             <td>{{$orderId['id'] ?: '-' }}</td>   
+                                                             <td>{{$user_previous_plans['order_id'] ?: '-' }}</td>   
                                                              <td>{{$user_previous_plans['plan_price'] ?: '-' }}/<?php if($user_previous_plans['option1'] == 'weekly'){?> week <?php }else{?> month <?php }?></td>      
                                                              <td>{{date('d/m/Y',strtotime($user_previous_plans['puchase_on']))}}</td>   
                                                              <td>{{date('d/m/Y',strtotime($user_previous_plans['expired_on']))}}</td>   
-                                                             <td>{{$user_previous_plans['plan_price'] ?: '-' }} SAR</td>   
+                                                             <td>{{$userCredit['available_credit'] ?: '-' }} SAR</td>   
                                                              <td>
                                                              <div class="mytoggle">
                                                                 <label class="switch">
@@ -285,7 +297,7 @@
                                                              </div>
                                                              </td>    
                                                              <td>
-                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/previous-order-details',['id' => $user_previous_plans['user_id'] ,'plan_id' => $user_previous_plans['plan_id']] )}}">View</a>
+                                                             <a class="comman_btn table_viewbtn" href="{{url('admin/previous-order-details',['id' => $user_previous_plans['user_id'] ,'plan_id' => $user_previous_plans['plan_id'],'variant_id' => $user_previous_plans['variant_id']] )}}">View</a>
                                                              </td>
                                                              <td>
                                                                <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>

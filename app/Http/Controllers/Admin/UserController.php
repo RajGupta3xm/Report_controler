@@ -19,6 +19,7 @@ use App\Models\DislikeItem;
 use App\Models\Order;
 use App\Models\SubscriptionPlan;
 use App\Models\UserAddress;
+use App\Models\DietPlanTypesMealCalorieMinMax;
 use App\Models\CalorieRecommend;
 use App\Models\UserCaloriTarget;
 use Illuminate\Support\Facades\Input;
@@ -53,15 +54,17 @@ class UserController extends Controller {
             // $userList = [];
                $user = User::select('*')->orderBy('id', 'DESC')->get()
               ->each(function($user){
-                $user->user_address = UserAddress::select('area')->where('user_id',$user->id)->where('day_selection_status','active')->take(2)->get();
+                $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+                ->select('orders.id','order_on_address.*')
+                ->where('orders.user_id',$user->id)
+                ->where('order_on_address.user_id',$user->id)
+                ->get();
+                // $user->countTotalOrder = Order::where('user_id',$user->id)->count();
               });
              
-        //   ->each(function($user){
-        //     $users->totalOrder = Order::where('user_id',$users->id)->count();
-        //     $users->user_address = UserAddress::select('area')->where(['user_id'=>$users->id, 'status'=>'active'])->get();
-        //   });
-        
-          $data['users'] = $user;
+        // dd($user);
+        // die;
+           $data['users'] = $user;
            
             
             return view('admin.users.user_list')->with($data);
@@ -76,9 +79,13 @@ class UserController extends Controller {
             //   return $user->pets_count;
             // $user_dislikes =[];
             if($user){
-                   $user_detail = UserProfile::with('fitness','dietplan')->where('user_id',$user->id)->first();
-                     $userCalorieTarget = UserCaloriTarget::where('user_id',$user->id)->first(); 
-                    //  $calorie = CalorieRecommend::select('recommended')->where('id',$userCalorieTarget->custom_result_id)->first(); 
+                      $user_detail = UserProfile::with('fitness','dietplan')->where('user_id',$user->id)->first();
+                       $userCalorieTarget = UserCaloriTarget::where('user_id',$user->id)->first(); 
+                        $calorie = CalorieRecommend::select('recommended')->where('id',$userCalorieTarget->custom_result_id)->first(); 
+                      if(!empty($calorie)){
+                         $UserGainCalorie = DietPlanTypesMealCalorieMinMax::where('meal_calorie',$calorie->recommended)->where('diet_plan_type_id',$user_detail->diet_plan_type_id)->first();
+                      }
+
                      $item_id = UserDislike::where('user_id',$user->id)->get();
                    if($item_id){
                     foreach($item_id as $item_ids){
@@ -98,8 +105,11 @@ class UserController extends Controller {
             }
               $user_previous_plan = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
             ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
-            ->select('subscriptions.start_date','subscriptions.plan_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.plan_price','subscriptions.id','subscriptions.status','subscriptions.user_id','subscriptions_meal_plans_variants.id as variant_id')
+            ->join('orders','subscriptions.variant_id','=','orders.variant_id')
+            ->select('orders.id as order_id','subscriptions.start_date','subscriptions.plan_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.plan_price','subscriptions.id','subscriptions.status','subscriptions.user_id','subscriptions_meal_plans_variants.id as variant_id')
            ->where(['subscriptions.delivery_status'=>'terminted','subscriptions.user_id'=>$id])
+           ->where(['subscriptions.plan_status'=>'plan_inactive'])
+           ->where(['orders.user_id'=>$id,'orders.plan_status'=>'plan_inactive'])
            ->get()->each(function($user_previous_plan){
             $puchase_on = $user_previous_plan->start_date;
             $user_previous_plan->puchase_on = date('d M', strtotime($puchase_on));
@@ -109,7 +119,7 @@ class UserController extends Controller {
         
            });
      
-            $data['user_previous_plan'] = $user_previous_plan;
+               $data['user_previous_plan'] = $user_previous_plan;
 
                    $userDetail = UserProfile::select('user_id','subscription_id','variant_id')->where('user_id',$id)->first();
               
@@ -119,8 +129,10 @@ class UserController extends Controller {
             ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
             ->select('subscriptions.start_date','orders.id as order_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','user_profile.available_credit','subscriptions_meal_plans_variants.no_days','subscriptions.id','subscriptions.status','user_profile.user_id','user_profile.subscription_id')
             ->where('user_profile.user_id',$id)
+            ->where('subscriptions.user_id',$id)
             ->where(['orders.plan_id'=>$userDetail->subscription_id,'orders.variant_id'=>$userDetail->variant_id])
             ->where('subscriptions.plan_id',$userDetail->subscription_id)
+            ->where('orders.plan_status','plan_active')
             ->where('subscriptions_meal_plans_variants.id',$userDetail->variant_id)
             ->where(function($q){
                 $q->where('subscriptions.delivery_status','active')
@@ -135,12 +147,12 @@ class UserController extends Controller {
                   $user_current_plan['expired_on'] = date('d/m/Y', strtotime($expired_on));
             }
 
-               $data['user_current_plan'] = $user_current_plan;
+                $data['user_current_plan'] = $user_current_plan;
             $data['user'] = $user;
 
             $data['user_details'] = $user_detail;
            
-            $data['userCalorieTargets'] = $userCalorieTarget;
+             $data['userCalorieTargets'] = $UserGainCalorie;
 
         
             if ($data) {                

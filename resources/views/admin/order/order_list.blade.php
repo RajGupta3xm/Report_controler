@@ -89,7 +89,6 @@
                                              <td> <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($order['id']))}}">View</a></td>
                                           </tr>
                                           @endforeach
-                                        
                                           @endforeach
                                           @endif
                                        </tbody>

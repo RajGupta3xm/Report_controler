@@ -19,6 +19,7 @@ use App\Models\SubscriptionPlan;
 use App\Models\PromoCodeDietPlan;
 use App\Models\PromoCode;
 use App\Models\UserUsedPromoCode;
+use App\Models\SubscriptionMealPlanVariant;
 use App\Models\UserCaloriTarget;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
@@ -49,12 +50,14 @@ class PromoController extends Controller {
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-             $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
+              $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
+               $plan_variants = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')->orderBy('id','asc')->get();
               $promoCode = PromoCode::withcount('promoCodeUsed')->orderBy('id','asc')->get();
             //   $codeUsed = PromoCode::withcount('promoCodeUsed')->get();
             
             $data['dietplan'] = $dietplan;
             $data['promoCode'] = $promoCode;
+            $data['plan_variant'] = $plan_variants;
             return view('admin.promoCode.promo_list')->with($data);
         }
     }
@@ -71,6 +74,8 @@ class PromoController extends Controller {
          "end_date" => $request->input('valid_till'),
          "promo_code_ticket_id" =>  substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 14),
      ];
+
+     
  
      if(!empty($request->image)){
          $filename = $request->image->getClientOriginalName();
@@ -88,13 +93,14 @@ class PromoController extends Controller {
      }
  
  $insert = PromoCode::create($data);
- foreach($request->diet_plan_type_id  as $id)
- {
-     PromoCodeDietPlan::create([
-        'promo_code_id' => $insert->id,
-         'meal_plan_id'  => $id   
-    ]);
- }
+ foreach($request->items  as $item)
+     {
+         $plan = PromoCodeDietPlan::create([
+            'promo_code_id' => $insert->id,
+            'meal_plan_id'  => $item['meal_plan'] , 
+            'variant_id'    => $item['variant_name'],
+        ]);
+     }
  
  if($insert){
     return redirect('admin/promo-code-management')->with('success', ' Insert successfully.');
@@ -145,5 +151,13 @@ public function filter_list(Request $request) {
     $data['dietplan'] = $dietplan;
     return view('admin.promoCode.promo_list')->with($data);
 }
+
+public function get_data(Request $request)
+    {
+        if($request->ajax()){
+            $data = SubscriptionMealPlanVariant::where('meal_plan_id',$request->id)->get();
+            return Response($data);
+        }
+     }
 
 }

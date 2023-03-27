@@ -45,7 +45,7 @@
                                                         <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between" action="{{url('admin/fleetarea/submit')}}" method="post" id="addForm">
                                                             @csrf
                                                            
-                                                            <div class="form-group mb-0 col" style="display:none;">
+                                                            <div class="form-group mb-0 col" >
                                                               <select id='selUser'class="form-select table_input table_select adjust_lenth selUser " name="area"  >
                                                             
                                                     
@@ -87,7 +87,7 @@
                                                         <div class="row">
                                                             <div class="col-12 comman_table_design px-0">
                                                                 <div class="table-responsive">
-                                                                    <table class="table mb-0">
+                                                                    <table class="table mb-0" id="example1">
                                                                         <thead>
                                                                         <tr>
                                                                             <th>S.No.</th>
@@ -210,13 +210,15 @@
 <script>
     $('.google').on('change',function(e){
     var id2 = document.getElementById('search_box').value
- alert(id2);
+
  if(id2){
     $.ajax({
  
  // Our sample url to make request 
- url: 
-'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBfnznJ2gE8vjoNP6f3pYzeRxzd-Ha5Yo8&input='+id2,
+//  url: 
+// 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBfnznJ2gE8vjoNP6f3pYzeRxzd-Ha5Yo8&input='+id2,
+
+url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2qx9sNSiaYyJkSFb6vSRI83oLHPIkg&input='+id2,
 
  // Type of Request
  type: "GET",

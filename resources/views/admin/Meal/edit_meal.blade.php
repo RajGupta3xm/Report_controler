@@ -117,11 +117,11 @@
                                              </select>
                                           </div>
                                           <div class="form-group col-12">
-                                             <label for="">Tags : Date format: YY-mm-dd</label>
+                                             <label for="">Tags : Date format: dd-mm-YY</label>
                                              @php 
                                            
                                            $meal_day=\App\Models\MealWeekDay::select('id','meal_id','week_days_id')->get();
-                                        
+                                         
                                            @endphp
                                            @php 
                                            $meal_id = [];
@@ -130,12 +130,13 @@
                                          
                                          
                                               }
+                                         
                                               $cate= $meal_id;
                                            @endphp
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
                                              @foreach($meal_day as $k=>$meal_days)
   
-                                                <option value="{{$meal_days->week_days_id}}" <?php echo in_array($meal_days->id,$cate)?"selected" :"" ;?> > {{ucwords($meal_days->week_days_id)}} </option>
+                                                <option value="{{$meal_days->week_days_id}}" {{in_array($meal_days->id,$cate)?"selected" :"" }}>{{ucwords($meal_days->week_days_id)}} </option>
                                                 @endforeach
                                              </select>
                                           </div>
@@ -233,7 +234,8 @@
                                                       <input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items[0][qty]" value="">
                                                    </td>
                                                    <td>
-                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_0" name="items[0][unit]" value="">
+                                                   <input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_0"  value="">
+                                                   <input class="form-control table_input  adjust_lenth" type="hidden" id="upload_videos_id_0" name="items[0][unit]" value="">
                                                    </td>
                                                 </tr>
                                            
@@ -250,35 +252,21 @@
                                           <div class="col logo_design">
                                              <img src="{{asset('assets/img/logo.png')}}" alt="Logo">
                                           </div> 
-                                          <div class="col-auto">
+                                          <!-- <div class="col-auto">
                                              <a class="comman_btn yellow-btn add_row_btn" href="javscript:;">
                                                Edit
                                              </a>
-                                          </div>
+                                          </div> -->
                                        </div>
                                        <div class="row p-3 instructions_box position-relative border-bottom">
                                           <span class="head_small mb-1">Instructions:</span>
-                                          <ul class="list-unstyled">
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                             <li>
-                                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit</p>
-                                             </li>
-                                          </ul>
+                                             <textarea  id="note" name="meal_instruction">{{$mealLabel->instruction}}</textarea>
                                        </div>
                                        <div class="row p-3 instructions_box position-relative">
                                           <span class="head_small mb-1">Ingredients:</span>
                                           <div class="d-flex flex-wrap">
-                                             <p class="me-2">Onion,</p>
-                                             <p class="me-2">Tomato,</p>
-                                             <p class="me-2">Onion</p>
+                                             <textarea id="note" class="me-2" name="meal_ingredients">{{$mealLabel->ingredients}}</textarea>
+                                           
                                           </div>
                                        </div>
                                     </div>
@@ -543,7 +531,8 @@ var int = 1;
             '<input class="form-control table_input  adjust_lenth" type="number" id="fname" name="items['+ (int) +'][qty]" value="">' +
             '</td>'+
             '<td>'+
-            '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
+            '<input class="form-control table_input  adjust_lenth" type="text" id="upload_videos_'+ (int) +'"  value="">' +
+            '<input class="form-control table_input  adjust_lenth" type="hidden" id="upload_videos_id_'+ (int) +'" name="items['+ (int) +'][unit]" value="">' +
             '<button class="remCF close" id="remCF"' + (int) +' type="button">-</button>' +
             '</td>'+
             '</tr>');
@@ -565,7 +554,7 @@ function getSubcategory(obj,count) {
                   $(allLists).each(function (a, unit) {
                    if (unit.id == unit_id) {
                      $("#upload_videos_"+count).val(unit.unit);
-                    
+                     $("#upload_videos_id_"+count).val(unit.id);
                       }
       
                    });
@@ -658,4 +647,28 @@ function getSubcategory(obj,count) {
             
         }
     </script>
+   <script>
+    var textarea = document.getElementById("note");
+   textarea.oninput = function() {
+  textarea.style.height = "auto";
+  textarea.style.height = Math.min(textarea.scrollHeight, limit) + "px";
+};
+   </script>
+<style>
+textarea#note {
+	width:100%;
+   height:100%;
+	box-sizing:border-box;
+   overflow:hidden;
+	display:block;
+	max-width:100%;
+	line-height:1.5;
+   resize: none;
+	padding:15px 15px 30px;
+	border-radius:3px;
+   outline: 0px solid transparent;
+	border:none;
+	font:14px Tahoma, cursive;
+}
+</style>
    

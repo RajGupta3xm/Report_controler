@@ -33,41 +33,40 @@
                 <div class="row mx-0">
                     <div class="col-12 comman_table_design border bg-white px-0 search_show_tables">
                         <div class="table-responsive">
-                            <table class="table mb-0" id="example1">
+                            <table class="table mb-0" id="example2">
                                 <thead>
                                 <tr>
-                                    <th>user Id<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        user Id 
                                     </th>
-                                    <th>User Name<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        User Name
+                                       
                                     </th>
-                                    <th>Driver name<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Driver name
+                                     
                                     </th>
-                                    <th>Time Slot<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Time Slot
                                     </th>
-                                    <th>Area<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Area
                                     </th>
-                                    <!-- <th>Street<br> -->
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Priority
                                     </th>
-                                    <th>Priority<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Status
                                     </th>
-                                    <th>Status<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Remark
                                     </th>
-                                    <th>Remark<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        View
                                     </th>
-                                    <th>View<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
-                                    </th>
-                                    <th>Notes<br>
-                                        <!-- <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"> -->
+                                    <th>
+                                        Note
                                     </th>
                                 </tr>
                                 </thead>
@@ -108,7 +107,6 @@
                                             <!-- <td>{{$order->user->user_address->street??null}}</td> -->
                                             <td>
 
-
                                                     <div class="form-group">
                                                         <select class="form-select select_tabls" aria-label="Default select example" name="priority[{{$order->id}}]" style="width:180px !important;">
                                                             <option value="2" @if(isset($driver->priority) && $driver->priority == 2) selected @endif>Expedite</option>
@@ -122,23 +120,20 @@
                                             <td><a class="map_pin" href="javscript:;"><i class="fas fa-map-marker-alt"></i></a></td>
                                             <td>Delivery to Neighbour 45645454</td>
                                         </tr>
-
                                         </tbody>
                                 @endforeach
-
                                 @endif
                             </table>
                         </div>
                     </div>
-                    <div class="col-12">
+                    <!-- <div class="col-12">
                         <div class="count_total">
                             Total Count : <span>{{count($orders)}}</span>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             @endforeach
-
         </div>
     </div>
     <div class="col-12 py-4 mt-4">
@@ -159,3 +154,15 @@
     </div>
 </div>
 </form>
+<style>
+    .dataTables_length {
+    text-align: left;
+}
+</style>
+<style>
+    .dataTables_info {
+    text-align: left;
+}
+</style>
+
+

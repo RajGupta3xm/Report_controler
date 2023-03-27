@@ -82,6 +82,10 @@ Route::group(['middleware' => ['\App\Http\Middleware\AdminAuth'], 'prefix' => 'a
     Route::post('/edit_passwordUpdate','Admin\AdminController@password_update');
     Route::get('/edit_profile','Admin\AdminController@edit_profile');
     Route::post('/edit_profileUpdate/{id}','Admin\AdminController@edit_update');
+    Route::post('/dashboard/filter', [
+        'uses' => 'Admin\AdminController@filter_list',
+        'as' => 'admin.dashboard.filter'
+    ]);
 
 
     /*******Help And Support */
@@ -252,6 +256,10 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\PromoController@filter_list',
         'as' => 'admin.user.filter'
     ]);
+    Route::get('/get_subcategory/{id}', [
+        'uses' => 'Admin\PromoController@get_data',
+        'as' => 'admin.get_subcategory.get_data'
+    ]);
      /*******End Promo Code Management */
 
      
@@ -274,6 +282,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
       Route::post('/meal-delete','Admin\MealController@meal_delete');
       Route::any('edit-meal/{id}', 'Admin\MealController@edit_meal');
       Route::post('/meal/meal_update/{id}','Admin\MealController@meal_update');
+      Route::post('/meal/export','Admin\MealController@export')->name('meals.export');
      /*******End Meal Management */
 
         /*******Meal Plan Management */
@@ -287,6 +296,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('mealplanvariants/edit', 'Admin\MealPlanController@editArea')->name('mealplanvariants.edit');
     Route::post('/mealplanvariants/edit_update/{id}','Admin\MealPlanController@edit_update_variants');
     Route::post('/mealplanvariants-delete','Admin\MealPlanController@meal_plan_delete');
+  
      /*******End Meal Plan Management */
 
  /*******upcoming deliveries Management */
@@ -301,7 +311,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
  Route::post('/currentPlan/change_currentPlan_status', 'Admin\OrderController@change_status');
  Route::post('/currentPlan/change_previousPlan_status', 'Admin\OrderController@change_previousPlan_status');
  Route::get('/order-details/{id}', 'Admin\OrderController@show');
- Route::get('/previous-order-details/{id}/{plan_id}', 'Admin\OrderController@previousPlanShow');
+ Route::get('/previous-order-details/{id}/{plan_id}/{variant_id}', 'Admin\OrderController@previousPlanShow');
  Route::post('/updateDeliveryStatus', 'Admin\OrderController@updateDeliveryStatus');
  /*******End order Management */
 

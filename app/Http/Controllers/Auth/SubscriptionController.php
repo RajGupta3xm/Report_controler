@@ -16,6 +16,7 @@ use App\Models\SubscriptionCosts;
 use App\Models\SubscriptionDietPlan;
 use App\Models\SubscriptionMealGroup;
 use App\Models\Meal;
+use App\Models\OrderOnAddress;
 use App\Models\FleetArea;
 use App\Models\UserSelectDeliveryLocation;
 use App\Models\SubscriptionMealVariantDefaultMeal;
@@ -1162,18 +1163,7 @@ class SubscriptionController extends Controller {
 
     }elseif($request->step=='3'){
 
-          $meal_des =[];
-          $delivery_slot =[];
-       
-         $getAddressDeliveryId =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
-         if($getAddressDeliveryId){
-            foreach($getAddressDeliveryId as $getAddressDeliveryIds){
-             array_push($meal_des,$getAddressDeliveryIds['id']); 
-             array_push($delivery_slot,$getAddressDeliveryIds['delivery_slot_id']); 
-           }
-         $addressId = implode(',', $meal_des);
-         $delivery_slot_id = implode(',', $delivery_slot);  
-       }
+          
     $update_status = Order::where(['user_id'=> Auth::guard('api')->id(), 'plan_id' => $request->plan_id,  'variant_id' => $request->variant_id,])->update(['plan_status'=>'plan_inactive']);
         $user1=Order::Create(
             // ['user_id' =>  Auth::guard('api')->id()],
@@ -1182,14 +1172,56 @@ class SubscriptionController extends Controller {
                 'card_type' => $request->card_type,
                 'payment_method' => $request->payment_method,
                 'total_amount' => $request->total_amount,
-                'address_id' => $addressId,
-                'delivery_slot_id' => $delivery_slot_id,
+                // 'address_id' => $addressId,
+                // 'delivery_slot_id' => $delivery_slot_id,
                 'plan_id' => $request->plan_id,
                 'variant_id' => $request->variant_id,
                 'plan_status' => 'plan_active',
                 
             ]
         );
+        if($user1)
+        {
+           $meal_des =[];
+          $delivery_slot =[];
+          $areas =[];
+          $streets =[];
+          $address_types =[];
+         $getAddressDeliveryId =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->get();
+           if($getAddressDeliveryId){
+             foreach($getAddressDeliveryId as $getAddressDeliveryIds){
+            //       array_push($meal_des,$getAddressDeliveryIds['id']); 
+            //       array_push($delivery_slot,$getAddressDeliveryIds['delivery_slot_id']); 
+            //       array_push($areas,$getAddressDeliveryIds['area']);
+            //       array_push($streets,$getAddressDeliveryIds['street']);
+            //       array_push($address_types,$getAddressDeliveryIds['address_type']);
+              
+            //    $addressId = implode(',', $meal_des);
+            //    $addressIdd = explode(',', $addressId);
+            //    dd($addressIdd);
+            //    die;
+            //    $delivery_slot_id = explode(',', $delivery_slot);
+            //    $area = explode(',', $areas);  
+            //    $street = explode(',', $streets);
+            //    $address_type = explode(',', $address_types);
+            //}
+            OrderOnAddress::Create(
+                [
+                    'user_id'=> Auth::guard('api')->id(),
+                    'order_id' => $user1->id,
+                    'address_id' => $getAddressDeliveryIds->id,
+                    'delivery_slot_id' => $getAddressDeliveryIds->delivery_slot_id,
+                    'area' => $getAddressDeliveryIds->area,
+                    'street' => $getAddressDeliveryIds->street,
+                    'house_number' => $getAddressDeliveryIds->house_number,
+                    'address_type' => $getAddressDeliveryIds->address_type,
+                    
+                ]
+            );
+        }
+    }
+
+        }
 
       
         // $updatePlanStatus = Subscription::where(['user_id' => Auth::guard('api')->id(), 'plan_id' => $request->plan_id, 'variant_id' => $request->variant_id])->update(['plan_status'=>'plan_inactive']);
@@ -1545,6 +1577,7 @@ public function selectStartDayCircle(){
     ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
    ->select('subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscriptions.plan_id','subscriptions_meal_plans_variants.id as variant_id')
    ->where(['subscriptions.delivery_status'=>'active','subscriptions.user_id'=>Auth::guard('api')->id()])
+   ->orWhere(['subscriptions.delivery_status'=>'paused','subscriptions.user_id'=>Auth::guard('api')->id()])
    ->where(['subscriptions.variant_id'=>$users->variant_id])
    ->where(['subscriptions_meal_plans_variants.id'=>$users->variant_id])
    ->first();
@@ -1944,7 +1977,7 @@ public function myMeals(Request $request) {
 
     $custom_calorie = $request->custom_calorie;
      $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
-    $start_date = Subscription::select('start_date','end_date')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('user_id',Auth::guard('api')->id())->first();
+    $start_date = Subscription::select('start_date','end_date','delivery_status')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('user_id',Auth::guard('api')->id())->first();
      $option22 = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$checkPlan->subscription_id,'id'=>$checkPlan->variant_id])->first();
     $getStartDate = Carbon::createFromFormat('Y-m-d',$start_date->start_date);
    $getEndDate = Carbon::createFromFormat('Y-m-d',$start_date->end_date);
@@ -2290,23 +2323,25 @@ public function switchPlan(Request $request){
 
   }
   else{
-    Subscription::where('user_id',Auth::guard('api')->id())->where(['delivery_status'=>'upcoming'])->update(['delivery_status'=>'terminted','plan_status'=>'plan_inactive']);
+    // Subscription::where('user_id',Auth::guard('api')->id())->where(['delivery_status'=>'upcoming'])->update(['delivery_status'=>'terminted','plan_status'=>'plan_inactive']);
     $getWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2')->where(['meal_plan_id'=>$request->new_subscription_plan_id,'id'=>$request->new_variant_id])->first();
     $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
-     $getStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['delivery_status'=>'active'])->first();
+      $getStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['delivery_status'=>'active'])->first();
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
-        'plan_id' => $request->new_subscription_plan_id,
-        'variant_id' => $request->new_variant_id,
+        'plan_id' => $request->subscription_plan_id,
+        'variant_id' => $request->variant_id,
          ],
         [
-            'plan_id'=> $request->new_subscription_plan_id,
-            'variant_id' => $request->new_variant_id,
+            'plan_id'=> $request->subscription_plan_id,
+            'variant_id' => $request->variant_id,
             'switch_plan_start_date'=> $fourtyHourDate,
+            'switch_plan_plan_id'=> $request->new_subscription_plan_id,
+            'switch_plan_variant_id'=> $request->new_variant_id,
             'start_date'=> $getStartDate->start_date,
             'is_weekend'=> $getWeekend->option2,
             'price'=> $getWeekend->plan_price,
-            'delivery_status'=> 'upcoming',
+            'delivery_status'=> 'active',
             'plan_status'=> 'plan_active',
 
         ]

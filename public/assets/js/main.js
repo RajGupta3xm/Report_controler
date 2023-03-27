@@ -76,12 +76,12 @@
       autoplayHoverPause: true,
       autoplayTimeout: 5000,
       dots: false, 
-      loop:true, 
+      loop:false, 
       autoWidth:false, 
       nav: true,
       fade: true, 
       items: 8,
-      autoplayHoverPause: true, 
+      // autoplayHoverPause: true, 
    });
 
 

@@ -15,9 +15,11 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserDislike;
 use App\Models\DislikeItem;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\DietPlanType;
 use App\Models\MealRating;
 use App\Models\WeekDays;
+use App\Models\MealLabel;
 use App\Models\MealAllocationDepartment;
 use App\Models\MealWeekDay;
 use App\Models\MealDepartment;
@@ -119,6 +121,7 @@ class MealController extends Controller {
                $data['department'] = MealAllocationDepartment::select('id','name')->orderBy('id','Asc')->get(); 
                 $data['ingredients'] = DislikeItem::select('id','name','unit_id')->orderBy('id','Asc')->get(); 
                  $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
+
             
             return view('admin.meal.add_meal')->with($data);
         }
@@ -159,6 +162,7 @@ class MealController extends Controller {
     }
 
 $insert = Meal::create($data);
+
 if($insert){
     
 
@@ -172,6 +176,12 @@ if($insert){
     ];
     
   MealMacroNutrients::insert($data);
+
+  MealLabel::create([
+    'meal_id'      =>   $insert->id,
+    'instruction'  =>  $request->input('meal_instruction'),
+    'ingredients'  =>  $request->input('meal_ingredients'),
+  ]);
 
 foreach($request->meal_schedule_id  as $id)
 {
@@ -228,7 +238,7 @@ foreach($request->week_days_id  as $id)
         // $date = Carbon::parse($id);
          MealWeekDay::create([
             'meal_id' => $insert->id,
-             'week_days_id'  => Carbon::createFromFormat('Y-m-d', $id)->format('Y-m-d')
+             'week_days_id'  => Carbon::parse($id)->format('Y-m-d')
          ]);
         }
 
@@ -987,7 +997,7 @@ public function meal_delete(Request $request ){
 
 
 public function edit_meal(Request $request, $id=null){
-    $id = base64_decode($id);
+      $id = base64_decode($id);
     //return $id;
       $data['meal'] = Meal::where('id',$id)->first();
       $data['unit'] = DislikeUnit::select('id','unit')->orderBy('id','Asc')->get(); 
@@ -1002,12 +1012,13 @@ public function edit_meal(Request $request, $id=null){
         ->where('meal_diet_plan.meal_id',$id)
         ->get();
         
-          $data['mealIngrdients'] = MealIngredientList::join('dislike_units','meal_ingredient_list.unit_id','=','dislike_units.id')
+         $data['mealIngrdients'] = MealIngredientList::join('dislike_units','meal_ingredient_list.unit_id','=','dislike_units.id')
         ->join('dislike_items','meal_ingredient_list.item_id','=','dislike_items.id')
         ->select('meal_ingredient_list.id','meal_ingredient_list.quantity','dislike_units.unit','dislike_items.name')
         ->where('meal_ingredient_list.meal_id',$id)->get();
 
          $data['mealDepartment'] = MealDepartment::select('id','department_id')->where('meal_id',$id)->get();
+           $data['mealLabel'] = MealLabel::select('*')->where('meal_id',$id)->first();
     if($data){
         return view('admin.Meal.edit_meal')->with($data);
 
@@ -1017,7 +1028,7 @@ public function edit_meal(Request $request, $id=null){
 }
 
 public function meal_update(Request $request,$id=null){
-    $id = base64_decode($id);
+     $id = base64_decode($id);
      $data=[
    "name" => $request->input('name'),
    "name_ar" => $request->input('name_ar'),
@@ -1063,6 +1074,13 @@ MealMacroNutrients::where('meal_id',$id)->delete();
 ];
 
 MealMacroNutrients::insert($data);
+
+$updateLabel=[
+    'meal_id'      =>   $id,
+    'instruction'  =>  $request->input('meal_instruction'),
+    'ingredients'  =>  $request->input('meal_ingredients'),
+ ];
+MealLabel::where('meal_id',$id)->update($updateLabel);
 
 MealGroupSchedule::where('meal_id',$id)->delete();
 foreach($request->meal_schedule_id  as $idd)
@@ -1117,11 +1135,12 @@ foreach($request->week_days_id  as $name)
 
     }
 
-     if (intval($name)) {
+
+    if (intval($name)) {
         // $date = Carbon::parse($id);
          MealWeekDay::create([
             'meal_id' => $id,
-             'week_days_id'  => Carbon::createFromFormat('Y-m-d', $name)->format('Y-m-d')
+             'week_days_id'  => Carbon::parse($name)->format('Y-m-d')
          ]);
         }
 
@@ -1210,24 +1229,35 @@ if (is_numeric($idf)) {
 
 
 
-if($request['ingredient'] != null)
-{
-foreach ($request->ingredient as $key => $value) {
-if($value && $_POST['ingredient'][$key]){
- $servicefaq=[
-     'meal_id' => $insert->id,
-     'item_id' => $value,
-     'quantity' => $request->qty[$key],
-     'unit_id' => $request->unit[$key],
+foreach($request->items as $item) {
+    if(isset($item['ingredient'])){
+    MealIngredientList::insert([
+       'meal_id' => $id,
+       'item_id' => $item['ingredient'],
+       'quantity' => $item['qty'],
+       'unit_id' => $item['unit'],
+   ]);
+}
+}
+
+// if($request['ingredient'] != null)
+// {
+// foreach ($request->ingredient as $key => $value) {
+// if($value && $_POST['ingredient'][$key]){
+//  $servicefaq=[
+//      'meal_id' => $insert->id,
+//      'item_id' => $value,
+//      'quantity' => $request->qty[$key],
+//      'unit_id' => $request->unit[$key],
    
-   ];
-   $data =MealIngredientList::create($servicefaq);
-}
-}
+//    ];
+//    $data =MealIngredientList::create($servicefaq);
+// }
+// }
 
 
 
-}
+// }
 
 if($insert){
 return redirect('admin/meal-management')->with('success', ' Update successfully.');
@@ -1236,6 +1266,27 @@ else {
 return redirect()->back()->with('error', 'Some error occurred while update ');
 }
 
+}
+
+public function export(Request $request) 
+{
+    // return $get = $request->input('radio1');
+    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+    ->each(function($meal){
+          $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+             ->select('meal_schedules.name')
+             ->where('meal_group_schedule.meal_id',$meal->id)
+             ->get();
+
+             $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+             ->select('diet_plan_types.name')
+             ->where('meal_diet_plan.meal_id',$meal->id)
+             ->get();
+           $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+      
+    });
+     $meals = $meal;
+    return Excel::download(new Users, 'users.xlsx');
 }
 
 }
