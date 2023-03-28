@@ -2902,7 +2902,7 @@ align-items: center;
         width: 344px;
     }
 
-    /* multi filter  */
+/* multi filter  */
 .comboTreeWrapper{
 	position: relative;
 	text-align: left !important;
@@ -3059,6 +3059,12 @@ span.comboTreeItemTitle, .comboTreeDropDownContainer .selectAll{
     border-radius: 6px;
     margin-bottom: 4px;
     outline: 0;
+}
+.arrow_set {
+    position: absolute;
+    right: 30px;
+    z-index: 1;
+    bottom: 16px;
 }
 .arrow_set {
     position: absolute;

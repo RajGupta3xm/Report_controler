@@ -67,6 +67,11 @@
                                  <p class="text-danger text-small" id="valid_tillError"></p>
                               </div>
                               <div class="form-group col-3 position-relative">
+                                 <label for="">Select Meal Plan</label>  
+                                 <input type="text" id="justAnInputBox1" placeholder="Select" autocomplete="off" />
+                                 <i class="far fa-angle-down arrow_set"></i>
+                              </div>
+                              <div class="form-group col-3 position-relative">
                                  <label for="">Select Meal Plan</label>
                                  <select class="form-select multiple-select-custom-field" id="selUser"  onchange="getSubcategory(this);" name="items[][meal_plan_id]" aria-label="Default select example" data-placeholder="Select Meal Plan" multiple>
                                     @foreach($dietplan as $dietplans)
@@ -76,11 +81,10 @@
                               </div>
                               <div class="form-group col-3 position-relative">
                                  <label for="">Select Variants</label>
-                                 <!-- <select class="form-select" id="AddContainer" > -->
                                  <select class="form-select multiple-select-custom-field select-ajax"  id="AddContainer"  aria-label="" name="" data-placeholder="Select Variants" multiple>
-                                    <!-- <option value="1">Variants 2</option> -->
                                  </select>
                               </div> 
+                              
                               <div class="form-group col-6 setup_pricing maximum_discount">
                                  <span for="">Maximum Discount Uses</span>
                                  <div class="row">
@@ -324,16 +328,47 @@
       <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
+      <script src="{{asset('assets/js/comboTreePlugin.js')}}" type="text/javascript"></script> 
       <script src="assets/js/main.js"></script>
-      <script>
-         $( '.multiple-select-custom-field' ).select2( {
-           theme: "bootstrap-5",
-           width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-           placeholder: $( this ).data( 'placeholder' ),
-           closeOnSelect: false,
-           tags: true
-         } );
+       <!-- multiple Checkbox slider  -->
+       <script type="text/javascript">
+var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
+var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+const result = category.map(e => {
+    e.subCategories = subcategory.filter(a => a.meal_plan_id == e.id);
+    return e.name;
+})
+         var SampleJSONData = [{ 
+            id: 09,
+            title: 'result.name',
+               subs: [{
+                  id: 10,
+                  title: 'variant 1'
+               }
+                  
+               ] 
+        
+         }];
+      
+ 
+         var comboTree1, comboTree2;
+         jQuery(document).ready(function($) { 
+            comboTree3 = $('#justAnInputBox1').comboTree({
+               source: SampleJSONData,
+               isMultiple: true,
+               cascadeSelect: true,
+               collapse: false
+            });
+         comboTree3.setSource(SampleJSONData2);
+            comboTree2 = $('#justAnotherInputBox').comboTree({
+               source: SampleJSONData,
+               isMultiple: true,
+               cascadeSelect: true,
+               collapse: false
+            });
+         });
       </script>
+      <!-- multiple Checkbox slider  -->
       <script>
       //     function getSubcategory(obj) {
       //       var id = $(obj).val();
@@ -377,12 +412,12 @@ function getSubcategory(obj) {
 var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
 var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
 const result = category.map(e => {
-    e.subCategories = subcategory.filter(a => a.meal_plan_id == e.id);
+    e.category = subcategory.filter(a => a.meal_plan_id == e.id);
     return e;
 })
 
 console.log(result);
-yaha vishnu ka phele wala code dalna hai jisme category ke sath subcategory aa rhi thi to ek dropdown me kaam ho jayega
+
 }
     </script>
 <!-- <script>

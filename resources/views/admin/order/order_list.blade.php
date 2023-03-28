@@ -7,7 +7,7 @@
                   <div class="col-12"> 
                      <div class="row mx-0">  
                         <div class="col-12 text-end mb-4 pe-0"> 
-                           <a href="javscript:;" class="comman_btn yellow-btn me-2">Draft Order</a> 
+                           <a href="{{url('admin/draft-orders')}}" class="comman_btn yellow-btn me-2">Draft Order</a> 
                            <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
                             <!-- <a href="javscript:;" id="print" class="comman_btn yellow-btn me-0">Print</a>  -->
                             <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />

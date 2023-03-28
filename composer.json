@@ -17,7 +17,7 @@
         "laravel/tinker": "^1.0",
         "lcobucci/jwt": "3.3.3",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "maatwebsite/excel": "3.0.1",
+        "maatwebsite/excel": "~2.1.0",
         "php-http/guzzle6-adapter": "^2.0",
         "pragmarx/google2fa-laravel": "^2.0",
         "simplesoftwareio/simple-qrcode": "^4.2",

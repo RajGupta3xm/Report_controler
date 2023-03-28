@@ -213,6 +213,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\UserController@filter_list',
         'as' => 'admin.query.filter'
       ]);
+      Route::post('/user/filterUserData','Admin\UserController@filterUserData');
      /*******End User Management */
 
 
@@ -313,6 +314,15 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
  Route::get('/order-details/{id}', 'Admin\OrderController@show');
  Route::get('/previous-order-details/{id}/{plan_id}/{variant_id}', 'Admin\OrderController@previousPlanShow');
  Route::post('/updateDeliveryStatus', 'Admin\OrderController@updateDeliveryStatus');
+ Route::get('/draft-orders', 'Admin\OrderController@draft_order');
+ Route::post('/draft/filter', [
+    'uses' => 'Admin\OrderController@filter_list',
+    'as' => 'admin.draft.filter'
+  ]);
+  Route::get('/get_draftData/data/{id}', [
+    'uses' => 'Admin\OrderController@get_draftData',
+    'as' => 'admin.get_draftData.data'
+]);
  /*******End order Management */
 
  /*******fleet Management */

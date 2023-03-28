@@ -52,7 +52,8 @@ class UserController extends Controller {
             return redirect()->intended('admin/login');
         } else {
             // $userList = [];
-               $user = User::select('*')->orderBy('id', 'DESC')->get()
+               $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+               ->select('users.*','subscriptions.delivery_status')->orderBy('id', 'DESC')->get()
               ->each(function($user){
                 $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
                 ->select('orders.id','order_on_address.*')
@@ -69,7 +70,72 @@ class UserController extends Controller {
             
             return view('admin.users.user_list')->with($data);
         }
+        
     }
+
+    public function filterUserData(Request $request){
+     $status = $request->input('status');
+     if($status == 'active'){
+     $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+     ->select('users.*','subscriptions.delivery_status')
+     ->where('subscriptions.delivery_status','active')
+     ->orderBy('id', 'DESC')->get()
+    ->each(function($user){
+      $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+      ->select('orders.id','order_on_address.*')
+      ->where('orders.user_id',$user->id)
+      ->where('order_on_address.user_id',$user->id)
+      ->get();
+    });
+}
+elseif($status == 'inactive'){
+    $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+    ->select('users.*','subscriptions.delivery_status')
+    ->where('subscriptions.delivery_status','!=','active')
+    ->where('subscriptions.delivery_status','!=','terminted')
+    ->where('subscriptions.delivery_status','!=','paused')
+    ->where('subscriptions.delivery_status','!=','upcoming')
+    ->orderBy('id', 'DESC')->get()
+   ->each(function($user){
+     $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+     ->select('orders.id','order_on_address.*')
+     ->where('orders.user_id',$user->id)
+     ->where('order_on_address.user_id',$user->id)
+     ->get();
+   });
+}elseif($status == 'paused'){
+    $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+    ->select('users.*','subscriptions.delivery_status')
+    ->where('subscriptions.delivery_status','paused')
+    ->orderBy('id', 'DESC')->get()
+   ->each(function($user){
+     $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+     ->select('orders.id','order_on_address.*')
+     ->where('orders.user_id',$user->id)
+     ->where('order_on_address.user_id',$user->id)
+     ->get();
+   });
+
+}else{
+    $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+    ->select('users.*','subscriptions.delivery_status')
+    ->where('subscriptions.delivery_status','terminted')
+    ->orderBy('id', 'DESC')->get()
+   ->each(function($user){
+     $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+     ->select('orders.id','order_on_address.*')
+     ->where('orders.user_id',$user->id)
+     ->where('order_on_address.user_id',$user->id)
+     ->get();
+   });
+}
+
+ $data['users'] = $user;
+ 
+     if ($data) {
+       return view('admin.users.user_list')->with($data);
+     }
+  }
 
     public function show(Request $request, $id = null) {
         if (Auth::guard('admin')->check()) {

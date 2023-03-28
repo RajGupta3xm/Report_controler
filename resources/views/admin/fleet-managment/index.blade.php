@@ -210,7 +210,7 @@
 <script>
     $('.google').on('change',function(e){
     var id2 = document.getElementById('search_box').value
-
+alert(id2);
  if(id2){
     $.ajax({
  
@@ -264,7 +264,7 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
    setTimeout(function(){ $('.alert-success').fadeOut('slow') }, 3000);
 });
   </script>
-@endsection
+
 
 
 <script>
@@ -282,9 +282,8 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
         // });
     });
     $(document).on('click','.showEdit',function(){
-
         var tour_id= $(this).data('id');
-
+        alert(tour_id);
         $.ajax({
             url:'{{ url("admin/fleetarea/edit") }}',
             method:'post',
@@ -296,6 +295,7 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
             cache: false,
             success:function(data)
             {
+
                 $('#staticBackdrop').modal("show");
                 $('#smallBody').html(data.html).show();
                 $( '.multiple-select-custom-field' ).select2( {
@@ -389,3 +389,4 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
 
     }
 </script>
+@endsection

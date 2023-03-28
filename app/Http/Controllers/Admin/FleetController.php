@@ -65,7 +65,7 @@ class FleetController extends Controller {
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-            $data['area'] = FleetArea::get();
+             $data['area'] = FleetArea::get();
             return view('admin.fleet-managment.index')->with($data);;
         }
     }
@@ -85,7 +85,6 @@ class FleetController extends Controller {
 
     }
     public function editArea(Request $request){
-
         $clients=FleetArea::where('id',$request->tour_id)->first();
         $returnHTML =view('admin.fleet-managment.edit', compact('clients'))->render();
         return response()->json(['html'=>$returnHTML]);

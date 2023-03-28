@@ -19,23 +19,22 @@
                         @endif
                         @endif
                         <div class="col-12 design_outter_comman recent_orders shadow">
-                           <div class="row comman_header justify-content-between">
+                           <div class="row comman_header justify-content-between ">
+                           
                               <div class="col-auto">
                                  <h2>Users Management</h2>
                               </div>
+                           
                               <div class="col-6">
-                                 <form class="form-design row align-items-center justify-content-end"  method="post"  action="{{route('admin.query.filter')}}">
-                                    <!-- <div class="form-group col-6 mb-0 position-relative icons_set">
-                                       <input type="text" class="form-control" placeholder="Search" name="name" id="name" style="margin-top: 12px;">
-                                       <i class="far fa-search"></i>
-                                    </div> -->
+                                 <form class="form-design row align-items-center justify-content-end" id="filterUserForm" method="post"  action="{{url('admin/user/filterUserData')}}">
+                                    @csrf
                                     <div class="form-group mb-0 col-4 ps-0" style="margin-top: 12px;"> 
-                                       <select class="form-select form-control" aria-label="Default select example">
+                                       <select class="form-select form-control" aria-label="Default select example"  name="status"  id="loadUserData">
                                           <option selected="" disabled="">Users Status</option>
-                                          <option value="1">Active</option>
-                                          <option value="2">Inactive</option> 
-                                          <option value="2">Paused</option> 
-                                          <option value="2">Expired</option> 
+                                          <option value="active">Active</option>
+                                          <option value="inactive">Inactive</option> 
+                                          <option value="paused">Paused</option> 
+                                          <option value="expired">Expired</option> 
                                         </select>
                                     </div>
                                  </form>
@@ -100,9 +99,15 @@
                                            <td>-</td>
                                            <td>-</td>
                                            @endforelse
-                                           <td>
-                                           Active
+                                           @if($user->delivery_status == 'terminted')
+                                           <td> 
+                                           Expired
                                            </td> 
+                                           @else
+                                           <td> 
+                                           {{$user->delivery_status}}
+                                           </td> 
+                                           @endif
                                            <td> 
                                              <a class="comman_btn table_viewbtn" href="{{url('admin/user-details/'.base64_encode($user->id))}}">View</a>
                                            </td>
@@ -132,13 +137,13 @@
          </div>
          <div class="modal-body py-4">
             <form class="Import_export_form px-4" action="">
-               <div class="form-group row mb-4">
+               <!-- <div class="form-group row mb-4">
                   <div class="col-12 mb-3 Export_head"> <label for="">Exports :</label> </div>
                   <div class="col-12">
                      <div class="comman_radio mb-2"> <input class="d-none" type="radio" id="radio1" name="radio1"> <label for="radio1">All Items</label> </div>
                      <div class="comman_radio mb-2"> <input class="d-none" type="radio" checked id="radio2" name="radio2"> <label for="radio2">Selected 50+ Items</label> </div>
                   </div>
-               </div>
+               </div> -->
                <div class="form-group row">
                   <div class="col-12 mb-3 Export_head"> <label for="">Exports As :</label> </div>
                   <div class="col-12">
@@ -150,7 +155,16 @@
       </div>
    </div>
 </div>
-
+<script src="assets/vendor/jquery.min.js"></script>
+      <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+      <script src="assets/vendor/owl/owl.carousel.min.js"></script>
+      <script src="assets/js/main.js"></script>
+   <script>
+      var select = document.getElementById('loadUserData');
+      select.onchange = function(){
+      this.form.submit();
+      };
+   </script>
 @endsection
 <script>
        function filterList(obj){

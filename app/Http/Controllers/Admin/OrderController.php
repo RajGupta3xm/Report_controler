@@ -27,6 +27,7 @@ use App\Models\DietPlanType;
 use App\Models\SubscriptionOrder;
 use App\Models\SubscriptionMealPlanVariant;
 use App\Models\Subscription;
+use App\Models\OrderDeliverByDriver;
 use App\Models\SubscriptionMealGroup;
 use App\Models\MealAllocationDepartment;
 use App\Models\MealWeekDay;
@@ -87,6 +88,29 @@ class OrderController extends Controller {
                     });
                 $data['orders'] = $user;
             return view('admin.order.order_list')->with($data);
+        }
+    }
+    public function draft_order() {
+        if (!Auth::guard('admin')->check()) {
+            return redirect()->intended('admin/login');
+        } else {
+             $driverDeliverOrNot = OrderDeliverByDriver::with('delivery_slot')
+              ->join('users','order_delivers_by_driver.user_id','=','users.id')
+              ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
+              ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name')
+            ->where('order_delivers_by_driver.is_deliver','no')
+           ->get()
+           ->each(function($driverDeliverOrNot){
+                       $driverDeliverOrNot->dietPlans = DietPlanType::join('subscriptions_meal_plans_variants','diet_plan_types.id','=','subscriptions_meal_plans_variants.diet_plan_id')
+                       ->select('diet_plan_types.name')
+                      ->where('subscriptions_meal_plans_variants.id',$driverDeliverOrNot->variant_id)
+                      ->get();
+                      
+                    });
+                   $data['cancel_orders'] = $driverDeliverOrNot;
+             
+            return view('admin.order.draft_order')->with($data);
         }
     }
     
@@ -747,4 +771,71 @@ public function updateDeliveryStatus(Request $request, $id = NULL){
    }
 }
 
+
+public function filter_list(Request $request) {
+    $start_date = date('Y-m-d', strtotime($request->input('start_date')));
+    $end_date = date('Y-m-d', strtotime($request->input('end_date')));
+    if ($request->input('start_date') && $request->input('end_date')) {
+                $driverDeliverOrNot = OrderDeliverByDriver::with('delivery_slot')
+                ->join('users','order_delivers_by_driver.user_id','=','users.id')
+                ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
+                ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
+              ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name')
+              ->where('order_delivers_by_driver.is_deliver','no')
+              ->whereBetween('cancel_or_delivery_date', [$start_date, $end_date])
+             ->get()
+             ->each(function($driverDeliverOrNot){
+                         $driverDeliverOrNot->dietPlans = DietPlanType::join('subscriptions_meal_plans_variants','diet_plan_types.id','=','subscriptions_meal_plans_variants.diet_plan_id')
+                         ->select('diet_plan_types.name')
+                        ->where('subscriptions_meal_plans_variants.id',$driverDeliverOrNot->variant_id)
+                        ->get();
+                        
+                      });
+    } else {
+        $driverDeliverOrNot = OrderDeliverByDriver::with('delivery_slot')
+              ->join('users','order_delivers_by_driver.user_id','=','users.id')
+              ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
+              ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
+            ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name')
+            ->where('order_delivers_by_driver.is_deliver','no')
+           ->get()
+           ->each(function($driverDeliverOrNot){
+                       $driverDeliverOrNot->dietPlans = DietPlanType::join('subscriptions_meal_plans_variants','diet_plan_types.id','=','subscriptions_meal_plans_variants.diet_plan_id')
+                       ->select('diet_plan_types.name')
+                      ->where('subscriptions_meal_plans_variants.id',$driverDeliverOrNot->variant_id)
+                      ->get();
+                      
+                    });
+              
+    }
+
+    $data['cancel_orders'] = $driverDeliverOrNot;
+    return view('admin.order.draft_order')->with($data);
+}
+
+public function get_draftData(Request $request, $id=NULL)
+    {
+        
+        
+        if($request->ajax()){
+             $clients = OrderDeliverByDriver::with('delivery_slot')
+            ->join('users','order_delivers_by_driver.user_id','=','users.id')
+            ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
+          ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name')
+          ->where('order_delivers_by_driver.is_deliver','no')
+          ->where('order_delivers_by_driver.id',$request->id)
+         ->first();
+         if($clients){
+              $dietPlans = DietPlanType::join('subscriptions_meal_plans_variants','diet_plan_types.id','=','subscriptions_meal_plans_variants.diet_plan_id')
+            ->select('diet_plan_types.name')
+           ->where('subscriptions_meal_plans_variants.id',$clients->variant_id)
+           ->first();
+         }
+        $returnHTML =view('admin.order.update_draft_order', compact('clients','dietPlans'))->render();
+        return response()->json(['html'=>$returnHTML]);
+
+             
+        }
+     }
 }
