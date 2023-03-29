@@ -18,6 +18,7 @@ use App\Models\SubscriptionMealGroup;
 use App\Models\Meal;
 use App\Models\OrderOnAddress;
 use App\Models\FleetArea;
+use App\Models\UserSwapMeal;
 use App\Models\UserSelectDeliveryLocation;
 use App\Models\SubscriptionMealVariantDefaultMeal;
 use App\Models\ReplaceEditPlanRequest;
@@ -2118,7 +2119,46 @@ public function myMeals(Request $request) {
         $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$checkPlan->subscription_id])
        ->get()
        ->each(function($category) use($dates,$checkPlan,$custom_calorie){
-       
+    
+       if(UserSwapMeal::where(['user_id'=>Auth::guard('api')->id(),'meal_schedule_id'=>$category->meal_group->id,'date'=>date('Y-m-d', strtotime($dates))])->exists()){
+
+        $category->meal_group->meals =Meal::
+        join('user_swap_meal','meals.id','user_swap_meal.meal_id')
+        ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+        // ->select('meals.*')
+        ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+         ->where('user_swap_meal.meal_schedule_id',$category->meal_group->id)
+        // ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+        ->whereDate('user_swap_meal.date','=', date('Y-m-d', strtotime($dates)))
+        ->where(['user_swap_meal.meal_plan_id'=> $checkPlan->subscription_id,'meals.status'=>'active'])
+         ->where('user_swap_meal.is_default','1')
+         ->where('meal_macro_nutrients.user_calorie',$custom_calorie)
+        ->get()->each(function($meals) {
+        
+            // $meals->ingredient= ['onion','tomato','carrot', 'chilli'];
+    
+        $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+        ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+        ->where('meal_ingredient_list.meal_id',$meals->id)
+        ->where('dislike_items.status','active')->get()
+        ->each(function($dislikeItem){
+           $dislikeItem->selected=false;
+           if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+               $dislikeItem->selected=true;
+           }
+       });
+
+         $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+         ->where('meal_id', $meals->id)
+         ->groupBy('meal_id')
+        ->first();
+        $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+        ->groupBy('meal_id')
+       ->count();
+ })->toArray();
+ 
+
+       }else{
         $category->meal_group->meals =Meal::
         join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
         ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
@@ -2158,6 +2198,7 @@ public function myMeals(Request $request) {
         ->groupBy('meal_id')
        ->count();
  })->toArray();
+}
 })->toArray();
    
 $calorieAddition[] ='0';
@@ -2410,15 +2451,37 @@ public function swapMeal(Request $request){
     $new_meal_id = $request->new_meal_id;
     $plan_id = $request->subscription_plan_id;
     $meal_schedule_id = $request->meal_schedule_id;
-    
-    $updateOldMealDefault=[
-        'is_default' => '0',
-    ];
-    $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$old_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateOldMealDefault);
-    $updateNewMealDefault=[
+
+
+    UserSwapMeal::updateOrCreate(
+        ['user_id' =>  Auth::guard('api')->id(),
+        'meal_plan_id'=>$plan_id,
+        'meal_id'=>$new_meal_id,
+        'date'=>$date,
+         ],
+        [
+
+        'user_id'=>Auth::guard('api')->id(),
+        'meal_plan_id'=>$plan_id,
+        'date'=>$date,
+        'meal_id'=>$new_meal_id,
+        'meal_schedule_id'=>$meal_schedule_id,
+        'old_meal_id'=>$old_meal_id,
         'is_default' => '1',
-    ];
-    $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$new_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateNewMealDefault);
+
+        ]
+    );
+
+  
+    
+    // $updateOldMealDefault=[
+    //     'is_default' => '0',
+    // ];
+    // $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$old_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateOldMealDefault);
+    // $updateNewMealDefault=[
+    //     'is_default' => '1',
+    // ];
+    // $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$new_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateNewMealDefault);
    
 
     $this->status = true; 
@@ -2990,4 +3053,54 @@ public function savedAddressListing(Request $request) {
       $this->message = trans('plan_messages.update_recommended');
       return $this->populateResponse();
   }
+
+  public function swapMeallisting(Request $request) {
+    $date = $request->date;
+    $subscription_plan_id = $request->subscription_plan_id;
+    $schedule_id = $request->schedule_id;
+    $custom_calorie = $request->custom_calorie;
+
+     $meals =Meal::
+     join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+     ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+     ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+    //  ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
+     ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $subscription_plan_id,'meals.status'=>'active'])
+      ->where('subscription_meal_plan_variant_default_meal.date',$date)
+      ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$schedule_id)
+      ->where('meal_macro_nutrients.user_calorie',$custom_calorie)
+     ->get()->each(function($meals) {
+       
+     $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+     ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+     ->where('meal_ingredient_list.meal_id',$meals->id)
+     ->where('dislike_items.status','active')->get()
+     ->each(function($dislikeItem){
+        $dislikeItem->selected=false;
+        if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+            $dislikeItem->selected=true;
+        }
+    });
+    $meals->dislikegroup = DislikeGroup::select('id','name')->where('status','active')->get()->each(function($dislikegroup){
+        $dislikegroup->selected=false;
+        if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+            $dislikegroup->selected=true;
+        }
+    });
+      $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+      ->where('meal_id', $meals->id)
+      ->groupBy('meal_id')
+     ->first();
+     $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+     ->groupBy('meal_id')
+    ->count();
+})->toArray();
+
+    $data['meals'] = $meals;
+    $response = new \Lib\PopulateResponse($data);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.swap_meal_listing');
+    return $this->populateResponse();
+}
 }

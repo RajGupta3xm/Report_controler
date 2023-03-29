@@ -45,14 +45,14 @@
                                     <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
-                                          <th>
+                                          <!-- <th>
                                              <form class="table_btns d-flex align-items-center justify-content-center">
                                                 <div class="check_radio">
                                                    <input type="checkbox" name="table5" id="table5" class="d-none">
                                                    <label for="table5"></label>
                                                 </div>
                                              </form>
-                                          </th>
+                                          </th> -->
                                            <th>S.No.</th>
                                            <th>Date/Time</th>
                                            <th>User Name</th>  
@@ -70,14 +70,14 @@
                                     
                                           @foreach($order->plans as $key3=>$variant)
                                           <tr>
-                                             <td >
+                                             <!-- <td >
                                                 <form class="table_btns d-flex align-items-center justify-content-center">
                                                    <div class="check_radio td_check_radio">
                                                       <input type="checkbox" name="v1" id="v1" class="d-none">
                                                       <label for="v1"></label>
                                                    </div>
                                                 </form>
-                                             </td>
+                                             </td> -->
                                              <td>{{$key1+1}}</td>
                                              <td>{{date('d/m/Y',strtotime($order->created_at))}}<br>{{date('h:i A',strtotime($order->created_at))}}</td>
                                              <td>{{$order->name}}</td>

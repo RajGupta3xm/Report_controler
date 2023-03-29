@@ -334,13 +334,15 @@
        <script type="text/javascript">
 var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
 var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
-const result = category.map(e => {
+var result = category.map(e => {
     e.subCategories = subcategory.filter(a => a.meal_plan_id == e.id);
-    return e.name;
-})
-         var SampleJSONData = [{ 
+    return e;
+   })
+   $(category).each(function(k,g){
+   console.log(g.name);
+   var SampleJSONData = [{ 
             id: 09,
-            title: 'result.name',
+            title: g.name,
                subs: [{
                   id: 10,
                   title: 'variant 1'
@@ -349,6 +351,8 @@ const result = category.map(e => {
                ] 
         
          }];
+
+        
       
  
          var comboTree1, comboTree2;
@@ -359,14 +363,11 @@ const result = category.map(e => {
                cascadeSelect: true,
                collapse: false
             });
-         comboTree3.setSource(SampleJSONData2);
-            comboTree2 = $('#justAnotherInputBox').comboTree({
-               source: SampleJSONData,
-               isMultiple: true,
-               cascadeSelect: true,
-               collapse: false
-            });
+        
          });
+   })
+
+     
       </script>
       <!-- multiple Checkbox slider  -->
       <script>
@@ -411,12 +412,17 @@ const result = category.map(e => {
 function getSubcategory(obj) {
 var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
 var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
-const result = category.map(e => {
-    e.category = subcategory.filter(a => a.meal_plan_id == e.id);
-    return e;
-})
+// var result = category.map(e => {
+//     e.category = subcategory.filter(a => a.meal_plan_id == e.id);
+//     return e;
+// })
+// $(result).each(function(k,g){
 
-console.log(result);
+//       console.log(g.category);
+
+// })
+
+
 
 }
     </script>

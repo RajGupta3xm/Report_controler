@@ -733,6 +733,7 @@ class ComposerStaticInit4dd6f25346a5011cf111d34624ead948
         'App\\Models\\Notification' => __DIR__ . '/../..' . '/app/Models/Notification.php',
         'App\\Models\\OnboardingScreen' => __DIR__ . '/../..' . '/app/Models/OnboardingScreen.php',
         'App\\Models\\Order' => __DIR__ . '/../..' . '/app/Models/Order.php',
+        'App\\Models\\OrderDeliverByDriver' => __DIR__ . '/../..' . '/app/Models/OrderDeliverByDriver.php',
         'App\\Models\\OrderOnAddress' => __DIR__ . '/../..' . '/app/Models/OrderOnAddress.php',
         'App\\Models\\Otp' => __DIR__ . '/../..' . '/app/Models/Otp.php',
         'App\\Models\\PopUpNotification' => __DIR__ . '/../..' . '/app/Models/PopUpNotification.php',

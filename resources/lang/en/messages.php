@@ -72,6 +72,8 @@ return [
 	'day_update'=>'Day update successfully',
 	'time_slot_update'=>'Time slot update successfully',
 	'update_recommended'=>' update successfully',
+	'invalid_mobile'  => 'mobile number already exist',
+	'other_dislike_items_list'  =>   'Other dislike items list'
 ];
 
 ?>

@@ -88,6 +88,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('checkDaySelectedOrNot', 'ApiController@checkDaySelectedOrNot');
     Route::post('updateTimeSlotFromAddress', 'ApiController@updateTimeSlotFromAddress');
     Route::post('getPriceCalculation', 'ApiController@getPriceCalculation');
+    Route::get('/otherIngredientDislikes','ApiController@otherIngredientDislikes');
     // Route::post('select_start_day_meal', 'ApiController@select_start_day_meal'); 
 
 

@@ -51,6 +51,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::post('repeat_meal_plan', 'SubscriptionController@repeat_meal_plan');
     Route::post('userUnskipDelivery', 'SubscriptionController@userUnskipDelivery');
     Route::post('updateDateForSelectStartDateAndMeal', 'SubscriptionController@updateDateForSelectStartDateAndMeal');
-    Route::post('saveRecommendedCalorie', 'SubscriptionController@saveRecommendedCalorie'); 
+    Route::post('saveRecommendedCalorie', 'SubscriptionController@saveRecommendedCalorie');
+    Route::post('swapMeallisting', 'SubscriptionController@swapMeallisting'); 
     
 });

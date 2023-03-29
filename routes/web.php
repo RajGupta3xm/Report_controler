@@ -323,6 +323,8 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     'uses' => 'Admin\OrderController@get_draftData',
     'as' => 'admin.get_draftData.data'
 ]);
+Route::post('/draftOrder/edit_update/{id}','Admin\OrderController@edit_update');
+
  /*******End order Management */
 
  /*******fleet Management */

@@ -822,7 +822,7 @@ public function get_draftData(Request $request, $id=NULL)
             ->join('users','order_delivers_by_driver.user_id','=','users.id')
             ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
             ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
-          ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name')
+          ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name','subscription_plans.id as plan_id','subscriptions_meal_plans_variants.id as variant_id')
           ->where('order_delivers_by_driver.is_deliver','no')
           ->where('order_delivers_by_driver.id',$request->id)
          ->first();
@@ -838,4 +838,30 @@ public function get_draftData(Request $request, $id=NULL)
              
         }
      }
+
+     public function edit_update($id,Request $request){
+        $plan_id = $request->plan_id;
+        $variant_id = $request->variant_id;
+        $user_id = $request->user_id;
+
+        $get_end_date = Subscription::select('end_date')->where(['variant_id'=>$variant_id,'plan_id'=>$plan_id,'user_id'=>$user_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->first();
+         $check_plan_weekend = SubscriptionMealPlanVariant::select('option2')->where(['id'=>$variant_id,'meal_plan_id'=>$plan_id])->first();
+          if(!empty($check_plan_weekend->option2 == 'withoutweekend')){
+             $datess = Carbon::createFromFormat('Y-m-d',$get_end_date->end_date);
+             $day = strtolower($datess->format('l'));
+              if($day == 'friday'){
+                $end_date = $datess->addDays('+2');
+            
+               }else{
+                $end_date = $datess->addDays('+1');
+               }
+            }else{
+                $end_date = $datess->addDays('+1');
+            }
+
+            Subscription::where(['variant_id'=>$variant_id,'plan_id'=>$plan_id,'user_id'=>$user_id,'delivery_status'=>'active','plan_status'=>'plan_active'])
+            ->update(['end_date'=>$end_date]);
+       
+        return redirect()->back()->with('success','date update successfully');
+    }
 }

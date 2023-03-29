@@ -579,6 +579,12 @@ class ApiController extends Controller {
     public function myProfile() {
         $user = User::select('id as user_id', 'users.*')->where('id', Auth::guard('api')->id())->first(); 
          $userProfile = UserProfile::where('user_id', Auth::guard('api')->id())->first();
+         $userFitnessGoal = FitnessGoal::where('id',$userProfile->fitness_scale_id)->first();
+         $userDietPlan = DietPlanType::where('id',$userProfile->diet_plan_type_id)->first();
+         $userCalorie = CalorieRecommend::join('user_calori_targets','calorie_recommend.id','=','user_calori_targets.custom_result_id')
+         ->select('calorie_recommend.recommended')
+         ->where('user_calori_targets.user_id',Auth::guard('api')->id())
+         ->first();
          $name = trim($user->name);
          $family_name = (strpos($name, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
          $first_name = trim( preg_replace('#'.$family_name.'#', '', $name ) );        
@@ -588,6 +594,9 @@ class ApiController extends Controller {
         $data->first_name = $first_name;
         $data->gender = $userProfile->gender;
         $data->dob = $userProfile->dob;
+        $data->fitness_goal = $userFitnessGoal->name;
+        $data->userDietPlan = $userDietPlan->name;
+        $data->calorie = $userCalorie->recommended;
         $this->status = true;
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
@@ -602,8 +611,7 @@ class ApiController extends Controller {
             'first_name' => 'required',
             'last_name' => 'required',
             'country_code' => 'required',
-            // 'mobile' => 'required|numeric',
-            'mobile' => 'required',
+            'mobile' => 'required|numeric',
             'email' => 'required',
             'image' => 'required',
             'dob' => 'required',
@@ -617,10 +625,19 @@ class ApiController extends Controller {
             'dob.required' =>           'dob is required field',
             'gender.required' => 'gender is required field',
             'mobile.required' => 'Mobile Number is required field',
-            // 'mobile.numeric' => 'Mobile Number should be numeric ',
+            'mobile.numeric' => 'Mobile Number should be numeric ',
        ]);
 
       $validator->after(function ($validator) use ($request) {
+
+        if($request['country_code'] && $request['mobile']){
+            $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->first();
+            if ($mobile_number) {
+                $validator->errors()->add('mobile_number', 'This number is already exist, Please choose another number');
+             
+                
+            }
+        }
 
       });
 
@@ -3239,7 +3256,26 @@ public function getPriceCalculation(Request $request) {
     return $this->populateResponse();
 }
 
+public function otherIngredientDislikes() {
+    $category=DislikeGroup::select('id','name','image')
+    // ->with('items')
+    ->where('status','inactive')->get();
+    // ->each(function($category){
+        foreach($category as $item){
+            $item->selected=false;
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
+                $item->selected=true;
+            }
+        }
+        
+    // });
 
+    $response = new \Lib\PopulateResponse($category);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.other_dislike_items_list');
+    return $this->populateResponse();
+}
 
 
 }

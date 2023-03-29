@@ -110,6 +110,7 @@ return array(
     'App\\Models\\Notification' => $baseDir . '/app/Models/Notification.php',
     'App\\Models\\OnboardingScreen' => $baseDir . '/app/Models/OnboardingScreen.php',
     'App\\Models\\Order' => $baseDir . '/app/Models/Order.php',
+    'App\\Models\\OrderDeliverByDriver' => $baseDir . '/app/Models/OrderDeliverByDriver.php',
     'App\\Models\\OrderOnAddress' => $baseDir . '/app/Models/OrderOnAddress.php',
     'App\\Models\\Otp' => $baseDir . '/app/Models/Otp.php',
     'App\\Models\\PopUpNotification' => $baseDir . '/app/Models/PopUpNotification.php',
