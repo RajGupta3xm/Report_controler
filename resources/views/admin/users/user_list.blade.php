@@ -8,19 +8,20 @@
                      <div class="row mx-0">
                      @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 mb-4 text-end">
+                        <a href="<?= url('admin/user-management') ?>" class="comman_btn me-2">Reset</a>
                            <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
                         </div>
                         @endif
                         @if(Session::get('admin_logged_in')['type']=='1')
                         @if(Session::get('staff_logged_in')['user_mgmt']!='1')
                         <div class="col-12 mb-4 text-end">
+                        <a href="<?= url('admin/user-management') ?>" class="comman_btn me-2">Reset</a>
                            <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
                         </div>
                         @endif
                         @endif
                         <div class="col-12 design_outter_comman recent_orders shadow">
                            <div class="row comman_header justify-content-between ">
-                           
                               <div class="col-auto">
                                  <h2>Users Management</h2>
                               </div>

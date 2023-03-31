@@ -89,7 +89,8 @@
                                              <td>{{$cancel_order->delivery_slot->name}} &nbsp; ({{$cancel_order->delivery_slot->start_time}} - {{$cancel_order->delivery_slot->end_time}})</td>
                                              <td>
                                                 <!-- <a data-bs-toggle="modal" data-bs-target="#draftorder" class="comman_btn table_viewbtn showEdit" href="javascript:;" data-id="{{$cancel_order->id}}">Draft Order</a> -->
-                                                <a class="comman_btn table_viewbtn " onclick="getDraftData(this,'{{$cancel_order->id}}');"  href="javscript:;"  data-toggle="modal" data-bs-target="#draftorder" >Draft Order</a> 
+                                                <a class="comman_btn table_viewbtn" href="{{url('admin/draft_order_edit/'.base64_encode($cancel_order->id))}}">Draft Order</a>
+                                                <!-- <a class="comman_btn table_viewbtn " onclick="getDraftData(this,'{{$cancel_order->id}}');"  href="javscript:;"  data-toggle="modal" data-bs-target="#draftorder" >Draft Order</a>  -->
                                             </td>
                                           </tr>
                                           @endforeach

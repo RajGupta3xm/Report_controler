@@ -11,9 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Models\DeliverySlot;
 use App\Models\DietPlanType;
+use App\Models\DislikeItem;
 use App\Models\Admin;
+use App\Models\Order;
+use App\Models\MealIngredientList;
 use App\Models\StaffMembers;
 use App\Models\UserProfile;
+use App\Models\MealWeekDay;
 use App\Models\SubscriptionMealVariantDefaultMeal;
 use App\Models\CalorieRecommend;
 use App\Models\FleetArea;
@@ -36,6 +40,47 @@ class ReportController extends Controller
               ->orwhere('staff_group.name','=','drivers')
               ->get();
               $data['area'] = FleetArea::select('id','area')->where('status','active')->get();
+
+              $activeUser = UserProfile::join('users','user_profile.user_id','=','users.id')
+              ->join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
+              ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+              ->join('subscriptions_meal_plans_variants','user_profile.variant_id','=','subscriptions_meal_plans_variants.id')
+              ->select('users.name as user_name','users.id as user_id','users.country_code','users.mobile','subscription_plans.name as plan_name','subscriptions_meal_plans_variants.variant_name','diet_plan_types.name as diet_plan')
+              ->orderBy('user_profile.user_id','DESC')
+               ->get()
+               ->each(function($activeUser){
+               $activeUser->orderDetail = Order::join('fleet_driver','orders.id','=','fleet_driver.order_id')
+               ->where(['orders.plan_status'=>'plan_active','payment_status'=>'paid'])
+               ->where('orders.user_id',$activeUser->user_id)
+               ->select('fleet_driver.staff_member_id','orders.id as order_id')
+               ->get();
+ 
+               });
+               $data['activeUser'] = $activeUser;
+              //  with('units','categorys')->
+                    $current_date = \carbon\Carbon::parse(now())->addDays('+2');
+                    $fourtyHourDate = \Carbon\Carbon::parse($current_date)->format('Y-m-d');
+                   $procurement = DislikeItem::with('units','categorys')
+                   ->select('dislike_items.name','dislike_items.id')->get()
+                  ->each(function($procurement)use($fourtyHourDate){
+                    $procurement->itemProcurement = MealIngredientList::join('meal_week_days','meal_ingredient_list.meal_id','=','meal_week_days.meal_id')
+                    ->selectRaw('SUM(meal_ingredient_list.quantity) AS qtyTotal')
+                     ->where('meal_ingredient_list.item_id',$procurement->id)
+                      ->where('meal_week_days.week_days_id',$fourtyHourDate)
+                      ->get();
+
+                  });
+
+                  // $procurement = MealWeekDay::where('week_days_id',$fourtyHourDate)
+                  // ->get()->each(function($procurement){
+                  //   $procurement->itemProcurement = MealIngredientList::join('dislike_items','meal_ingredient_list.item_id','=','dislike_items.id')
+                  //   ->selectRaw('SUM(meal_ingredient_list.quantity) AS qtyTotal')
+                  //     ->where('meal_ingredient_list.meal_id',$procurement->meal_id)
+                  //     ->get();
+
+                  // });
+
+                    $data['procurements'] = $procurement;
 
              return view('admin.report.report_list')->with($data);
         }

@@ -840,23 +840,27 @@ public function get_draftData(Request $request, $id=NULL)
      }
 
      public function edit_update($id,Request $request){
-        $plan_id = $request->plan_id;
-        $variant_id = $request->variant_id;
-        $user_id = $request->user_id;
+         $plan_id = $request->plan_id;
+          $variant_id = $request->variant_id;
+          $user_id = $request->user_id;
 
         $get_end_date = Subscription::select('end_date')->where(['variant_id'=>$variant_id,'plan_id'=>$plan_id,'user_id'=>$user_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->first();
          $check_plan_weekend = SubscriptionMealPlanVariant::select('option2')->where(['id'=>$variant_id,'meal_plan_id'=>$plan_id])->first();
           if(!empty($check_plan_weekend->option2 == 'withoutweekend')){
-             $datess = Carbon::createFromFormat('Y-m-d',$get_end_date->end_date);
-             $day = strtolower($datess->format('l'));
-              if($day == 'friday'){
-                $end_date = $datess->addDays('+2');
-            
-               }else{
-                $end_date = $datess->addDays('+1');
-               }
+              $datess = Carbon::createFromFormat('Y-m-d',$get_end_date->end_date);
+               $nextDayDate = $datess->addDays('+1');
+              $day = strtolower($nextDayDate->format('l'));
+               if($day == 'friday' || $day == 'saturady'){
+                   if($day == 'friday'){
+                      $end_date = $datess->addDays('+2');
+                   }else{
+                      $end_date = $datess->addDays('+1');
+                    }
+                }else{
+                        $end_date = $nextDayDate; 
+                    }
             }else{
-                $end_date = $datess->addDays('+1');
+                $end_date = $request->addOn_date;
             }
 
             Subscription::where(['variant_id'=>$variant_id,'plan_id'=>$plan_id,'user_id'=>$user_id,'delivery_status'=>'active','plan_status'=>'plan_active'])
@@ -864,4 +868,45 @@ public function get_draftData(Request $request, $id=NULL)
        
         return redirect()->back()->with('success','date update successfully');
     }
+
+    public function edit_draft_order(Request $request, $id=NULL) {
+      
+             $id = base64_decode($request->id); 
+              $clients = OrderDeliverByDriver::with('delivery_slot')
+            ->join('users','order_delivers_by_driver.user_id','=','users.id')
+            ->join('subscription_plans','order_delivers_by_driver.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','order_delivers_by_driver.variant_id','=','subscriptions_meal_plans_variants.id')
+          ->select('order_delivers_by_driver.*','users.name','users.id as user_id','subscription_plans.name as plan_name','subscription_plans.id as plan_id','subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.option2','subscriptions_meal_plans_variants.calorie')
+          ->where('order_delivers_by_driver.is_deliver','no')
+          ->where('order_delivers_by_driver.id',$id)
+         ->first();
+         if($clients){
+               $dietPlans = DietPlanType::join('subscriptions_meal_plans_variants','diet_plan_types.id','=','subscriptions_meal_plans_variants.diet_plan_id')
+            ->select('diet_plan_types.name')
+           ->where('subscriptions_meal_plans_variants.id',$clients->variant_id)
+           ->first();
+
+            $subscription_detail = Subscription::where(['user_id'=>$clients->user_id,'plan_id'=>$clients->plan_id,'variant_id'=>$clients->variant_id])->where(['delivery_status'=>'active','plan_status'=>'plan_active'])->first();
+            
+              $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$clients->plan_id])
+            ->get()
+            ->each(function($category) use($clients){
+             $category->meal_group->meals =Meal::
+             join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+             ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+             // ->select('meals.*')
+             ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+              ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
+             // ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+             ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($clients->cancel_or_delivery_date)))
+             ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $clients->plan_id,'meals.status'=>'active'])
+              ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+              ->where('meal_macro_nutrients.user_calorie',$clients->calorie)
+             ->get();
+            });
+         }      
+       
+            return view('admin.order.draft_order_edit',compact('clients','dietPlans','subscription_detail','category'));
+        }
+    
 }

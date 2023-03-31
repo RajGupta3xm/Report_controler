@@ -275,6 +275,8 @@
     <script src="{{asset('assets/admin/plugins/functions/dashboard1.js')}}"></script>
     <script src="{{asset('assets/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('assets/admin/plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
+
+    
 <!-- end filter script -->
 
 

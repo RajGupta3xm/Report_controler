@@ -20,7 +20,7 @@
                                  <div class="tab-content" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                                        <div class="row mx-0 px-4 py-4">
-                                          <div class="col-12 mb-4">
+                                          <!-- <div class="col-12 mb-4">
                                              <form class="form-design filter_check" action=""> 
                                                 <div class="check_toggle d-flex">
                                                    <span>Filter : </span>
@@ -28,7 +28,7 @@
                                                    <label class="onclk" for="check1"></label>
                                                 </div>
                                              </form>
-                                          </div>
+                                          </div> -->
                                           <div class="col-12 design_outter_comman">
                                              <div class="row comman_header justify-content-between">
                                                 <div class="col-auto">
@@ -55,19 +55,29 @@
                                                            </tr>
                                                          </thead>
                                                          <tbody>
+                                                            @foreach($activeUser as $key=>$activeUsers)
+                                                            @foreach($activeUsers->orderDetail as $key=>$orderDetails)
+                                                            @php 
+                                                            $driver = \App\Models\StaffMembers::select('name')->where('id',$orderDetails->staff_member_id)->get();
+                                                            @endphp
                                                             <tr>
-                                                               <td>Mohd. Aarif/محمد. عارف
-                                                                  <br>+971 09819283109
+                                                               <td>{{$activeUsers->user_name}}
+                                                                  <br>{{$activeUsers->country_code}} {{$activeUsers->mobile}}
                                                                </td>
-                                                               <td>Low Crab</td>
-                                                               <td>Fully Monthly</td> 
-                                                               <td>Lorem</td>
-                                                               <td>1001</td>
+                                                               <td>{{$activeUsers->diet_plan}}</td>
+                                                               <td>{{$activeUsers->plan_name}}</td> 
+                                                               <td>{{$activeUsers->variant_name}}</td>
+                                                               <td>{{$orderDetails->staff_member_id}}</td>
                                                                <td>Lorem ipsum dolor</td>
                                                                <td>6AM - 10AM</td>
-                                                               <td>XYZ</td>
+                                                               @foreach($driver as $drivers)
+                                                               <td>{{$drivers->name}}</td>
+                                                               @endforeach
                                                             </tr> 
-                                                            <tr>
+                                                            @endforeach
+                                                            @endforeach
+
+                                                            <!-- <tr>
                                                                <td>Mohd. Aarif/محمد. عارف
                                                                   <br>+971 09819283109
                                                                </td>
@@ -78,8 +88,8 @@
                                                                <td>Lorem ipsum dolor</td>
                                                                <td>6AM - 10AM</td>
                                                                <td>XYZ</td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>Mohd. Aarif/محمد. عارف
                                                                   <br>+971 09819283109
                                                                </td>
@@ -90,7 +100,7 @@
                                                                <td>Lorem ipsum dolor</td>
                                                                <td>6AM - 10AM</td>
                                                                <td>XYZ</td>
-                                                            </tr>
+                                                            </tr> -->
                                                          </tbody>
                                                       </table>
                                                    </div>
@@ -101,7 +111,7 @@
                                     </div>
                                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                                        <div class="row mx-0 px-4 py-4">
-                                          <div class="col-12 mb-4">
+                                          <!-- <div class="col-12 mb-4">
                                              <form class="form-design filter_check" action=""> 
                                                 <div class="check_toggle d-flex">
                                                    <span>Filter : </span>
@@ -109,7 +119,7 @@
                                                    <label class="onclk1" for="checkvp"></label>
                                                 </div>
                                              </form>
-                                          </div>
+                                          </div> -->
                                           <div class="col-12 design_outter_comman">
                                              <div class="row comman_header justify-content-between">
                                                 <div class="col-auto">
@@ -130,20 +140,20 @@
                                              <div class="row">
                                                 <div class="col-12 comman_table_design border bg-white px-0 search_show_tables1">
                                                    <div class="table-responsive">
-                                                      <table class="table mb-0">
+                                                      <table class="table mb-0" id="example2">
                                                          <thead>
                                                            <tr>
-                                                             <th>Label <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Name of Meal <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Diet Plan <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Category <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Department <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
+                                                             <th>Label </th>
+                                                             <th>Name of Meal </th>
+                                                             <th>Diet Plan</th>
+                                                             <th>Category</th>
+                                                             <th>Department</th>
                                                              <th>XS</th>
                                                              <th>s</th> 
                                                              <th>m</th>  
                                                              <th>l</th>  
                                                              <th>xl</th>  
-                                                             <th>Total <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>  
+                                                             <th>Total</th>  
                                                            </tr>
                                                          </thead>
                                                          <tbody>
@@ -162,7 +172,7 @@
                                                                <td>250</td>
                                                                <td>390</td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
@@ -176,8 +186,8 @@
                                                                <td>100</td>
                                                                <td></td>
                                                                <td>220</td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
@@ -191,8 +201,8 @@
                                                                <td> </td>
                                                                <td>10</td>
                                                                <td>177</td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
@@ -206,8 +216,8 @@
                                                                <td> </td>
                                                                <td>100</td>
                                                                <td>155</td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
@@ -221,8 +231,8 @@
                                                                <td> </td>
                                                                <td></td>
                                                                <td>103</td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
@@ -236,7 +246,7 @@
                                                                <td>100</td>
                                                                <td>250</td>
                                                                <td>390</td>
-                                                            </tr>
+                                                            </tr> -->
                                                          </tbody>
                                                       </table>
                                                    </div>
@@ -247,7 +257,7 @@
                                     </div> 
                                     <div class="tab-pane fade" id="nav-profile1" role="tabpanel" aria-labelledby="nav-profile1-tab">
                                        <div class="row mx-0 px-4 py-4">
-                                          <div class="col-12 mb-4">
+                                          <!-- <div class="col-12 mb-4">
                                              <form class="form-design filter_check" action=""> 
                                                 <div class="check_toggle d-flex">
                                                    <span>Filter : </span>
@@ -255,7 +265,7 @@
                                                    <label class="onclk2" for="check23"></label>
                                                 </div>
                                              </form>
-                                          </div>
+                                          </div> -->
                                           <div class="col-12 design_outter_comman">
                                              <div class="row comman_header justify-content-between">
                                                 <div class="col-auto">
@@ -276,32 +286,36 @@
                                              <div class="row">
                                                 <div class="col-12 comman_table_design border bg-white px-0 search_show_tables2">
                                                    <div class="table-responsive">
-                                                      <table class="table mb-0">
+                                                      <table class="table mb-0" id="example4">
                                                          <thead>
                                                            <tr>
-                                                             <th>Name of Item <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Unit <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Category <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Department <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th>
-                                                             <th>Qty <br> <input class="form-control th_input mt-2 shadow-none" placeholder="search" type="text"></th> 
+                                                             <th>Name of Item </th>
+                                                             <th>Unit</th>
+                                                             <th>Category</th>
+                                                             <th>Department</th>
+                                                             <th>Qty</th> 
                                                            </tr>
                                                          </thead>
                                                          <tbody>
+                                                            @foreach($procurements as $procurement)
+                                                            @foreach($procurement->itemProcurement as $itemProcurements)
                                                             <tr>
-                                                               <td>Onion</td>
-                                                               <td>Gram</td>
-                                                               <td>Vegetable</td>
+                                                               <td>{{$procurement->name}}</td>
+                                                               <td>{{$procurement->unit['unit']}}</td>
+                                                               <td>{{$procurement->categorys['name']}}</td>
                                                                <td>Hot section</td>
-                                                               <td>20000</td> 
+                                                               <td>{{$itemProcurements->qtyTotal}}</td> 
                                                             </tr>
-                                                            <tr>
+                                                            @endforeach
+                                                            @endforeach
+                                                            <!-- <tr>
                                                                <td>Potatot</td>
                                                                <td>Gram</td>
                                                                <td>Vegetable</td>
                                                                <td></td>
                                                                <td>1000</td> 
-                                                            </tr> 
-                                                            <tr>
+                                                            </tr>  -->
+                                                            <!-- <tr>
                                                                <td>Green Chilli</td>
                                                                <td>Gram</td>
                                                                <td>Vegetable</td>
@@ -314,8 +328,8 @@
                                                                <td>Vegetable</td>
                                                                <td></td>
                                                                <td>2000</td> 
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                <td>Cabbage</td>
                                                                <td>Gram</td>
                                                                <td>Vegetable</td>
@@ -335,7 +349,7 @@
                                                                <td>Frozen Products</td>
                                                                <td></td>
                                                                <td>550</td> 
-                                                            </tr>
+                                                            </tr> -->
                                                          </tbody>
                                                       </table>
                                                    </div>

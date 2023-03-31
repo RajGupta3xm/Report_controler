@@ -68,23 +68,96 @@
                               </div>
                               <div class="form-group col-3 position-relative">
                                  <label for="">Select Meal Plan</label>  
-                                 <input type="text" id="justAnInputBox1" placeholder="Select" autocomplete="off" />
-                                 <i class="far fa-angle-down arrow_set"></i>
+                                 <div class="custom_dropdown">
+                                    <input class="form-control open_select" type="text" placeholder="Select Meal">
+                                    <i class="far fa-angle-down arrow_set"></i>
+                                    <div class="custom_dropdown_inner">
+                                       <div class="searchbar">
+                                          <input class="form-control" type="text" placeholder="Search">
+                                       </div>
+                                       <div class="custom_dropdown_checkbox">
+                                          <div class="accordion" id="accordionExample">
+                                          @foreach($plan as $key=>$plans)
+                                             <div class="accordion-item mt-2">
+                                               <h2 class="accordion-header" id="headingOne">
+                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                    <div class="form-group d-flex align-items-center mb-0">
+                                                       <input type="checkbox" id="q{{$key}}" name="plan_id[{{$plans->id}}]">
+                                                       <label class="mb-0 ms-2" for="q{{$key}}">{{$plans->name}}</label>
+                                                    </div>
+                                                 </button>
+                                               </h2>
+                                               <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                                 <div class="accordion-body">
+                                                 @foreach($plans->variant as $k=>$variants)
+                                                   <div class="form-group d-flex align-items-center mb-1">
+                                                      <input type="checkbox" id="v{{$k}}" name="variant_id[{{$variants->id}}]">
+                                                      <label class="mb-0 ms-2" for="v{{$k}}">{{$variants->variant_name}}</label>
+                                                   </div>
+                                                   @endforeach
+                                                 </div>
+                                               </div>
+                                             </div>
+                                             @endforeach  
+                                             <!-- <div class="accordion-item mt-2">
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                   <div class="form-group d-flex align-items-center mb-0">
+                                                      <input type="checkbox" id="12" name="12">
+                                                      <label class="mb-0 ms-2" for="12">Breakfast PLAN</label>
+                                                   </div>
+                                                  </button>
+                                                </h2>
+                                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample"> 
+                                                   <div class="accordion-body">
+                                                      <div class="form-group d-flex align-items-center mb-1">
+                                                         <input type="checkbox" id="Breakfast1" name="Breakfast1">
+                                                         <label class="mb-0 ms-2" for="Breakfast1">variant 1</label>
+                                                      </div>
+                                                   </div> 
+                                                </div>
+                                             </div> -->
+                                             <!-- <div class="accordion-item mt-2">
+                                                <h2 class="accordion-header" id="headingthree">
+                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsethree" aria-expanded="false" aria-controls="collapsethree">
+                                                   <div class="form-group d-flex align-items-center mb-0">
+                                                      <input type="checkbox" id="13" name="13">
+                                                      <label class="mb-0 ms-2" for="13">Lunch Plan</label>
+                                                   </div>
+                                                  </button>
+                                                </h2>
+                                                <div id="collapsethree" class="accordion-collapse collapse" aria-labelledby="headingthree" data-bs-parent="#accordionExample"> 
+                                                   <div class="accordion-body">
+                                                      <div class="form-group d-flex align-items-center mb-1">
+                                                         <input type="checkbox" id="Lunch1" name="Lunch1">
+                                                         <label class="mb-0 ms-2" for="Lunch1">variant 1</label>
+                                                      </div>
+                                                   </div> 
+                                                </div>
+                                             </div> -->
+                                             <!-- <div class="accordion-item mt-2">
+                                                <h2 class="accordion-header" id="headingfour">
+                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
+                                                   <div class="form-group d-flex align-items-center mb-0">
+                                                      <input type="checkbox" id="14" name="14">
+                                                      <label class="mb-0 ms-2" for="14">Dinner PLAN</label>
+                                                   </div>
+                                                  </button>
+                                                </h2>
+                                                <div id="collapsefour" class="accordion-collapse collapse" aria-labelledby="headingfour" data-bs-parent="#accordionExample"> 
+                                                   <div class="accordion-body">
+                                                      <div class="form-group d-flex align-items-center mb-1">
+                                                         <input type="checkbox" id="Dinner1" name="Dinner1">
+                                                         <label class="mb-0 ms-2" for="Dinner1">variant 1</label>
+                                                      </div>
+                                                   </div> 
+                                                </div>
+                                             </div> -->
+                                           </div>
+                                       </div>
+                                    </div>
+                                 </div>
                               </div>
-                              <div class="form-group col-3 position-relative">
-                                 <label for="">Select Meal Plan</label>
-                                 <select class="form-select multiple-select-custom-field" id="selUser"  onchange="getSubcategory(this);" name="items[][meal_plan_id]" aria-label="Default select example" data-placeholder="Select Meal Plan" multiple>
-                                    @foreach($dietplan as $dietplans)
-                                    <option value="{{$dietplans->id}}">{{$dietplans->name}}</option>
-                                    @endforeach
-                                 </select>
-                              </div>
-                              <div class="form-group col-3 position-relative">
-                                 <label for="">Select Variants</label>
-                                 <select class="form-select multiple-select-custom-field select-ajax"  id="AddContainer"  aria-label="" name="" data-placeholder="Select Variants" multiple>
-                                 </select>
-                              </div> 
-                              
                               <div class="form-group col-6 setup_pricing maximum_discount">
                                  <span for="">Maximum Discount Uses</span>
                                  <div class="row">
@@ -157,15 +230,7 @@
                                  <input type="datetime-local" class="form-control validate"  name="valid_till">
                                  <p class="text-danger text-small" id="valid_tillError"></p>
                               </div>
-                              <div class="form-group col-6">
-                                 <label for="">Select Meal Plan</label> 
-                                  <select class="form-select multiple-select-custom-field " aria-label="Default select example" data-placeholder="Select Meal Plan" multiple name="diet_plan_type_id[]">
-                                    @foreach($dietplan as $dietplans)
-                                    <option value="{{$dietplans->id}}">{{$dietplans->name}}</option>
-                                    @endforeach
-                                    <!-- <option value="1">Balanced Diet</option>   -->
-                                 </select>
-                              </div>
+                            
                               <div class="form-group col-6 setup_pricing maximum_discount">
                                  <span for="">Maximum Discount Uses</span>
                                  <div class="row">
@@ -330,10 +395,26 @@
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
       <script src="{{asset('assets/js/comboTreePlugin.js')}}" type="text/javascript"></script> 
       <script src="assets/js/main.js"></script>
+      <script>
+         $('.open_select').click(function(e) {
+             $('.custom_dropdown').toggleClass('show');
+             $(this).parent().toggleClass('active');
+         });  
+
+         $(document).ready(function() {
+            $('#select-all').click(function() {
+                  var checked = this.checked;
+                  $('#collapsefive input[type="checkbox"]').each(function() {
+                  this.checked = checked;
+               });
+            }) 
+         });
+
+
+     </script> 
        <!-- multiple Checkbox slider  -->
        <script type="text/javascript">
-var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
-var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+var subcategory =<?= \GuzzleHttp\json_encode($plan)?>;
 var result = category.map(e => {
     e.subCategories = subcategory.filter(a => a.meal_plan_id == e.id);
     return e;
@@ -389,7 +470,6 @@ var result = category.map(e => {
       //   }
 // function getSubcategory(obj) {
 // var category = $(obj).val();
-// var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
 // var newCategoryArray = category.map(v => {
 //   var sub = [];
 //   subcategory.forEach(i => {
@@ -410,8 +490,7 @@ var result = category.map(e => {
 
 // }
 function getSubcategory(obj) {
-var category =<?= \GuzzleHttp\json_encode($dietplan)?>;
-var subcategory =<?= \GuzzleHttp\json_encode($plan_variant)?>;
+
 // var result = category.map(e => {
 //     e.category = subcategory.filter(a => a.meal_plan_id == e.id);
 //     return e;
@@ -437,7 +516,6 @@ function getSubcategory(obj) {
    var result = Object.entries(brand_id);
    $(result).each(function (i, v) {
          alert(i.v);
-      var variant =<?= json_encode($plan_variant) ?>;
       $(variant).each(function (j, val) {
          // if (val.id == v) {
 
@@ -446,7 +524,6 @@ function getSubcategory(obj) {
             });
             });
    // var ingredientId =$('#selUser').find('option:selected').val();
-   //  var allList =<?= \GuzzleHttp\json_encode($plan_variant)?>;
    //  $(allList).each(function (a, plan_variant) {
    //             if (ingredientId == plan_variant.meal_plan_id) {
    //                $.each(plan_variant, function (key, value) {

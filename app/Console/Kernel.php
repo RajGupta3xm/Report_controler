@@ -7,6 +7,7 @@ use App\Models\UserProfile;
 use App\Models\User;
 use App\Models\SubscriptionMealPlanVariant;
 use App\Models\Subscription;
+use App\Models\Notification;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Console\Scheduling\Schedule;
@@ -32,6 +33,65 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->call(function () {
+            $switch_plan =  Subscription::select('id','user_id','plan_id','variant_id','start_date','end_date','pause_date','resume_date','switch_plan_start_date','switch_plan_plan_id','switch_plan_variant_id')->where('delivery_status','active')->where('plan_status','plan_active')->get();
+            foreach($switch_plan as $switch_plans){
+                $date = Carbon::createFromFormat('Y-m-d',$switch_plans->end_date);
+                 $fourtyHourDate= $date->subDays(3);
+                 if(date('Y-m-d') == \Carbon\Carbon::parse($fourtyHourDate)->format('Y-m-d'))
+                 {
+                    $data = [
+                        'user_id' => $switch_plans->user_id,
+                        'plan_id' => $switch_plans->plan_id,
+                        'variant_id' => $switch_plans->variant_id,
+                        'title_en' => 'For Renewal',
+                        'title_ar' => 'For Renewal',
+                        'body_en' => 'Renew your package before it expire on '. $switch_plans->end_date,
+                        'body_ar' => $switch_plans->end_date .'جدد اشتراكك قبل انتهائه بتاريخ ',
+                        // 'body' => [
+                        // 'notification' => $notification,
+                        // 'data' => $extraNotificationData
+                        // ],
+                        'type' => 'yes',
+                        'read_status' => 'unread'
+                    ];
+                
+                    Notification::create($data);
+                  
+                 }
+            }
+
+        })->everyMinute();
+
+        $schedule->call(function () {
+            $switch_plan =  Subscription::select('id','user_id','plan_id','variant_id','start_date','end_date','pause_date','resume_date','switch_plan_start_date','switch_plan_plan_id','switch_plan_variant_id')->where('delivery_status','active')->where('plan_status','plan_active')->get();
+            foreach($switch_plan as $switch_plans){
+                $date = Carbon::createFromFormat('Y-m-d',$switch_plans->resume_date);
+                 $fourtyHourBeforeDate= $date->subDays(3);
+                 if(date('Y-m-d') == \Carbon\Carbon::parse($fourtyHourBeforeDate)->format('Y-m-d'))
+                 {
+                    $data = [
+                        'user_id' => $switch_plans->user_id,
+                        'plan_id' => $switch_plans->plan_id,
+                        'variant_id' => $switch_plans->variant_id,
+                        'title_en' => 'Resume',
+                        'title_ar' => 'Resume',
+                        'body_en' => 'Your package will be resumed on'. $switch_plans->resume_date,
+                        'body_ar' => $switch_plans->enresume_dated_date . 'سيتم استئناف وجباتك بتاريخ ',
+                        // 'body' => [
+                        // 'notification' => $notification,
+                        // 'data' => $extraNotificationData
+                        // ],
+                        'type' => 'yes',
+                        'read_status' => 'unread'
+                    ];
+                
+                    Notification::create($data);
+                  
+                 }
+            }
+
+        })->everyMinute();
 
         $schedule->call(function () {
             $switch_plan =  Subscription::select('id','user_id','plan_id','variant_id','start_date','end_date','pause_date','resume_date','switch_plan_start_date','switch_plan_plan_id','switch_plan_variant_id')->where('delivery_status','active')->where('switch_plan_start_date',date('Y-m-d'))->get();

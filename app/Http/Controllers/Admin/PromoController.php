@@ -50,19 +50,26 @@ class PromoController extends Controller {
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-              $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
-               $plan_variants = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')->orderBy('id','asc')->get();
+               $plan = SubscriptionPlan::select('id','name')->orderBy('id','DESC')
+              ->get()->each(function($plan){
+                   $plan->variant = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')
+                   ->where('meal_plan_id',$plan->id)
+                   ->orderBy('id','DESC')
+                   ->get();
+              });
+            //    $plan_variants = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')->orderBy('id','asc')->get();
               $promoCode = PromoCode::withcount('promoCodeUsed')->orderBy('id','asc')->get();
             //   $codeUsed = PromoCode::withcount('promoCodeUsed')->get();
             
-            $data['dietplan'] = $dietplan;
+            // $data['dietplan'] = $dietplan;
             $data['promoCode'] = $promoCode;
-            $data['plan_variant'] = $plan_variants;
+            $data['plan'] = $plan;
             return view('admin.promoCode.promo_list')->with($data);
         }
     }
 
     public function promoCode_submit(Request $request ){
+
           $data=[
          "name" => $request->input('promo_name'),
         //  'diet_plan_type_id' => implode(',', $request->diet_plan_type_id),
@@ -93,14 +100,42 @@ class PromoController extends Controller {
      }
  
  $insert = PromoCode::create($data);
- foreach($request->items  as $item)
-     {
-         $plan = PromoCodeDietPlan::create([
-            'promo_code_id' => $insert->id,
-            'meal_plan_id'  => $item['meal_plan'] , 
-            'variant_id'    => $item['variant_name'],
-        ]);
+
+ $variant_id = $request->variant_id;
+   if(isset($request->plan_id) && count($request->plan_id) > 0){
+       foreach ($request->plan_id as $key=> $plan){
+            $plans=SubscriptionMealPlanVariant::where('meal_plan_id',$key)->get();
+            foreach($plans as $planss){
+                PromoCodeDietPlan::create([
+                    'promo_code_id' =>  $insert->id,
+                    'meal_plan_id'  => $planss['meal_plan_id'] , 
+                    'variant_id'    => $planss['id'],
+                ]);
+            }
+       }                
+    }
+    if(isset($request->variant_id) && count($request->variant_id) > 0){
+        foreach ($request->variant_id as $k=> $variant_ids){
+            $variants=SubscriptionMealPlanVariant::where('id',$k)->get();
+            foreach($variants as $variant){
+                PromoCodeDietPlan::create([
+                    'promo_code_id' =>   $insert->id,
+                    'meal_plan_id'  => $variant['meal_plan_id'] , 
+                    'variant_id'    => $variant['id'],
+                ]);
+            }
+        }                  
      }
+
+
+//  foreach($request->items  as $item)
+//      {
+//          $plan = PromoCodeDietPlan::create([
+//             'promo_code_id' => $insert->id,
+//             'meal_plan_id'  => $item['meal_plan'] , 
+//             'variant_id'    => $item['variant_name'],
+//         ]);
+//      }
  
  if($insert){
     return redirect('admin/promo-code-management')->with('success', ' Insert successfully.');

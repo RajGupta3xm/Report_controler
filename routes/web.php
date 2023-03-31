@@ -324,7 +324,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     'as' => 'admin.get_draftData.data'
 ]);
 Route::post('/draftOrder/edit_update/{id}','Admin\OrderController@edit_update');
-
+Route::get('/draft_order_edit/{id}', 'Admin\OrderController@edit_draft_order');
  /*******End order Management */
 
  /*******fleet Management */
@@ -353,6 +353,8 @@ Route::post('/draftOrder/edit_update/{id}','Admin\OrderController@edit_update');
         'as' => 'admin.edit_giftCardEmail.giftCard_update'
     ]);
 
+    Route::get('/push-notification','Admin\NotificationController@index1');
+    Route::post('/sendNotification','Admin\NotificationController@sendNotification')->name('send.notification');
 /*******End Notification Management */
 
 

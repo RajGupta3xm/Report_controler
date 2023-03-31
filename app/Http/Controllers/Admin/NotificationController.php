@@ -8,6 +8,8 @@ use App\Models\MealPlanGroup;
 use App\Models\MealPlanVariant;
 use App\Models\MealVariantDefaultMeal;
 use App\Models\PopUpNotification;
+use App\Models\Notification;
+use App\Models\Subscription;
 use Auth;
 use Carbon\CarbonPeriod;
 use DB;
@@ -75,6 +77,51 @@ class NotificationController extends Controller {
         }
     }
 
+    public function index1()
+    {
+        return view('admin.pushNotification');
+    } 
+    
+
+    public function sendNotification(Request $request)
+    {
+         $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
+            
+        $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
+    
+        $data = [
+            "registration_ids" => $firebaseToken,
+            // "to" => $firebaseToken,
+            "notification" => [
+                "title" => $request->title,
+                "body" => $request->body,  
+            ]
+        ];
+        //  dd($data);
+        // die;
+        $dataString = json_encode($data);
+      
+        $headers = [
+            'Authorization: key=' . $SERVER_API_KEY,
+            'Content-Type: application/json',
+        ];
+      
+        $ch = curl_init();
+        
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+                 
+        $response = curl_exec($ch);
+    dd($response);
+    die;
+        return back()->with('success', 'Notification send successfully.');
+    }
+
+
     public function storeBroadCastNotification(Request $request){
         if(isset($request->images)){
             $filename = $request->images->getClientOriginalName();
@@ -92,6 +139,29 @@ class NotificationController extends Controller {
             'image'=>$images,
             'description'=>$request->description,
         ]);
+        
+         $userBroadcast = User::whereNotIn('status',['0'])->get();
+         if(count($userBroadcast)>0){
+            foreach($userBroadcast as $userBroadcasts){
+            $data = [
+                'user_id' => $userBroadcasts->id,
+                'title_en' => 'Insatnt',
+                'title_ar' => 'Instant',
+                'body_en' => $request->description,
+                'body_ar' => $request->description,
+                // 'body' => [
+                // 'notification' => $notification,
+                // 'data' => $extraNotificationData
+                // ],
+                'type' => 'yes',
+                'read_status' => 'unread'
+            ];
+     
+            Notification::create($data);
+    }
+         }
+     
+      
         \Illuminate\Support\Facades\Session::flash('broadcast');
         return redirect('admin/notification-management')->with('success', ' Insert successfully.');
     }

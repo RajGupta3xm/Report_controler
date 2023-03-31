@@ -92,7 +92,7 @@ class ApiController extends Controller {
             // 'family_name' => 'required',
             'email' => 'required',
             'country_code' => 'required',
-            'mobile' => 'required|string|size:10'
+            'mobile' => 'required|string|size:11'
         ], [
             'name.required' => trans('validation.required', ['attribute' => 'name']),
             // 'family_name.required' => trans('validation.required', ['attribute' => 'family_name']),
@@ -239,6 +239,7 @@ class ApiController extends Controller {
 
 
     public function verifyOtp(request $request) {
+     
         $validate = Validator::make($request->all(), [
             'user_id' => 'required',
             'otp' => 'required'
@@ -288,10 +289,10 @@ class ApiController extends Controller {
             $message = 'Congrats! You have successfully registered';
 
 
-            // if(!empty($request->device_token)){
-            //     /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
-            //     $this->sendNotification($request['user_id'], $request->device_token, $title, $message, 'registered');
-            // }
+            if(!empty($request->device_token)){
+                /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
+                $this->sendNotification($request->user_id, $request->device_token, $title, $message, 'registered');
+            }
             //die;
 
             // sms gateway api
@@ -395,7 +396,7 @@ class ApiController extends Controller {
             $data['user_id'] = $user->id;
             $data['otp'] = $createOtp['otp'];
             $otp = Otp::create($createOtp);
-            $resultSMS = $this->sendSMS("+91",$request->mobile,$data['otp']);
+            // $resultSMS = $this->sendSMS("+91",$request->mobile,$data['otp']);
             //dd($resultSMS);
             $updateArr = array();
             if ($request->device_token != "" && $request->device_type != "") {
@@ -468,30 +469,35 @@ class ApiController extends Controller {
     {
         $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
     
-        /*$notification = [
+        $notification = [
             'title' => $title,
             "body" => $message,
             'sound' => true,
             'type' => $type,
-        ];*/
+        ];
             
         $extraNotificationData = [
-            //'message' => $message,
+            'message' => $message,
             'type' => $type,
-            //'id' => $data['id'],
+            // 'id' => $data['id'],
         ];
+
+        // if(isset($data['user_id']) && $data['user_id']){
+        //     $extraNotificationData['user_id']=$data['user_id'];
+        // }
     
         $fcmNotification = [
             'to'        => $device_code,
-            //'to'        => 'cfA6mVygSHWMRQydDeqLdN:APA91bHRkdREmOyJh_Si3nscRJfRNYV6kcqzNIrzEUraXFIS6aAAfj4DJurMQhgh7OIoNFKV2F8-PFmrg1cL5kJfRnNCvbmm8yrCz8u629hm7uPXYHleGISI7CFa6KAYYnLYTPE65-sd', //single token
-            //'notification' => $notification,
+            // 'to'        => 'fL5X-J8HTem26CE1HMP5Lg:APA91bEKo5WV9kYuwjhjbavpzfiws_AY24_YNmBp3hSSfA5V580M2GyV0JGirJG4WR2N1reSVKTNfZukCoFczhqauwDwwEKlxgzLhSLtMmVB94TwAScZAtYm6eROxK5m2DMrT1KTfXwM', //single token
+            'notification' => $notification,
             'data' => $extraNotificationData,
             'priority' => 'high'
         ];
     
         // dd($fcmNotification);
+        // die;
           
-        $SERVER_API_KEY = 'AAAAzTjhJng:APA91bF6B3HlGSOL7zx2-o0RQk_IScvOmuRSqSSAuWZ7fJFbOlLnBEMOetgnlKi1ZfproC8dse-5nXDeAZAqVt6Pw88Jas1SrMJhOQmCxdOgL8DW11D8_ry6rmxQ6zN_yi3KFWAUiv3M';
+        $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
     
         // $data = [
         //     "registration_ids" => $user_id,
@@ -518,7 +524,11 @@ class ApiController extends Controller {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
     
         $result = curl_exec($ch);
-        //dd($result);
+        dd($result);
+        die;
+        if($result === FALSE){
+            die('FCM send error: '. curl_error($ch));
+        }
         /*$data = [
             'user_id' => $user_id,
             'body' => [
@@ -535,6 +545,7 @@ class ApiController extends Controller {
             //dd(env('FIREBASE_KEY'));
         //Log::info($result);
         curl_close($ch);
+        return $result;
     }
 
     public function aboutUs()
@@ -631,7 +642,7 @@ class ApiController extends Controller {
       $validator->after(function ($validator) use ($request) {
 
         if($request['country_code'] && $request['mobile']){
-            $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->first();
+            $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->where('id','!=',Auth::guard('api')->id())->first();
             if ($mobile_number) {
                 $validator->errors()->add('mobile_number', 'This number is already exist, Please choose another number');
              
@@ -1001,7 +1012,8 @@ class ApiController extends Controller {
     public function dislikes() {
         $category=DislikeGroup::select('id','name','image')
         // ->with('items')
-        ->where('status','active')->get();
+        ->where('status','active')
+        ->get();
         // ->each(function($category){
             foreach($category as $item){
                 $item->selected=false;

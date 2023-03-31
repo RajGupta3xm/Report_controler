@@ -30,6 +30,14 @@ public function unit(){
    return $this->belongsTo(Unit::class);
 }
 
+public function units(){
+   return $this->belongsTo(DislikeUnit::class,'unit_id','id');
+}
+public function categorys(){
+   return $this->belongsTo(DislikeCategory::class,'category_id','id');
+}
+
+
 
 
    //protected $visible = ['id', 'name'];

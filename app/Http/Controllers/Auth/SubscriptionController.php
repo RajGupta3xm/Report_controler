@@ -2140,7 +2140,8 @@ public function myMeals(Request $request) {
         $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
         ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
         ->where('meal_ingredient_list.meal_id',$meals->id)
-        ->where('dislike_items.status','active')->get()
+        ->where('dislike_items.status','active')
+        ->get()
         ->each(function($dislikeItem){
            $dislikeItem->selected=false;
            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
@@ -2452,37 +2453,56 @@ public function swapMeal(Request $request){
     $plan_id = $request->subscription_plan_id;
     $meal_schedule_id = $request->meal_schedule_id;
 
+    // $update = UserSwapMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'meal_schedule_id'=>$meal_schedule_id])->delete();
 
+ $getAllMeal = SubscriptionMealVariantDefaultMeal::where('date',date('Y-m-d',strtotime($date)))->where(['meal_plan_id'=>$plan_id,'meal_schedule_id'=>$meal_schedule_id,'is_default'=>'1'])->get();
+ foreach($getAllMeal as $key=>$getAllMeals){
+    UserSwapMeal::updateOrCreate(
+        ['user_id' =>  Auth::guard('api')->id(),
+        'meal_plan_id'=>$getAllMeals->meal_plan_id,
+        'meal_id'=>$getAllMeals->item_id,
+        'date'=>$getAllMeals->date,
+        'meal_schedule_id'=>$getAllMeals->meal_schedule_id,
+         ],
+
+            [
+                'user_id'=>Auth::guard('api')->id(),
+                'meal_plan_id'=>$getAllMeals->meal_plan_id,
+                'date'=>$getAllMeals->date,
+                'meal_id'=>$getAllMeals->item_id,
+                'meal_schedule_id'=>$getAllMeals->meal_schedule_id,
+                'old_meal_id'=>$getAllMeals->item_id,
+        
+                ]
+    );
+}
+
+    // $updateOldMealDefault=[
+    //     'is_default' => '1'
+    // ];
+    // $update = UserSwapMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'meal_id'=>$old_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateOldMealDefault);
+    $updateOldMealDefault=[
+        'is_default' => '0'
+    ];
+    $update = UserSwapMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'meal_id'=>$old_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateOldMealDefault);
     UserSwapMeal::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'meal_plan_id'=>$plan_id,
         'meal_id'=>$new_meal_id,
         'date'=>$date,
-         ],
-        [
-
-        'user_id'=>Auth::guard('api')->id(),
-        'meal_plan_id'=>$plan_id,
-        'date'=>$date,
-        'meal_id'=>$new_meal_id,
         'meal_schedule_id'=>$meal_schedule_id,
-        'old_meal_id'=>$old_meal_id,
-        'is_default' => '1',
+         ],
 
-        ]
+            [
+                'user_id'=>Auth::guard('api')->id(),
+                'meal_plan_id'=>$plan_id,
+                'date'=>$date,
+                'meal_id'=>$new_meal_id,
+                'meal_schedule_id'=>$meal_schedule_id,
+                'old_meal_id'=>$old_meal_id,
+                'is_default' => '1'
+                ]
     );
-
-  
-    
-    // $updateOldMealDefault=[
-    //     'is_default' => '0',
-    // ];
-    // $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$old_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateOldMealDefault);
-    // $updateNewMealDefault=[
-    //     'is_default' => '1',
-    // ];
-    // $update = SubscriptionMealVariantDefaultMeal::where(['meal_plan_id'=>$plan_id,'date'=>$date,'item_id'=>$new_meal_id,'meal_schedule_id'=>$meal_schedule_id])->update($updateNewMealDefault);
-   
 
     $this->status = true; 
     $this->message = trans('messages.swap_meal');
