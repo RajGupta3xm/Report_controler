@@ -100,7 +100,7 @@
                                                                         </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                        @foreach($area as $key=>$area)
+                                                                        @foreach($areas as $key=>$area)
                                                                             <tr>
                                                                                 <td>{{$key+1}}</td>
                                                                                 @php
@@ -138,20 +138,17 @@
                                                                                     </form>
                                                                                 </td>
                                                                                 <td>
-
-                                                                                    <form class="table_btns d-flex align-items-center">
-                                                                                        <div class="check_toggle">
-                                                                                            <input type="checkbox" name="check0" id="check0" class="d-none" onchange="changeStatus(this, '<?= $area->id ?>');" <?= ( $area->status == 'active' ? 'checked' : '') ?>>
-                                                                                            <label for="check0"></label>
-                                                                                        </div>
-                                                                                    </form>
+                                                                                <div class="mytoggle">
+                                                                                   <label class="switch">
+                                                                                     <input type="checkbox" onchange="changeStatus(this, '<?= $area->id ?>');" <?= ($area->status == 'active' ? 'checked' : '') ?>><span class="slider"></span><span class="labels"> </span> 
+                                                                                    </label>
+                                                                                </div>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <a class="comman_btn table_viewbtn showEdit" data-id="{{$area->id}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javscript:;" >Edit</a>
+                                                                                    <a class="comman_btn table_viewbtn showEdit" data-id="{{$area->id}}" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="javscript:;">Edit</a>
                                                                                 </td>
                                                                             </tr>
                                                                         @endforeach
-
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -315,6 +312,7 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
         console.log($(this).val());
     });
     function changeStatus(obj, id) {
+        alert(id);
         swal({
             title: "Are you sure?",
             text: " status will be closed",

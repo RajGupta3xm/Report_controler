@@ -18,6 +18,15 @@
                 </div>
             </div>
         </div>
+        @php
+
+$user=auth()->guard('staff_members')->user();
+$admin=\App\Models\Admin::where('id',$user->admin_id)->first();
+$lat1=$admin->latitude;
+$lon1=$admin->longitude;
+$lat2=$order->orders->user->user_address->latitude;
+$lon2=$order->orders->user->user_address->longitude;
+@endphp
         <div class="inner_part">
             <div class="row">
                 <div class="col-12 comman_heading mb-5">
@@ -27,7 +36,9 @@
                     <div class="cancel_delivery">
                         <form class="row" action="{{route('submitcancelorder')}}" method="post">
                             @csrf
-                            <input type="hidden" name="order_id" value="{{$order->id}}">
+                            <input type="hidden" name="order_id" value="{{$order->order_id}}">
+                            <input type="hidden" name="time_slot_id" value="{{$order->deliverySlot->id}}">
+                            <input type="hidden" name="address_id" value="{{$order->orders->user->user_address->id}}">
                             <div class="form-group col-12 custom_checkbox mb-3">
                                 <input type="radio" id="check1" name="check1" value="door_locked">
                                 <label for="check1">Door Locked</label>

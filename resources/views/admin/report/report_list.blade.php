@@ -35,7 +35,7 @@
                                                    <h2>Active User</h2> 
                                                 </div>
                                                 <div class="col text-center">
-                                                   <span class="selected_date">06/10/2022</span>
+                                                   <span class="selected_date">{{\Carbon\Carbon::parse($activeUserCurrentDate)->format('d/m/Y')}}</span>
                                                 </div>
                                              </div>
                                              <div class="row"> 
@@ -56,25 +56,20 @@
                                                          </thead>
                                                          <tbody>
                                                             @foreach($activeUser as $key=>$activeUsers)
-                                                            @foreach($activeUsers->orderDetail as $key=>$orderDetails)
-                                                            @php 
-                                                            $driver = \App\Models\StaffMembers::select('name')->where('id',$orderDetails->staff_member_id)->get();
-                                                            @endphp
+
                                                             <tr>
-                                                               <td>{{$activeUsers->user_name}}
-                                                                  <br>{{$activeUsers->country_code}} {{$activeUsers->mobile}}
+                                                               <td>{{$activeUsers->userDetail['user_name']}}
+                                                                  <br>{{$activeUsers->userDetail['country_code']}} {{$activeUsers->userDetail['mobile']}}
                                                                </td>
-                                                               <td>{{$activeUsers->diet_plan}}</td>
-                                                               <td>{{$activeUsers->plan_name}}</td> 
-                                                               <td>{{$activeUsers->variant_name}}</td>
-                                                               <td>{{$orderDetails->staff_member_id}}</td>
-                                                               <td>Lorem ipsum dolor</td>
-                                                               <td>6AM - 10AM</td>
-                                                               @foreach($driver as $drivers)
-                                                               <td>{{$drivers->name}}</td>
-                                                               @endforeach
+                                                               <td>{{$activeUsers->userDetail['diet_plan']}}</td>
+                                                               <td>{{$activeUsers->userDetail['plan_name']}}</td> 
+                                                               <td>{{$activeUsers->userDetail['variant_name']}}</td>
+                                                               <td>{{$activeUsers->userDetail['variant_name']}}</td>
+                                                               <td>{{$activeUsers->orderDetail['order_id']}}</td>
+                                                               <td>{{$activeUsers->deliveries['start_time']}} - {{$activeUsers->deliveries['end_time']}}</td>
+                                                               <td>{{$activeUsers->orderDetail['name']}}</td>
                                                             </tr> 
-                                                            @endforeach
+                                                          
                                                             @endforeach
 
                                                             <!-- <tr>
@@ -126,7 +121,7 @@
                                                    <h2>Meals count</h2> 
                                                 </div>
                                                 <div class="col text-center">
-                                                   <span class="selected_date">06/10/2022</span>
+                                                   <span class="selected_date">{{\Carbon\Carbon::parse($mealCountCurrentDate)->format('d/m/Y')}}</span>
                                                 </div>
                                                 <div class="col-auto d-flex">
                                                    <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
@@ -157,14 +152,16 @@
                                                            </tr>
                                                          </thead>
                                                          <tbody>
+                                                            @foreach($getSubscription as $key=>$getSubscriptions)
+                                                        
                                                             <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
-                                                               <td>Club Sandwich</td>
-                                                               <td>Balanced Diet</td>
-                                                               <td>Lunch&dinner</td>
-                                                               <td>Sandwich</td>
+                                                               <td>{{$getSubscriptions->name}}</td>
+                                                               <td>{{$getSubscriptions->dietPlan['name']}}</td>
+                                                               <td>{{$getSubscriptions->MealSchedule['name']}}</td>
+                                                               <td>{{$getSubscriptions->department['name']}}</td>
                                                                <td>25</td>
                                                                <td>10</td>
                                                                <td>5</td>
@@ -172,6 +169,7 @@
                                                                <td>250</td>
                                                                <td>390</td>
                                                             </tr>
+                                                            @endforeach
                                                             <!-- <tr>
                                                                <td>
                                                                   <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
@@ -272,7 +270,7 @@
                                                    <h2>Procurement</h2> 
                                                 </div>
                                                 <div class="col text-center">
-                                                   <span class="selected_date">06/10/2022</span>
+                                                   <span class="selected_date">{{\Carbon\Carbon::parse($fourtyHourDates)->format('d/m/Y')}}</span>
                                                 </div>
                                                 <div class="col-auto d-flex">
                                                    <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
@@ -299,13 +297,15 @@
                                                          <tbody>
                                                             @foreach($procurements as $procurement)
                                                             @foreach($procurement->itemProcurement as $itemProcurements)
+                                                            @foreach($procurement->getDepartment as $getDepartments)
                                                             <tr>
                                                                <td>{{$procurement->name}}</td>
                                                                <td>{{$procurement->unit['unit']}}</td>
                                                                <td>{{$procurement->categorys['name']}}</td>
-                                                               <td>Hot section</td>
+                                                               <td>{{$getDepartments['name']}}</td>
                                                                <td>{{$itemProcurements->qtyTotal}}</td> 
                                                             </tr>
+                                                            @endforeach
                                                             @endforeach
                                                             @endforeach
                                                             <!-- <tr>

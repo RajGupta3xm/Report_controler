@@ -86,12 +86,13 @@ class NotificationController extends Controller {
     public function sendNotification(Request $request)
     {
          $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
+         
             
         $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
     
         $data = [
-            "registration_ids" => $firebaseToken,
-            // "to" => $firebaseToken,
+            // "registration_ids" => $firebaseToken,
+            "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bEURwPi2BmznUprvblhnPCMpd7C3h0sBH5ye22LLE0PoPrNYA5YopO4DEwgLZfFRFROnVfhkDHiAiFLz8nbLYezMEZnSAkijFmUUl_2PxLo5PVfbcWsuzBD26I4JA436OruQo1-",
             "notification" => [
                 "title" => $request->title,
                 "body" => $request->body,  
@@ -140,26 +141,26 @@ class NotificationController extends Controller {
             'description'=>$request->description,
         ]);
         
-         $userBroadcast = User::whereNotIn('status',['0'])->get();
-         if(count($userBroadcast)>0){
-            foreach($userBroadcast as $userBroadcasts){
-            $data = [
-                'user_id' => $userBroadcasts->id,
-                'title_en' => 'Insatnt',
-                'title_ar' => 'Instant',
-                'body_en' => $request->description,
-                'body_ar' => $request->description,
-                // 'body' => [
-                // 'notification' => $notification,
-                // 'data' => $extraNotificationData
-                // ],
-                'type' => 'yes',
-                'read_status' => 'unread'
-            ];
+    //      $userBroadcast = User::whereNotIn('status',['0'])->get();
+    //      if(count($userBroadcast)>0){
+    //         foreach($userBroadcast as $userBroadcasts){
+    //         $data = [
+    //             'user_id' => $userBroadcasts->id,
+    //             'title_en' => 'Insatnt',
+    //             'title_ar' => 'Instant',
+    //             'body_en' => $request->description,
+    //             'body_ar' => $request->description,
+    //             // 'body' => [
+    //             // 'notification' => $notification,
+    //             // 'data' => $extraNotificationData
+    //             // ],
+    //             'type' => 'yes',
+    //             'read_status' => 'unread'
+    //         ];
      
-            Notification::create($data);
-    }
-         }
+    //         Notification::create($data);
+    // }
+    //      }
      
       
         \Illuminate\Support\Facades\Session::flash('broadcast');

@@ -27,6 +27,7 @@ class CreateOrderDeliversByDriverTable extends Migration
             $table->string('cancel_reason')->nullable();
             $table->string('delivery_reason')->nullable();
             $table->enum('is_deliver',['yes','no']);
+            $table->enum('status',['order_placed','preparing','on_the_way','delivered','cancelled'])->default('order_placed');
             $table->timestamps();
         });
     }

@@ -169,6 +169,15 @@ class ApiController extends Controller {
                  User::where('id',$newUser->id)->update(['image'=>$images]);
             }
 
+            $updateArr = array();
+            if ($request->device_token != "" && $request->device_type != "") {
+                $updateArr['device_token'] = $request->device_token;
+                $updateArr['device_type'] = $request->device_type ? $request->device_type : 0;
+            }
+            if ($updateArr) {
+                User::where('id', $newUser->id)->update($updateArr);
+            }
+
             if($request->referral_code){
                  $CheckReferIsValid = User::where('referral_code',$request->referral_code)->whereNotIn('status',['0'])->first();
                 if(!empty($CheckReferIsValid)){
@@ -239,7 +248,7 @@ class ApiController extends Controller {
 
 
     public function verifyOtp(request $request) {
-     
+   
         $validate = Validator::make($request->all(), [
             'user_id' => 'required',
             'otp' => 'required'
@@ -289,10 +298,10 @@ class ApiController extends Controller {
             $message = 'Congrats! You have successfully registered';
 
 
-            if(!empty($request->device_token)){
-                /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
-                $this->sendNotification($request->user_id, $request->device_token, $title, $message, 'registered');
-            }
+            // if(!empty($request->device_token)){
+            //     /*$this->android_pushh($array,$saveNotification->id,$notificationCount);*/
+            //     $this->sendNotification($request->user_id, $request->device_token, $title, $message, 'registered');
+            // }
             //die;
 
             // sms gateway api

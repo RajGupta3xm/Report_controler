@@ -7,8 +7,8 @@
     </div>
     <div class="form-group mb-0 col">
     @php
-       $data = json_decode($clients->area,true);
-       $print = preg_replace('/^([^,]*).*$/', '$1', $data['description']);
+       $dataa = json_decode($clients->area,true);
+       $print = preg_replace('/^([^,]*).*$/', '$1', $dataa['description']);
     @endphp
         <label for="">Area (En)</label>
         <input class="form-control validate google1" value="{{$print}}"  type="text" id="search_box1" >

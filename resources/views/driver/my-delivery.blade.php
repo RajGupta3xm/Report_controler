@@ -102,10 +102,10 @@
                                                                 @php
                                                                     $user=auth()->guard('staff_members')->user();
                                                                     $admin=\App\Models\Admin::where('id',$user->admin_id)->first();
-                                                                   $lat1=$admin->latitude;
-                                                                   $lon1=$admin->longitude;
-                                                                    $lat2=$orders->orders->user->user_address->latitude;
-                                                                    $lon2=$orders->orders->user->user_address->longitude;
+                                                                   $lat1=$admin['latitude'];
+                                                                   $lon1=$admin['longitude'];
+                                                                    $lat2=$orders->orders->user->user_address['latitude'];
+                                                                    $lon2=$orders->orders->user->user_address['longitude'];
                                                                      $theta = $lon1 - $lon2;
                                                                      $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
                                                                      $dist = acos($dist);
@@ -129,7 +129,7 @@
                                                                             <div class="col-6 deliveries_right ps-0 text-end">
                                                                                 <strong class="timing_maion">{{$orders->deliverySlot->start_time}}-{{$orders->deliverySlot->end_time}}</strong>
                                                                                 <div class="location_map ">
-                                                                                    At {{$orders->orders->user->user_address->area}}
+                                                                                    At {{$orders->orders->user->user_address['area']}}
                                                                                 </div>
                                                                             </div>
 

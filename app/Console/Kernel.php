@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\SubscriptionMealPlanVariant;
 use App\Models\Subscription;
 use App\Models\Notification;
+use App\Models\BrodcastNotification;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Console\Scheduling\Schedule;
@@ -33,6 +34,69 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+
+        $schedule->call(function () {
+
+            $broadCastNotification = BrodcastNotification::where('status','0')->get();
+            foreach($broadCastNotification as $broadCastNotifications){
+              if($broadCastNotifications->date_time == date('Y-m-d h:i:s')){
+                  $userBroadcast = User::whereNotIn('status',['0'])->get();
+                  if(count($userBroadcast)>0){
+                       foreach($userBroadcast as $userBroadcasts){
+                           $data = [
+                             'user_id' => $userBroadcasts->id,
+                             'title_en' => 'Insatnt',
+                              'title_ar' => 'Instant',
+                               'body_en' => $broadCastNotifications->description,
+                                'body_ar' => $broadCastNotifications->description,
+                                // 'body' => [
+                                // 'notification' => $notification,
+                               // 'data' => $extraNotificationData
+                                 // ],
+                                'type' => 'yes',
+                                'read_status' => 'unread'
+                            ];
+                           Notification::create($data);
+
+            /***********Start Notification********** */
+                           $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();   
+                           $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
+                            $data = [
+                              "registration_ids" => $firebaseToken,
+                            //   "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bFIFEaby7fO_GmJf5ClXuwoJTy_C-ctqkjYkZjHT3nQ-Vz2O01sLpHXLyKS9mJf_EQFBQrkSs2zShPp5vkKGIZCNUKkQ9NJo1l64CfDcUMhD3p4a7G6d6J6yW0lTCFkVvK0aUkr",
+                               "notification" => [
+                                 "title" => $broadCastNotifications->description,
+                                 "body" =>$broadCastNotifications->description,  
+                               ]
+                            ];
+                           //  dd($data);
+                          // die;
+                           $dataString = json_encode($data);
+      
+                           $headers = [
+                             'Authorization: key=' . $SERVER_API_KEY,
+                             'Content-Type: application/json',
+                            ];
+      
+                             $ch = curl_init();
+        
+                            curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                            curl_setopt($ch, CURLOPT_POST, true);
+                            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);   
+                            $response = curl_exec($ch);
+
+                               /***********End Notification********** */
+                       }
+                    }
+               }
+            }
+        })->everyMinute();
+
+
+
         $schedule->call(function () {
             $switch_plan =  Subscription::select('id','user_id','plan_id','variant_id','start_date','end_date','pause_date','resume_date','switch_plan_start_date','switch_plan_plan_id','switch_plan_variant_id')->where('delivery_status','active')->where('plan_status','plan_active')->get();
             foreach($switch_plan as $switch_plans){
@@ -57,6 +121,39 @@ class Kernel extends ConsoleKernel
                     ];
                 
                     Notification::create($data);
+
+                       /***********Start Notification********** */
+                       $firebaseToken = User::where(['id'=>$switch_plans->user_id])->whereNotNull('device_token')->pluck('device_token')->all();  
+                       $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
+                        $data = [
+                          "registration_ids" => $firebaseToken,
+                        //   "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bFIFEaby7fO_GmJf5ClXuwoJTy_C-ctqkjYkZjHT3nQ-Vz2O01sLpHXLyKS9mJf_EQFBQrkSs2zShPp5vkKGIZCNUKkQ9NJo1l64CfDcUMhD3p4a7G6d6J6yW0lTCFkVvK0aUkr",
+                           "notification" => [
+                             "title" => 'For Renewal',
+                             "body" =>'Renew your package before it expire on '. $switch_plans->end_date,  
+                           ]
+                        ];
+                       //  dd($data);
+                      // die;
+                       $dataString = json_encode($data);
+  
+                       $headers = [
+                         'Authorization: key=' . $SERVER_API_KEY,
+                         'Content-Type: application/json',
+                        ];
+  
+                         $ch = curl_init();
+    
+                        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);   
+                        $response = curl_exec($ch);
+
+                           /***********End Notification********** */
+  
                   
                  }
             }
@@ -87,6 +184,39 @@ class Kernel extends ConsoleKernel
                     ];
                 
                     Notification::create($data);
+                    
+                       /***********Start Notification********** */
+                       $firebaseToken = User::where(['id'=>$switch_plans->user_id])->whereNotNull('device_token')->pluck('device_token')->all();  
+                       $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
+                        $data = [
+                          "registration_ids" => $firebaseToken,
+                        //   "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bFIFEaby7fO_GmJf5ClXuwoJTy_C-ctqkjYkZjHT3nQ-Vz2O01sLpHXLyKS9mJf_EQFBQrkSs2zShPp5vkKGIZCNUKkQ9NJo1l64CfDcUMhD3p4a7G6d6J6yW0lTCFkVvK0aUkr",
+                           "notification" => [
+                             "title" => 'Resume Plan',
+                             "body" => 'Your package will be resumed on'. $switch_plans->resume_date,  
+                           ]
+                        ];
+                       //  dd($data);
+                      // die;
+                       $dataString = json_encode($data);
+  
+                       $headers = [
+                         'Authorization: key=' . $SERVER_API_KEY,
+                         'Content-Type: application/json',
+                        ];
+  
+                         $ch = curl_init();
+    
+                        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+                        curl_setopt($ch, CURLOPT_POST, true);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);   
+                        $response = curl_exec($ch);
+
+                           /***********End Notification********** */
+  
                   
                  }
             }

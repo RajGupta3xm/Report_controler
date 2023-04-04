@@ -12,6 +12,7 @@ class OrderDeliverByDriver extends Model
     	'driver_id',
     	'order_id',
     	'address_id',
+    	'status',
     	'delivery_slot_id',
     	'plan_id',
     	'variant_id',
