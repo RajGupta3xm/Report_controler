@@ -334,6 +334,9 @@ Route::get('/draft_order_edit/{id}', 'Admin\OrderController@edit_draft_order');
     Route::post('fleetarea/edit', 'Admin\FleetController@editArea')->name('area.edit');
     Route::post('/fleetarea/edit_update/{id}','Admin\FleetController@edit_update');
     Route::post('/fleetdriver/submit', 'Admin\FleetController@storeFleetDriver');
+    Route::get('/drivers/location/{id}','Admin\FleetController@driverLocation');
+    Route::get('/allDriver/location/{date}','Admin\FleetController@allDriverLocation');
+       
  /*******End fleet Management */
 
  /*******Notification Management */

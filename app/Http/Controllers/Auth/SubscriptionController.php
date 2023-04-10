@@ -1978,17 +1978,44 @@ public function myMeals(Request $request) {
 
     $custom_calorie = $request->custom_calorie;
      $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
-    $start_date = Subscription::select('start_date','end_date','delivery_status')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('user_id',Auth::guard('api')->id())->first();
+  
+    $start_date = Subscription::select('start_date','end_date','delivery_status')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->where('user_id',Auth::guard('api')->id())->first();
      $option22 = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$checkPlan->subscription_id,'id'=>$checkPlan->variant_id])->first();
     $getStartDate = Carbon::createFromFormat('Y-m-d',$start_date->start_date);
    $getEndDate = Carbon::createFromFormat('Y-m-d',$start_date->end_date);
-     $no_of_day = $getStartDate->diffInDays($getEndDate); 
+      $no_of_day = $getStartDate->diffInDays($getEndDate); 
      if(!empty($no_of_day))
      {
 
          $countSkip = UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->count();
-         $no_of_days = $no_of_day + $countSkip;
+          $swapno_of_days =  $countSkip;
      }
+    if($option22->option2 == 'withoutweekend'){
+            //   $date = Carbon::createFromFormat('Y-m-d',$start_date->start_date);
+              $date = Carbon::now();
+            $weekdays = 0;
+            $weekdayss = 0;
+            $f=[];
+              for ($i = 0; $i < $option22->no_days; $i++) {
+                   $alldate = $date->addDay()->format('y-m-d');
+                 
+                   $dd = Carbon::createFromFormat('Y-m-d',$alldate);
+                //    array_push($f,$dd);
+                    $dayStr = strtolower($dd->format('l'));
+                    if ($dayStr == 'friday' ) {
+                       $weekdays++;
+                   }
+                   if ($dayStr == 'saturday' ) {
+                       $weekdayss++;
+                   }
+              }
+            //   dd($f);
+            //   die;
+             $totalDays = $weekdays+$weekdayss;
+             $no_of_days = $option22->no_days+$totalDays+$swapno_of_days;
+            }else{
+            $no_of_days = $option22->no_days+$swapno_of_days;
+       }
 
     if(UserChangeDeliveryLocation::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('change_location_for_date',$dates)->exists()){
         $deliverie = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
@@ -2655,6 +2682,7 @@ public function savedAddressListing(Request $request) {
                                        $weekdayss++;
                                    }
                               }
+                               //    dd($increasingdays);
                             $totalDays = $weekdays+$weekdayss;
                             $subscription->no_days = $subscription->no_dayss+$totalDays;
                             }else{

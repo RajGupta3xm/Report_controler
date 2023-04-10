@@ -16,6 +16,7 @@ use App\Models\DislikeItem;
 use App\Models\Admin;
 use App\Models\UserAddress;
 use App\Models\FleetDriver;
+use App\Models\UserCaloriTarget;
 use App\Models\Meal;
 use App\Models\MealSchedules;
 use App\Models\MealAllocationDepartment;
@@ -158,13 +159,52 @@ class ReportController extends Controller
                       // ->where('subscriptions.delivery_status', '=', 'active')
                       // ->where('subscriptions.plan_status', '=', 'plan_active')
                       // ->get()->each(function($getSubscriptionDetail)use($mealCountCurrentDate){
-                        $getSubscription = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
+                          $getSubscription = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
                           ->select('meals.id as meal_id','meals.name')
                           ->where('subscription_meal_plan_variant_default_meal.is_default','1')
                           // ->where('subscription_meal_plan_variant_default_meal.meal_plan_id',$getSubscriptionDetail->plan_id)
                           ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
                           ->groupBy(['meal_id', 'name'])
-                          ->get()
+                          ->get()->each(function($getSubscription)use($mealCountCurrentDate){
+                            $getSubscription->medium = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+                            ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                            ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+                            ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                            ->where('meal_macro_nutrients.size_pcs','m')
+                            ->where('meal_macro_nutrients.user_calorie','1500')
+                            ->count();
+                            $getSubscription->xs = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+                            ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                            ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+                            ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                            ->where('meal_macro_nutrients.size_pcs','xs')
+                            ->where('meal_macro_nutrients.user_calorie','1000')
+                            ->count();
+                            $getSubscription->s = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+                            ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                            ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+                            ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                            ->where('meal_macro_nutrients.size_pcs','s')
+                            ->where('meal_macro_nutrients.user_calorie','1200')
+                            ->count();
+                            $getSubscription->l = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+                            ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                            ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+                            ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                            ->where('meal_macro_nutrients.size_pcs','l')
+                            ->where('meal_macro_nutrients.user_calorie','1800')
+                            ->count();
+                            $getSubscription->xl = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+                            ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                            ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+                            ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                            ->where('meal_macro_nutrients.size_pcs','xl')
+                            ->where('meal_macro_nutrients.user_calorie','2000')
+                            ->count();
+                               $getSubscription->add =  $getSubscription->medium+$getSubscription->s+$getSubscription->xs+$getSubscription->l+$getSubscription->xl;
+
+
+                             })
                         ->each(function($getSubscription){
                            $getSubscription->dietPlan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
                           ->select('diet_plan_types.name','diet_plan_types.id as diet_plan_id')
@@ -184,8 +224,48 @@ class ReportController extends Controller
                            ->first();
                         });
 
+                        // $mealCountCurrentDate = date('Y-m-d');
+                        //        $user_calorie = UserCaloriTarget::join('user_profile','user_calori_targets.user_id','=','user_profile.user_id')
+                        //   ->join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+                        //   ->select('calorie_recommend.recommended')
+                        //   ->get()->each(function($user_calorie)use($mealCountCurrentDate){
+                        //     $user_calorie->mealcount = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
+                        //     ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+                        //     ->select('meals.id as meal_id','meals.name','meal_macro_nutrients.size_pcs')
+                        //     ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+                        //     ->where('meal_macro_nutrients.user_calorie',$user_calorie->recommended)
+                        //     ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+                        //       ->get();
+
+                        //   });
+
+                        //   $a=[];
+                        // foreach($getSubscription as $getSubscriptions){
+                        // foreach($user_calorie as $mealId){
+                        //  foreach($mealId->mealcount as $Id){
+
+                        //   $a[] = count($Id->meal_id);
+                        // if($getSubscriptions->meal_id == $Id->meal_id){
+                         
+                        //  if($mealId->size_pcs == 'l'){
+                         
+                        
+                        // $data['calorieAdditional'] = array_sum($calorieAddition);
+                      //     //  $countmeal = MealMacroNutrients::where('meal_id',$getSubscriptions->meal_id)->where('user_calorie',$user_calories->recommended)->get();
+                      //   }
+                      // }
+                    
+                      //  }
+                      //  dd($a);
+                      //  die;
+                      // }
+                      //  dd($calorieAddition);
+                      //  die;
+                      //  }
+                       
+
                       // });
-                       $data['getSubscription'] = $getSubscription;
+                        $data['getSubscription'] = $getSubscription;
                        $data['mealCountCurrentDate'] = $mealCountCurrentDate;
                     
                          

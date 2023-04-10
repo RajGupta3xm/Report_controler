@@ -33,6 +33,7 @@
                 <div class="row mx-0">
                     <div class="col-12 comman_table_design border bg-white px-0 search_show_tables">
                         <div class="table-responsive">
+                      
                             <table class="table mb-0" id="example2">
                                 <thead>
                                 <tr>
@@ -81,7 +82,7 @@
                                         @endphp
                                         <tbody>
                                         <tr>
-                                            <td>{{$order->user->id??null}}</td>
+                                            <td>{{$driver->user->id??null}}</td>
                                             <td>{{$order->user->name??null}}</td>
                                             <td>
                                                 <div class="form-group">
@@ -117,7 +118,14 @@
                                             </td>
                                             <td>{{$order->status??null}}</td>
                                             <td><a class="map_pin" href="javscript:;"><i class="far fa-file"></i></a></td>
-                                            <td><a class="map_pin" href="javscript:;"><i class="fas fa-map-marker-alt"></i></a></td>
+                                          <!-- Map -->
+                                         @php 
+                                         $admin_id = App\Models\StaffMembers::where('id',$driver->staff_member_id)->first();
+                                         @endphp
+                                          
+                                            <td> <a class="map_pin" href="javscript:;"   onclick="updateDriverLocation(this, '{{$admin_id->admin_id}}');"><i class="fas fa-map-marker-alt"></i></a></td>
+                                            <!-- end map -->
+                                         
                                             <td>Delivery to Neighbour 45645454</td>
                                         </tr>
                                         </tbody>
@@ -139,7 +147,7 @@
     <div class="col-12 py-4 mt-4">
         <div class="row justify-content-center">
             <div class="col-auto">
-                <a href="javscript:;" class="comman_btn">View On Map</a>
+                <a href="{{url('admin/allDriver/location',['date'=> '2023-04-10'])}}"  class="comman_btn">View On Map</a>
             </div>
             <div class="col-auto">
                 <button type="submit" class="comman_btn">Update</button>
@@ -154,6 +162,72 @@
     </div>
 </div>
 </form>
+<div class="container">
+<div id="map" style="width:100%;height:300px;">
+
+</div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMN2qx9sNSiaYyJkSFb6vSRI83oLHPIkg&libraries=places&callback=initialize">
+  </script>
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVD0ngfhOFs5rnww7UFyz9rN6UznOIZ1U&callback=initMap" async defer></script> -->
+
+<script>
+ var map;
+var marker;
+
+// In your JavaScript file
+function updateDriverLocation(obj,admin_id) {
+    var id = admin_id;
+alert(id);
+  $.ajax({
+    url  : "<?= url('admin/drivers/location/') ?>/" + id,
+    type: 'GET',
+    success: function(data) {
+      var latlng = new google.maps.LatLng(data.latitude, data.longitude);
+      marker.setPosition(latlng);
+      map.setCenter(latlng);
+    },
+    error: function() {
+      console.log('Failed to get driver location.');
+    }
+  });
+
+  // In your JavaScript file
+  const map = new google.maps.Map(document.getElementById("map"), {
+  zoom: 15,
+  center: { lat: 27.1766701, lng: 78.00807449999999 }, // San Francisco, CA (default center)
+});
+
+
+
+//   var marker = new google.maps.Marker({
+//   map: map,
+// });
+// marker.addListener("click", () => {
+//   map.setZoom(15);
+//   map.setCenter(marker.getPosition());
+// });
+
+const marker = new google.maps.Marker({
+      position: {lat: 27.1766701, lng: 78.00807449999999},
+      map: map,
+      title: 'Driver Location'
+    }); 
+}
+
+
+</script>
+
+
+
+
+
+
 <style>
     .dataTables_length {
     text-align: left;
@@ -164,5 +238,3 @@
     text-align: left;
 }
 </style>
-
-

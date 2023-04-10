@@ -57,4 +57,8 @@ class StaffMembers extends Authenticatable
 	public function admin(){
 		return $this->belongsTo(Admin::class,'admin_id','id');
 	}
+
+	public function fleetDriver(){
+		return $this->belongsTo(FleetDriver::class,'staff_member_id','id');
+	}
 }

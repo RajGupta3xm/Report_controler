@@ -8,6 +8,9 @@ use App\Models\MealPlan;
 use App\Models\MealPlanGroup;
 use App\Models\MealPlanVariant;
 use App\Models\MealVariantDefaultMeal;
+use App\Models\Admin;
+use App\Models\StaffMembers;
+use App\Models\Order;
 use Auth;
 use Carbon\CarbonPeriod;
 use DB;
@@ -66,7 +69,7 @@ class FleetController extends Controller {
             return redirect()->intended('admin/login');
         } else {
              $data['areas'] = FleetArea::get();
-            return view('admin.fleet-managment.index')->with($data);;
+            return view('admin.fleet-managment.index')->with($data);
         }
     }
 
@@ -137,5 +140,45 @@ class FleetController extends Controller {
         \Illuminate\Support\Facades\Session::flash('driver');
         return redirect()->back()->with('success','FleetArea added successfully');
     }
+    
+
+
+     public function allDriverLocation(Request $request)
+{
+     $date = $request->date;
+     $drive = [];
+    //    $getOrder = Order::join('fleet_driver','orders.id','=','fleet_driver.order_id')
+    //  ->select('orders.id','fleet_driver.staff_member_id')->whereDate('orders.created_at',$date)->where('orders.plan_status','plan_active')->get();
+    //  if($getOrder){
+    //     foreach($getOrder as $getOrders){
+    //          $driver[] = Admin::join('staff_members','admin.id','=','staff_members.admin_id')
+    //         ->where('staff_members.id',$getOrders->staff_member_id)
+    //         ->select('admin.latitude','admin.longitude')
+    //         ->get();
+    //         // array_push($drive,$driver);
+           
+    //     }
+    //     $data['getOrders'] =$getOrder;
+    //     // dd($drive);
+        // die;
+        // $data['drivers'] = $drive;
+    //  }
+    //  foreach($driver as $drivers){
+    //     foreach($drivers as $driverr){
+    //     $lat[] = $driverr;
+    //     }
+   
+    // }
+    // dd($lat);
+    // die;
+      $drivers = StaffMembers::join('fleet_driver','staff_members.id','=','fleet_driver.staff_member_id')
+    ->join('admin','staff_members.admin_id','=','admin.id')
+    ->select('admin.latitude','admin.longitude','admin.name')
+    ->get();
+//  $data['drivers'] = $drivers;
+//   return $drivers = Admin::all();
+
+     return view('admin.map')->with('drivers', $drivers);
+}
 
 }

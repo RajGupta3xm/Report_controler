@@ -90,13 +90,13 @@ class ApiController extends Controller {
         $validatedData = Validator::make($request->all(), [
             'name' => 'required',
             // 'family_name' => 'required',
-            'email' => 'required',
+            // 'email' => 'required',
             'country_code' => 'required',
             'mobile' => 'required|string|size:11'
         ], [
             'name.required' => trans('validation.required', ['attribute' => 'name']),
             // 'family_name.required' => trans('validation.required', ['attribute' => 'family_name']),
-            'email.required' => trans('validation.required', ['attribute' => 'email']),
+            // 'email.required' => trans('validation.required', ['attribute' => 'email']),
             'country_code.required' => trans('validation.required', ['attribute' => 'country_code']),
             'mobile.required' => trans('validation.required', ['attribute' => 'mobile']),
         ]);
@@ -599,6 +599,15 @@ class ApiController extends Controller {
     public function myProfile() {
         $user = User::select('id as user_id', 'users.*')->where('id', Auth::guard('api')->id())->first(); 
          $userProfile = UserProfile::where('user_id', Auth::guard('api')->id())->first();
+         $userPlan = UserProfile::join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+         ->select('subscription_plans.name')
+         ->where('user_profile.user_id', Auth::guard('api')->id())->first();
+          $userDislike = UserDislike::join('dislike_group','user_dilikes.item_id','=','dislike_group.id')
+          ->select('dislike_group.name')
+         ->where('user_dilikes.user_id', Auth::guard('api')->id())->limit(2)->get();
+          $userAddress = UserAddress::where('user_id',Auth::guard('api')->id())->select('address_type')
+         ->where(['status'=>'active','day_selection_status'=>'active'])
+         ->limit(2)->get();
          $userFitnessGoal = FitnessGoal::where('id',$userProfile->fitness_scale_id)->first();
          $userDietPlan = DietPlanType::where('id',$userProfile->diet_plan_type_id)->first();
          $userCalorie = CalorieRecommend::join('user_calori_targets','calorie_recommend.id','=','user_calori_targets.custom_result_id')
@@ -617,6 +626,9 @@ class ApiController extends Controller {
         $data->fitness_goal = $userFitnessGoal->name;
         $data->userDietPlan = $userDietPlan->name;
         $data->calorie = $userCalorie->recommended;
+        $data->user_dislike = $userDislike->implode('name', ', ');
+        $data->userAddress = $userAddress->implode('address_type', ', ');
+        $data->userPlan = $userPlan->name;
         $this->status = true;
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
@@ -632,7 +644,7 @@ class ApiController extends Controller {
             'last_name' => 'required',
             'country_code' => 'required',
             'mobile' => 'required|numeric',
-            'email' => 'required',
+            // 'email' => 'required',
             'image' => 'required',
             'dob' => 'required',
             'gender' => 'required',
@@ -640,7 +652,7 @@ class ApiController extends Controller {
                 ], [
             'first_name.required' =>    'first_name is required field',
             'last_name.required' =>    'last_name is required field',
-            'email.required' =>         'email is required field',
+            // 'email.required' =>         'email is required field',
             'image.required' =>          'image is required field',
             'dob.required' =>           'dob is required field',
             'gender.required' => 'gender is required field',
@@ -1391,7 +1403,7 @@ public function addAddress(Request $request){
         'area' => 'required',
         // 'address_type' => 'required',
         // 'selected_day' => 'required',
-        'building' => 'required',
+        // 'building' => 'required',
         'street' => 'required',
         'postal_code' => 'required',
         'delivery_slot_id' => 'required',
@@ -1401,7 +1413,7 @@ public function addAddress(Request $request){
         'area.required' => trans('validation.required', ['attribute' => 'area']),
         // 'address_type.required' => trans('validation.required', ['attribute' => 'address type ']),
         // 'selected_day.required' => trans('validation.required', ['attribute' => 'selected day  ']),
-        'building.required' => trans('validation.required', ['attribute' => 'building ']),
+        // 'building.required' => trans('validation.required', ['attribute' => 'building ']),
         'street.required' => trans('validation.required', ['attribute' => 'street ']),
         'postal_code.required' => trans('validation.required', ['attribute' => 'postal_code']),
         'delivery_slot_id.required' => trans('validation.required', ['attribute' => 'delivery slot id  ']),

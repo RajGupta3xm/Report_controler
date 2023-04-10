@@ -152,6 +152,7 @@
                                                            </tr>
                                                          </thead>
                                                          <tbody>
+                                                           
                                                             @foreach($getSubscription as $key=>$getSubscriptions)
                                                         
                                                             <tr>
@@ -162,12 +163,12 @@
                                                                <td>{{$getSubscriptions->dietPlan['name']}}</td>
                                                                <td>{{$getSubscriptions->MealSchedule['name']}}</td>
                                                                <td>{{$getSubscriptions->department['name']}}</td>
-                                                               <td>25</td>
-                                                               <td>10</td>
-                                                               <td>5</td>
-                                                               <td>100</td>
-                                                               <td>250</td>
-                                                               <td>390</td>
+                                                               <td>{{$getSubscriptions->xs}}</td>
+                                                               <td>{{$getSubscriptions->s}}</td>
+                                                               <td>{{$getSubscriptions->medium}}</td>
+                                                               <td>{{$getSubscriptions->l}}</td>
+                                                               <td>{{$getSubscriptions->xl}}</td>
+                                                               <td>{{$getSubscriptions->add}}</td>
                                                             </tr>
                                                             @endforeach
                                                             <!-- <tr>
