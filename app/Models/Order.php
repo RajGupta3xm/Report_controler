@@ -21,6 +21,7 @@ class Order extends Model
     	'total_amount',
     	'payment_method',
     	'card_type',
+		'deliver_note',
     	'payment_status',
     	'cancel_reason',
     	'status',

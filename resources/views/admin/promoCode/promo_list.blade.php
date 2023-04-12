@@ -163,15 +163,15 @@
                                  <div class="row">
                                     <div class="col-12 mb-2 d-flex select_tr">
                                        <div class="check_radio">
-                                          <input type="checkbox" checked="" name="v2" id="v2" class="d-none">
-                                          <label for="v2">Limit number of times this Discount can be used in total</label>
+                                          <input type="checkbox" checked="" name="v2" id="y2" class="d-none">
+                                          <label for="y2">Limit number of times this Discount can be used in total</label>
                                        </div> 
                                        <input class="form-control width_manage" type="text" id="" name="maximum_discount_uses">
                                     </div>
                                     <div class="col-12">
                                        <div class="check_radio">
-                                          <input type="checkbox" name="v4" id="v4" value="1" class="d-none">
-                                          <label for="v4">Limit to one use per customer</label>
+                                          <input type="checkbox" name="v4" id="t4" value="1" class="d-none">
+                                          <label for="t4">Limit to one use per customer</label>
                                        </div>
                                     </div>
                                  </div>

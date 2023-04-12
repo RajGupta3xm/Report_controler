@@ -10,6 +10,8 @@ use Mail;
 //use App\Http\Requests\UsersRequest as StoreRequest;
 //use App\Http\Requests\UsersRequest as UpdateRequest;
 //use App\Http\Controllers\CrudOverrideController;
+use App\Exports\OrdersExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -909,4 +911,44 @@ public function get_draftData(Request $request, $id=NULL)
             return view('admin.order.draft_order_edit',compact('clients','dietPlans','subscription_detail','category'));
         }
     
+
+public function export(Request $request)
+{
+    //  $users = User::all();
+     $users = Order::join('user_profile','orders.user_id','=','user_profile.user_id')
+    ->join('users','orders.user_id','=','users.id')
+    ->select('users.id','users.name','user_profile.subscription_id','user_profile.variant_id','orders.id as order_id','orders.created_at')
+    ->where('orders.plan_status','plan_active')
+   ->get()
+   ->each(function($users){
+               $users->plans = SubscriptionMealPlanVariant::with('plan','dietPlans')
+              ->where('meal_plan_id',$users->subscription_id)
+              ->where('id',$users->variant_id)
+              ->get();
+              
+            });
+
+    return Excel::download(new OrdersExport($users), 'orders.xlsx');
+}
+
+public function print()
+{
+    // retrieve the user data that you want to print
+     $users = Order::join('user_profile','orders.user_id','=','user_profile.user_id')
+    ->join('users','orders.user_id','=','users.id')
+    ->select('users.id','users.name','user_profile.subscription_id','user_profile.variant_id','orders.id as order_id','orders.created_at')
+    ->where('orders.plan_status','plan_active')
+   ->get()
+   ->each(function($users){
+               $users->plans = SubscriptionMealPlanVariant::with('plan','dietPlans')
+              ->where('meal_plan_id',$users->subscription_id)
+              ->where('id',$users->variant_id)
+              ->get();
+              
+            });
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.order.print', compact('users'));
+}
+
 }

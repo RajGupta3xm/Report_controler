@@ -39,6 +39,8 @@ use App\Models\MealItemOrganization;
 use App\Models\Meal;
 use App\Models\UserCaloriTarget;
 use App\Models\StaffGroup;
+use App\Exports\FleetsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -141,11 +143,18 @@ class FleetController extends Controller {
         return redirect()->back()->with('success','FleetArea added successfully');
     }
     
+    public function driverLocation(Request $request)
+    {
+        if($request->ajax()){
+            $data = Admin::Find($request->id);
+            return Response($data);
+        }
+     }
 
 
-     public function allDriverLocation(Request $request)
+    public function allDriverLocation(Request $request)
 {
-     $date = $request->date;
+      $date = $request->date;
      $drive = [];
     //    $getOrder = Order::join('fleet_driver','orders.id','=','fleet_driver.order_id')
     //  ->select('orders.id','fleet_driver.staff_member_id')->whereDate('orders.created_at',$date)->where('orders.plan_status','plan_active')->get();
@@ -179,6 +188,27 @@ class FleetController extends Controller {
 //   return $drivers = Admin::all();
 
      return view('admin.map')->with('drivers', $drivers);
+}
+
+public function export(Request $request)
+{
+    //  $users = User::all();
+       $users =  Unit::select('*')->orderBy('id','desc')->get();
+
+    return Excel::download(new UnitsExport($users), 'units.xlsx');
+}
+
+public function update(Request $request, $id=null){
+        $data=[
+     "deliver_note" => $request->input('reply'),
+ ];
+   $update = Order::where('id',$request->order_id)->update($data);
+   if($update){
+       return response()->json(['status' => true, 'error_code' => 200, 'message' => 'Your remark update successfully']);
+   }
+   else {
+       return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while update remark']);
+   }
 }
 
 }

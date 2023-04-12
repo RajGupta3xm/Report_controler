@@ -9,8 +9,9 @@
                      <div class="row mx-0">
                      @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 text-end mb-4 pe-0">
-                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a>
-                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a>
+                        <a href="{{url('admin/export/meal_list')}}"  class="comman_btn">Export to Excel</a>
+                           <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a> -->
+                           <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a> -->
                            <a href="javscript:;" class="comman_btn me-2">Print</a>
                            <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
                         </div>
@@ -18,8 +19,9 @@
                      @if(Session::get('admin_logged_in')['type']=='1')
                        @if(Session::get('staff_logged_in')['meal_mgmt']!='1')
                         <div class="col-12 text-end mb-4 pe-0">
-                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a>
-                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a>
+                        <a href="{{url('admin/export/meal_list')}}"  class="comman_btn">Export to Excel</a>
+                           <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a> -->
+                           <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a> -->
                            <a href="javscript:;" class="comman_btn me-2">Print</a>
                            <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
                         </div>
@@ -40,6 +42,7 @@
                               </div>  -->
                               <div class="col-auto">
                                  <div class="dropdown more_filters">
+                                 
                                  <a href="<?= url('admin/meal-management') ?>" class="comman_btn me-2">Reset</a>
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                        More Filters 

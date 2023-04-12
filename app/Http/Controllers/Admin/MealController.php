@@ -33,6 +33,7 @@ use App\Models\MealItemOrganization;
 use App\Models\Meal;
 use App\Models\UserCaloriTarget;
 use App\Models\StaffGroup;
+use App\Exports\MealsExport;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -1268,25 +1269,26 @@ return redirect()->back()->with('error', 'Some error occurred while update ');
 
 }
 
-public function export(Request $request) 
-{
-    // return $get = $request->input('radio1');
-    $meal = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
-    ->each(function($meal){
-          $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
-             ->select('meal_schedules.name')
-             ->where('meal_group_schedule.meal_id',$meal->id)
-             ->get();
 
-             $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
-             ->select('diet_plan_types.name')
-             ->where('meal_diet_plan.meal_id',$meal->id)
-             ->get();
-           $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
-      
-    });
-     $meals = $meal;
-    return Excel::download(new Users, 'users.xlsx');
+public function export(Request $request)
+{
+    //  $users = User::all();
+       $users =  Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+       ->each(function($meal){
+             $meal->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+                ->select('meal_schedules.name')
+                ->where('meal_group_schedule.meal_id',$meal->id)
+                ->get();
+   
+                $meal->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+                ->select('diet_plan_types.name')
+                ->where('meal_diet_plan.meal_id',$meal->id)
+                ->get();
+              $meal->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$meal->id)->first();  
+         
+       });
+
+    return Excel::download(new MealsExport($users), 'meals.xlsx');
 }
 
 }

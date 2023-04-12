@@ -303,13 +303,15 @@
                               </div>
                               @if(Session::get('admin_logged_in')['type']=='0')
                               <div class="col-auto">
-                                 <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
+                              <a href="{{url('admin/export/refer_list')}}"  class="comman_btn">Export to Excel</a>
+                                 <!-- <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button> -->
                               </div>
                               @endif
                               @if(Session::get('admin_logged_in')['type']=='1')
                               @if(Session::get('staff_logged_in')['refer_earn_mgmt']!='1')
                               <div class="col-auto">
-                                 <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
+                              <a href="{{url('admin/export/refer_list')}}"  class="comman_btn">Export to Excel</a>
+                                 <!-- <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button> -->
                               </div>
                               @endif
                               @endif

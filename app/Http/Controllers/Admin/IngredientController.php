@@ -7,10 +7,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\DislikeUnit;
 use App\Models\DislikeCategory;
 use App\Models\DislikeGroup;
 use App\Models\DislikeItem;
+use App\Exports\IngredientsExport;
+use App\Exports\GroupsExport;
+use App\Exports\CategorysExport;
+use App\Exports\UnitsExport;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use DB;
 
@@ -336,5 +343,158 @@ public function get_category_data(Request $request)
       } else {
           return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while deleting Unit']);
       }
-    }    
+    } 
+    
+    
+    public function export(Request $request)
+{
+    //  $users = User::all();
+      $users = DislikeItem::with('group','category','unit')->select('*')->where('status','active')->orderBy('id','desc')->get();
+
+    return Excel::download(new IngredientsExport($users), 'ingredients.xlsx');
+}
+
+ 
+public function export_group(Request $request)
+{
+    //  $users = User::all();
+       $users =  DislikeGroup::select('*')->orderBy('id','desc')->get();
+
+    return Excel::download(new GroupsExport($users), 'groups.xlsx');
+}
+
+public function export_category(Request $request)
+{
+    //  $users = User::all();
+       $users =  DislikeCategory::select('*')->orderBy('id','desc')->get();
+
+    return Excel::download(new CategorysExport($users), 'categories.xlsx');
+}
+
+public function export_unit(Request $request)
+{
+    //  $users = User::all();
+       $users =  Unit::select('*')->orderBy('id','desc')->get();
+
+    return Excel::download(new UnitsExport($users), 'units.xlsx');
+}
+
+public function import_ingredients(Request $request)
+{ 
+    $file = $request->file('file');
+    $file_path = $file->getPathName();
+    $rows = array_map('str_getcsv', file($file_path));
+    $header = array_shift($rows);
+
+    foreach ($rows as $row) {
+        $data = array_combine($header, $row);
+       $groupId =  DislikeGroup::create([
+            'name' => $data['group'],
+            'name_ar' => $data['group_ar'],
+        ]);
+        $unitId =  DislikeUnit::create([
+            'unit' => $data['unit'],
+            'unit_ar' => $data['unit_ar'],
+        ]);
+        $categoryId =  DislikeCategory::create([
+            'name' => $data['category'],
+            'name_ar' => $data['category_ar'],
+        ]);
+        DislikeItem::create([
+            'name' => $data['name'],
+            'name_ar' => $data['name_ar'],
+            'group_id' => $groupId->id,
+            'category_id' => $categoryId->id,
+            'unit_id' => $unitId->id,
+        ]);
+    }
+
+    return redirect()->back()->with('success', 'Group added successfully');
+}
+
+public function import_groups(Request $request)
+{ 
+    $file = $request->file('file');
+    $file_path = $file->getPathName();
+    $rows = array_map('str_getcsv', file($file_path));
+    $header = array_shift($rows);
+
+    foreach ($rows as $row) {
+        $data = array_combine($header, $row);
+         DislikeGroup::create([
+            'name' => $data['name'],
+            'name_ar' => $data['name_ar'],
+        ]);
+        
+    }
+
+    return redirect()->back()->with('success', 'Group added successfully');
+}
+
+public function import_category(Request $request)
+{ 
+    $file = $request->file('file');
+    $file_path = $file->getPathName();
+    $rows = array_map('str_getcsv', file($file_path));
+    $header = array_shift($rows);
+
+    foreach ($rows as $row) {
+        $data = array_combine($header, $row);
+         DislikeCategory::create([
+            'name' => $data['category'],
+            'name_ar' => $data['category_ar'],
+        ]);
+        
+    }
+
+    return redirect()->back()->with('success', 'Group added successfully');
+}
+
+public function import_unit(Request $request)
+{ 
+    $file = $request->file('file');
+    $file_path = $file->getPathName();
+    $rows = array_map('str_getcsv', file($file_path));
+    $header = array_shift($rows);
+
+    foreach ($rows as $row) {
+        $data = array_combine($header, $row);
+         DislikeUnit::create([
+            'unit' => $data['unit'],
+            'unit_ar' => $data['unit_ar'],
+        ]);
+        
+    }
+
+    return redirect()->back()->with('success', 'Group added successfully');
+}
+
+
+public function print_ingredient()
+{
+    // retrieve the user data that you want to print
+     $users = DislikeItem::with('group','category','unit')->select('*')->orderBy('name')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.ingredient.print_ingredient', compact('users'));
+}
+
+public function print_group()
+{
+    // retrieve the user data that you want to print
+     $users =   DislikeGroup::select('*')->orderBy('id','desc')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.ingredient.print_group', compact('users'));
+}
+
+public function print_category()
+{
+    // retrieve the user data that you want to print
+     $users =  DislikeCategory::select('*')->orderBy('id','desc')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.ingredient.print_category', compact('users'));
+}
+
 }

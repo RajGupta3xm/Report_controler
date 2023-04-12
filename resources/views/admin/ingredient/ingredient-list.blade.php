@@ -26,8 +26,8 @@
                         <div class="row mx-0">
                         @if(Session::get('admin_logged_in')['type']=='0')
                             <div class="col-12 text-end mb-4 pe-0">
-                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
-                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a>
+                                 <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> -->
                                   <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>  -->
                                   <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
                                 </div>
@@ -35,8 +35,8 @@
                          @if(Session::get('admin_logged_in')['type']=='1')
                            @if(Session::get('staff_logged_in')['ingredient_mgmt']!='1')
                             <div class="col-12 text-end mb-4 pe-0">
-                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
-                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> 
+                                 <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
+                                 <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a>  -->
                                  <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> -->
                                  <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
                                  </div>
@@ -159,6 +159,12 @@
                                                             <div class="col">
                                                                 <h2>Ingredients Management</h2>
                                                             </div>
+                                                            <div class="col-auto">
+                                                             <a href="{{url('admin/export/ingredient_list')}}"  class="comman_btn">Export to Excel</a>
+                                                             <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a>
+                                                             <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printIngredientList()">print</a>
+                                                            </div>
+                                                           
                                                             <!-- <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
@@ -318,6 +324,11 @@
                                                             <div class="col">
                                                                 <h2>Groups Management</h2>
                                                             </div>
+                                                            <div class="col-auto">
+                                                             <a href="{{url('admin/export/group_list')}}"  class="comman_btn">Export to Excel</a>
+                                                             <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop11" class="comman_btn me-2">Import Excel</a>
+                                                             <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printGroupList()">print</a>
+                                                            </div>
                                                             <!-- <div class="col-3">
                                                                 <form class="form-design" action="">
                                                                    <div class="form-group mb-0 position-relative icons_set">
@@ -367,7 +378,11 @@
                                                                             @foreach($group as $key=>$groups)
                                                                             <tr>
                                                                                 <td>{{$key+1}}</td>
+                                                                                @if($groups->image)
                                                                                 <td> <img class="table_img" src="{{$groups->image?$groups->image:assets/img/bg-img.jpg}}" alt=""> </td>
+                                                                                @else
+                                                                                <td> </td>
+                                                                                @endif
                                                                                 <td>{{$groups->name}}</td>
                                                                                 <td>{{$groups->name_ar}}</td>
                                                                                 @if(Session::get('admin_logged_in')['type']=='0')
@@ -466,6 +481,11 @@
                                 <div class="col">
                                   <h2>Categories</h2>
                                 </div>
+                                <div class="col-auto">
+                                  <a href="{{url('admin/export/category_list')}}"  class="comman_btn">Export to Excel</a>
+                                  <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop111" class="comman_btn me-2">Import Excel</a>
+                                  <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printCategoryList()">print</a>
+                                 </div>
                                 <!-- <div class="col-3">
                                   <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
@@ -619,6 +639,10 @@
                                   <div class="col">
                                     <h2>Unit</h2>
                                   </div>
+                                  <div class="col-auto">
+                                  <a href="{{url('admin/export/unit_list')}}"  class="comman_btn">Export to Excel</a>
+                                  <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1111" class="comman_btn me-2">Import Excel</a>
+                                 </div>
                                   <!-- <div class="col-3">
                                     <form class="form-design" action="">
                                       <div class="form-group mb-0 position-relative icons_set">
@@ -855,25 +879,80 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Import Excel</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body py-4">
-                <form class="Import_export_form px-4" action="">
-                    <div class="form-group row mb-4">
-                        <div class="col-12 mb-3 Export_head"> <label for="">Import :</label> </div>
-                        <div class="col-12">
-                            <div class="comman_radio mb-2"> <input class="d-none" type="radio" id="radio1" name="radio1"> <label for="radio1">All Items</label> </div>
-                            <div class="comman_radio mb-2"> <input class="d-none" type="radio" checked id="radio2" name="radio2"> <label for="radio2">Selected 50+ Items</label> </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-12 mb-3 Export_head"> <label for="">Import As :</label> </div>
-                        <div class="col-12">
-                            <div class="comman_radio mb-2"> <input class="d-none" type="radio" checked id="radio2" name="radio2"> <label for="radio2">Excel (In Proper Format)</label> </div>
-                        </div>
-                    </div>
+               <form method="post" action="{{url('admin/import-ingredients-list')}}" enctype="multipart/form-data">
+                  @csrf
+                  <div class="form-group">
+                  <label for="file">Choose CSV file</label>
+                        <input type="file" name="file" id="file">
+                     </div>
+                     <button type="submit" class="btn btn-primary">Import</button>
                 </form>
             </div>
         </div>
     </div>
 </div> 
+<div class="modal fade reply_modal Import_export" id="staticBackdrop11" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Import Excel</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+               <form method="post" action="{{url('admin/import-group-list')}}" enctype="multipart/form-data">
+                  @csrf
+                  <div class="form-group">
+                  <label for="file">Choose CSV file</label>
+                        <input type="file" name="file" id="file">
+                     </div>
+                     <button type="submit" class="btn btn-primary">Import</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+<!-- Category model import -->
+<div class="modal fade reply_modal Import_export" id="staticBackdrop111" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Import Excel</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+               <form method="post" action="{{url('admin/import-category-list')}}" enctype="multipart/form-data">
+                  @csrf
+                  <div class="form-group">
+                  <label for="file">Choose CSV file</label>
+                        <input type="file" name="file" id="file">
+                     </div>
+                     <button type="submit" class="btn btn-primary">Import</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+<!-- end category model -->
+
+<!-- Unit model import -->
+<div class="modal fade reply_modal Import_export" id="staticBackdrop1111" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Import Excel</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+               <form method="post" action="{{url('admin/import-unit-list')}}" enctype="multipart/form-data">
+                  @csrf
+                  <div class="form-group">
+                  <label for="file">Choose CSV file</label>
+                        <input type="file" name="file" id="file">
+                     </div>
+                     <button type="submit" class="btn btn-primary">Import</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> 
+<!-- end Unit model -->
 @foreach($ingredient as $key=>$ingredients)
 <div class="modal fade comman_modal" id="staticBackdrop07{{$ingredients->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1003,7 +1082,27 @@ function printableDiv(printableAreaDivId) {
 }
 
 </script>
+<script>
+    function printIngredientList() {
+        var printWindow = window.open('{{ route("ingredients.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
 
+</script>
+<script>
+    function printGroupList() {
+        var printWindow = window.open('{{ route("groups.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
+<script>
+    function printCategoryList() {
+        var printWindow = window.open('{{ route("categories.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
 @endsection
 
 <script>

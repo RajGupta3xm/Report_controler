@@ -18,7 +18,7 @@
                   @if(Session::get('admin_logged_in')['type']=='0')
                   <li><a class="<?= Request::segment(2) == 'staff-management' || Request::segment(2) == 'add_staff_group' ? 'active' : ''; ?>" href="{{url('admin/staff-management')}}" ><i class="fal fa-clipboard-user"></i>Staff Management</a></li>
                   @endif
-                  <li><a class="<?= Request::segment(2) == 'fleet-management'  ? 'active' : ''; ?>" href="{{url('admin/fleet-management')}}" ><i class="fal fa-layer-group"></i>Fleet Management</a></li>
+                  <li><a class="<?= Request::segment(2) == 'fleet-management' || Request::segment(2) == 'allDriver' ? 'active' : ''; ?>" href="{{url('admin/fleet-management')}}" ><i class="fal fa-layer-group"></i>Fleet Management</a></li>
               
                   <li><a class="<?= Request::segment(2) == 'promo-code-management' ? 'active' : ''; ?>" href="{{url('admin/promo-code-management')}}" ><i class="fal fa-badge-percent"></i>Promo Code Management</a></li>
                   <li><a class="<?= Request::segment(2) == 'gift-card-management' || Request::segment(2) == '' ? 'active' : ''; ?>" href="{{url('admin/gift-card-management')}}" ><i class="fad fa-gift-card"></i>Gift Card Management</a></li>

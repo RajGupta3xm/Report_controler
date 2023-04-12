@@ -1,0 +1,28 @@
+<table>
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>name_ar</th>
+            <th>category</th>
+            <th>category_ar</th>
+            <th>group</th>
+            <th>group_ar</th>
+            <th>unit</th>
+            <th>unit_ar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($users as $key=>$user)
+        <tr>
+          <td>{{$user['name']?:'N/A'}}</td>
+           <td>{{$user['name_ar']?:'N/A'}}</td>
+           <td>{{$user->category['name']?:'N/A'}}</td>
+           <td>{{$user->category['name_ar']?:'N/A'}}</td>
+            <td>{{$user->group['name']?:'N/A'}}</td>
+            <td>{{$user->group['name_ar']?:'N/A'}}</td>
+            <td>{{$user->unit['unit']?:'N/A'}}</td>
+            <td>{{$user->unit['unit_ar']?:'N/A'}}</td>
+           </tr>
+        @endforeach
+    </tbody>
+</table>

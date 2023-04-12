@@ -9,14 +9,16 @@
                      @if(Session::get('admin_logged_in')['type']=='0')
                         <div class="col-12 mb-4 text-end">
                         <a href="<?= url('admin/user-management') ?>" class="comman_btn me-2">Reset</a>
-                           <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
+                        <a href="{{url('admin/export/user_list')}}"  class="comman_btn">Export to Excel</a>
+                           <!-- <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button> -->
                         </div>
                         @endif
                         @if(Session::get('admin_logged_in')['type']=='1')
                         @if(Session::get('staff_logged_in')['user_mgmt']!='1')
                         <div class="col-12 mb-4 text-end">
                         <a href="<?= url('admin/user-management') ?>" class="comman_btn me-2">Reset</a>
-                           <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button>
+                        <a href="{{url('admin/export/user_list')}}"  class="comman_btn">Export to Excel</a>
+                           <!-- <button data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn">Export to Excel</button> -->
                         </div>
                         @endif
                         @endif

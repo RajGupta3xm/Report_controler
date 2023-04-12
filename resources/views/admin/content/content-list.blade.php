@@ -51,14 +51,14 @@
                         <div class="col-md-6 d-flex align-items-stretch">
                            <div class="row content_management_box me-0">
                               <h2>{{$contents->name}}</h2>
-                              <a class="edit_content_btn comman_btn "    data-container=".view_modal"   data-toggle="modal" data-target="#contact_modal{{$contents->id}}" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
+                              <a class="edit_content_btn comman_btn"  data-container=".view_modal"   data-toggle="modal" data-target="#contact_modal{{$contents->id}}" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
                               <p>{{$contents->content}}</p>
                            </div>
                         </div> 
                         <div class="col-md-6 d-flex align-items-stretch">
                            <div class="row content_management_box ms-0 text-end">
                               <h2>سياسات الخصوصية</h2>
-                              <a class="edit_content_btn comman_btn "    data-container=".view_modal"   data-toggle="modal" data-target="#contact_modal1{{$contents->id}}" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
+                              <a class="edit_content_btn comman_btn"   data-container=".view_modal"   data-toggle="modal" data-target="#contact_modal1{{$contents->id}}" href="javscript:;"><i class="far fa-edit me-2"></i>Edit</a>
                               <p >{{$contents->content_ar}}
                               </p>
                            </div>

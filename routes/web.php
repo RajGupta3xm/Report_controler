@@ -171,6 +171,17 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     
     Route::post('/ingredient-delete','Admin\IngredientController@ingredient_delete');
     Route::post('/category/change_status','Admin\IngredientController@change_status_category');
+    Route::get('/export/ingredient_list', 'Admin\IngredientController@export')->name('ingredient.export');
+    Route::get('/export/group_list', 'Admin\IngredientController@export_group')->name('group.export');
+    Route::get('/export/category_list', 'Admin\IngredientController@export_category')->name('category.export');
+    Route::get('/export/unit_list', 'Admin\IngredientController@export_unit')->name('unit.export');
+    Route::post('/import-ingredients-list', 'Admin\IngredientController@import_ingredients')->name('import-ingredients');
+    Route::post('/import-group-list', 'Admin\IngredientController@import_groups')->name('import-groups');
+    Route::post('/import-category-list', 'Admin\IngredientController@import_category')->name('import-categories');
+    Route::post('/import-unit-list', 'Admin\IngredientController@import_unit')->name('import-units');
+    Route::get('/ingredients/print', 'Admin\IngredientController@print_ingredient')->name('ingredients.print');
+    Route::get('/groups/print', 'Admin\IngredientController@print_group')->name('groups.print');
+    Route::get('/categories/print', 'Admin\IngredientController@print_category')->name('categories.print');
 
     /*******End Ingredient Management */
 
@@ -214,6 +225,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'as' => 'admin.query.filter'
       ]);
       Route::post('/user/filterUserData','Admin\UserController@filterUserData');
+      Route::get('/export/user_list', 'Admin\UserController@export')->name('users.export');
      /*******End User Management */
 
 
@@ -269,6 +281,8 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::post('/refer_earn_submit', 'Admin\ReferAndEarnController@refer_earn_submit');
     Route::post('/refercontent/update', 'Admin\ReferAndEarnController@refer_content_update');
     Route::post('/refer_earn/update_content/{id}', 'Admin\ReferAndEarnController@update_content');
+    Route::get('/export/refer_list', 'Admin\ReferAndEarnController@export')->name('refers.export');
+
      /*******End refer and earn Management */
 
          /*******Meal Management */
@@ -284,6 +298,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
       Route::any('edit-meal/{id}', 'Admin\MealController@edit_meal');
       Route::post('/meal/meal_update/{id}','Admin\MealController@meal_update');
       Route::post('/meal/export','Admin\MealController@export')->name('meals.export');
+      Route::get('/export/meal_list', 'Admin\MealController@export')->name('meal.export');
      /*******End Meal Management */
 
         /*******Meal Plan Management */
@@ -325,6 +340,8 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
 ]);
 Route::post('/draftOrder/edit_update/{id}','Admin\OrderController@edit_update');
 Route::get('/draft_order_edit/{id}', 'Admin\OrderController@edit_draft_order');
+Route::get('/export/order_list', 'Admin\OrderController@export')->name('orders.export');
+Route::get('/orders/print', 'Admin\OrderController@print')->name('orders.print');
  /*******End order Management */
 
  /*******fleet Management */
@@ -336,7 +353,11 @@ Route::get('/draft_order_edit/{id}', 'Admin\OrderController@edit_draft_order');
     Route::post('/fleetdriver/submit', 'Admin\FleetController@storeFleetDriver');
     Route::get('/drivers/location/{id}','Admin\FleetController@driverLocation');
     Route::get('/allDriver/location/{date}','Admin\FleetController@allDriverLocation');
-       
+    Route::get('/export/driver_list', 'Admin\FleetController@export')->name('drivers.export');
+    Route::post('fleet/update/{id}', [
+        'uses' => 'Admin\FleetController@update',
+        'as' => 'admin.fleet.update'
+    ]);
  /*******End fleet Management */
 
  /*******Notification Management */

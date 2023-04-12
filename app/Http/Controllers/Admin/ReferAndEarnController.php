@@ -17,6 +17,8 @@ use App\Models\ReferAndEarn;
 use App\Models\ReferEarnContent;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
+use App\Exports\RefersExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
@@ -131,6 +133,26 @@ public function update_content(Request $request, $id=null){
    } else {
        return response()->json(['status' => false, 'error_code' => 201, 'message' => 'Error while updating status']);
    }
+}
+
+public function export(Request $request)
+{
+    //  $users = User::all();
+        $users = User::withcount('user_referral')->with('refers')->get()
+       ->each(function($users){
+              $users->purchase = ReferAndEarnUsed::where(['referral_id'=>$users->id,'used_for'=>'plan_purchase'])->count(); 
+              $planPurchase = ReferAndEarn::select('plan_purchase_referral')->first(); 
+              $users->plan_referral = $planPurchase['plan_purchase_referral'];  
+              $users->plan_purchase_total = $users->purchase*$users->plan_referral;
+     
+         $users->registration = ReferAndEarnUsed::where(['referral_id'=>$users->id,'used_for'=>'registration'])->count();
+         $registerReferral = ReferAndEarn::select('register_referral')->first();  
+       $users->register_referral = $registerReferral['register_referral'];   
+        $users->registration_total = $users->registration* $users->register_referral;
+        $users->grand_total = $users->registration_total+$users->plan_purchase_total;
+});
+
+    return Excel::download(new RefersExport($users), 'refers.xlsx');
 }
 
 }

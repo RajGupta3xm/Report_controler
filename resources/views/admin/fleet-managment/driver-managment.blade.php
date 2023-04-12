@@ -38,6 +38,7 @@
                                 <thead>
                                 <tr>
                                     <th>
+                                      
                                         user Id 
                                     </th>
                                     <th>
@@ -117,7 +118,10 @@
 
                                             </td>
                                             <td>{{$order->status??null}}</td>
-                                            <td><a class="map_pin" href="javscript:;"><i class="far fa-file"></i></a></td>
+                                            <td>
+                                            <a class="map_pin"  data-container=".view_modal"   data-toggle="modal" data-target="#contact_modal{{$order->id}}" href="javscript:;"><i class="far fa-file"></i></a>
+                                                <!-- <a class="map_pin" href="javscript:;" data-toggle="modal" data-target="#myModal"><i class="far fa-file"></i></a> -->
+                                            </td>
                                           <!-- Map -->
                                          @php 
                                          $admin_id = App\Models\StaffMembers::where('id',$driver->staff_member_id)->first();
@@ -129,6 +133,30 @@
                                             <td>Delivery to Neighbour 45645454</td>
                                         </tr>
                                         </tbody>
+                                          <!-- model -->
+                   <div class="modal fade account_model" id="contact_modal{{$order->id}}" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel"><div class="modal-dialog modal-dialog-centered modal-lg" role="document" >
+                      <div class="modal-content " style="width:135%">
+                          <form id="queryForm_<?=$order->id?>"  >
+                            @csrf
+                              <input name="_token" type="hidden" value="apx5h5sBuUEVxY3XmUn2gfJu2iz145ls84Uht2xQ">
+                               <div class="modal-header">
+                                   <h4 class="modal-title">Edit Content </h4>
+                                </div>
+                                <div class="modal-body">
+                                   <div class="form-group">
+                                      <input  id="input_id"  type="hidden" name="order_id" value="{{$order->id}}">
+                                       <label for="account_id">Remark</label>
+                                        <textarea type="text"   rows="4" id="privacy" name="reply" class="form-control mt-200" style="height: 140px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                 <button type="button" onclick="sendReply(this,<?= $order->id ?>)" class="btn btn-primary">Save</button>
+                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                               </div>
+                          </form>
+                        </div>
+                   </div><!-- /.modal-dialog --></div> 
+                   <!-- end model -->
                                 @endforeach
                                 @endif
                             </table>
@@ -141,6 +169,7 @@
                     </div> -->
                 </div>
             </div>
+        
             @endforeach
         </div>
     </div>
@@ -156,7 +185,7 @@
                 <a href="javscript:;" class="comman_btn yellow-btn">Print</a>
             </div>
             <div class="col-auto">
-                <a href="javscript:;" class="comman_btn">Export Excel</a>
+            <a href="{{url('admin/export/driver_list')}}"  class="comman_btn">Export to Excel</a>
             </div>
         </div>
     </div>
@@ -171,6 +200,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ></script>
+
 <script type="text/javascript"
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMN2qx9sNSiaYyJkSFb6vSRI83oLHPIkg&libraries=places&callback=initialize">
   </script>
@@ -183,7 +214,7 @@ var marker;
 // In your JavaScript file
 function updateDriverLocation(obj,admin_id) {
     var id = admin_id;
-alert(id);
+
   $.ajax({
     url  : "<?= url('admin/drivers/location/') ?>/" + id,
     type: 'GET',
@@ -238,3 +269,39 @@ const marker = new google.maps.Marker({
     text-align: left;
 }
 </style>
+<script>
+  function sendReply(obj, id) {
+  alert(id)
+	if (id) {
+   
+		if (id) {
+     
+			$.ajax({
+				url: "<?= url('admin/fleet/update/') ?>/" + id,
+				type: 'post',
+				data: $("#queryForm_" + id).serialize() + '&_token=<?= csrf_token() ?>',
+
+				success: function(data) {
+					swal({
+						title: "Success!",
+						text: "Your content has been updated",
+						icon: "success",
+                  buttons: false,
+					});
+					setTimeout(function() {
+						location.reload();
+					}, 2000);
+				}
+			});
+		} else {
+			$("#error").html("Message field is required");
+		}
+	} else {
+		var data = {
+			message: "Something went wrong"
+		};
+		errorOccured(data);
+	}
+}
+</script>
+</script>

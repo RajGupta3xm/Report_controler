@@ -10,6 +10,8 @@ use Mail;
 //use App\Http\Requests\UsersRequest as StoreRequest;
 //use App\Http\Requests\UsersRequest as UpdateRequest;
 //use App\Http\Controllers\CrudOverrideController;
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProfile;
@@ -259,6 +261,22 @@ elseif($status == 'inactive'){
     $data['end_date'] = $request->input('end_date');
      $data['users'] = $user;
     return view('admin.users.user_list')->with($data);
+}
+
+public function export(Request $request)
+{
+    //  $users = User::all();
+      $users = User::join('subscriptions','users.id','=','subscriptions.user_id')
+     ->select('users.*','subscriptions.delivery_status')->orderBy('id', 'DESC')->get()
+    ->each(function($users){
+      $users->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+      ->select('orders.id','order_on_address.*')
+      ->where('orders.user_id',$users->id)
+      ->where('order_on_address.user_id',$users->id)
+      ->get();
+    });
+
+    return Excel::download(new UsersExport($users), 'users.xlsx');
 }
 
 }

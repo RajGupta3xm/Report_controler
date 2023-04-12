@@ -8,9 +8,11 @@
                      <div class="row mx-0">  
                         <div class="col-12 text-end mb-4 pe-0"> 
                            <a href="{{url('admin/draft-orders')}}" class="comman_btn yellow-btn me-2">Draft Order</a> 
-                           <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
+                           <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a>  -->
+                           <a href="{{url('admin/export/order_list')}}"  class="comman_btn">Export to Excel</a>
                             <!-- <a href="javscript:;" id="print" class="comman_btn yellow-btn me-0">Print</a>  -->
-                            <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
+                            <!-- <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" /> -->
+                            <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printUserList()">print</a>
                         </div>
                         <div class="col-12 design_outter_comman shadow">
                            <div class="row comman_header justify-content-between">
@@ -116,6 +118,13 @@
       <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 <script>
    
+</script>
+<script>
+    function printUserList() {
+        var printWindow = window.open('{{ route("orders.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
 </script>
 <script>
 function printableDiv(printableAreaDivId) {
