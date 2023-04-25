@@ -182,7 +182,7 @@
                 <button type="submit" class="comman_btn">Update</button>
             </div>
             <div class="col-auto">
-                <a href="javscript:;" class="comman_btn yellow-btn">Print</a>
+            <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printDriverList()">print</a> 
             </div>
             <div class="col-auto">
             <a href="{{url('admin/export/driver_list')}}"  class="comman_btn">Export to Excel</a>
@@ -253,10 +253,13 @@ const marker = new google.maps.Marker({
 
 
 </script>
+<script>
+    function printDriverList() {
+        var printWindow = window.open('{{ route("drivers.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
 
-
-
-
+</script>
 
 
 <style>

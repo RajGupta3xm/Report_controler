@@ -195,4 +195,15 @@ public function get_data(Request $request)
         }
      }
 
+
+public function print_promo()
+{
+
+    // retrieve the user data that you want to print
+      $users =  PromoCode::withcount('promoCodeUsed')->orderBy('id','asc')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.promoCode.print_promo', compact('users'));
+}
+
 }

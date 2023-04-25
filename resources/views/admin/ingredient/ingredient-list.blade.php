@@ -29,7 +29,7 @@
                                  <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
                                  <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a> -->
                                   <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>  -->
-                                  <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
+                                  <!-- <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" /> -->
                                 </div>
                             @endif
                          @if(Session::get('admin_logged_in')['type']=='1')
@@ -38,7 +38,7 @@
                                  <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="comman_btn me-2">Export Excel</a> 
                                  <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1" class="comman_btn me-2">Import Excel</a>  -->
                                  <!-- <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> -->
-                                 <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" />
+                                 <!-- <input type="button" class="comman_btn yellow-btn me-0" onclick="printableDiv('printableArea')" value="print" /> -->
                                  </div>
                             @endif
                             @endif
@@ -270,32 +270,32 @@
                                                                 <h2>Add New Group</h2>
                                                             </div>
                                                         </div>
-                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between needs-validation" novalidate  method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
+                                                        <form class="form-design py-4 px-3 help-support-form row align-items-end justify-content-between "   method="POST" id="addForm2" enctype="multipart/form-data" action="{{url('admin/group/submit')}}">
                                                             @csrf
                                                             <div class="form-group position-relative mb-0 col"> 
                                                                 <label for="validationCustom01">Group Name (En)</label>
                                                                  <input type="text" class="form-control validate" value="" name="group" maxlength="20" id="validationCustom01" required>
-                                                             <!-- <p class="text-danger m-0 error text-small" id="groupError"></p>  -->
-                                                             <div class="invalid-feedback error text-small">
+                                                             <p class="text-danger m-0 error text-small" id="groupError"></p> 
+                                                             <!-- <div class="invalid-feedback error text-small">
                                                                   Please choose a group name.
-                                                              </div>
+                                                              </div> -->
                                                         </div>
                                                             <div class="form-group position-relative mb-0 col"> 
                                                                 <label for="validationCustom01">Group Name (Ar)</label>
                                                                  <input type="text" class="form-control validate" value="" name="group_ar" id="validationCustom01" maxlength="20" required>
-                                                                 <!-- <p class="text-danger m-0 error text-small" id="group_arError"></p> -->
-                                                                 <div class="invalid-feedback error text-small">
+                                                                 <p class="text-danger m-0 error text-small" id="group_arError"></p>
+                                                                 <!-- <div class="invalid-feedback error text-small">
                                                                   Please choose a group name_ar.
-                                                              </div>
+                                                              </div> -->
                                                             </div>
                                                             <div class="form-group mb-0 col choose_file position-relative">
                                                                 <span>Upload Image</span>
-                                                                <label for="validationCustom01"><i class="fal fa-camera me-1"></i>Choose File</label>
-                                                                <input type="file" class="form-control validate" value="" name="images1" id="validationCustom01" accept="image/*" required>
-                                                                <!-- <p class="text-danger m-0 error text-small" id="images1Error"></p> -->
-                                                                <div class="invalid-feedback error text-small">
+                                                                <label for="upload_video"><i class="fal fa-camera me-1"></i>Choose File</label>
+                                                                <input type="file" class="form-control " value="" name="images1" id="upload_video" accept="image/*" >
+                                                                <p class="text-danger m-0 error text-small" id="images1Error"></p>
+                                                                <!-- <div class="invalid-feedback error text-small">
                                                                   Please choose a image.
-                                                              </div>
+                                                              </div> -->
                                                             </div>
                                                             <div class="form-group mb-0 col-auto"> <button type="submit" onclick="validate2(this)" class="comman_btn">Save</button> </div>
                                                         </form>
@@ -642,6 +642,7 @@
                                   <div class="col-auto">
                                   <a href="{{url('admin/export/unit_list')}}"  class="comman_btn">Export to Excel</a>
                                   <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1111" class="comman_btn me-2">Import Excel</a>
+                                  <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printUnitList()">print</a>
                                  </div>
                                   <!-- <div class="col-3">
                                     <form class="form-design" action="">
@@ -1103,6 +1104,13 @@ function printableDiv(printableAreaDivId) {
     }
 
 </script>
+<script>
+    function printUnitList() {
+        var printWindow = window.open('{{ route("units.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
 @endsection
 
 <script>
@@ -1354,7 +1362,9 @@ if (flag) {
                                 text : "Ingredient has been deleted \n Click OK to refresh the page",
                                 icon : "success",
                             }).then(function() {
-                                location.reload();
+                                $('#example2').load(document.URL +  ' #example2');
+                               
+                             
                             });
                         },
                         error : function(){
@@ -1442,7 +1452,9 @@ if (flag) {
                                 text : "Category has been deleted \n Click OK to refresh the page",
                                 icon : "success",
                             }).then(function() {
-                                location.reload();
+                                $('#example4').load(document.URL +  ' #example4');
+                               
+                             
                             });
                         },
                         error : function(){
@@ -1804,8 +1816,10 @@ if (flag) {
                                 title: "Success!",
                                 text : "Unit has been deleted \n Click OK to refresh the page",
                                 icon : "success",
-                            // }).then(function() {
-                            //     location.reload();
+                            }).then(function() {
+                                $('#example5').load(document.URL +  ' #example5');
+                               
+                             
                             });
                         },
                         error : function(){

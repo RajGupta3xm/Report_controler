@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration {
             $table->enum('is_otp_verified',['0','1'])->default('0')->comment("1=verified");
             $table->timestamp('mobile_verified_at')->nullable();
             $table->rememberToken();
+            $table->string('lang')->nullable();
             $table->enum('status',['0','1','2'])->default('0')->comment("0=inactive,1=active,2=blocked	");
             $table->timestamps();
         });

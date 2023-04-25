@@ -486,7 +486,7 @@
                               </div>  -->
                               <div class="col-auto d-flex align-items-center">
                               <a href="<?= url('admin/staff-management') ?>" class="comman_btn me-2">Reset</a>
-                                 <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a> 
+                              <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printStaffList()">print</a> 
                                  <div class="dropdown more_filters">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                        More Filters 
@@ -1023,6 +1023,13 @@
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>
       <script src="assets/js/main.js"></script>
+      <script>
+    function printStaffList() {
+        var printWindow = window.open('{{ route("staffs.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
    <script>
       jQuery(document).ready(function($) {
     $("#loadStaffData").on('change', function() {

@@ -497,4 +497,13 @@ public function print_category()
     return view('admin.ingredient.print_category', compact('users'));
 }
 
+public function print_unit()
+{
+    // retrieve the user data that you want to print
+     $users =  Unit::select('*')->orderBy('id','desc')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.ingredient.print_unit', compact('users'));
+}
+
 }

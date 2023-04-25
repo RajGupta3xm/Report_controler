@@ -388,5 +388,14 @@ public function filterStaffGroupData(Request $request){
  }
 }
 
+public function print_staff()
+{
+    // retrieve the user data that you want to print
+     $users =  StaffMembers::with('group','admin')->select('*')->orderBy('id','desc')->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.staffGroup.print_staff', compact('users'));
+}
+
 
 }

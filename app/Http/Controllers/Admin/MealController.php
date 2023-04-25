@@ -1291,4 +1291,24 @@ public function export(Request $request)
     return Excel::download(new MealsExport($users), 'meals.xlsx');
 }
 
+public function print_meal()
+{
+    // retrieve the user data that you want to print
+     $users = Meal::select('id','name','image','status')->orderBy('id','desc')->get()
+     ->each(function($users){
+           $users->meal_group = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+              ->select('meal_schedules.name')
+              ->where('meal_group_schedule.meal_id',$users->id)
+              ->get();
+              $users->diet_plan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+              ->select('diet_plan_types.name')
+              ->where('meal_diet_plan.meal_id',$users->id)
+              ->get();
+            $users->rating = MealRating::select(DB::raw('round(AVG(rating),1) as rating'))->where('meal_id',$users->id)->first();  
+     });
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.Meal.print_meal', compact('users'));
+}
+
 }

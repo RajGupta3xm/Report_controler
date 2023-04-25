@@ -211,4 +211,14 @@ public function update(Request $request, $id=null){
    }
 }
 
+public function print_driver()
+{
+    $date = "2023-04-13";
+    // retrieve the user data that you want to print
+      $users =  Order::wheredate('created_at',$date)->get();
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.fleet-managment.print_driver', compact('users'));
+}
+
 }

@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
                            $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
                             $data = [
                               "registration_ids" => $firebaseToken,
-                            //   "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bFIFEaby7fO_GmJf5ClXuwoJTy_C-ctqkjYkZjHT3nQ-Vz2O01sLpHXLyKS9mJf_EQFBQrkSs2zShPp5vkKGIZCNUKkQ9NJo1l64CfDcUMhD3p4a7G6d6J6yW0lTCFkVvK0aUkr",
+                              // "to" => "fgZEGS4FTued1OHu3qmzwt:APA91bG-uvesfhkpLaXkI1Eckj9GFOi1woPZRQKhviwNpGvTZPAJaVkf9RvXfSJuloUKaCWpdPouDb11ZJs4SbAIrbMF4IbQ_SByoRvr4H6Ad1GsmUDw8rqufqIS1WeN6nfAmHWgbFSD",
                                "notification" => [
                                  "title" => $broadCastNotifications->description,
                                  "body" =>$broadCastNotifications->description,  
@@ -126,8 +126,8 @@ class Kernel extends ConsoleKernel
                        $firebaseToken = User::where(['id'=>$switch_plans->user_id])->whereNotNull('device_token')->pluck('device_token')->all();  
                        $SERVER_API_KEY = 'AAAAbPtHfNY:APA91bGAvFfWkVSYIHvmBtptkAN9G3df3zLGyTiSZbO3nXgmdJWzadTOuS0dM2rH2MUG4-0WWpUYvr9ZwcTvAtBJzcAg1c56VYBFapL-QWdkpb0rVSrufA7yD4KgFBkeR72P5KbNzXsU';
                         $data = [
-                          "registration_ids" => $firebaseToken,
-                        //   "to" => "fiwfGvvfQTCmQY2hVHj9Yh:APA91bFIFEaby7fO_GmJf5ClXuwoJTy_C-ctqkjYkZjHT3nQ-Vz2O01sLpHXLyKS9mJf_EQFBQrkSs2zShPp5vkKGIZCNUKkQ9NJo1l64CfDcUMhD3p4a7G6d6J6yW0lTCFkVvK0aUkr",
+                          // "registration_ids" => $firebaseToken,
+                          "to" => "fgZEGS4FTued1OHu3qmzwt:APA91bG-uvesfhkpLaXkI1Eckj9GFOi1woPZRQKhviwNpGvTZPAJaVkf9RvXfSJuloUKaCWpdPouDb11ZJs4SbAIrbMF4IbQ_SByoRvr4H6Ad1GsmUDw8rqufqIS1WeN6nfAmHWgbFSD",
                            "notification" => [
                              "title" => 'For Renewal',
                              "body" =>'Renew your package before it expire on '. $switch_plans->end_date,  

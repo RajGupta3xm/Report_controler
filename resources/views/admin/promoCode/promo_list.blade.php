@@ -262,13 +262,13 @@
                                  <h2>Promo Code Management</h2>
                               </div>
                               <div class="col-4 d-flex align-items-center">
-                                 <button class="comman_btn me-3">Print</button>
-                                 <form class="form-design" action="">
+                              <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printPromoList()">print</a> 
+                                 <!-- <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name">
                                        <i class="far fa-search"></i>
                                     </div>
-                                 </form>
+                                 </form> -->
                               </div>
                            </div>
                            <form method="post" class="form-design py-4 px-3 row align-items-end justify-content-between" action="{{route('admin.user.filter')}}">
@@ -288,7 +288,7 @@
                            <div class="row">
                               <div class="col-12 comman_table_design px-0">
                                  <div class="table-responsive">
-                                    <table class="table mb-0">
+                                    <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
                                            <th>
@@ -322,14 +322,14 @@
                                        <tbody>
                                         @foreach($promoCode as $promoCodes)
                                          <tr>
-                                           <td>
+                                           <!-- <td>
                                              <form class="table_btns d-flex align-items-center justify-content-center"> 
                                                 <div class="check_radio td_check_radio">
                                                    <input type="checkbox" checked name="table2" id="table2" class="d-none">
                                                    <label for="table2"></label>
                                                 </div>
                                              </form>
-                                           </td>
+                                           </td> -->
                                            <td>{{$promoCodes->name ?? 'N/A'}}</td>
                                            <td><img class="table_img" src="{{$promoCodes->image?$promoCodes->image:asset('assets/img/bg-img.jpg')}}" alt=""></td>
                                            <td>{{$promoCodes->discount ?? 'N/A'}}</td>
@@ -696,4 +696,11 @@ function getSubcategory(obj) {
             });
         }
         
+</script>
+<script>
+    function printPromoList() {
+        var printWindow = window.open('{{ route("promos.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
 </script>

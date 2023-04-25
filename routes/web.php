@@ -182,6 +182,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     Route::get('/ingredients/print', 'Admin\IngredientController@print_ingredient')->name('ingredients.print');
     Route::get('/groups/print', 'Admin\IngredientController@print_group')->name('groups.print');
     Route::get('/categories/print', 'Admin\IngredientController@print_category')->name('categories.print');
+    Route::get('/units/print', 'Admin\IngredientController@print_unit')->name('units.print');
 
     /*******End Ingredient Management */
 
@@ -226,6 +227,8 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
       ]);
       Route::post('/user/filterUserData','Admin\UserController@filterUserData');
       Route::get('/export/user_list', 'Admin\UserController@export')->name('users.export');
+      Route::post('/send-invoice-email','Admin\UserController@sendInvoiceEmail')->name('send.invoice');
+      Route::post('/send-invoice-previous-email','Admin\UserController@sendPreviousInvoiceEmail')->name('send.invoice');
      /*******End User Management */
 
 
@@ -255,7 +258,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
     ]);
     Route::post('/staff/filterStaffData','Admin\StaffController@filterStaffData');
     Route::post('/staffgroup/filterStaffGroupData','Admin\StaffController@filterStaffGroupData');
-
+    Route::get('/staffs/print', 'Admin\StaffController@print_staff')->name('staffs.print');
 
      /*****End Staff Management */
 
@@ -273,6 +276,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
         'uses' => 'Admin\PromoController@get_data',
         'as' => 'admin.get_subcategory.get_data'
     ]);
+    Route::get('/promos/print', 'Admin\PromoController@print_promo')->name('promos.print');
      /*******End Promo Code Management */
 
      
@@ -299,6 +303,7 @@ Route::post('homeScreen/updateBanners', 'Admin\ContentController@updateBanners')
       Route::post('/meal/meal_update/{id}','Admin\MealController@meal_update');
       Route::post('/meal/export','Admin\MealController@export')->name('meals.export');
       Route::get('/export/meal_list', 'Admin\MealController@export')->name('meal.export');
+      Route::get('/meals/print', 'Admin\MealController@print_meal')->name('meals.print');
      /*******End Meal Management */
 
         /*******Meal Plan Management */
@@ -358,6 +363,7 @@ Route::get('/orders/print', 'Admin\OrderController@print')->name('orders.print')
         'uses' => 'Admin\FleetController@update',
         'as' => 'admin.fleet.update'
     ]);
+    Route::get('/drivers/print', 'Admin\FleetController@print_driver')->name('drivers.print');
  /*******End fleet Management */
 
  /*******Notification Management */
@@ -386,6 +392,9 @@ Route::get('/orders/print', 'Admin\OrderController@print')->name('orders.print')
 
 Route::get('/report-management', 'Admin\ReportController@index');
 Route::post('/search_packing_list', 'Admin\ReportController@search_packing_list');
+Route::any('/upcomingMealCount', 'Admin\ReportController@upcomingMealCount');
+Route::any('/upcomingProcurementMealCount', 'Admin\ReportController@upcomingProcurementMealCount');
+Route::get('/download-pdf', 'Admin\ReportController@downloadPDF')->name('download-pdf');
 /*******End Report Management */
 
 

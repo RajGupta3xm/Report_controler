@@ -229,7 +229,6 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
                     .text(JSON.stringify(value))); 
 
             // $("#selUser").append('<option value='+JSON.stringify(value)+'>'+JSON.stringify(value)+'</option>' );  
-
            
         });
         console.log(JSON.stringify(value));

@@ -12,8 +12,20 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 /* Set API Lang */
-\App::setlocale(!empty(request()->header('Lang')) ? request()->header('Lang') : 'en');
+// \App::setlocale(!empty(request()->hasHeader('X-localization')) ? request()->header('X-localization') : 'en');
+
+// Route::get('greeting', 'Auth\ApiController@lang')
+//       ->middleware('localization');
+
+// Route::get('/aboutUss', function (Request $request) {
+//     \App::setlocale(!empty($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en');
+//     $lang = (($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en');
+//     User::where('id',Auth::guard('api')->id())->update(['lang'=>$lang]);
+//     // echo $lang;
+//     // die;
+// });
 
 
 Route::post('/registerUser','Auth\ApiController@register');
@@ -38,6 +50,8 @@ Route::post('insertImage', 'Auth\ApiController@insertImage');
 /********End Driver Route */
 
 Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){	
+  
+    Route::get('/setLang', 'ApiController@setLang');
 	Route::get('myProfile', 'ApiController@myProfile');
 	Route::post('/editProfile','ApiController@editProfile');
     Route::any('/homescreen/{plan_types}','ApiController@homescreen');

@@ -171,7 +171,7 @@ elseif($status == 'inactive'){
             }else{
                 
             }
-              $user_previous_plan = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+               $user_previous_plan = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
             ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
             ->join('orders','subscriptions.variant_id','=','orders.variant_id')
             ->select('orders.id as order_id','subscriptions.start_date','subscriptions.plan_id','subscription_plans.name','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.plan_price','subscriptions.id','subscriptions.status','subscriptions.user_id','subscriptions_meal_plans_variants.id as variant_id')
@@ -277,6 +277,90 @@ public function export(Request $request)
     });
 
     return Excel::download(new UsersExport($users), 'users.xlsx');
+}
+
+public function sendInvoiceEmail(Request $request)
+{
+    $userId = $request->input('user_id');
+    $user = User::find($userId);
+    if(!empty($user)){
+     $userAddress = UserAddress::where('user_id',$user->id)->where(['status'=>'active','day_selection_status'=>'active'])->first();
+     $userOrder = Order::where('user_id',$user->id)->where(['status'=>'order_placed','plan_status'=>'plan_active'])->first();
+     $userProfile = UserProfile::where('user_id',$user->id)->first();
+       $plan_detail = SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+     ->select('subscription_plans.name','subscription_plans.name_ar','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.delivery_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1')
+     ->where('subscription_plans.id',$userProfile->subscription_id)
+     ->where('subscriptions_meal_plans_variants.id',$userProfile->variant_id)
+     ->first();
+    }
+    $email = [
+      'to' => $user->email,
+      'subject' => 'Invoice',
+      'name' => $user->name,
+      'address' => $userAddress->area,
+      'orderId' => $userOrder->id,
+      'created_at' => $userOrder->created_at,
+      'planName' => $plan_detail->name,
+      'planName_ar' => $plan_detail->name_ar,
+      'plan_price' => $plan_detail->plan_price,
+      'delivery_price' => $plan_detail->delivery_price,
+      'no_days' => $plan_detail->no_days,
+      'option1' => $plan_detail->option1,
+      'country_code' => $user->country_code,
+      'email' => $user->email,
+      'mobile' => $user->mobile,
+      'message' => "You have Received a gift card of Diet-on",
+
+  ];
+     $data = ['name' => $email['name'],'country_code' => $email['country_code'], 'mobile'=>$email['mobile'],'email'=>$email['email'],'address'=>$email['address'],'orderId'=>$email['orderId'],'created_at'=>$email['created_at'],'planName'=>$email['planName'],'planName_ar'=>$email['planName_ar'],'plan_price'=>$email['plan_price'],'delivery_price'=>$email['delivery_price'],'no_days'=>$email['no_days'],'option1'=>$email['option1']];
+    Mail::send('admin.users.invoice', $data, function ($message) use ($email) {
+        $message->to($email['to'])->subject('Reply to: ' . $email['subject']);
+        $message->from('praveen.techgropse@gmail.com', 'Diet-on ');
+    });
+    
+    return response()->json(['success' => true]);
+}
+
+public function sendPreviousInvoiceEmail(Request $request)
+{
+    $userId = $request->input('user_id');
+    $user = User::find($userId);
+    if(!empty($user)){
+     $userAddress = UserAddress::where('user_id',$user->id)->where(['status'=>'active','day_selection_status'=>'active'])->first();
+     $userOrder = Order::where('user_id',$user->id)->where(['status'=>'order_placed','plan_status'=>'plan_inactive'])->first();
+     $plan_detail = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+     ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+     ->select('subscription_plans.name','subscription_plans.name_ar','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.delivery_price','subscriptions_meal_plans_variants.no_days','subscriptions_meal_plans_variants.option1')
+    ->where(['subscriptions.delivery_status'=>'terminted','subscriptions.user_id'=>$user->id])
+    ->where(['subscriptions.plan_status'=>'plan_inactive'])
+    ->first();
+    }
+    $email = [
+      'to' => $user->email,
+      'subject' => 'Invoice',
+      'name' => $user->name,
+      'address' => $userAddress->area,
+      'orderId' => $userOrder->id,
+      'created_at' => $userOrder->created_at,
+      'planName' => $plan_detail->name,
+      'planName_ar' => $plan_detail->name_ar,
+      'plan_price' => $plan_detail->plan_price,
+      'delivery_price' => $plan_detail->delivery_price,
+      'no_days' => $plan_detail->no_days,
+      'option1' => $plan_detail->option1,
+      'country_code' => $user->country_code,
+      'email' => $user->email,
+      'mobile' => $user->mobile,
+      'message' => "You have Received a gift card of Diet-on",
+
+  ];
+     $data = ['name' => $email['name'],'country_code' => $email['country_code'], 'mobile'=>$email['mobile'],'email'=>$email['email'],'address'=>$email['address'],'orderId'=>$email['orderId'],'created_at'=>$email['created_at'],'planName'=>$email['planName'],'planName_ar'=>$email['planName_ar'],'plan_price'=>$email['plan_price'],'delivery_price'=>$email['delivery_price'],'no_days'=>$email['no_days'],'option1'=>$email['option1']];
+    Mail::send('admin.users.invoice', $data, function ($message) use ($email) {
+        $message->to($email['to'])->subject('Reply to: ' . $email['subject']);
+        $message->from('praveen.techgropse@gmail.com', 'Diet-on ');
+    });
+    
+    return response()->json(['success' => true]);
 }
 
 }

@@ -12,7 +12,7 @@
                         <a href="{{url('admin/export/meal_list')}}"  class="comman_btn">Export to Excel</a>
                            <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a> -->
                            <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a> -->
-                           <a href="javscript:;" class="comman_btn me-2">Print</a>
+                           <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printMealList()">print</a>
                            <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
                         </div>
                         @endif
@@ -22,7 +22,7 @@
                         <a href="{{url('admin/export/meal_list')}}"  class="comman_btn">Export to Excel</a>
                            <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop"  class="comman_btn me-2">Export Excel</a> -->
                            <!-- <a href="javscript:;" data-bs-toggle="modal" data-bs-target="#staticBackdrop1"  class="comman_btn me-2">Import Excel</a> -->
-                           <a href="javscript:;" class="comman_btn me-2">Print</a>
+                           <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printMealList()">print</a>
                            <a href="{{url('admin/add-meal')}}" class="comman_btn yellow-btn me-2">Add Items</a>
                         </div>
                         @endif
@@ -198,6 +198,13 @@
          </div>
       </div>
       @endsection
+      <script>
+    function printMealList() {
+        var printWindow = window.open('{{ route("meals.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
       <script>
       function deleteMeal(obj, id){
             //var csrf_token=$('meta[name="csrf_token"]').attr('content');

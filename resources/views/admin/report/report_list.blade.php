@@ -125,10 +125,11 @@
                                                 </div>
                                                 <div class="col-auto d-flex">
                                                    <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
-                                                   <form class="form-design" action="">
-                                                      <div class="form-group mb-0 position-relative only_calender">
-                                                         <input type="date" class="form-control" placeholder="Search Recent Orders" name="name" id="name"> 
-                                                      </div>
+                                                   <form class="form-design" method="POST"   enctype="multipart/form-data" action="{{url('admin/upcomingMealCount')}}">
+                                                     @csrf
+                                                     <div class="form-group mb-0 position-relative only_calender">
+                                                        <input type="date" name="start_date" id="form1"   class="form-control" placeholder="Search Recent Orders" > 
+                                                     </div>
                                                    </form>
                                                 </div>
                                              </div> 
@@ -157,18 +158,19 @@
                                                         
                                                             <tr>
                                                                <td>
-                                                                  <a class="pdf_icon" href="javascript:;"><i class="fas fa-file-pdf"></i></a>
+                                                               <!-- <a href="{{ route('download-pdf') }}" class="btn btn-primary">Download PDF</a> -->
+                                                                  <a class="pdf_icon" href="{{ route('download-pdf') }}"><i class="fas fa-file-pdf"></i></a>
                                                                </td>
                                                                <td>{{$getSubscriptions->name}}</td>
                                                                <td>{{$getSubscriptions->dietPlan['name']}}</td>
                                                                <td>{{$getSubscriptions->MealSchedule['name']}}</td>
                                                                <td>{{$getSubscriptions->department['name']}}</td>
-                                                               <td>{{$getSubscriptions->xs}}</td>
-                                                               <td>{{$getSubscriptions->s}}</td>
-                                                               <td>{{$getSubscriptions->medium}}</td>
-                                                               <td>{{$getSubscriptions->l}}</td>
-                                                               <td>{{$getSubscriptions->xl}}</td>
-                                                               <td>{{$getSubscriptions->add}}</td>
+                                                               <td>{{$getSubscriptions->xs+$countUserCaloriexs}}</td>
+                                                               <td>{{$getSubscriptions->s+$countUserCalorieS}}</td>
+                                                               <td>{{$getSubscriptions->medium+$countUserCalorieMedium}}</td>
+                                                               <td>{{$getSubscriptions->l+$countUserCaloriel}}</td>
+                                                               <td>{{$getSubscriptions->xl+$countUserCaloriexl}}</td>
+                                                               <td>{{$getSubscriptions->xs+$countUserCaloriexs+$getSubscriptions->s+$countUserCalorieS+$getSubscriptions->medium+$countUserCalorieMedium+$getSubscriptions->l+$countUserCaloriel+$getSubscriptions->xl+$countUserCaloriexl}}</td>
                                                             </tr>
                                                             @endforeach
                                                             <!-- <tr>
@@ -274,11 +276,12 @@
                                                    <span class="selected_date">{{\Carbon\Carbon::parse($fourtyHourDates)->format('d/m/Y')}}</span>
                                                 </div>
                                                 <div class="col-auto d-flex">
-                                                   <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
-                                                   <form class="form-design" action="">
-                                                      <div class="form-group mb-0 position-relative only_calender">
-                                                         <input type="date" class="form-control" placeholder="Search Recent Orders" name="name" id="name"> 
-                                                      </div>
+                                                <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printMealCountList()">print</a> 
+                                                   <form class="form-design" method="POST"   enctype="multipart/form-data" action="{{url('admin/upcomingProcurementMealCount')}}">
+                                                     @csrf
+                                                     <div class="form-group mb-0 position-relative only_calender">
+                                                        <input type="date" name="procurement_start_date" id="form11"   class="form-control" placeholder="Search Recent Orders" > 
+                                                     </div>
                                                    </form>
                                                 </div>
                                              </div> 
@@ -443,7 +446,23 @@
       <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
       <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script>
       <script src="{{asset('assets/js/main.js')}}"></script>
-   
+      <script>
+
+         var select = document.getElementById('form1');
+      select.onchange = function(){
+      this.form.submit();
+     };
+
+</script>
+<script>
+    
+    var select = document.getElementById('form11');
+ select.onchange = function(){
+ this.form.submit();
+};
+
+
+</script>
    <script>
    $(document).ready(function(){
    $('#searchPackingList').on('click',function(){

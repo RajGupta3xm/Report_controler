@@ -26,6 +26,7 @@ class User extends Authenticatable {
         'is_otp_verified',
         'mobile_verified_at',
         'push_notification',
+        'lang',
         'status',
     ];
     protected $primaryKey = 'id';

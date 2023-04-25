@@ -206,7 +206,7 @@ class OrderController extends Controller {
            $data['user_details'] = $user_detail;
             $data['userCalorieTargets'] = $UserGainCalorie;
 
-          $date = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
+           $date = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
          //  $date = Carbon::now();
         //   for ($i = 0; $i < $costs->no_days; $i++) {
         //        $alldate = $date->addDay()->format('y-m-d');
@@ -220,7 +220,7 @@ class OrderController extends Controller {
         // $dates = '2023-02-21';
         $dates = [];
         for ($i = 0; $i < $costs->no_days; $i++) {
-             $datess = $date->addDay()->format('Y-m-d');
+              $datess = $date->addDays()->format('Y-m-d');
             $dates[] = DB::table('subscription_meal_plan_variant_default_meal')->select('date')->where('is_default','1')->where(['meal_plan_id'=>$getUserSubscriptionId->subscription_id])->where('date',$datess)->groupBy('date')->get()
             ->each(function($dates)use($id){
                

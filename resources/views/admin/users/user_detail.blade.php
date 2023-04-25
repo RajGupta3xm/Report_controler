@@ -232,7 +232,9 @@
                                                              <a class="comman_btn table_viewbtn" href="{{url('admin/order-details/'.base64_encode($user_current_plan['user_id']))}}">View</a>
                                                              </td>
                                                              <td>
-                                                               <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                           
+                                                             <button type="button"  onclick="sendMail(this,'{{$user_current_plan['user_id']}}');" name="submit-form"   class="comman_btn table_viewbtn">Send</button>
+                                                               <!-- <a class="comman_btn table_viewbtn" href="javscript:;">Send</a> -->
                                                              </td>
                                                              @else
                                                           <tr>
@@ -300,7 +302,7 @@
                                                              <a class="comman_btn table_viewbtn" href="{{url('admin/previous-order-details',['id' => $user_previous_plans['user_id'] ,'plan_id' => $user_previous_plans['plan_id'],'variant_id' => $user_previous_plans['variant_id']] )}}">View</a>
                                                              </td>
                                                              <td>
-                                                               <a class="comman_btn table_viewbtn" href="javscript:;">Send</a>
+                                                             <button type="button"  onclick="sendPreviousMail(this,'{{$user_previous_plans['user_id']}}');" name="submit-form"   class="comman_btn table_viewbtn">Send</button>
                                                              </td>
                                                            </tr> 
                                                           @endforeach
@@ -330,6 +332,48 @@
          </div>
       </div>
     @endsection
+    <script>
+function sendMail(obj,id) {
+ 
+        var userId = id; // Replace with the user ID of the recipient
+        $.ajax({
+            type: 'POST',
+            url: "<?= url('admin/send-invoice-email') ?>",
+            data: 'user_id=' + userId +  '&_token=<?= csrf_token() ?>',
+            // data: {
+            //     user_id: userId
+                
+            // },
+            success: function(response) {
+                alert('Invoice email sent successfully!');
+            },
+            error: function() {
+                alert('Error sending invoice email!');
+            }
+        });
+      }
+</script>
+<script>
+function sendPreviousMail(obj,id) {
+ 
+        var userId = id; // Replace with the user ID of the recipient
+        $.ajax({
+            type: 'POST',
+            url: "<?= url('admin/send-invoice-previous-email') ?>",
+            data: 'user_id=' + userId +  '&_token=<?= csrf_token() ?>',
+            // data: {
+            //     user_id: userId
+                
+            // },
+            success: function(response) {
+                alert('Invoice email sent successfully!');
+            },
+            error: function() {
+                alert('Error sending invoice email!');
+            }
+        });
+      }
+</script>
     <script>
        function changeStatusForPreviousPlan(obj, id) {
             swal({

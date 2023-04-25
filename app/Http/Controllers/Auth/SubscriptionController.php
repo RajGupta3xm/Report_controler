@@ -506,8 +506,10 @@ class SubscriptionController extends Controller {
        
 
          $subscriptions=SubscriptionPlan::select('id')->where(['id'=> $request->subscription_plan_id])->first();
-        if(Subscription::where(['plan_id'=>$subscriptions['id'],'variant_id'=>$request->variant_id,'user_id'=>Auth::guard('api')->id()])->where(function($q){
+        if(Subscription::where(['plan_id'=>$subscriptions['id'],'variant_id'=>$request->variant_id,'user_id'=>Auth::guard('api')->id()])
+        ->where(function($q){
             $q->where('delivery_status','paused')
+            ->orWhere('delivery_status','upcoming')
             ->orWhere('delivery_status','active');
         })->first()){
            $subscription=SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
@@ -584,9 +586,25 @@ class SubscriptionController extends Controller {
              }else{
                     $subscription->PlanStatus = 'inactive';
                 }
+                $PlanDateCheck = Subscription::select('start_date')->where(['user_id' => Auth::guard('api')->id(),  'plan_id' =>  $request->subscription_plan_id, 'variant_id' => $request->variant_id,'plan_status'=>'plan_active'])
+                ->where(function($q){
+                    $q->where('delivery_status','paused')
+                    ->orWhere('delivery_status','upcoming')
+                    ->orWhere('delivery_status','active');
+                })
+                ->first();
+                if(now() < $PlanDateCheck->start_date){
+                    $subscription->plan_status = 'upcoming';
+                }else{
+                    $subscription->plan_status = 'continue';
+                }
+                $countSkip = UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$request->subscription_id,'variant_id'=>$request->variant_id])->count();
+                $swapno_of_days =  $countSkip;
+                $no_of_days_pause_plan = Subscription::select('no_of_days_pause_plan')->where(['user_id' => Auth::guard('api')->id(),  'plan_id' =>  $request->subscription_plan_id, 'variant_id' => $request->variant_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->first();
                 if($subscription->start_date){
                     if($subscription->option2 == 'withoutweekend'){
-                         $date = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                        //  $date = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                        $date = Carbon::now();
                         $weekdays = 0;
                         $weekdayss = 0;
                           for ($i = 0; $i < $subscription->no_dayss; $i++) {
@@ -601,9 +619,10 @@ class SubscriptionController extends Controller {
                                }
                           }
                         $totalDays = $weekdays+$weekdayss;
-                        $subscription->no_days = $subscription->no_dayss+$totalDays;
+                        $subscription->no_days = $subscription->no_dayss+$totalDays+$swapno_of_days+$no_of_days_pause_plan->no_of_days_pause_plan;
                         }else{
-                        $subscription->no_days = $subscription->no_dayss;
+                            
+                            $subscription->no_days = $subscription->no_dayss+$swapno_of_days+$no_of_days_pause_plan->no_of_days_pause_plan;
                         }
                     //    dd($increasingdays);
                  }
@@ -910,6 +929,7 @@ class SubscriptionController extends Controller {
        ->select('subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscription_plans.image','subscription_plans.name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price')
        ->where(['subscriptions.user_id'=>Auth::guard('api')->id()])->where(function($q){
         $q->where('subscriptions.delivery_status','paused')
+        ->orWhere('subscriptions.delivery_status','upcoming')
         ->orWhere('subscriptions.delivery_status','active');
         })
        ->where('subscriptions.variant_id',$user_detail->variant_id)
@@ -1245,6 +1265,7 @@ class SubscriptionController extends Controller {
     
             }
         }else{
+        if($request->buy_status != 'switch'){ 
      $noOfDays = SubscriptionMealPlanVariant::select('no_days','plan_price')->where(['meal_plan_id'=>$request->plan_id, 'id' => $request->variant_id,])->first();
      $dates = Carbon::createFromFormat('Y-m-d',$request->start_date);
        $date = $dates->addDays($noOfDays->no_days);
@@ -1305,6 +1326,22 @@ class SubscriptionController extends Controller {
             );
 
         }
+    }else{
+        $credit = UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        if(!empty($credit->available_credit)){
+             $totalCredit = $credit->available_credit += $request->total_amount;
+            $user3=UserProfile::updateOrCreate(
+                ['user_id' =>  Auth::guard('api')->id()],
+                [
+                    'available_credit' => $totalCredit,
+                   
+                ]
+               
+            );
+        }
+        
+
+    }
         
 
         if($request->gift_card_status == '1'){
@@ -1577,10 +1614,15 @@ public function selectStartDayCircle(){
       $meal = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
     ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
    ->select('subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscriptions.plan_id','subscriptions_meal_plans_variants.id as variant_id')
-   ->where(['subscriptions.delivery_status'=>'active','subscriptions.user_id'=>Auth::guard('api')->id()])
-   ->orWhere(['subscriptions.delivery_status'=>'paused','subscriptions.user_id'=>Auth::guard('api')->id()])
+   ->where(['subscriptions.user_id'=>Auth::guard('api')->id()])
    ->where(['subscriptions.variant_id'=>$users->variant_id])
    ->where(['subscriptions_meal_plans_variants.id'=>$users->variant_id])
+ ->where(function($q){
+    $q->where('delivery_status','paused')
+    ->orWhere('delivery_status','upcoming')
+    ->orWhere('delivery_status','active');
+})
+  
    ->first();
    if($meal){
     $dates = Carbon::createFromFormat('Y-m-d',$meal->start_date);
@@ -1618,8 +1660,7 @@ public function selectStartDayCircle(){
     }else{
         $text = 'custom';
     }
-
-   
+     
  $data=['protein'=>'21','carbs'=>'34','fat'=>'28'];
 
     $data['caloriRecommended'] = $caloriRecommended;
@@ -1636,6 +1677,14 @@ public function selectStartDayCircle(){
      $data['getMinMaxValue'] = $getMinMax;
 
    /*********end Calorie, protein, fat, carbs addition */
+   $PlanDateCheck = Subscription::select('start_date')->where(['user_id' => Auth::guard('api')->id(),  'plan_id' =>  $users->subscription_id, 'variant_id' => $users->variant_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->first();
+       if(now() < $PlanDateCheck->start_date){
+          $plan_status = 'upcoming';
+        }else{
+             $plan_status = 'continue';
+         }
+
+$data['plan_status'] = $plan_status;
 
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
@@ -1678,6 +1727,7 @@ public function getSwapMeal(Request $request) {
       ->where('subscription_meal_plan_variant_default_meal.date',$date)
       ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$schedule_id)
       ->where('meal_macro_nutrients.user_calorie',$custom_calorie)
+      ->distinct()
      ->get()->each(function($meals) {
        
      $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
@@ -1870,7 +1920,6 @@ public function apply_promo_code(Request $request){
             }
         }
 
-       
     
     });
     if ($validate->fails()) {
@@ -1885,6 +1934,7 @@ public function apply_promo_code(Request $request){
                     if ($countUser) {
                         return response()->json([
                             'status' => true,
+                            'error_code' => 201,
                              'error'=> 'This Code  is already used'
                            ]);
                     }
@@ -1893,6 +1943,7 @@ public function apply_promo_code(Request $request){
                     if($countUsers == $count_used->maximum_discount_uses){
                         return response()->json([
                             'status' => true,
+                            'error_code' => 201,
                              'error'=> 'You used your max limit'
                            ]);
                     }
@@ -1902,6 +1953,7 @@ public function apply_promo_code(Request $request){
              if($countTicket == $count_used->maximum_discount_uses){
                  return response()->json([
                     'status' => true,
+                    'error_code' => 201,
                      'error'=> 'This code is expired '
                    ]);
               }
@@ -1917,9 +1969,18 @@ public function apply_promo_code(Request $request){
         //   ];
         //   $promo = UserUsedPromoCode::create($insert);
           if(!empty($promoCodeTicket_id->discount)){
-            $promoCodeTicket_id->amount_discount = ($promoCodeTicket_id->discount/100)*$request->total_amount;
+             $amount_discount = ($promoCodeTicket_id->discount/100)*$request->total_amount;
             }else{
-             $promoCodeTicket_id->amount_discount = $promoCodeTicket_id->price;
+             $amount_discount = $promoCodeTicket_id->price;
+            }
+            if($amount_discount > $request->total_amount){
+                return response()->json([
+                    'status'=>true,
+                    'error_code' => 201,
+                    'error' => 'Amount is greater than meal package'
+                ]);
+            }else{
+                $promoCodeTicket_id->amount_discount = $amount_discount;
             }
         if($promoCodeTicket_id){
          $response = new \Lib\PopulateResponse($promoCodeTicket_id);
@@ -1979,7 +2040,7 @@ public function myMeals(Request $request) {
     $custom_calorie = $request->custom_calorie;
      $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
   
-    $start_date = Subscription::select('start_date','end_date','delivery_status')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id,'delivery_status'=>'active','plan_status'=>'plan_active'])->where('user_id',Auth::guard('api')->id())->first();
+     $start_date = Subscription::select('start_date','end_date','delivery_status','no_of_days_pause_plan')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('delivery_status','!=','terminted')->where('plan_status','!=','plan_inactive')->where('user_id',Auth::guard('api')->id())->first();
      $option22 = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$checkPlan->subscription_id,'id'=>$checkPlan->variant_id])->first();
     $getStartDate = Carbon::createFromFormat('Y-m-d',$start_date->start_date);
    $getEndDate = Carbon::createFromFormat('Y-m-d',$start_date->end_date);
@@ -2012,9 +2073,9 @@ public function myMeals(Request $request) {
             //   dd($f);
             //   die;
              $totalDays = $weekdays+$weekdayss;
-             $no_of_days = $option22->no_days+$totalDays+$swapno_of_days;
+             $no_of_days = $option22->no_days+$totalDays+$swapno_of_days+$start_date->no_of_days_pause_plan;
             }else{
-            $no_of_days = $option22->no_days+$swapno_of_days;
+            $no_of_days = $option22->no_days+$swapno_of_days+$start_date->no_of_days_pause_plan;
        }
 
     if(UserChangeDeliveryLocation::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('change_location_for_date',$dates)->exists()){
@@ -2283,6 +2344,13 @@ return $this->populateResponse();
 
 public function changeDeliveryTime(Request $request){
     
+    $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+    if($fourtyHourDate >= $request->skip_date){ 
+        return response()->json([
+            'status' => true,
+             'error'=> 'You can not skip delivery before  48 hours '
+           ]);
+    }else{
     $insert=UserSkipTimeSlot::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'skip_date' => $request->skip_date,],
@@ -2295,7 +2363,7 @@ public function changeDeliveryTime(Request $request){
             'skip_date' => $request->skip_date,
         ]
     );
-   
+  }
     
     $this->status = true; 
     $this->message = trans('messages.time_slot_change');
@@ -2359,7 +2427,14 @@ public function userUnskipDelivery(Request $request){
 }
 
 public function userChangeDeliveryLocation(Request $request){
-    
+    $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+    if($fourtyHourDate >= $request->change_location_for_date){ 
+        return response()->json([
+            'status' => true,
+            'error_code' => 201,
+             'error'=> 'You can not skip address before  48 hours '
+           ]);
+    }else{
     $insert=UserChangeDeliveryLocation::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
         'change_location_for_date' => $request->change_location_for_date,],
@@ -2371,7 +2446,7 @@ public function userChangeDeliveryLocation(Request $request){
             'change_location_for_date' => $request->change_location_for_date,
         ]
     );
-   
+}
     
     $this->status = true; 
     $this->message = trans('messages.change_location');
@@ -2394,7 +2469,12 @@ public function switchPlan(Request $request){
   else{
     // Subscription::where('user_id',Auth::guard('api')->id())->where(['delivery_status'=>'upcoming'])->update(['delivery_status'=>'terminted','plan_status'=>'plan_inactive']);
     $getWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2')->where(['meal_plan_id'=>$request->new_subscription_plan_id,'id'=>$request->new_variant_id])->first();
+    $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
+   if(now()>$oldDate->start_date){
     $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+ }else{
+    $fourtyHourDate= $oldDate->start_date;
+ }
       $getStartDate = Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->where(['delivery_status'=>'active'])->first();
     $data =Subscription::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
@@ -2426,7 +2506,11 @@ public function switchPlan(Request $request){
                     $perDayRequiredCreditForOldPlan = $oldNumberOfDays->plan_price/$oldNumberOfDays->no_days;
               if($perDayRequiredCreditForOldPlan <= $perDayRequiredCredit){ 
                $oldDate = Subscription::select('start_date')->where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$request->subscription_plan_id,'variant_id' => $request->variant_id])->first();
-                 $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+               if(now()>$oldDate->start_date){
+                $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
+             }else{
+                $fourtyHourDate= $oldDate->start_date;
+             }
                    $used_plan = carbon::parse($oldDate->start_date)->diffInDays($fourtyHourDate);
 
                    $remainingDayFromOldPlan =  $oldNumberOfDays->no_days-$used_plan;
@@ -2977,10 +3061,10 @@ public function savedAddressListing(Request $request) {
             if($request->toggle_request == '1'){
             if($getSubscriptionId->available_credit >=  $getNoOfDays->plan_price ){
                 $dates = Carbon::createFromFormat('Y-m-d',$remainingDays->start_date);
-                 $date = $dates->addDays($getNoOfDays->no_days);
-                  $expireDateOnedayExtra = $date->addDays(1);
+                  $date = $dates->addDays($getNoOfDays->no_days);
+                  $expireDateOnedayExtra = $date->addDays(2);
                 $newStartDate = date('Y-m-d',strtotime($expireDateOnedayExtra));
-
+                $dateend = $dates->addDays($getNoOfDays->no_days);
                 $data =Subscription::updateOrCreate(
                     ['user_id' =>  Auth::guard('api')->id(), 'plan_id' => $getSubscriptionId->subscription_id,  'variant_id' => $getSubscriptionId->variant_id, 'delivery_status'=> 'upcoming'],
                   
@@ -2989,6 +3073,7 @@ public function savedAddressListing(Request $request) {
                        'plan_id' => $getSubscriptionId->subscription_id,
                        'variant_id' => $getSubscriptionId->variant_id,
                        'start_date'=> $newStartDate,
+                       'end_date'=> \Carbon\Carbbon::parse($dateend)->format('Y-m-d'),
                        'is_weekend'=> $getNoOfDays->option2,
                        'delivery_status'=> 'upcoming',
                        'plan_status'=> 'plan_active',
@@ -3002,9 +3087,9 @@ public function savedAddressListing(Request $request) {
                    ]);
             }else{
               $date = $dates->addDays($getNoOfDays->no_days);
-             $expireDateOnedayExtra = $date->addDays(1);
+             $expireDateOnedayExtra = $date->addDays(2);
              $newStartDate = date('Y-m-d',strtotime($expireDateOnedayExtra));
-
+             $dateend = $dates->addDays($getNoOfDays->no_days);
              //  $updatePlanStatus = Subscription::where(['user_id' => Auth::guard('api')->id(),  'plan_id' => $getSubscriptionId->subscription_id, 'variant_id' => $getSubscriptionId->variant_id,])->update(['plan_status'=>'plan_inactive','delivery_status'=>'terminted']);
              $data =Subscription::Create(
                
@@ -3013,6 +3098,7 @@ public function savedAddressListing(Request $request) {
                     'plan_id' => $getSubscriptionId->subscription_id,
                     'variant_id' => $getSubscriptionId->variant_id,
                     'start_date'=> $newStartDate,
+                    'end_date'=> \Carbon\Carbbon::parse($dateend)->format('Y-m-d'),
                     'is_weekend'=> $getNoOfDays->option2,
                     'delivery_status'=> 'upcoming',
                     'plan_status'=> 'plan_active',
@@ -3117,7 +3203,9 @@ public function savedAddressListing(Request $request) {
       ->where('subscription_meal_plan_variant_default_meal.date',$date)
       ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$schedule_id)
       ->where('meal_macro_nutrients.user_calorie',$custom_calorie)
-     ->get()->each(function($meals) {
+      ->distinct()
+     ->get()
+     ->each(function($meals){
        
      $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
      ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
