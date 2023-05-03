@@ -34,7 +34,7 @@
                            </a>
                         </div>
                         <div class="col d-flex align-items-stretch">
-                           <a href="{{url('admin/order-management')}}" class="row dashboard_box box_design me-3 w-100">
+                         <a href="{{url('admin/order-management')}}" class="row dashboard_box box_design me-3 w-100">
                               <div class="col-auto px-0">
                                  <span class="dashboard_icon"><i class="fal fa-box-full"></i></span>
                               </div>

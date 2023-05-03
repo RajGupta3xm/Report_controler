@@ -237,7 +237,12 @@ class ApiController extends Controller {
                 $newUser->user_id = $newUser->id;
                 $response = new \Lib\PopulateResponse($newUser);
                 $this->data = $response->apiResponse();
-                $this->message = trans('messages.register');
+                $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en';
+                if($local == 'ar'){
+                $this->message = trans('messages.register_ar');
+                }else{
+                    $this->message = trans('messages.register');
+                }
             } else {
                 $this->status_code = 202;
                 $this->message = trans('messages.server_error');
@@ -261,7 +266,12 @@ class ApiController extends Controller {
         $validate->after(function ($validate) use ($request) {
             $userOtp = Otp::where(['user_id' => $request['user_id'], 'otp' => $request['otp']])->get()->first();
             if (!$userOtp) {
+                $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en';
+                if($local == 'ar'){
                 $validate->errors()->add('otp', trans('messages.invalid_otp'));
+                }else{
+                    $validate->errors()->add('otp', trans('messages.invalid_otp'));
+                }
             }
         });
         if ($validate->fails()) {
@@ -332,8 +342,12 @@ class ApiController extends Controller {
           
             $response = new \Lib\PopulateResponse($user);
             $this->data = $response->apiResponse();
-            
-            $this->message = trans('messages.otp_verified');
+             $local = ($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en';
+            if($local == 'ar'){
+            $this->message = trans('messages.otp_verified_ar');
+            }else{
+                $this->message = trans('messages.otp_verified');
+            }
             $this->status = true;
         }
         return $this->populateResponse();
@@ -354,11 +368,16 @@ class ApiController extends Controller {
  
              // SMS getway & SMTP integration
              $data = [];
+            
              $response = new \Lib\PopulateResponse($data);
  
              $this->data = $response->apiResponse();
              $this->status   = true;
+             if($user->lang == 'ar'){
+                $this->message  = 'إعادة إرسال OTP بنجاح.';
+            }else{
              $this->message  = 'OTP resend successfully.';
+            }
          }
          return $this->populateResponse(); 
      }
@@ -375,15 +394,23 @@ class ApiController extends Controller {
 
         $validate->after(function ($validate) use ($request) {
             $this->status_code = 201;
-            $user = User::where(['country_code' => $request->country_code, 'mobile' => $request->mobile])->get()->first();
+             $user = User::where(['country_code' => $request->country_code, 'mobile' => $request->mobile])->get()->first();
             if ($user) {
                 if ($user->status == 2) {
-                    $this->message = trans('messages.account_blocked');
+                    if($request['X-localization'] == 'ar'){
+                        $this->message = trans('messages.account_blocked_ar');
+                        }else{
+                            $this->message = trans('messages.account_blocked');
+                        }
                     $this->status_code = 203;
                     $validate->errors()->add('mobile', $this->message);
                 }
             } else {
-                $this->message = trans('messages.not_registered');
+                if($request['X-localization'] == 'ar'){
+                    $this->message = trans('messages.not_registered_ar');
+                    }else{
+                        $this->message = trans('messages.not_registered');
+                    }
                 $this->status_code = 201;
                 $validate->errors()->add('mobile', $this->message);
             }
@@ -423,7 +450,11 @@ class ApiController extends Controller {
             $user->user_id = $user->id;
             
             // $data = $user;
-            $this->message = trans('messages.login_success');
+            if($request['X-localization'] == 'ar'){
+            $this->message = trans('messages.login_success_ar');
+             }else{
+                $this->message = trans('messages.login_success');
+             }
             $this->status_code = 200;
             
             $response = new \Lib\PopulateResponse($data);
@@ -562,41 +593,71 @@ class ApiController extends Controller {
         return $result;
     }
 
-    public function aboutUs()
+    public function aboutUs(Request $request)
     {
-        $content = $this->content->fetchtremsData('About Us');
+        //  $content = $this->content->fetchtremsData('About Us');
+        $lang = (($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en');
+        if($lang == 'ar'){ 
+            $content =  Content::select('content_ar as content')->where('name','About Us')->first();
+        }else{
+            $content = Content::select('content')->where('name','About Us')->first();
+        }
 
         $response = new \Lib\PopulateResponse(compact('content'));
 
         $this->data = $response->apiResponse();
         $this->status   = true;
+        if($lang == 'ar'){ 
+        $this->message  = 'عنا المحتوى';
+        }else{
         $this->message  = 'about us content';
+        }
         
         return $this->populateResponse();     
     }
 
     public function privacyPolicy()
     {
-        $content = $this->content->fetchtremsData('Privacy Policy');
+        // $content = $this->content->fetchtremsData('Privacy Policy');
+        $lang = (($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en');
+        if($lang == 'ar'){ 
+            $content =  Content::select('name','content_ar as content')->where('name','Privacy Policy')->first();
+        }else{
+            $content = Content::select('name','content')->where('name','Privacy Policy')->first();
+        }
 
         $response = new \Lib\PopulateResponse(compact('content'));
 
         $this->data = $response->apiResponse();
         $this->status   = true;
-        $this->message  = 'privacy policy content';
+         if($lang == 'ar'){ 
+            $this->message  = 'محتوى سياسة الخصوصية';
+            }else{
+            $this->message  = 'privacy policy content';
+            }
         
         return $this->populateResponse();     
     }
 
     public function termsConditions()
     {
-        $content = $this->content->fetchtremsData('Terms and Conditions');
+        // $content = $this->content->fetchtremsData('Terms and Conditions');
+        $lang = (($request->hasHeader('X-localization')) ? $request->header('X-localization') : 'en');
+        if($lang == 'ar'){ 
+            $content =  Content::select('name','content_ar as content')->where('name','Terms and Conditions')->first();
+        }else{
+            $content = Content::select('name','content')->where('name','Terms and Conditions')->first();
+        }
 
         $response = new \Lib\PopulateResponse(compact('content'));
 
         $this->data = $response->apiResponse();
         $this->status   = true;
-        $this->message  = 'content';
+        if($lang == 'ar'){ 
+            $this->message  = 'محتوى';
+            }else{
+            $this->message  = 'content';
+            }
         
         return $this->populateResponse();     
     }
@@ -604,12 +665,27 @@ class ApiController extends Controller {
     public function myProfile() {
         $user = User::select('id as user_id', 'users.*')->where('id', Auth::guard('api')->id())->first(); 
          $userProfile = UserProfile::where('user_id', Auth::guard('api')->id())->first();
-         $userPlan = UserProfile::join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
-         ->select('subscription_plans.name')
-         ->where('user_profile.user_id', Auth::guard('api')->id())->first();
-          $userDislike = UserDislike::join('dislike_group','user_dilikes.item_id','=','dislike_group.id')
-          ->select('dislike_group.name')
-         ->where('user_dilikes.user_id', Auth::guard('api')->id())->limit(2)->get();
+         $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+         if($language->lang == 'ar'){
+            $userPlan = UserProfile::join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+            ->select('subscription_plans.name_ar as name')
+            ->where('user_profile.user_id', Auth::guard('api')->id())->first();
+            }else{
+                $userPlan = UserProfile::join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+            ->select('subscription_plans.name')
+            ->where('user_profile.user_id', Auth::guard('api')->id())->first();
+    
+            }
+         if($language->lang == 'ar'){
+            $userDislike = UserDislike::join('dislike_group','user_dilikes.item_id','=','dislike_group.id')
+            ->select('dislike_group.name_ar as name')
+           ->where('user_dilikes.user_id', Auth::guard('api')->id())->limit(2)->get();
+            }else{
+               $userDislike = UserDislike::join('dislike_group','user_dilikes.item_id','=','dislike_group.id')
+            ->select('dislike_group.name')
+           ->where('user_dilikes.user_id', Auth::guard('api')->id())->limit(2)->get();
+   
+            }
           $userAddress = UserAddress::where('user_id',Auth::guard('api')->id())->select('address_type')
          ->where(['status'=>'active','day_selection_status'=>'active'])
          ->limit(2)->get();
@@ -638,7 +714,11 @@ class ApiController extends Controller {
         $response = new \Lib\PopulateResponse($data);
         $this->data = $response->apiResponse();
 
-        $this->message = trans('messages.my_profile');
+        if($language->lang == 'ar'){
+            $this->message = trans('messages.my_profile_ar');
+            }else{
+                $this->message = trans('messages.my_profile');
+            }
 
         return $this->populateResponse();
     }
@@ -670,7 +750,12 @@ class ApiController extends Controller {
         if($request['country_code'] && $request['mobile']){
             $mobile_number = User::where('country_code',$request['country_code'])->where('mobile',$request['mobile'])->whereNotIn('status',['0'])->where('id','!=',Auth::guard('api')->id())->first();
             if ($mobile_number) {
-                $validator->errors()->add('mobile_number', 'This number is already exist, Please choose another number');
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $validator->errors()->add('mobile_number', 'هذا الرقم موجود بالفعل ، الرجاء اختيار رقم آخر');
+                }else{
+                    $validator->errors()->add('mobile_number', 'This number is already exist, Please choose another number');
+                }
              
                 
             }
@@ -695,8 +780,10 @@ class ApiController extends Controller {
         if ($request->mobile) {
             $addUser['mobile'] = $request->mobile;
         }
-        if ($request->email) {
+        if (!empty($request->email)) {
             $addUser['email'] = $request['email'];
+        }else{
+            $addUser['email'] = '';
         }
         if ($request->image) {
             $image = $request->image;
@@ -730,9 +817,18 @@ class ApiController extends Controller {
             $data = User::select('id as user_id', 'users.*')->find(Auth::guard('api')->id());
             $response = new \Lib\PopulateResponse($data);
             $this->data = $response->apiResponse();
-            $this->message = trans('messages.update_profile_success');
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.update_profile_success_ar');
+            }else{
+                $this->message = trans('messages.update_profile_success'); 
+            }
         }else{
-            $this->message = trans('messages.update_profile_success');
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.update_profile_success_ar');
+            }else{
+                $this->message = trans('messages.update_profile_success');
+            }
         }
         $this->status = true;
     }
@@ -742,22 +838,35 @@ class ApiController extends Controller {
     public function homescreen(Request $request) {
         
         $profile=UserProfile::where('user_id',Auth::guard('api')->id())->first();
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
         if($profile){
             $flag=true;
             if($profile->fitness_scale_id == Null){
                 $flag=false;
                 $this->status_code=203;
-                $this->message = trans('messages.fitness_selection_incomplete');
+                if($language->lang == 'ar'){
+                $this->message = trans('messages.fitness_selection_incomplete_ar');
+                }else{
+                    $this->message = trans('messages.fitness_selection_incomplete');
+                }
             }
             if($profile->diet_plan_type_id == Null){
                 $flag=false;
                 $this->status_code=204;
-                $this->message = trans('messages.diet_plan_selection_incomplete');
+                if($language->lang == 'ar'){
+                $this->message = trans('messages.diet_plan_selection_incomplete_ar');
+                }else{
+                    $this->message = trans('messages.diet_plan_selection_incomplete');
+                }
             }
             if(!UserDislike::where(['user_id'=>Auth::guard('api')->id(),'status'=>'active'])->first()){
                 $flag=false;
                 $this->status_code=205;
-                $this->message = trans('messages.dislikes_selection_incomplete');
+                if($language->lang == 'ar'){
+                $this->message = trans('messages.dislikes_selection_incomplete_ar');
+                }else{
+                    $this->message = trans('messages.dislikes_selection_incomplete');
+                }
             }
             if($flag){
 
@@ -779,6 +888,16 @@ class ApiController extends Controller {
                 ->orWhere('extended_end_date','>',"'".date('Y-m-d')."'")
                 ->get();
                 // $data['plan_list']=SubscriptionPlan::where(['duration_type'=>'weekly','status'=>'active'])->get();
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $plan_type_list=DietPlanType::select('id','name_ar as name')->where(['status'=>'active'])->get()
+                ->each(function($plan_type_list){
+                    $plan_type_list->selected=false;
+                    if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'diet_plan_type_id'=>$plan_type_list->id])->first()){
+                        $plan_type_list->selected=true;
+                    }
+                });
+            }else{
                 $plan_type_list=DietPlanType::select('id','name')->where(['status'=>'active'])->get()
                 ->each(function($plan_type_list){
                     $plan_type_list->selected=false;
@@ -786,11 +905,98 @@ class ApiController extends Controller {
                         $plan_type_list->selected=true;
                     }
                 });
+
+            }
                 $data['plan_type_list'] = $plan_type_list;
                 // $data['my_plan']=new \stdClass();
                 // $data['users'] = SubscriptionPlan::all()->except($profile->subscription_id);
+                if($language->lang == 'ar'){
                 $plan_type= $request->plan_types;
-               
+                 $selectDietPlan = DietPlanType::select('diet_plan_types.name_ar as name','diet_plan_types.id')
+                ->get()
+                // ->toArray();
+                
+                ->each(function($selectDietPlan) use($plan_type,$profile) {
+                    $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+                    $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
+
+                        $deliveryDay=DeliveryDay::find($plan_type);
+                           $subscriptions=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+                          ->select('subscription_plans.id','subscription_plans.name_ar as name','subscription_plans.image','subscriptions_meal_plans_variants.id as variant_id')
+                          ->where('subscriptions_meal_plans_variants.status','active')
+                          ->where('subscriptions_meal_plans_variants.id', '!=', $profile->variant_id)
+                          ->where('subscriptions_meal_plans_variants.diet_plan_id', $selectDietPlan->id)
+                          ->where('subscriptions_meal_plans_variants.option1',$deliveryDay->type)
+                          ->where('subscriptions_meal_plans_variants.option2',$deliveryDay->including_weekend)
+                          ->where('subscriptions_meal_plans_variants.calorie',$getUerCustomCalorie->recommended)
+                          ->get();
+                      
+                        if($subscriptions){
+                            foreach($subscriptions as $subscription){
+                                $subscription->cost="0";
+                               
+                                $subscription->delivery_day_type="N/A";
+                                // $plan_type= $request->plan_types;
+                                // $plan_type=2;
+                             
+                                $subscription->meal_groups=[];
+                                if(userProfile::where(['variant_id'=>$subscription->variant_id,'subscription_id'=>$subscription->id,'user_id'=>Auth::guard('api')->id()])->exists()){
+                                    $subscription->buy_status ="buy";
+                                }elseif(userProfile::where(['variant_id'=>null,'subscription_id'=>null,'user_id'=>Auth::guard('api')->id()])->exists()){
+                                    $subscription->buy_status ="buy";
+                                }else{
+                                    $subscription->buy_status ="switch";
+                                }
+                                $userCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+                                $getUerCustomCalorie = CalorieRecommend::select('recommended')->where('id',$userCalorie->custom_result_id)->first();
+                              
+                                if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id])->get()){
+                                    if($plan_type == 1 || $plan_type == 2){
+                                        $subscription->delivery_day_type="أسبوع";
+                                    }else{
+                                        $subscription->delivery_day_type="شهر";
+                                    }
+                                        //   $deliveryDay=DeliveryDay::find($plan_type);
+
+                
+                                        if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'option1'=>$deliveryDay->type,'option2'=>$deliveryDay->including_weekend])->first()){
+                                            // if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'option2'=>$deliveryDay->including_weekend])->first()){
+                                          $costss=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id,'diet_plan_id'=>$selectDietPlan->id,'calorie'=>$getUerCustomCalorie->recommended])->get();
+                                       
+                                          foreach($costss as $costs){
+                                          
+                                          $subscription->cost=$costs['plan_price'];
+                                          $subscription->variant_name=$costs['variant_name'];
+                
+                                        $meals=[];
+                                        $meal_des=[];
+                                          $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
+                                        foreach($subscription->meal_groups as $meal){
+                                          
+                                            array_push($meal_des,$meal->meal_group->name);
+                                        }
+                                        $meal_des=count($meal_des)."باقة الوجبات (".implode(',',$meal_des).")";
+                
+                                        $subscription->description=[
+                                            "يخدم حتى $costs->serving_calorie من السعرات الحرارية $costs->calorie السعرات الحرارية الموصى بها لك.",
+                                            $deliveryDay->number_of_days." أيام أ ".$subscription->delivery_day_type,
+                                            " ".$meal_des
+                                        ];
+                                         $subscription->meal_groups='';
+                
+                                        }
+                                     }
+                                    //}
+                                
+                            }
+                            }
+                        }
+                    
+                         $selectDietPlan->meals=$subscriptions;
+                        
+                        });
+                    }else{
+                 $plan_type= $request->plan_types;
                  $selectDietPlan = DietPlanType::select('diet_plan_types.name','diet_plan_types.id')
                 ->get()
                 // ->toArray();
@@ -875,6 +1081,7 @@ class ApiController extends Controller {
                         
                         });
 
+                    }
                 $data['select_diet_plan'] = $selectDietPlan;
                 
                 $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
@@ -901,7 +1108,7 @@ class ApiController extends Controller {
                  ->each(function($meals){
                     $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
                    ->where('meal_group_schedule.meal_id', $meals->meal_id)
-                   ->select('meal_schedules.name')->first();
+                   ->select('meal_schedules.name_ar as name')->first();
                 });       
                 })->toArray(); 
             }else{
@@ -933,15 +1140,22 @@ class ApiController extends Controller {
                 $data['old_variant_id'] = $oldvariant->variant_id;
                 // echo '<pre>';print_r($category);
                 // die;
-              
-                $this->message = trans('messages.homescreen_success');
+                if($language->lang == 'ar'){
+                $this->message = trans('messages.homescreen_success_ar');
+                }else{
+                    $this->message = trans('messages.homescreen_success');
+                }
                 $response = new \Lib\PopulateResponse($data);
                 $this->data = $response->apiResponse();
             }
             
         }else{
             $this->status_code=206;
-            $this->message = trans('messages.homescreen_without_setup');
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.homescreen_without_setup_ar');
+            }else{
+                $this->message = trans('messages.homescreen_without_setup');
+            }
         }  
         $this->status = true; 
         
@@ -1025,7 +1239,12 @@ class ApiController extends Controller {
         }
      
             $this->status = true; 
-            $this->message = trans('messages.update_profile_success');
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.update_profile_success_ar');
+            }else{
+                $this->message = trans('messages.update_profile_success');
+            }
         }
         
         return $this->populateResponse();
@@ -1044,26 +1263,49 @@ class ApiController extends Controller {
         }   
         
         $this->status = true; 
-        $this->message = trans('messages.update_profile_success');
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.update_profile_success_ar');
+        }else{
+         $this->message = trans('messages.update_profile_success');  
+        }
         return $this->populateResponse();
     }
 
     public function fitnessGoals() {
-        $fitnessGoals = FitnessGoal::select('id','name')->where('status','active')->get()->each(function($fitnessGoals){
-            $fitnessGoals->selected=false;
-            if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'fitness_scale_id'=>$fitnessGoals->id])->first()){
-                $fitnessGoals->selected=true;
-            }
-        });
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+            $fitnessGoals = FitnessGoal::select('id','name_ar as name','image_ar as image')->where('status','active')->get()->each(function($fitnessGoals){
+                $fitnessGoals->selected=false;
+                if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'fitness_scale_id'=>$fitnessGoals->id])->first()){
+                    $fitnessGoals->selected=true;
+                }
+            });
+        }else{
+            $fitnessGoals = FitnessGoal::select('id','name','image')->where('status','active')->get()->each(function($fitnessGoals){
+                $fitnessGoals->selected=false;
+                if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'fitness_scale_id'=>$fitnessGoals->id])->first()){
+                    $fitnessGoals->selected=true;
+                }
+            });
+    
+        }
         $response = new \Lib\PopulateResponse($fitnessGoals);
         $this->status = true;
         $this->data = $response->apiResponse();
-        $this->message = trans('messages.fitness_goal_list');
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.fitness_goal_list_ar');
+        }else{
+            $this->message = trans('messages.fitness_goal_list');
+        }
         return $this->populateResponse();
     }
 
     public function dislikes() {
-        $category=DislikeGroup::select('id','name','image')
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $category=DislikeGroup::select('id','name_ar','image')
         // ->with('items')
         ->where('status','active')
         ->get();
@@ -1074,27 +1316,61 @@ class ApiController extends Controller {
                     $item->selected=true;
                 }
             }
+        }else{
+            $category=DislikeGroup::select('id','name','image')
+            // ->with('items')
+            ->where('status','active')
+            ->get();
+            // ->each(function($category){
+                foreach($category as $item){
+                    $item->selected=false;
+                    if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
+                        $item->selected=true;
+                    }
+                }
+        }
             
         // });
 
         $response = new \Lib\PopulateResponse($category);
         $this->status = true;
         $this->data = $response->apiResponse();
-        $this->message = trans('messages.dislike_items_list');
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.dislike_items_list_ar');
+        }else{
+            $this->message = trans('messages.dislike_items_list'); 
+        }
         return $this->populateResponse();
     }
 
     public function dietPlanType() {
-        $plan_types = DietPlanType::select('id','name')->where('status','active')->get()->each(function($plan_types){
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $plan_types = DietPlanType::select('id','name_ar as name','image_ar as image')->where('status','active')->get()->each(function($plan_types){
             $plan_types->selected=false;
             if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'diet_plan_type_id'=>$plan_types->id])->first()){
                 $plan_types->selected=true;
             }
         });
+    }else{
+        $plan_types = DietPlanType::select('id','name','image')->where('status','active')->get()->each(function($plan_types){
+            $plan_types->selected=false;
+            if(UserProfile::where(['user_id'=>Auth::guard('api')->id(),'diet_plan_type_id'=>$plan_types->id])->first()){
+                $plan_types->selected=true;
+            }
+        });
+
+    }
         $response = new \Lib\PopulateResponse($plan_types);
         $this->status = true;
         $this->data = $response->apiResponse();
-        $this->message = trans('messages.diet_plan_type_list');
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.diet_plan_type_list_ar');
+        }else{
+            $this->message = trans('messages.diet_plan_type_list');
+        }
         return $this->populateResponse();
     }
 
@@ -1109,7 +1385,11 @@ class ApiController extends Controller {
         $response = new \Lib\PopulateResponse($country);
         $this->status = true;
         $this->data = $response->apiResponse();
-        $this->message = trans('messages.country_list');
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.country_list_ar');
+        }else{
+            $this->message = trans('messages.country_list');
+        }
         return $this->populateResponse();
     }
 
@@ -1164,21 +1444,39 @@ class ApiController extends Controller {
 
 
     public function notificationList() {
-      
-        $notifications = Notification::where('user_id', Auth::guard('api')->id())->orderBy('id', 'DESC')->get();
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+         $notifications = Notification::select('id','user_id','plan_id','variant_id','title_ar as title_en','body_ar as body_en','read_status','status')->where('user_id', Auth::guard('api')->id())->orderBy('id', 'DESC')->get();
+        }else{
+          $notifications = Notification::select('id','user_id','plan_id','variant_id','title_en','body_en','read_status','status')->where('user_id', Auth::guard('api')->id())->orderBy('id', 'DESC')->get();
+        }
         $response = new \Lib\PopulateResponse($notifications);
         $this->data = $response->apiResponse();
         $this->status = true;
-        $this->message = trans('messages.notification_list');
+        if($language->lang == 'ar'){
+        $this->message = trans('messages.notification_list_ar');
+        }else{
+            $this->message = trans('messages.notification_list');
+        }
         return $this->populateResponse();
     }
 
     public function clearNotifications(Request $request) {
         if ($request->notification_id) {
-            $this->message = trans('messages.notification_delete_success');
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.notification_delete_success_ar');
+            }else{
+                $this->message = trans('messages.notification_delete_success');
+            }
             $notifications = Notification::where('id', $request->notification_id)->where('user_id', Auth::guard('api')->id())->delete();
         } else {
-            $this->message = trans('messages.notification_clear_success');
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.notification_clear_success_ar');
+            }else{
+                $this->message = trans('messages.notification_clear_success'); 
+            }
             $notifications = Notification::where('user_id', Auth::guard('api')->id())->delete();
         }
         $this->status = true;
@@ -1186,7 +1484,12 @@ class ApiController extends Controller {
 
         } else {
             $this->status_code = 201;
-            $this->message = "Server could not get any response. Please try again later.";
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = "تعذر على الخادم الحصول على أي رد. الرجاء معاودة المحاولة في وقت لاحق.";
+            }else{
+                $this->message = "Server could not get any response. Please try again later."; 
+            }
         }
         return $this->populateResponse();
     }
@@ -1205,10 +1508,20 @@ class ApiController extends Controller {
             $user=Users::select('push_notification')->where('id','=',Auth::guard('api')->id())->first();
             if($user['push_notification'] == 'on'){
                 $status='off';
-                $this->message  = trans('messages.push_off');
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $this->message  = trans('messages.push_off_ar');
+                }else{
+                    $this->message  = trans('messages.push_off');
+                }
             }else{
                 $status='on';
-                $this->message  = trans('messages.push_on');
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $this->message  = trans('messages.push_on_ar');
+                }else{
+                    $this->message  = trans('messages.push_on'); 
+                }
             }
             $user = Users::where('id','=',Auth::guard('api')->id())->update(['push_notification'=>$status]);
 
@@ -1354,7 +1667,12 @@ class ApiController extends Controller {
                 if($insert){
                  $response = new \Lib\PopulateResponse($insert);
                  $this->data = $response->apiResponse();
-                 $this->message = trans('messages.rating_message');
+                 $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                 if($language->lang == 'ar'){
+                 $this->message = trans('messages.rating_message_ar');
+                 }else{
+                    $this->message = trans('messages.rating_message');
+                 }
                 } else {
                     $this->message = trans('messages.server_error');
                     $this->status_code = 202;
@@ -1401,7 +1719,12 @@ class ApiController extends Controller {
                 if($insert){
                  $response = new \Lib\PopulateResponse($insert);
                  $this->data = $response->apiResponse();
-                 $this->message = trans('messages.card_add');
+                 $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                 if($language->lang == 'ar'){
+                 $this->message = trans('messages.card_add_ar');
+                 }else{
+                    $this->message = trans('messages.card_add');
+                 }
                 } else {
                     $this->message = trans('messages.server_error');
                     $this->status_code = 202;
@@ -1425,7 +1748,12 @@ public function deleteAddCard(Request $request) {
     } else {
         $delete = UserCard::where(['user_id' => Auth::guard('api')->id(), 'id' => $request->card_id])->delete();
         if ($delete) {
-            $this->message = trans('messages.card_delete');
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            $this->message = trans('messages.card_delete_ar');
+            }else{
+                $this->message = trans('messages.card_delete');
+            }
         } else {
             $this->status_code = 202;
             $this->message =  trans('messages.server_error');
@@ -1460,7 +1788,12 @@ public function addAddress(Request $request){
     $validate->after(function ($validate) use ($request) {
             $countUser = UserAddress::where('user_id',Auth::guard('api')->id())->count();
             if ($countUser == '3') {
-                $validate->errors()->add('countUser', 'You can not add more than 3 address');
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $validate->errors()->add('countUser', 'لا يمكنك إضافة أكثر من 3 عناوين');
+                }else{
+                    $validate->errors()->add('countUser', 'You can not add more than 3 address'); 
+                }
              
                 
             }
@@ -1527,7 +1860,12 @@ public function addAddress(Request $request){
         if($insert){
          $response = new \Lib\PopulateResponse($insert);
          $this->data = $response->apiResponse();
-         $this->message = trans('messages.add_address');
+         $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+         if($language->lang == 'ar'){
+         $this->message = trans('messages.add_address_ar');
+         }else{
+            $this->message = trans('messages.add_address');
+         }
         } else {
             $this->message = trans('messages.server_error');
             $this->status_code = 202;
@@ -1722,7 +2060,12 @@ public function editAddress(Request $request){
         if($data){
          $response = new \Lib\PopulateResponse($data);
          $this->data = $response->apiResponse();
-         $this->message = trans('messages.update_address');
+         $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+         if($language->lang == 'ar'){
+         $this->message = trans('messages.update_address_ar');
+         }else{
+            $this->message = trans('messages.update_address');
+         }
         } else {
             $this->message = trans('messages.server_error');
             $this->status_code = 202;
@@ -1748,15 +2091,25 @@ public function addressListing(Request $request) {
    
    if($data){
        $this->status = true;
-       $this->message = trans('messages.address_detail');
+       $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+       if($language->lang == 'ar'){
+       $this->message = trans('messages.address_detail_ar');
+       }else{
+        $this->message = trans('messages.address_detail');
+       }
        $response = new \Lib\PopulateResponse($data);
        $this->data = $response->apiResponse();
 
       }else{
 
        $this->status = true;
-       $data = [];                
-       $this->message = trans('messages.address_notfound');
+       $data = [];  
+       $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+       if($language->lang == 'ar'){              
+       $this->message = trans('messages.address_notfound_ar');
+       }else{
+        $this->message = trans('messages.address_notfound');
+       }
        $response = new \Lib\PopulateResponse($data);
        $this->data = $response->apiResponse();
 
@@ -1766,19 +2119,31 @@ return $this->populateResponse();
 
 
 public function giftCardListing(Request $request) {
-  
-    $gift_card = GiftCard::where('status', 'active')->orderBy('id', 'ASC')->get();
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $gift_card = GiftCard::select('title_ar as title','description_ar as description','discount','amount','gift_card_amount','image','status')->where('status', 'active')->orderBy('id', 'ASC')->get();
+    }else{
+        $gift_card = GiftCard::select('title','description','discount','amount','gift_card_amount','image','status')->where('status', 'active')->orderBy('id', 'ASC')->get();
+    }
     $response = new \Lib\PopulateResponse($gift_card);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.card_listing');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){  
+    $this->message = trans('messages.card_listing_ar');
+    }else{
+        $this->message = trans('messages.card_listing');
+    }
     return $this->populateResponse();
 }
 
 public function giftCardOneShow(Request $request) {
-  
-     $gift_card_show = GiftCard::where(['id'=>$request->gift_card_id,'status'=>'active'])->orderBy('id', 'ASC')->first();
-    
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+     $gift_card_show = GiftCard::select('title_ar as title','description_ar as description','discount','amount','gift_card_amount','image','status')->where(['id'=>$request->gift_card_id,'status'=>'active'])->orderBy('id', 'ASC')->first();
+    }else{
+        $gift_card_show = GiftCard::select('title','description','discount','amount','gift_card_amount','image','status')->where(['id'=>$request->gift_card_id,'status'=>'active'])->orderBy('id', 'ASC')->first();
+    }
      if($gift_card_show->gift_card_amount){
         $gift_card_show->buying_amount = $gift_card_show->gift_card_amount;
      }
@@ -1795,7 +2160,12 @@ public function giftCardOneShow(Request $request) {
     $response = new \Lib\PopulateResponse($gift_card_show);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.card_listing');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $this->message = trans('messages.card_listing_ar');
+    }else{
+        $this->message = trans('messages.card_listing');
+    }
     return $this->populateResponse();
 }
 
@@ -1805,7 +2175,12 @@ public function mySaveCardListing(Request $request) {
     $response = new \Lib\PopulateResponse($user_card);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.save_card_listing');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $this->message = trans('messages.save_card_listing_ar');
+    }else{
+        $this->message = trans('messages.save_card_listing');  
+    }
     return $this->populateResponse();
 }
 
@@ -1890,11 +2265,21 @@ public function addGiftCard(Request $request){
         ];
         $this->send_mail($email);
     }else{
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
         return response()->json([
              'status'=>true,
              'error_code' =>201,
-             'error'=> "Please complete your profile with email address"
+             'error'=> "يرجى استكمال ملف التعريف الخاص بك مع عنوان البريد الإلكتروني"
         ]);
+    }else{
+        return response()->json([
+            'status'=>true,
+            'error_code' =>201,
+            'error'=> "Please complete your profile with email address"
+       ]);
+
+    }
 
     }
     }
@@ -1939,7 +2324,12 @@ public function availableCredit(Request $request) {
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.available_credit');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $this->message = trans('messages.available_credit_ar');
+    }else{
+        $this->message = trans('messages.available_credit');
+    }
     return $this->populateResponse();
 }
 
@@ -2036,25 +2426,45 @@ public function basicInfo(Request $request){
         
         
         $this->status = true;
-         $this->message = trans('messages.basic_info');
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+         $this->message = trans('messages.basic_info_ar');
+        }else{
+            $this->message = trans('messages.basic_info');
+        }
        
     }
     return $this->populateResponse();
 }  
 
 public function promoCodeListings(Request $request) {
- 
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
     $promo_codes = PromoCode::join('promo_code_diet_plan','promo_codes.id','=','promo_code_diet_plan.promo_code_id')
-    ->select('promo_codes.id','promo_codes.name','promo_codes.image','promo_codes.description','promo_codes.start_date','promo_codes.end_date','promo_codes.promo_code_ticket_id')->orderBy('id', 'ASC')
+    ->select('promo_codes.id','promo_codes.name_ar as name','promo_codes.image','promo_codes.description_ar as description','promo_codes.start_date','promo_codes.end_date','promo_codes.promo_code_ticket_id')->orderBy('id', 'ASC')
     ->where('promo_code_diet_plan.meal_plan_id', $request->meal_plan_id)
     ->where('promo_code_diet_plan.variant_id', $request->variant_id)
     ->where('promo_codes.status', 'active')
     ->get();
+    }else{
+        $promo_codes = PromoCode::join('promo_code_diet_plan','promo_codes.id','=','promo_code_diet_plan.promo_code_id')
+        ->select('promo_codes.id','promo_codes.name','promo_codes.image','promo_codes.description','promo_codes.start_date','promo_codes.end_date','promo_codes.promo_code_ticket_id')->orderBy('id', 'ASC')
+        ->where('promo_code_diet_plan.meal_plan_id', $request->meal_plan_id)
+        ->where('promo_code_diet_plan.variant_id', $request->variant_id)
+        ->where('promo_codes.status', 'active')
+        ->get();
+
+    }
 
     $response = new \Lib\PopulateResponse($promo_codes);
     $this->status = true;
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.promo_code');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $this->message = trans('messages.promo_code_ar');
+    }else{
+        $this->message = trans('messages.promo_code');
+    }
     return $this->populateResponse();
 }
 
@@ -2119,9 +2529,14 @@ public function insertImage(Request $request) {
 }
 
 public function cities_listing(Request $request) {
-  
-    $data['city'] = Cities::select('id','city')->Where('city','<>','')->orderBy('id', 'ASC')->first();
-    $data['upcoming_city'] = Cities::select('upcoming_cities')->orderBy('id', 'ASC')->get();
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $data['city'] = Cities::select('id','city_ar as city')->Where('city','<>','')->orderBy('id', 'ASC')->first();
+    $data['upcoming_city'] = Cities::select('upcoming_cities_ar as upcoming_cities')->orderBy('id', 'ASC')->get();
+    }else{
+        $data['city'] = Cities::select('id','city')->Where('city','<>','')->orderBy('id', 'ASC')->first();
+        $data['upcoming_city'] = Cities::select('upcoming_cities')->orderBy('id', 'ASC')->get();
+    }
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
@@ -2155,11 +2570,21 @@ public function resume_meal_plan(Request $request) {
     $getOldWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2','option1')->where(['meal_plan_id'=>$request->old_subscription_plan_id,'id'=>$request->old_variant_id])->first();
     $getNewWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2','option1')->where(['meal_plan_id'=>$request->subscription_plan_id,'id'=>$request->variant_id])->first();
 if($getOldWeekend->option1 == 'monthly'  && $getNewWeekend->option1 == 'weekly'){
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
   return response()->json([
     'status' => true,
-    'error'  => "You can not switch plan from monthly to weekly",
+    'error'  => "لا يمكنك تبديل الخطة من الشهرية إلى الأسبوعية",
 
   ]);
+}else{
+    return response()->json([
+        'status' => true,
+        'error'  => "You can not switch plan from monthly to weekly",
+    
+      ]);
+
+}
 }else{
 if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$request->subscription_plan_id,'variant_id'=>$request->variant_id])->exists()){
     $data =Subscription::updateOrCreate(
@@ -2349,7 +2774,12 @@ if(Subscription::where('user_id',Auth::guard('api')->id())->where(['plan_id'=>$r
     if($data){
     $response = new \Lib\PopulateResponse($data);
     $this->data = $response->apiResponse();
-    $this->message = trans('messages.plan_resume');
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $this->message = trans('messages.plan_resume_ar');
+    }else{
+        $this->message = trans('messages.plan_resume');
+    }
     }else {
         $this->message = trans('messages.server_error');
         $this->status_code = 202;
@@ -2491,7 +2921,9 @@ public function sample_daily_meals(Request $request) {
     $datess = Carbon::createFromFormat('Y-m-d',$dates);
     $day = strtolower($datess->format('l'));
     // $day = 'monday';
-  
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+
      $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
      $targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
        $category = MealSchedules::select('id','name')
@@ -2502,7 +2934,7 @@ public function sample_daily_meals(Request $request) {
                    join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
                    ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
                    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
-                   ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+                   ->select('meals.name_ar as name','meals.side_dish_ar as side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
                     ->where('meal_group_schedule.meal_schedule_id',$category->id)
                     ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
@@ -2513,7 +2945,7 @@ public function sample_daily_meals(Request $request) {
                     
                    ->get()->each(function($meals) {
                     $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
-                    ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+                    ->select('dislike_items.id','dislike_items.group_id','dislike_items.name_ar as name')
                     ->where('meal_ingredient_list.meal_id',$meals->id)
                      ->where('dislike_items.status','active')->get()
                       ->each(function($dislikeItem){
@@ -2538,6 +2970,56 @@ public function sample_daily_meals(Request $request) {
                   ->count();
             })->toArray();
            })->toArray();
+        }
+        else{
+            $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+            $targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
+              $category = MealSchedules::select('id','name')
+              ->get()
+               ->each(function($category) use($dates,$targetCalorie,$day){
+                          $meals = $category->meals=Meal::
+                       //    join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+                          join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
+                          ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+                          ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+                          ->select('meals.name','meals.side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+                          ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+                           ->where('meal_group_schedule.meal_schedule_id',$category->id)
+                           ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
+                               $q->where('meal_week_days.week_days_id','=', $dates)
+                               ->orWhere('meal_week_days.week_days_id','=', $day);
+                             })
+                       //    ->where(['meals.meal_schedule_id'=>$category->id])
+                           
+                          ->get()->each(function($meals) {
+                           $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+                           ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+                           ->where('meal_ingredient_list.meal_id',$meals->id)
+                            ->where('dislike_items.status','active')->get()
+                             ->each(function($dislikeItem){
+                                 $dislikeItem->selected=false;
+                              if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+                                  $dislikeItem->selected=true;
+                              }
+                         });
+           //    $meals->dislikegroup = DislikeGroup::select('id','name')->where('status','active')->get()->each(function($dislikegroup){
+           //        $dislikegroup->selected=false;
+           //        if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+           //            $dislikegroup->selected=true;
+           //        }
+           //    });
+                         
+                           $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+                           ->where('meal_id', $meals->id)
+                           ->groupBy('meal_id')
+                          ->first();
+                          $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+                          ->groupBy('meal_id')
+                         ->count();
+                   })->toArray();
+                  })->toArray();
+
+        }
    
    $data = $category;
    if($data){
@@ -2564,6 +3046,8 @@ public function balance_sample_daily_meals(Request $request) {
           $datess = Carbon::createFromFormat('Y-m-d',$dates);
            $day = strtolower($datess->format('l'));
 
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+           if($language->lang == 'ar'){ 
                  $user_diet_plan = UserProfile::select('diet_plan_type_id')->where('user_id',Auth::guard('api')->id())->first();
                 $user_custom_calorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
                 $targetCalorie = CalorieRecommend::select('recommended')->where('id',$user_custom_calorie->custom_result_id)->first();
@@ -2572,7 +3056,7 @@ public function balance_sample_daily_meals(Request $request) {
                    join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
                    ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
                    ->join('meal_diet_plan','meals.id','=','meal_diet_plan.meal_id')
-                   ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+                   ->select('meals.name_ar as name','meals.side_dish_ar as side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
                    ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
                    ->where('meal_diet_plan.diet_plan_type_id','=', $user_diet_plan->diet_plan_type_id)
                 //    ->orWhere('meal_week_days.week_days_id','=', $day)
@@ -2586,7 +3070,7 @@ public function balance_sample_daily_meals(Request $request) {
                     ->select('meal_schedules.name')->first();
 
                     $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
-                    ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+                    ->select('dislike_items.id','dislike_items.group_id','dislike_items.name_ar as name')
                     ->where('meal_ingredient_list.meal_id',$meals->id)
                      ->where('dislike_items.status','active')->get()
                       ->each(function($dislikeItem){
@@ -2612,6 +3096,57 @@ public function balance_sample_daily_meals(Request $request) {
                    ->groupBy('meal_id')
                   ->count();
             })->toArray();
+        }else{
+            $user_diet_plan = UserProfile::select('diet_plan_type_id')->where('user_id',Auth::guard('api')->id())->first();
+            $user_custom_calorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+            $targetCalorie = CalorieRecommend::select('recommended')->where('id',$user_custom_calorie->custom_result_id)->first();
+               $meals =Meal::
+            //    join('meal_group_schedule','meals.id','=','meal_group_schedule.meal_id')
+               join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+               ->join('meal_week_days','meals.id','=','meal_week_days.meal_id')
+               ->join('meal_diet_plan','meals.id','=','meal_diet_plan.meal_id')
+               ->select('meals.name','meals.side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+               ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+               ->where('meal_diet_plan.diet_plan_type_id','=', $user_diet_plan->diet_plan_type_id)
+            //    ->orWhere('meal_week_days.week_days_id','=', $day)
+                ->where('meals.status','=', 'active')->where(function($q)use($dates,$day){
+                 $q->where('meal_week_days.week_days_id','=', $dates)
+                 ->orWhere('meal_week_days.week_days_id','=', $day);
+               })
+               ->get()->each(function($meals) {
+                $meals->meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+                ->where('meal_group_schedule.meal_id', $meals->id)
+                ->select('meal_schedules.name')->first();
+
+                $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+                ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+                ->where('meal_ingredient_list.meal_id',$meals->id)
+                 ->where('dislike_items.status','active')->get()
+                  ->each(function($dislikeItem){
+                      $dislikeItem->selected=false;
+                   if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+                       $dislikeItem->selected=true;
+                   }
+              });
+             
+              
+          //    $meals->dislikegroup = DislikeGroup::select('id','name')->where('status','active')->get()->each(function($dislikegroup){
+                //        $dislikegroup->selected=false;
+        //        if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+           //            $dislikegroup->selected=true;
+          //        }
+         //    });
+          
+                $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+                ->where('meal_id', $meals->id)
+                ->groupBy('meal_id')
+               ->first();
+               $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+               ->groupBy('meal_id')
+              ->count();
+        })->toArray();
+
+        }
    
    $data = $meals;
    if($data){
@@ -2738,8 +3273,14 @@ public function updateBasicInfo(Request $request){
 
 
 public function delivery_slot(Request $request) {
-  
-    $data['delivery_slot'] = DeliverySlot::select('*')->Where('status','active')->orderBy('id', 'ASC')->get();
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $data['delivery_slot'] = DeliverySlot::select('id','name_ar as name','start_time','end_time','status')->Where('status','active')->orderBy('id', 'ASC')->get();
+    }else{
+        $data['delivery_slot'] = DeliverySlot::select('id','name','start_time','end_time','status')->Where('status','active')->orderBy('id', 'ASC')->get();
+    }
+
+    
     $response = new \Lib\PopulateResponse($data);
     $this->status = true;
     $this->data = $response->apiResponse();
@@ -3022,10 +3563,19 @@ public function helpSupport(Request $request)
         if(!empty($address_id)){
          $active_address =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])->count();
          if($active_address == '2'){
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
              return response()->json([
+                    'status' => true,
+                     'error'=> 'يمكنك اختيار عنوانين فقط للتسليم'
+                ]);
+            }else{
+                return response()->json([
                     'status' => true,
                      'error'=> 'You can select only 2 address for delivery'
                 ]);
+
+            }
          }
          $getDayDetail =UserAddress::where(['id'=>$request->address_id,'user_id'=>Auth::guard('api')->id()])->first();
          if($getDayDetail->monday=='1'){
@@ -3226,11 +3776,19 @@ public function helpSupport(Request $request)
 
             $updateVaccine=UserAddress::where(['id'=>$request->address_id,'user_id'=>Auth::guard('api')->id()])->update($data);
            }else{
-
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            return response()->json([
+                'status' => true,
+                 'error'=> 'الرجاء تحديد عنوان'
+            ]);
+        }else{
             return response()->json([
                 'status' => true,
                  'error'=> 'Please select an address'
             ]);
+
+        }
 
            }
                 if($request->monday == "1"){
@@ -3347,7 +3905,9 @@ public function getPriceCalculation(Request $request) {
 }
 
 public function otherIngredientDislikes() {
-    $category=DislikeGroup::select('id','name','image')
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $category=DislikeGroup::select('id','name_ar as name','image')
     // ->with('items')
     ->where('status','inactive')->get();
     // ->each(function($category){
@@ -3357,6 +3917,19 @@ public function otherIngredientDislikes() {
                 $item->selected=true;
             }
         }
+    }else{
+        $category=DislikeGroup::select('id','name','image')
+        // ->with('items')
+        ->where('status','inactive')->get();
+        // ->each(function($category){
+            foreach($category as $item){
+                $item->selected=false;
+                if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$item->id,'status'=>'active'])->first()){
+                    $item->selected=true;
+                }
+            }
+
+    }
         
     // });
 
@@ -3370,7 +3943,7 @@ public function otherIngredientDislikes() {
 public function lang(Request $request)
 {
   $data = [
-    'message' => trans('messages.greeting')
+    'message' => trans('messages.otp_verified')
   ];
   return response()->json($data, 200);
 }
@@ -3386,6 +3959,48 @@ public function setLang(Request $request)
             'status' =>true,
              'message' => 'language saved'
         ]);
+}
+
+public function sendInvoice() {
+     $checkEmail=User::where('id',Auth::guard('api')->id())->first();
+    if(!empty($checkEmail->email)){
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        return response()->json([
+           'status' => true,
+           'status_code'=> 200,
+           'messages' => 'تم إرسال الفاتورة على بريدك الإلكتروني'
+        ]);
+    }else{
+        return response()->json([
+            'status' => true,
+            'status_code'=> 200,
+            'messages' => 'Invoice has been sent on your email'
+         ]);
+    }
+    }else{
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        return response()->json([
+            'status' => true,
+            'status_code'=> 201,
+            'error' => 'يرجى استكمال ملف التعريف الخاص بك مع البريد الإلكتروني'
+         ]);
+        }else{
+            return response()->json([
+                'status' => true,
+                'status_code'=> 201,
+                'error' => 'Please complete your profile with email'
+             ]);
+
+        }
+    }
+
+    $response = new \Lib\PopulateResponse($checkEmail);
+    $this->status = true;
+    $this->data = $response->apiResponse();
+    $this->message = trans('messages.other_dislike_items_list');
+    return $this->populateResponse();
 }
 
 }

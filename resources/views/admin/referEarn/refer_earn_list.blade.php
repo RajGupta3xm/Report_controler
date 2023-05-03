@@ -92,8 +92,9 @@
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (En) :</label>
-                                             <textarea class="form-control text-start" name="how_it_work_en" id="" >{{$refer_id->how_it_work_en}}
+                                             <textarea class="form-control text-start validatee" name="how_it_work_en" id="" >{{$refer_id->how_it_work_en}}
                                              </textarea>  
+                                             <p class="text-danger text-small" id="how_it_work_enError"></p>
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (Ar) :</label>
@@ -509,7 +510,7 @@ if (flag) {
             function validate(obj) {
             $(".text-danger").html('');
             var flag = true;
-            var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
+            var formData = $("#addForm").find(".validatee").not(':input[type=button]');
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();

@@ -323,6 +323,55 @@ class SubscriptionController extends Controller {
     }
 
     public function mealDetails(Request $request){
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
+        $id = $request->meal_plan_id;
+        $meal_des=[];
+         $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+         $targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
+           $mealDetail=Meal::join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+          ->select('meals.id as meal_id','meals.name_ar as meal_name','meals.image','meals.description_ar as description','meals.image','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+          ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+          ->where('meals.id',$request->meal_plan_id)->first();
+        //  $mealDetail = Meal::join('meal_schedules','meals.id','=','meal_schedules.id')
+        // ->select('meals.id as meal_id','meals.name as meal_name','image','description','image','food_type','meal_schedules.name')
+        // ->where('meals.id',$request->meal_plan_id)
+        // ->get()
+        
+           $meal_schedule= MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+           ->where('meal_group_schedule.meal_id', $mealDetail->meal_id)
+           ->select('meal_schedules.name_ar as name')->first();
+           $mealDetail->name = $meal_schedule->name;
+        
+      
+
+        // $ingredient=DislikeItem::select('name')->get();
+        // foreach($ingredient as $meal){
+        //     array_push($meal_des,$meal->name);
+        // }
+        // $ing = implode(',', $meal_des);
+
+         $dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+         ->select('dislike_items.id','dislike_items.group_id','dislike_items.name_ar as name')
+         ->where('meal_ingredient_list.meal_id',$id)
+         ->where('dislike_items.status','active')->get()
+         ->each(function($dislikeItem){
+            $dislikeItem->selected=false;
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+                $dislikeItem->selected=true;
+            }
+        });
+        $dislikegroup = DislikeGroup::select('id','name_ar as name')->where('status','active')->get()->each(function($dislikegroup){
+            $dislikegroup->selected=false;
+            if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+                $dislikegroup->selected=true;
+            }
+        });
+  
+        $mealDetail->dislike_item = $dislikeItem;
+        $mealDetail->dislikegroup = $dislikegroup;
+        $data=$mealDetail;
+    }else{
         $id = $request->meal_plan_id;
         $meal_des=[];
          $userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
@@ -369,6 +418,8 @@ class SubscriptionController extends Controller {
         $mealDetail->dislike_item = $dislikeItem;
         $mealDetail->dislikegroup = $dislikegroup;
         $data=$mealDetail;
+
+    }
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
         $this->data = $response->apiResponse();
@@ -512,23 +563,37 @@ class SubscriptionController extends Controller {
             ->orWhere('delivery_status','upcoming')
             ->orWhere('delivery_status','active');
         })->first()){
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
            $subscription=SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
          ->join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
-         ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions.delivery_status','subscriptions_meal_plans_variants.variant_name','subscriptions_meal_plans_variants.option2')
+         ->select('subscription_plans.id','subscription_plans.name_ar','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions.delivery_status','subscriptions_meal_plans_variants.variant_name','subscriptions_meal_plans_variants.option2')
          ->where(['subscriptions.plan_id'=>$subscriptions->id,'subscriptions.variant_id'=> $request->variant_id])
          ->where(['subscriptions_meal_plans_variants.id'=> $request->variant_id])
          ->where(['subscriptions.user_id'=> Auth::guard('api')->id()])
          ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
          ->first();
+            }else{
+                $subscription=SubscriptionPlan::join('subscriptions','subscription_plans.id','=','subscriptions.plan_id')
+                ->join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+                ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions.delivery_status','subscriptions_meal_plans_variants.variant_name','subscriptions_meal_plans_variants.option2')
+                ->where(['subscriptions.plan_id'=>$subscriptions->id,'subscriptions.variant_id'=> $request->variant_id])
+                ->where(['subscriptions_meal_plans_variants.id'=> $request->variant_id])
+                ->where(['subscriptions.user_id'=> Auth::guard('api')->id()])
+                ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
+                ->first();
+
+            }
       
            if($subscription){
          
-         
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
              $subscription->dietPlanTypeId = UserProfile::join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
              ->where('user_profile.user_id',Auth::guard('api')->id())
-             ->select('diet_plan_types.name','user_profile.diet_plan_type_id')
+             ->select('diet_plan_types.name_ar as name','user_profile.diet_plan_type_id')
              ->first();
-
+            
                  $dates = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
                  $date = $dates->addDays($subscription->no_dayss);
                  $diff = now()->diffInDays(Carbon::parse($date));
@@ -544,13 +609,64 @@ class SubscriptionController extends Controller {
                        $subscription->days_remaining  = $diff .' days ';
                    }
                 }
-              
+            }else{
+                $subscription->dietPlanTypeId = UserProfile::join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
+                ->where('user_profile.user_id',Auth::guard('api')->id())
+                ->select('diet_plan_types.name','user_profile.diet_plan_type_id')
+                ->first();
+               
+                    $dates = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                    $date = $dates->addDays($subscription->no_dayss);
+                    $diff = now()->diffInDays(Carbon::parse($date));
+   
+                    $datess = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                    if($datess->gt(now())){
+                       $dates = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
+                      $subscription->days_remaining  = 'تبدأ خطتك من'.' '.date('d-m-Y',strtotime($dates));
+                    }else{
+                      if($diff == 0){
+                          $subscription->days_remaining  = "خطتك انتهت";
+                      }else{
+                          $subscription->days_remaining  = $diff .' أيام ';
+                      }
+                   }
+                
+
+            }
                 $subscription->end_date= date('Y-m-d',strtotime($date));
               
                 
                 $subscription->meal_groups=[];
-
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                 if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$request->variant_id])->first()){
+
+                        $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$request->variant_id])->first();
+                        $subscription->cost=$costs->plan_price;
+                        $subscription->day=$costs->option1;
+                        // $costs->option1 = '-';
+                       
+
+                        $meals=[];
+                        $meal_des=[];
+                           $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
+                        foreach($subscription->meal_groups as $meal){
+                            array_push($meals,['id'=>$meal->meal_group->id,'meal_name'=>$meal->meal_group->name_ar]);
+                            array_push($meal_des,$meal->meal_group->name_ar);
+                        }
+                        $meal_des=count($meal_des)." باقة الوجبات (".implode(',',$meal_des).")";
+
+                        $subscription->description=[
+                            "يخدم حتى $costs->serving_calorie من السعرات الحرارية $costs->calorie السعرات الحرارية الموصى بها لك.",
+                            $costs->no_days." أيام أ ".$costs->option1,
+                            " ".$meal_des
+                        ];
+                        $subscription->meal_groups=$meals;
+
+                       
+                    }
+                }else{
+                    if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$request->variant_id])->first()){
 
                         $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$request->variant_id])->first();
                         $subscription->cost=$costs->plan_price;
@@ -575,6 +691,8 @@ class SubscriptionController extends Controller {
 
                        
                     }
+
+                }
                 }
                if( Subscription::where(['user_id' => Auth::guard('api')->id(),  'plan_id' =>  $request->subscription_plan_id, 'variant_id' => $request->variant_id,'delivery_status'=>'upcoming'])->exists()){
                  $PlanStatus = Subscription::select('plan_status')->where(['user_id' => Auth::guard('api')->id(),  'plan_id' =>  $request->subscription_plan_id, 'variant_id' => $request->variant_id,'delivery_status'=>'upcoming'])->first();
@@ -644,9 +762,12 @@ class SubscriptionController extends Controller {
      }
 
      public function viewPlanDeliveries(Request $request) {
-        $dates = $request->date;
-        $plan_id = $request->subscription_plan_id;
+         $dates = $request->date;
+         $plan_id = $request->subscription_plan_id;
         $variant_id = $request->variant_id;
+
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
 
          $datess = Carbon::createFromFormat('Y-m-d',$dates);
           $day = strtolower($datess->format('l'));
@@ -738,7 +859,7 @@ class SubscriptionController extends Controller {
 
             $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
            ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
-           ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id')
+           ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
            ->where('user_skip_time_slot.skip_date',$dates)
             ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
             ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
@@ -752,7 +873,7 @@ class SubscriptionController extends Controller {
        }else{
         $deliverieSlot = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
         ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
-        ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+        ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
         ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
          ->where('user_change_delivery_location.change_location_for_date',$dates)
          ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
@@ -772,7 +893,7 @@ class SubscriptionController extends Controller {
     
              $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
             // ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
-            ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+            ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
             ->where('user_skip_time_slot.skip_date',$dates)
              ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
              ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
@@ -812,7 +933,7 @@ class SubscriptionController extends Controller {
           
         }else{
             $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
-        ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type')
+        ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name_ar as name','delivery_slots.id as slot_id','user_address.address_type')
         ->where('user_id',Auth::guard('api')->id())
         ->where('day_selection_status','active')
         ->when($var == "1", function ($q) {
@@ -867,7 +988,7 @@ class SubscriptionController extends Controller {
             $category->meal_group->meals =Meal::
            join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
            ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
-            ->select('meals.id','meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.recipe_yields','meals.description','meals.description_ar','meals.image','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+            ->select('meals.id','meals.name_ar as name','meals.side_dish_ar as side_dish','meals.recipe_yields','meals.description_ar as description','meals.image','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
             ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
              ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
             ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
@@ -902,6 +1023,263 @@ class SubscriptionController extends Controller {
        $data['withoutOrWithweekend'] = $no_of_day->option2;
        $data['skipNoDaysIncrease'] = $no_of_days;
     }
+}else{
+    $datess = Carbon::createFromFormat('Y-m-d',$dates);
+    $day = strtolower($datess->format('l'));
+
+  if($day == 'monday'){
+      $var = "1";
+  }elseif($day == 'tuesday'){
+      $var = '2';
+  }elseif($day == 'wednesday'){
+     $var = '3';
+ }elseif($day == 'thursday'){
+     $var = '4';
+ }elseif($day == 'friday'){
+     $var = '5';
+ }elseif($day == 'saturday'){
+     $var = '6';
+ }else{
+     $var = '7';
+ }
+ $datess = Carbon::createFromFormat('Y-m-d',$dates);
+ $day = strtolower($datess->format('l'));
+$getAllDays = UserAddress::where('user_id',Auth::guard('api')->id())->where('day_selection_status','active')->get();
+if($day == 'monday'){
+   $var = "1";
+}elseif($day == 'tuesday'){
+   $var = '2';
+}elseif($day == 'wednesday'){
+  $var = '3';
+}elseif($day == 'thursday'){
+  $var = '4';
+}elseif($day == 'friday'){
+  $var = '5';
+}elseif($day == 'saturday'){
+  $var = '6';
+}else{
+  $var = '7';
+}
+
+// $custom_calorie = $request->custom_calorie;
+$userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+$targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
+
+//  $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+ $start_date = Subscription::select('start_date')->where(['plan_id'=>$plan_id,'variant_id'=>$variant_id,'plan_status'=>'plan_active','delivery_status'=>'active'])->where('user_id',Auth::guard('api')->id())->first();
+$no_of_day = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$plan_id,'id'=>$variant_id])->first();
+if($start_date){
+  if($no_of_day->option2 == 'withoutweekend'){
+  $date = Carbon::createFromFormat('Y-m-d',$start_date->start_date);
+  $weekdays = 0;
+  $weekdayss = 0;
+    for ($i = 0; $i < $no_of_day->no_days; $i++) {
+         $alldate = $date->addDay()->format('y-m-d');
+         $dd = Carbon::createFromFormat('Y-m-d',$alldate);
+          $dayStr = strtolower($dd->format('l'));
+          if ($dayStr == 'friday' ) {
+             $weekdays++;
+         }
+         if ($dayStr == 'saturday' ) {
+             $weekdayss++;
+         }
+    }
+  $totalDays = $weekdays+$weekdayss;
+  $increasingdays = $no_of_day->no_days+$totalDays;
+  }else{
+  $increasingdays = $no_of_day->no_days;
+  }
+  //    dd($increasingdays);
+}
+
+
+if(!empty($no_of_day))
+{
+
+   $countSkip = UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->count();
+   $no_of_days = $no_of_day->no_days + $countSkip;
+}
+
+if(UserChangeDeliveryLocation::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('change_location_for_date',$dates)->exists()){
+  $deliverie = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
+  // ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
+  ->select('user_address.address_type','user_address.id')
+  ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
+   ->where('user_change_delivery_location.change_location_for_date',$dates)
+   ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
+   ->where('user_change_delivery_location.variant_id',$variant_id)
+  ->first();
+
+  if(UserSkipTimeSlot::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_date',$dates)->exists()){
+
+      $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+     ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
+     ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id')
+     ->where('user_skip_time_slot.skip_date',$dates)
+      ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
+      ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
+      ->where('user_skip_time_slot.variant_id',$variant_id)
+     ->first();
+     $deliverie->start_time = $deliveries_slot->start_time;
+     $deliverie->end_time = $deliveries_slot->end_time;
+     $deliverie->name = $deliveries_slot->name;
+     $deliverie->slot_id = $deliveries_slot->slot_id;
+  
+ }else{
+  $deliverieSlot = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
+  ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
+  ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+  ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
+   ->where('user_change_delivery_location.change_location_for_date',$dates)
+   ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
+   ->where('user_change_delivery_location.variant_id',$variant_id)
+  ->first();
+
+ $deliverie->start_time = $deliverieSlot->start_time;
+ $deliverie->end_time = $deliverieSlot->end_time;
+ $deliverie->name = $deliverieSlot->name;
+ $deliverie->slot_id = $deliverieSlot->slot_id;
+}
+
+ $data['deliveries'] = $deliverie;
+
+}else{
+  if(UserSkipTimeSlot::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_date',$dates)->exists()){
+
+       $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+      // ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
+      ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+      ->where('user_skip_time_slot.skip_date',$dates)
+       ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
+       ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
+       ->where('user_skip_time_slot.variant_id',$variant_id)
+      ->first();
+          $deliveries = userAddress::
+          select('user_address.id','user_address.address_type')
+          ->where('user_id',Auth::guard('api')->id())
+          ->where('day_selection_status','active')
+          ->when($var == "1", function ($q) {
+              $q->where('monday',"1");
+           })
+           ->when($var == "2", function ($q) {
+               $q->where('tuesday',"1");
+           })
+           ->when($var == "3", function ($q) {
+               $q->where('wednesday',"1");
+           })
+           ->when($var == "4", function ($q) {
+               $q->where('thursday',"1");
+           })
+           ->when($var == "5", function ($q) {
+               $q->where('friday',"1");
+           })
+           ->when($var == "6", function ($q) {
+               $q->where('saturday',"1");
+           })
+           ->when($var == "7", function ($q) {
+               $q->where('sunday',"1");
+           })
+          ->first();
+
+          $deliverie->address_type = $deliveries->address_type;
+          $deliverie->id = $deliveries->id;
+
+      $data['deliveries'] = $deliverie;
+    
+  }else{
+      $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+  ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type')
+  ->where('user_id',Auth::guard('api')->id())
+  ->where('day_selection_status','active')
+  ->when($var == "1", function ($q) {
+     $q->where('monday',"1");
+  })
+  ->when($var == "2", function ($q) {
+      $q->where('tuesday',"1");
+  })
+  ->when($var == "3", function ($q) {
+      $q->where('wednesday',"1");
+  })
+  ->when($var == "4", function ($q) {
+      $q->where('thursday',"1");
+  })
+  ->when($var == "5", function ($q) {
+      $q->where('friday',"1");
+  })
+  ->when($var == "6", function ($q) {
+      $q->where('saturday',"1");
+  })
+  ->when($var == "7", function ($q) {
+      $q->where('sunday',"1");
+  })
+  ->first();
+}
+}
+if(UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_delivery_date',$dates)->exists())
+{
+  
+  $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$plan_id])
+  ->get()
+  ->each(function($category){
+      $category->meal_group->meals = ["you skip your delivery for this date"];
+      
+  })->toArray();
+  $data['category'] = $category;
+  $data['skip_status'] = "you skip your delivery for this date";
+ }else{
+   $checkPlanStatus = UserProfile::select('subscription_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+   if($checkPlanStatus->subscription_id == $plan_id && $checkPlanStatus->variant_id == $variant_id){
+      $data['plan_status'] = "current";
+   }else{
+      $data['plan_status'] = "previous";
+   }
+ 
+  //   $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+  //   ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.address_type')
+  //   ->first();
+      $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$plan_id])
+     ->get()
+     ->each(function($category) use($dates,$plan_id,$targetCalorie){
+      $category->meal_group->meals =Meal::
+     join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+     ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+      ->select('meals.id','meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.recipe_yields','meals.description','meals.description_ar','meals.image','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+      ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+       ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
+      ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
+      ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $plan_id,'meals.status'=>'active'])
+       
+      ->get()->each(function($meals) {
+      
+      //  $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+       $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+       ->where('meal_id', $meals->id)
+       ->groupBy('meal_id')
+      ->first();
+      $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+      ->groupBy('meal_id')
+     ->count();
+})->toArray();
+})->toArray();
+      // ->each(function($category) use($dates){
+      //            $meals = $category->meals=Meal::join('meal_ratings','meals.id','=','meal_ratings.meal_id' )
+      //         //    ->where(['meal_ratings.user_id',Auth::guard('api')->id()])
+      //            ->select('meals.*','meal_ratings.rating')
+      //            ->whereDate('meals.created_at','=', date('Y-m-d', strtotime($dates)))
+      //            ->where(['meals.meal_schedule_id'=>$category->id])->get()->each(function($meals) {
+      //             $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+      //     })->toArray();
+      //    })->toArray();
+          // $category->deliveries = $deliveries;
+ 
+ $data['category'] = $category;
+ $data['skip_status'] = "";
+ $data['no_days'] = $increasingdays;
+ $data['withoutOrWithweekend'] = $no_of_day->option2;
+ $data['skipNoDaysIncrease'] = $no_of_days;
+}
+
+}
        if($data){
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
@@ -924,7 +1302,52 @@ class SubscriptionController extends Controller {
 
     public function myPlan(Request $request){
         $user_detail = UserProfile::select('subscription_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+        
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
           $meal = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+        ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+       ->select('subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscriptions.end_date','subscription_plans.image','subscription_plans.name_ar as name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price')
+       ->where(['subscriptions.user_id'=>Auth::guard('api')->id()])->where(function($q){
+        $q->where('subscriptions.delivery_status','paused')
+        ->orWhere('subscriptions.delivery_status','upcoming')
+        ->orWhere('subscriptions.delivery_status','active');
+        })
+       ->where('subscriptions.variant_id',$user_detail->variant_id)
+       ->where('subscriptions_meal_plans_variants.id',$user_detail->variant_id)
+    //    ->where('subscriptions.delivery_status','!=','upcoming')
+       ->first();
+       if($meal){
+        $dates = Carbon::createFromFormat('Y-m-d',$meal->start_date);
+          $date = $dates->addDays($meal->no_days);
+           $diff = now()->diffInDays(Carbon::parse($meal->end_date));
+           
+           $datess = Carbon::createFromFormat('Y-m-d',$meal->start_date);
+           if($datess->gt(now())){
+             $dates = Carbon::createFromFormat('Y-m-d',$meal->start_date);
+             $meal->days_remaining  = 'تبدأ خطتك من'.' '.date('d-m-Y',strtotime($dates));
+           }else{
+             if($diff == 0){
+                 $meal->days_remaining  = "خطتك انتهت";
+             }else{
+                 $meal->days_remaining  = $diff .' أيام ';
+             }
+         
+         }
+        // if($diff == 0){
+        //     $meal->days_remaining  = "Your plan is expire today";
+        // }
+        //     elseif($date< now()){
+        //     $meal->days_remaining  = "Your plan is expire ";
+        //     UserProfile::where('user_id',Auth::guard('api')->id())->update(['subscription_id'=>Null]);
+        //     Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$meal->id])->update(['delivery_status'=>'terminted']);
+        //  }else{
+        //      $meal->days_remaining  = $diff .' days left to expire ';
+        //  }
+     
+       }
+    }else{
+        $meal = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
         ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
        ->select('subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.no_days','subscriptions.start_date','subscription_plans.image','subscription_plans.name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price')
        ->where(['subscriptions.user_id'=>Auth::guard('api')->id()])->where(function($q){
@@ -953,21 +1376,25 @@ class SubscriptionController extends Controller {
              }
          
          }
-        // if($diff == 0){
-        //     $meal->days_remaining  = "Your plan is expire today";
-        // }
-        //     elseif($date< now()){
-        //     $meal->days_remaining  = "Your plan is expire ";
-        //     UserProfile::where('user_id',Auth::guard('api')->id())->update(['subscription_id'=>Null]);
-        //     Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$meal->id])->update(['delivery_status'=>'terminted']);
-        //  }else{
-        //      $meal->days_remaining  = $diff .' days left to expire ';
-        //  }
-     
        }
+
+    }
   
     
-
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
+    $meals = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+    ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+   ->select('subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.no_days','subscription_plans.image','subscription_plans.name_ar as name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions.start_date')
+   ->where(['subscriptions.delivery_status'=>'terminted','subscriptions.user_id'=>Auth::guard('api')->id()])
+   ->get()->each(function($meals){
+    $puchase_on = $meals->start_date;
+    $meals->puchase_on = date('d M', strtotime($puchase_on));
+    $dates = Carbon::createFromFormat('Y-m-d',$meals->start_date);
+    $expired_on = $dates->addDays($meals->no_days);
+    $meals->expired_on = date('d M', strtotime($expired_on));
+   });
+}else{
     $meals = Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
     ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
    ->select('subscriptions_meal_plans_variants.id as variant_id','subscriptions_meal_plans_variants.no_days','subscription_plans.image','subscription_plans.name','subscription_plans.id','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.plan_price','subscriptions.start_date')
@@ -978,8 +1405,9 @@ class SubscriptionController extends Controller {
     $dates = Carbon::createFromFormat('Y-m-d',$meals->start_date);
     $expired_on = $dates->addDays($meals->no_days);
     $meals->expired_on = date('d M', strtotime($expired_on));
-
    });
+
+}
 
        $data['current_plan'] = $meal;
        $data['previous_plan'] = $meals;
@@ -1025,10 +1453,19 @@ class SubscriptionController extends Controller {
                   if($checkDaySelects->monday == '1' || $checkDaySelects->tuesday == '1' || $checkDaySelects->wednesday == '1' || $checkDaySelects->thursday == '1' || $checkDaySelects->friday == '1' || $checkDaySelects->saturday == '1' || $checkDaySelects->sunday == '1'){
 
                    }else{
+                    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                    if($language->lang == 'ar'){
                       return response()->json([
                      'status' => true,
-                     'error'=> 'Please select a delivery day '
+                     'error'=> 'الرجاء تحديد يوم التسليم '
                      ]);
+                    }else{
+                      return response()->json([
+                         'status' => true,
+                        'error'=> 'Please select a delivery day '
+                     ]);
+
+                    }
 
                    }
 
@@ -1040,64 +1477,127 @@ class SubscriptionController extends Controller {
                     ->where('monday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('tuesday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام'
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('wednesday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('thursday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                     if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام '
+                        ]);
+                     }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                     }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('friday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('saturday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'يرجى تحديد 7 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('sunday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 7 day '
                         ]);
+                    }else{
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'Please select 7 day '
+                        ]);
+
+                    }
                     }
                     
                    }
@@ -1105,80 +1605,161 @@ class SubscriptionController extends Controller {
                     if(UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('friday',"1")
                     ->exists()){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء إلغاء تحديد الجمعة'
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please Unselect friday'
                         ]);
+
+                    }
                     }
                     if(UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('saturday',"1")
                     ->exists()){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء إلغاء تحديد السبت'
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please Unselect saturday'
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('monday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء تحديد 5 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 5 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('tuesday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء تحديد 5 أيام'
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 5 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('wednesday',"1")
                     ->get();
+                    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                    if($language->lang == 'ar'){
                     if(sizeof($checkDaySelect) == 0){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء تحديد 5 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 5 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('thursday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء تحديد 5 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 5 day '
                         ]);
+
+                    }
                     }
                     $checkDaySelect =UserAddress::where(['day_selection_status'=>'active','user_id'=>Auth::guard('api')->id()])
                     ->where('sunday',"1")
                     ->get();
                     if(sizeof($checkDaySelect) == 0){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'الرجاء تحديد 5 أيام '
+                        ]);
+                    }else{
                         return response()->json([
                             'status' => true,
                             'error'=> 'Please select 5 day '
                         ]);
+
+                    }
                     }
 
                    }
                }
              
             }else{
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                return response()->json([
+                    'status' => true,
+                     'error'=> 'الرجاء تحديد عنوان أولا'
+                ]);
+            }else{
                 return response()->json([
                     'status' => true,
                      'error'=> 'Please select an address first'
                 ]);
+
+            }
             }
          }
+        }else{
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
+            return response()->json([
+                'status' => true,
+                'error'=> 'الرجاء إضافة عنوان أولا'
+            ]);
         }else{
             return response()->json([
                 'status' => true,
                 'error'=> 'Please add an address first'
             ]);
+
+        }
         }
        
 
@@ -1695,13 +2276,23 @@ $data['plan_status'] = $plan_status;
 
 
 public function paymentPlan_detail(Request $request) {
-
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
     $plan_detail=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
+    ->select('subscription_plans.id','subscription_plans.name_ar as name','subscription_plans.image','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.variant_name')
+    ->where('subscription_plans.id',$request->plan_id)
+    ->where('subscriptions_meal_plans_variants.id',$request->variant_id)
+    ->where(['subscription_plans.status'=>'active'])
+    ->first();
+    }else{
+        $plan_detail=SubscriptionPlan::join('subscriptions_meal_plans_variants','subscription_plans.id','=','subscriptions_meal_plans_variants.meal_plan_id')
     ->select('subscription_plans.id','subscription_plans.name','subscription_plans.image','subscriptions_meal_plans_variants.plan_price','subscriptions_meal_plans_variants.option1','subscriptions_meal_plans_variants.variant_name')
     ->where('subscription_plans.id',$request->plan_id)
     ->where('subscriptions_meal_plans_variants.id',$request->variant_id)
     ->where(['subscription_plans.status'=>'active'])
     ->first();
+
+    }
    
    
     $data['plan_detail'] = $plan_detail;
@@ -1718,10 +2309,12 @@ public function getSwapMeal(Request $request) {
     $schedule_id = $request->schedule_id;
     $custom_calorie = $request->custom_calorie;
 
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
      $meals =Meal::
      join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
      ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
-     ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+     ->select('meals.name_ar as name','meals.side_dish_ar as side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
     //  ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
      ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $subscription_plan_id,'meals.status'=>'active'])
       ->where('subscription_meal_plan_variant_default_meal.date',$date)
@@ -1731,7 +2324,7 @@ public function getSwapMeal(Request $request) {
      ->get()->each(function($meals) {
        
      $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
-     ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+     ->select('dislike_items.id','dislike_items.group_id','dislike_items.name_ar')
      ->where('meal_ingredient_list.meal_id',$meals->id)
      ->where('dislike_items.status','active')->get()
      ->each(function($dislikeItem){
@@ -1754,6 +2347,46 @@ public function getSwapMeal(Request $request) {
      ->groupBy('meal_id')
     ->count();
 })->toArray();
+
+    }else{
+        $meals =Meal::
+        join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+        ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+        ->select('meals.name','meals.side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+       //  ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
+        ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $subscription_plan_id,'meals.status'=>'active'])
+         ->where('subscription_meal_plan_variant_default_meal.date',$date)
+         ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$schedule_id)
+         ->where('meal_macro_nutrients.user_calorie',$custom_calorie)
+         ->distinct()
+        ->get()->each(function($meals) {
+          
+        $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+        ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+        ->where('meal_ingredient_list.meal_id',$meals->id)
+        ->where('dislike_items.status','active')->get()
+        ->each(function($dislikeItem){
+           $dislikeItem->selected=false;
+           if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+               $dislikeItem->selected=true;
+           }
+       });
+       $meals->dislikegroup = DislikeGroup::select('id','name')->where('status','active')->get()->each(function($dislikegroup){
+           $dislikegroup->selected=false;
+           if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikegroup->id])->first()){
+               $dislikegroup->selected=true;
+           }
+       });
+         $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+         ->where('meal_id', $meals->id)
+         ->groupBy('meal_id')
+        ->first();
+        $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+        ->groupBy('meal_id')
+       ->count();
+   })->toArray();
+
+    }
 
     $data['meals'] = $meals;
     $response = new \Lib\PopulateResponse($data);
@@ -1779,14 +2412,25 @@ public function apply_gift_card(Request $request){
             $getBooking = UserGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->first();
             if (!$getBooking) {
                 $this->error_code = 201;
-                $validate->errors()->add('gift card', "This gift card is not valid");
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $validate->errors()->add('gift card', "بطاقة الهدايا هذه غير صالحة");
+                }else{
+                    $validate->errors()->add('gift card', "This gift card is not valid");
+
+                }
             }
         }
 
         if ($request['voucher_code'] &&  $request['voucher_pin']) {
             if($user_used = UserUsedGiftCard::where('voucher_code', $request['voucher_code'])->where('voucher_pin', $request['voucher_pin'])->exists()){
              $this->error_code = 201;
-             $validate->errors()->add('gift card used', "This gift card is already used");
+             $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+             if($language->lang == 'ar'){
+             $validate->errors()->add('gift card used', "بطاقة الهدايا هذه مستخدمة بالفعل");
+             }else{
+                $validate->errors()->add('gift card used', "This gift card is already used");
+             }
            }
         }
     });
@@ -1834,7 +2478,12 @@ public function apply_referral_code(Request $request){
             $getBooking = User::where('referral_code', $request['referral_code'])->first();
             if (!$getBooking) {
                 $this->error_code = 201;
-                $validate->errors()->add('gift card', "This referral code is not valid");
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $validate->errors()->add('gift card', "رمز الإحالة هذا غير صالح");
+                }else{
+                    $validate->errors()->add('gift card', "This referral code is not valid");
+                }
             }
         }
 
@@ -1848,10 +2497,19 @@ public function apply_referral_code(Request $request){
             $getReferralId = User::where('referral_code',$request['referral_code'])->whereNotIn('status',['0'])->first();
             if($checkForPlan = ReferAndEarnUsed::where(['referee_id'=>$getReferralId->id, 'referral_id'=>Auth::guard('api')->id()])->where('used_for','plan_purchase')->exists())
             {
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                 return response()->json([
                     'status' => true,
-                     'error'=> 'You already used this referral code for plan purchase'
+                     'error'=> 'لقد استخدمت بالفعل رمز الإحالة هذا لشراء خطة'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                         'error'=> 'You already used this referral code for plan purchase'
+                       ]);
+
+                }
             }
 
         }
@@ -1861,10 +2519,19 @@ public function apply_referral_code(Request $request){
             if($getReferralId->id == Auth::guard('api')->id()){
              
                {
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                    return response()->json([
                     'status' => true,
-                     'error'=> 'Use other user code '
+                     'error'=> 'استخدم كود مستخدم آخر'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                         'error'=> 'Use other user code '
+                       ]);
+
+                }
                }
             }
         }
@@ -1875,10 +2542,19 @@ public function apply_referral_code(Request $request){
             $countForPlan = ReferAndEarnUsed::where(['referee_id'=>$getReferralId->id])->where('used_for','plan_purchase')->count();
             if($countForPlan == $referralPerUser->referral_per_user){
             {
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                 return response()->json([
                     'status' => true,
-                     'error'=> 'This code is expire'
+                     'error'=> 'هذا الرمز منتهي الصلاحية'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                         'error'=> 'This code is expire'
+                       ]);
+
+                }
            }
          }
         }
@@ -1916,7 +2592,12 @@ public function apply_promo_code(Request $request){
             $getBooking = PromoCode::where('promo_code_ticket_id', $request['ticket_id'])->first();
             if (!$getBooking) {
                 $this->error_code = 201;
-                $validate->errors()->add('promo code', "This promo code is not valid");
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                $validate->errors()->add('promo code', "هذا الرمز الترويجي غير صالح");
+                }else{
+                    $validate->errors()->add('promo code', "This promo code is not valid");
+                }
             }
         }
 
@@ -1932,30 +2613,60 @@ public function apply_promo_code(Request $request){
                 if($count_used->maximum_discount_uses == null){
                     $countUser = UserUsedPromoCode::where('user_id',Auth::guard('api')->id())->where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->first();
                     if ($countUser) {
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
                         return response()->json([
                             'status' => true,
                             'error_code' => 201,
-                             'error'=> 'This Code  is already used'
+                             'error'=> 'هذا الرمز مستخدم بالفعل'
                            ]);
+                        }else{
+                            return response()->json([
+                                'status' => true,
+                                'error_code' => 201,
+                                 'error'=> 'This Code  is already used'
+                               ]);
+
+                        }
                     }
                 }else{
                     $countUsers = UserUsedPromoCode::where('user_id',Auth::guard('api')->id())->where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->count();
                     if($countUsers == $count_used->maximum_discount_uses){
+                        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                        if($language->lang == 'ar'){
                         return response()->json([
                             'status' => true,
                             'error_code' => 201,
-                             'error'=> 'You used your max limit'
+                             'error'=> 'لقد استخدمت الحد الأقصى الخاص بك'
                            ]);
+                        }else{
+                            return response()->json([
+                                'status' => true,
+                                'error_code' => 201,
+                                 'error'=> 'You used your max limit'
+                               ]);
+
+                        }
                     }
                 }
            }else{
              $countTicket = UserUsedPromoCode::where('promo_code_ticket_id',$count_used->promo_code_ticket_id)->count();
              if($countTicket == $count_used->maximum_discount_uses){
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                  return response()->json([
                     'status' => true,
                     'error_code' => 201,
-                     'error'=> 'This code is expired '
+                     'error'=> 'هذا الرمز منتهي الصلاحية'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                        'error_code' => 201,
+                         'error'=> 'This code is expired '
+                       ]);
+
+                }
               }
             }
 
@@ -1974,11 +2685,21 @@ public function apply_promo_code(Request $request){
              $amount_discount = $promoCodeTicket_id->price;
             }
             if($amount_discount > $request->total_amount){
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
+                return response()->json([
+                    'status'=>true,
+                    'error_code' => 201,
+                    'error' => 'المبلغ أكبر من حزمة الوجبة'
+                ]);
+            }else{
                 return response()->json([
                     'status'=>true,
                     'error_code' => 201,
                     'error' => 'Amount is greater than meal package'
                 ]);
+
+            }
             }else{
                 $promoCodeTicket_id->amount_discount = $amount_discount;
             }
@@ -2395,10 +3116,19 @@ public function userSkipDelivery(Request $request){
          
     }   
   }else{
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
     return response()->json([
         'status' => true,
-         'error'=> 'You can not skip delivery for this date'
+         'error'=> 'لا يمكنك تخطي التسليم لهذا التاريخ'
        ]);
+    }else{
+        return response()->json([
+            'status' => true,
+             'error'=> 'You can not skip delivery for this date'
+           ]);
+
+    }
    }
      
    $response = new \Lib\PopulateResponse($user);
@@ -2415,10 +3145,19 @@ public function userUnskipDelivery(Request $request){
    if($fourtyHourDate <= $request->skip_delivery_date.' '. $current_time){   
       $unSkip =  UserSkipDelivery::where(['user_id'=> Auth::guard('api')->id(),'user_address_id' => $request->user_address_id,  'subscription_plan_id' => $request->subscription_plan_id, 'variant_id' => $request->variant_id,'skip_delivery_date' => $request->skip_delivery_date,])->delete();   
 }else{
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
  return response()->json([
      'status' => true,
-      'error'=> 'You can not Unskip delivery for this date'
+      'error'=> 'لا يمكنك Unskip التسليم لهذا التاريخ'
     ]);
+}else{
+    return response()->json([
+        'status' => true,
+         'error'=> 'You can not Unskip delivery for this date'
+       ]);
+
+}
 }
  
  $this->status = true; 
@@ -2429,11 +3168,21 @@ public function userUnskipDelivery(Request $request){
 public function userChangeDeliveryLocation(Request $request){
     $fourtyHourDate= date('Y-m-d',strtotime(' +2day '));
     if($fourtyHourDate >= $request->change_location_for_date){ 
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){
         return response()->json([
             'status' => true,
             'error_code' => 201,
-             'error'=> 'You can not skip address before  48 hours '
+             'error'=> 'لا يمكنك تخطي العنوان قبل 48 ساعة '
            ]);
+        }else{
+            return response()->json([
+                'status' => true,
+                'error_code' => 201,
+                 'error'=> 'You can not skip address before  48 hours '
+               ]);
+
+        }
     }else{
     $insert=UserChangeDeliveryLocation::updateOrCreate(
         ['user_id' =>  Auth::guard('api')->id(),
@@ -2459,11 +3208,21 @@ public function switchPlan(Request $request){
      $getNewWeekend = SubscriptionMealPlanVariant::select('no_days','plan_price','option2','option1')->where(['meal_plan_id'=>$request->new_subscription_plan_id,'id'=>$request->new_variant_id])->first();
   if($getOldWeekend->option1 == 'monthly'  && $getNewWeekend->option1 == 'weekly')
   {
+    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+    if($language->lang == 'ar'){
     return response()->json([
         'status' => true,
-        'error'  => "You can not  switch plan from monthly to weekly",
+        'error'  => "لا يمكنك تبديل الخطة من الشهرية إلى الأسبوعية",
     
       ]);
+    }else{
+        return response()->json([
+            'status' => true,
+            'error'  => "You can not  switch plan from monthly to weekly",
+        
+          ]);
+
+    }
 
   }
   else{
@@ -2685,22 +3444,45 @@ public function savedAddressListing(Request $request) {
         // $request->is_weekend;
         $request->subscription_plan_id; // this id get from my plan when user click on perticular plan then get ths detail
         $request->variant_id; // this id get from my plan when user click on perticular plan then get ths detail
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){   
         $dietPlan = UserProfile::join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
+        ->where('user_profile.user_id',Auth::guard('api')->id())
+        ->select('diet_plan_types.name_ar as name')
+        ->first();
+        }else{
+            $dietPlan = UserProfile::join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
         ->where('user_profile.user_id',Auth::guard('api')->id())
         ->select('diet_plan_types.name')
         ->first();
 
+        }
+
          $subscriptions=SubscriptionPlan::select('id')->where(['id'=> $request->subscription_plan_id])->first();
         if(Subscription::where(['delivery_status'=>'terminted','plan_id'=>$request->subscription_plan_id,'variant_id'=>$request->variant_id])->where('user_id',Auth::guard('api')->id())->first()){
+
+        if($language->lang == 'ar'){    
          $subscription=Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
          ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
-         ->select('subscription_plans.id','subscriptions.variant_id','subscription_plans.name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions_meal_plans_variants.option2')
+         ->select('subscription_plans.id','subscriptions.variant_id','subscription_plans.name_ar as name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions_meal_plans_variants.option2')
          ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
          ->where('subscriptions.user_id',Auth::guard('api')->id())
          ->where('subscriptions.variant_id',$request->variant_id)
          ->where('subscriptions_meal_plans_variants.id',$request->variant_id)
          ->where('subscriptions.delivery_status','terminted')
          ->first();
+        }else{
+            $subscription=Subscription::join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+            ->join('subscriptions_meal_plans_variants','subscriptions.plan_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+            ->select('subscription_plans.id','subscriptions.variant_id','subscription_plans.name','subscription_plans.image','subscriptions.start_date','subscriptions_meal_plans_variants.no_days as no_dayss','subscriptions_meal_plans_variants.option2')
+            ->where(['subscription_plans.status'=>'active','subscription_plans.id'=>$subscriptions->id])
+            ->where('subscriptions.user_id',Auth::guard('api')->id())
+            ->where('subscriptions.variant_id',$request->variant_id)
+            ->where('subscriptions_meal_plans_variants.id',$request->variant_id)
+            ->where('subscriptions.delivery_status','terminted')
+            ->first();
+
+         }
         
          if($subscription){
         
@@ -2725,8 +3507,33 @@ public function savedAddressListing(Request $request) {
                 
                 
                 $subscription->meal_groups=[];
-
+                if($language->lang == 'ar'){   
                 if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id])->first()){
+
+                        $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id])->first();
+                        $subscription->cost=$costs->plan_price;
+                        $subscription->day=$costs->option1;
+                        // $costs->option1 = '-';
+
+                        $meals=[];
+                        $meal_des=[];
+                           $subscription->meal_groups=SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$subscription->id])->get();
+                        foreach($subscription->meal_groups as $meal){
+                            array_push($meals,['id'=>$meal->meal_group->id,'meal_name'=>$meal->meal_group->name_ar]);
+                            array_push($meal_des,$meal->meal_group->name_ar);
+                        }
+                        $meal_des=count($meal_des)." باقة الوجبات (".implode(',',$meal_des).")";
+
+                        $subscription->description=[
+                            "يخدم حتى $costs->serving_calorie من السعرات الحرارية $costs->calorie السعرات الحرارية الموصى بها لك.",
+                            $costs->no_days." أيام أ ".$costs->option1,
+                            " ".$meal_des
+                        ];
+                        $subscription->meal_groups=$meals;
+                        
+                    }
+                }else{
+                    if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id])->first()){
 
                         $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$subscription->id,'id'=>$subscription->variant_id])->first();
                         $subscription->cost=$costs->plan_price;
@@ -2750,6 +3557,8 @@ public function savedAddressListing(Request $request) {
                         $subscription->meal_groups=$meals;
                         
                     }
+
+                }
                     if($subscription->start_date){
                         if($subscription->option2 == 'withoutweekend'){
                              $date = Carbon::createFromFormat('Y-m-d',$subscription->start_date);
@@ -2798,6 +3607,10 @@ public function savedAddressListing(Request $request) {
         $plan_id = $request->subscription_plan_id;
         $variant_id = $request->variant_id;
         $dates = $request->date;
+
+        $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+        if($language->lang == 'ar'){ 
+
         $datess = Carbon::createFromFormat('Y-m-d',$dates);
         $day = strtolower($datess->format('l'));
 
@@ -2863,7 +3676,7 @@ public function savedAddressListing(Request $request) {
 
             $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
            ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
-           ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id')
+           ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
            ->where('user_skip_time_slot.skip_date',$dates)
             ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
             ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
@@ -2877,7 +3690,7 @@ public function savedAddressListing(Request $request) {
        }else{
         $deliverieSlot = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
         ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
-        ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+        ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
         ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
          ->where('user_change_delivery_location.change_location_for_date',$dates)
          ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
@@ -2897,7 +3710,7 @@ public function savedAddressListing(Request $request) {
     
              $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
             // ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
-            ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+            ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name_ar as name','delivery_slots.id as slot_id')
             ->where('user_skip_time_slot.skip_date',$dates)
              ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
              ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
@@ -2937,7 +3750,7 @@ public function savedAddressListing(Request $request) {
           
         }else{
             $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
-        ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type')
+        ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name_ar as name','delivery_slots.id as slot_id','user_address.address_type')
         ->where('user_id',Auth::guard('api')->id())
         ->where('day_selection_status','active')
         ->when($var == "1", function ($q) {
@@ -2993,7 +3806,7 @@ public function savedAddressListing(Request $request) {
             $category->meal_group->meals =Meal::
          join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
          ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
-         ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+         ->select('meals.name_ar as name','meals.side_dish_ar as side_dish','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
              ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
             ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
             ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $plan_id,'meals.status'=>'active'])
@@ -3001,7 +3814,7 @@ public function savedAddressListing(Request $request) {
             ->get()->each(function($meals) {
             
                 $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
-                ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+                ->select('dislike_items.id','dislike_items.group_id','dislike_items.name_ar as name')
                 ->where('meal_ingredient_list.meal_id',$meals->id)
                  ->where('dislike_items.status','active')->get()
                   ->each(function($dislikeItem){
@@ -3025,6 +3838,236 @@ public function savedAddressListing(Request $request) {
        $data['no_of_days'] = $no_of_days;
        $data['withoutOrWithweekend'] = $no_of_day->option2;
     }
+}else{
+    $datess = Carbon::createFromFormat('Y-m-d',$dates);
+    $day = strtolower($datess->format('l'));
+
+    if($day == 'monday'){
+        $var = "1";
+    }elseif($day == 'tuesday'){
+        $var = '2';
+    }elseif($day == 'wednesday'){
+       $var = '3';
+   }elseif($day == 'thursday'){
+       $var = '4';
+   }elseif($day == 'friday'){
+       $var = '5';
+   }elseif($day == 'saturday'){
+       $var = '6';
+   }else{
+       $var = '7';
+   }
+   $datess = Carbon::createFromFormat('Y-m-d',$dates);
+   $day = strtolower($datess->format('l'));
+ $getAllDays = UserAddress::where('user_id',Auth::guard('api')->id())->where('day_selection_status','active')->get();
+ if($day == 'monday'){
+     $var = "1";
+ }elseif($day == 'tuesday'){
+     $var = '2';
+ }elseif($day == 'wednesday'){
+    $var = '3';
+}elseif($day == 'thursday'){
+    $var = '4';
+}elseif($day == 'friday'){
+    $var = '5';
+}elseif($day == 'saturday'){
+    $var = '6';
+}else{
+    $var = '7';
+}
+
+// $custom_calorie = $request->custom_calorie;
+$userCustomCalorie = UserCaloriTarget::select('custom_result_id')->where('user_id',Auth::guard('api')->id())->first();
+$targetCalorie = CalorieRecommend::select('recommended')->where('id',$userCustomCalorie->custom_result_id)->first();
+
+//  $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+$start_date = Subscription::select('start_date')->where(['plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('user_id',Auth::guard('api')->id())->first();
+ $no_of_day = SubscriptionMealPlanVariant::select('no_days','option2')->where(['meal_plan_id'=>$plan_id,'id'=>$variant_id])->first();
+ if(!empty($no_of_day))
+ {
+
+     $countSkip = UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->count();
+     $no_of_days = $no_of_day->no_days + $countSkip;
+ }
+
+if(UserChangeDeliveryLocation::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('change_location_for_date',$dates)->exists()){
+    $deliverie = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
+    // ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
+    ->select('user_address.address_type','user_address.id')
+    ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
+     ->where('user_change_delivery_location.change_location_for_date',$dates)
+     ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
+     ->where('user_change_delivery_location.variant_id',$variant_id)
+    ->first();
+
+    if(UserSkipTimeSlot::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_date',$dates)->exists()){
+
+        $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+       ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
+       ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id')
+       ->where('user_skip_time_slot.skip_date',$dates)
+        ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
+        ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
+        ->where('user_skip_time_slot.variant_id',$variant_id)
+       ->first();
+       $deliverie->start_time = $deliveries_slot->start_time;
+       $deliverie->end_time = $deliveries_slot->end_time;
+       $deliverie->name = $deliveries_slot->name;
+       $deliverie->slot_id = $deliveries_slot->slot_id;
+    
+   }else{
+    $deliverieSlot = userAddress::join('user_change_delivery_location','user_address.id','=','user_change_delivery_location.user_address_id')
+    ->join('delivery_slots','user_address.delivery_slot_id','=','delivery_slots.id')
+    ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+    ->where('user_change_delivery_location.user_id',Auth::guard('api')->id())
+     ->where('user_change_delivery_location.change_location_for_date',$dates)
+     ->where('user_change_delivery_location.subscription_plan_id',$plan_id)
+     ->where('user_change_delivery_location.variant_id',$variant_id)
+    ->first();
+ 
+   $deliverie->start_time = $deliverieSlot->start_time;
+   $deliverie->end_time = $deliverieSlot->end_time;
+   $deliverie->name = $deliverieSlot->name;
+   $deliverie->slot_id = $deliverieSlot->slot_id;
+}
+
+   $data['deliveries'] = $deliverie;
+
+}else{
+    if(UserSkipTimeSlot::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_date',$dates)->exists()){
+
+         $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+        // ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
+        ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
+        ->where('user_skip_time_slot.skip_date',$dates)
+         ->where('user_skip_time_slot.user_id',Auth::guard('api')->id())
+         ->where('user_skip_time_slot.subscription_plan_id',$plan_id)
+         ->where('user_skip_time_slot.variant_id',$variant_id)
+        ->first();
+            $deliveries = userAddress::
+            select('user_address.id','user_address.address_type')
+            ->where('user_id',Auth::guard('api')->id())
+            ->where('day_selection_status','active')
+            ->when($var == "1", function ($q) {
+                $q->where('monday',"1");
+             })
+             ->when($var == "2", function ($q) {
+                 $q->where('tuesday',"1");
+             })
+             ->when($var == "3", function ($q) {
+                 $q->where('wednesday',"1");
+             })
+             ->when($var == "4", function ($q) {
+                 $q->where('thursday',"1");
+             })
+             ->when($var == "5", function ($q) {
+                 $q->where('friday',"1");
+             })
+             ->when($var == "6", function ($q) {
+                 $q->where('saturday',"1");
+             })
+             ->when($var == "7", function ($q) {
+                 $q->where('sunday',"1");
+             })
+            ->first();
+
+            $deliverie->address_type = $deliveries->address_type;
+            $deliverie->id = $deliveries->id;
+
+        $data['deliveries'] = $deliverie;
+      
+    }else{
+        $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+    ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type')
+    ->where('user_id',Auth::guard('api')->id())
+    ->where('day_selection_status','active')
+    ->when($var == "1", function ($q) {
+       $q->where('monday',"1");
+    })
+    ->when($var == "2", function ($q) {
+        $q->where('tuesday',"1");
+    })
+    ->when($var == "3", function ($q) {
+        $q->where('wednesday',"1");
+    })
+    ->when($var == "4", function ($q) {
+        $q->where('thursday',"1");
+    })
+    ->when($var == "5", function ($q) {
+        $q->where('friday',"1");
+    })
+    ->when($var == "6", function ($q) {
+        $q->where('saturday',"1");
+    })
+    ->when($var == "7", function ($q) {
+        $q->where('sunday',"1");
+    })
+    ->first();
+  }
+}
+  if(UserSkipDelivery::where('user_id',Auth::guard('api')->id())->where(['subscription_plan_id'=>$plan_id,'variant_id'=>$variant_id])->where('skip_delivery_date',$dates)->exists())
+  {
+    $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$plan_id])
+    ->get()
+    ->each(function($category){
+        $category->meal_group->meals = [ ];
+        
+    })->toArray();
+    $data['category'] = $category;
+    $data['skip_status'] = "you skip your delivery for this date";
+   }else{
+
+ 
+     $checkPlanStatus = UserProfile::select('subscription_id','variant_id')->where('user_id',Auth::guard('api')->id())->first();
+     if($checkPlanStatus->subscription_id == $plan_id && $checkPlanStatus->variant_id == $variant_id){
+        $data['plan_status'] = "current";
+     }else{
+        $data['plan_status'] = "previous";
+     }
+   
+    //   $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+    //   ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.address_type')
+    //   ->first();
+        $category = SubscriptionMealGroup::select('meal_schedule_id')->with('meal_group')->where(['plan_id'=>$plan_id])
+       ->get()
+       ->each(function($category) use($dates,$plan_id,$targetCalorie,$variant_id){
+        $category->meal_group->meals =Meal::
+     join('subscription_meal_plan_variant_default_meal','meals.id','subscription_meal_plan_variant_default_meal.item_id')
+     ->join('meal_macro_nutrients','meals.id','=','meal_macro_nutrients.meal_id')
+     ->select('meals.name','meals.name_ar','meals.side_dish','meals.side_dish_ar','meals.image','meals.id','meals.food_type','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
+         ->where('subscription_meal_plan_variant_default_meal.meal_schedule_id',$category->meal_group->id)
+        ->whereDate('subscription_meal_plan_variant_default_meal.date','=', date('Y-m-d', strtotime($dates)))
+        ->where(['subscription_meal_plan_variant_default_meal.meal_plan_id'=> $plan_id,'meals.status'=>'active'])
+        ->where('meal_macro_nutrients.user_calorie',$targetCalorie->recommended)
+        ->get()->each(function($meals) {
+        
+            $meals->dislikeItem = DislikeItem::join('meal_ingredient_list','dislike_items.id','=','meal_ingredient_list.item_id')
+            ->select('dislike_items.id','dislike_items.group_id','dislike_items.name')
+            ->where('meal_ingredient_list.meal_id',$meals->id)
+             ->where('dislike_items.status','active')->get()
+              ->each(function($dislikeItem){
+                  $dislikeItem->selected=false;
+               if(UserDislike::where(['user_id'=>Auth::guard('api')->id(),'item_id'=>$dislikeItem->group_id])->first()){
+                   $dislikeItem->selected=true;
+               }
+          });
+        //  $meals->ingredient=MealIngredientList::select('ingredients')->where(['meal_id'=>$meals->id])->get();
+         $meals->rating = MealRating::select(DB::raw('avg(rating) as avg_rating'))
+         ->where('meal_id', $meals->id)
+         ->groupBy('meal_id')
+        ->first();
+        $meals->ratingcount = MealRating::where('meal_id', $meals->id)
+        ->groupBy('meal_id')
+       ->count();
+ })->toArray();
+})->toArray(); 
+   $data['category'] = $category;
+   $data['skip_status'] = "";
+   $data['no_of_days'] = $no_of_days;
+   $data['withoutOrWithweekend'] = $no_of_day->option2;
+}
+
+}
        if($data){
         $response = new \Lib\PopulateResponse($data);
         $this->status = true;
@@ -3081,10 +4124,19 @@ public function savedAddressListing(Request $request) {
            
                    ]
                 );
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                 return response()->json([
                     'status' => true,
-                    'error'=> 'Plan repeat successfully'
+                    'error'=> 'كرر الخطة بنجاح'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                        'error'=> 'Plan repeat successfully'
+                       ]);
+
+                }
             }else{
               $date = $dates->addDays($getNoOfDays->no_days);
              $expireDateOnedayExtra = $date->addDays(2);
@@ -3108,17 +4160,35 @@ public function savedAddressListing(Request $request) {
           }
         }else{
              Subscription::where(['user_id' => Auth::guard('api')->id(),  'plan_id' => $getSubscriptionId->subscription_id, 'variant_id' => $getSubscriptionId->variant_id,'delivery_status'=>'upcoming'])->update(['plan_status'=>'plan_inactive']);
+             $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+             if($language->lang == 'ar'){
             return response()->json([
                 'status' => true,
-                'error'=> ' Plan inactive successfully'
+                'error'=> ' خطة غير نشطة بنجاح'
                ]);
+            }else{
+                return response()->json([
+                    'status' => true,
+                    'error'=> ' Plan inactive successfully'
+                   ]);
+
+            }
         }
 
         }else{
+            $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+            if($language->lang == 'ar'){
             return response()->json([
              'status' => true,
-             'error'=> 'Repeat plan before 48 hours of expire date'
+             'error'=> 'كرر الخطة قبل 48 ساعة من تاريخ انتهاء الصلاحية'
             ]);
+        }else{
+            return response()->json([
+                'status' => true,
+                'error'=> 'Repeat plan before 48 hours of expire date'
+               ]);
+
+        }
         }
        
         if($data){
@@ -3149,16 +4219,33 @@ public function savedAddressListing(Request $request) {
              $day = strtolower($date->format('l'));
              if ($day == 'friday' )
               {
+                $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                if($language->lang == 'ar'){
                 return response()->json([
                     'status' => true,
-                    'error'=> 'Your plan is without weekend you can not add friday'
+                    'error'=> 'خطتك بدون عطلة نهاية الأسبوع لا يمكنك إضافة الجمعة'
                    ]);
+                }else{
+                    return response()->json([
+                        'status' => true,
+                        'error'=> 'Your plan is without weekend you can not add friday'
+                       ]);
+
+                }
                 }
                 if ($day == 'saturday' ) {
+                    $language = User::select('lang')->where('id',Auth::guard('api')->id())->first();
+                    if($language->lang == 'ar'){
                     return response()->json([
                         'status' => true,
                         'error'=> 'Your plan is without weekend you can not add saturday'
                        ]);
+                    }else{
+                        return response()->json([
+                            'status' => true,
+                            'error'=> 'Your plan is without weekend you can not add saturday'
+                           ]);
+                    }
                      }
                      Subscription::where(['user_id'=>Auth::guard('api')->id(),'plan_id'=>$plan_id,'variant_id'=>$variant_id])->update(['start_date'=>$startDate, 'end_date'=>$endDate]);
            }else{

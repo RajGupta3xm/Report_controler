@@ -141,9 +141,8 @@
 
                                                                     <td>
                                                                         <select class="form-select table_input table_select" aria-label="Default select example" name="is_charge_vat" id="is_charge_vat"  style="    width: 157px !important;">
-                                                                        <option selected value="1">No</option>
-                                                                            <option >Yes</option>
-                                                                          
+                                                                            <option selected>Yes</option>
+                                                                            <option value="1">No</option>
                                                                         </select>
                                                                         <p class="text-danger text-small" id="is_charge_vatError"></p>
                                                                     </td>

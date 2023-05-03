@@ -92,25 +92,32 @@
                                            <td>{{date('d/m/Y',strtotime($user->created_at))}}</td>
                                            @php
                                                 $totalOrder=\App\Models\Order::where('user_id',$user->id)->count();
-                                               
+                                               $userAddressFirst = \App\Models\UserAddress::select('area')->where('user_id',$user->id)->where('day_selection_status','active')->take(1)->first();
+                                               $userAddressSecond = \App\Models\UserAddress::select('area')->where('user_id',$user->id)->where('day_selection_status','active')->skip(1)->take(1)->first();
+                                            
                                             @endphp
                                            <td>{{$totalOrder}}</td> 
                                            <td>22</td> 
                                            @forelse ($user->TotalOrder->take(2) as $k=>$order)
                                            <td>{{$order->area}}</td>
                                            @empty
-                                           <td>-</td>
-                                           <td>-</td>
+                                           <td>{{$userAddressFirst->area}}</td>
+                                           <td>{{$userAddressSecond->area}}</td>
                                            @endforelse
-                                           @if($user->delivery_status == 'terminted')
+                                           @php
+                                           if($user->delivery_status == 'terminted'){
+                                           $statusUser = 'Expired';
+                                           }
+                                           elseif($user->delivery_status == ''){
+                                           $statusUser = 'Inactive';
+                                           }
+                                           else{
+                                             $statusUser = $user->delivery_status;
+                                           }
+                                           @endphp
                                            <td> 
-                                           Expired
+                                           {{$statusUser}}
                                            </td> 
-                                           @else
-                                           <td> 
-                                           {{$user->delivery_status}}
-                                           </td> 
-                                           @endif
                                            <td> 
                                              <a class="comman_btn table_viewbtn" href="{{url('admin/user-details/'.base64_encode($user->id))}}">View</a>
                                            </td>

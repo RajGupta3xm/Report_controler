@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserDislike;
+use App\Models\DislikeGroup;
 use App\Models\Subscription;
 use App\Models\DislikeItem;
 use App\Models\Order;
@@ -91,20 +92,34 @@ class UserController extends Controller {
     });
 }
 elseif($status == 'inactive'){
-    $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
-    ->select('users.*','subscriptions.delivery_status')
-    ->where('subscriptions.delivery_status','!=','active')
-    ->where('subscriptions.delivery_status','!=','terminted')
-    ->where('subscriptions.delivery_status','!=','paused')
-    ->where('subscriptions.delivery_status','!=','upcoming')
-    ->orderBy('id', 'DESC')->get()
-   ->each(function($user){
-     $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
-     ->select('orders.id','order_on_address.*')
-     ->where('orders.user_id',$user->id)
-     ->where('order_on_address.user_id',$user->id)
-     ->get();
-   });
+  $user = User::join('user_profile','users.id','=','user_profile.user_id')
+    ->select('users.*')
+    ->where('user_profile.subscription_id',NULL)
+    ->where('user_profile.variant_id',NULL)
+    ->where('users.status','1')
+    ->get()
+    ->each(function($user){
+         $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+         ->select('orders.id','order_on_address.*')
+         ->where('orders.user_id',$user->id)
+         ->where('order_on_address.user_id',$user->id)
+         ->get();
+       });
+         
+  //   $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
+  //   ->select('users.*','subscriptions.delivery_status')
+  //   ->where('subscriptions.delivery_status','!=','active')
+  //   ->where('subscriptions.delivery_status','!=','terminted')
+  //   ->where('subscriptions.delivery_status','!=','paused')
+  //   ->where('subscriptions.delivery_status','!=','upcoming')
+  //   ->orderBy('id', 'DESC')->get()
+  //  ->each(function($user){
+  //    $user->TotalOrder = Order::join('order_on_address','orders.id','=','order_on_address.order_id')
+  //    ->select('orders.id','order_on_address.*')
+  //    ->where('orders.user_id',$user->id)
+  //    ->where('order_on_address.user_id',$user->id)
+  //    ->get();
+  //  });
 }elseif($status == 'paused'){
     $user = User::join('subscriptions','users.id','=','subscriptions.user_id')
     ->select('users.*','subscriptions.delivery_status')
@@ -145,7 +160,7 @@ elseif($status == 'inactive'){
                $user = User::where('id',$id)->first();     
 
             //   return $user->pets_count;
-            // $user_dislikes =[];
+            $notifications =[];
             if($user){
                       $user_detail = UserProfile::with('fitness','dietplan')->where('user_id',$user->id)->first();
                        $userCalorieTarget = UserCaloriTarget::where('user_id',$user->id)->first(); 
@@ -154,19 +169,26 @@ elseif($status == 'inactive'){
                          $UserGainCalorie = DietPlanTypesMealCalorieMinMax::where('meal_calorie',$calorie->recommended)->where('diet_plan_type_id',$user_detail->diet_plan_type_id)->first();
                       }
 
-                     $item_id = UserDislike::where('user_id',$user->id)->get();
-                   if($item_id){
+                      $item_id = UserDislike::select('item_id')->where('user_id',$user->id)->get();
+
+                  if($item_id){
                     foreach($item_id as $item_ids){
-                          $user_dislikes = DislikeItem::where('id',$item_ids['item_id'])->get();
-                          if($user_dislikes){
-                            $data['user_dislike'] = $user_dislikes;
-
-                          }else{
-                            $data['user_dislike'] = '';
-
-                          }
-                            // array_push($user_dislikes,$user_dislike);
+                      $user_list=[];
+                      $item_idd=explode(',',$item_ids->item_id);
+                      foreach($item_idd as $item){
+                        $user_dislikes = DislikeGroup::find($item);
+                        if($user_dislikes){
+                          array_push($user_list,$user_dislikes->name);
+                         }
+                       }
+                         $notifi['user_list']=implode(', ',$user_list);
+                       array_push($notifications,$notifi);     
                     }
+                       $data['notifications'] = $notifications;
+                    // dd($user_dislikess);
+                    // die;
+                   }else{
+                    $data['notifications'] = [];
                    }
             }else{
                 

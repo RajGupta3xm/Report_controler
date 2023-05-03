@@ -50,6 +50,7 @@ use App\Models\StaffGroup;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class OrderController extends Controller {
@@ -80,6 +81,7 @@ class OrderController extends Controller {
             ->join('users','orders.user_id','=','users.id')
             ->select('users.id','users.name','user_profile.subscription_id','user_profile.variant_id','orders.id as order_id','orders.created_at')
             ->where('orders.plan_status','plan_active')
+            ->orderBy('orders.user_id','Asc')
            ->get()
            ->each(function($user){
                        $user->plans = SubscriptionMealPlanVariant::with('plan','dietPlans')
@@ -142,7 +144,7 @@ class OrderController extends Controller {
 
    public function show(Request $request, $id = null) {
      if (Auth::guard('admin')->check()) {
-             $id = base64_decode($id);     
+              $id = base64_decode($id);     
            $user = User::where('id',$id)->first();   
           if($user){
             $user_detail = UserProfile::with('fitness','dietplan')->where('user_id',$user->id)->first();
@@ -171,7 +173,7 @@ class OrderController extends Controller {
      if($getUserSubscriptionId){
          $subscription = SubscriptionPlan::select('id','name','image')->where('id',$getUserSubscriptionId->subscription_id)->where('status','active')->first();
          if($subscription){
-             $subscription->start_date = Subscription::where('user_id',$id)->where(['plan_id'=> $getUserSubscriptionId->subscription_id,'variant_id'=> $getUserSubscriptionId->variant_id,'plan_status'=>'plan_active'])->first();
+              $subscription->start_date = Subscription::where('user_id',$id)->where(['plan_id'=> $getUserSubscriptionId->subscription_id,'variant_id'=> $getUserSubscriptionId->variant_id,'plan_status'=>'plan_active'])->first();
             if(SubscriptionMealPlanVariant::where(['meal_plan_id'=>$getUserSubscriptionId->subscription_id,'id'=>$getUserSubscriptionId->variant_id])->first()){
 
                  $costs=SubscriptionMealPlanVariant::where(['meal_plan_id'=>$getUserSubscriptionId->subscription_id,'id'=>$getUserSubscriptionId->variant_id])->first();
@@ -206,7 +208,9 @@ class OrderController extends Controller {
            $data['user_details'] = $user_detail;
             $data['userCalorieTargets'] = $UserGainCalorie;
 
-           $date = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
+            $startDate = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
+             $endDate = Carbon::createFromFormat('Y-m-d', $subscription->start_date->end_date);
+   
          //  $date = Carbon::now();
         //   for ($i = 0; $i < $costs->no_days; $i++) {
         //        $alldate = $date->addDay()->format('y-m-d');
@@ -219,14 +223,14 @@ class OrderController extends Controller {
  
         // $dates = '2023-02-21';
         $dates = [];
-        for ($i = 0; $i < $costs->no_days; $i++) {
-              $datess = $date->addDays()->format('Y-m-d');
+        for($i = $startDate; $i <= $endDate; $i->modify('+1 day')){
+               $datess = $i->format("Y-m-d");
             $dates[] = DB::table('subscription_meal_plan_variant_default_meal')->select('date')->where('is_default','1')->where(['meal_plan_id'=>$getUserSubscriptionId->subscription_id])->where('date',$datess)->groupBy('date')->get()
             ->each(function($dates)use($id){
                
-            $day = \Carbon\Carbon::parse($dates->date)->format('l');
+             $day = \Carbon\Carbon::parse($dates->date)->format('l');
            
-            $getAllDays = UserAddress::where('user_id',$id)->where('day_selection_status','active')->get();
+             $getAllDays = UserAddress::where('user_id',$id)->where('day_selection_status','active')->get();
          if($day == 'Monday'){
              $var = "1";
          }elseif($day == 'Tuesday'){
@@ -244,7 +248,7 @@ class OrderController extends Controller {
         }
     
     //    return  $custom_calorie = $request->custom_calorie;
-          $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',$id)->first();
+           $checkPlan = UserProfile::select('id','subscription_id','diet_plan_type_id','variant_id')->where('user_id',$id)->first();
            $start_date = Subscription::select('start_date','end_date','delivery_status','user_id')->where(['plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id,'delivery_status'=>'active','plan_status'=>'plan_active','user_id'=>$id])->orWhere('delivery_status','paused')->first();
           $option22 = SubscriptionMealPlanVariant::select('no_days','option2','calorie')->where(['meal_plan_id'=>$checkPlan->subscription_id,'id'=>$checkPlan->variant_id])->first();
            $custom_calorie = $option22->calorie;
@@ -271,7 +275,7 @@ class OrderController extends Controller {
     
             if(UserSkipTimeSlot::where('user_id',$id)->where(['subscription_plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('skip_date',$dates->date)->exists()){
     
-                $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+                 $deliveries_slot = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
                ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
                ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id')
                ->where('user_skip_time_slot.skip_date',$dates->date)
@@ -300,12 +304,12 @@ class OrderController extends Controller {
            $deliverie->slot_id = $deliverieSlot->slot_id;
         }
     
-             $data['deliveries'] = $deliverie;
+         $data['deliveries'] = $deliverie;
     
         }else{
             if(UserSkipTimeSlot::where('user_id',$id)->where(['subscription_plan_id'=>$checkPlan->subscription_id,'variant_id'=>$checkPlan->variant_id])->where('skip_date',$dates->date)->exists()){
         
-                  $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
+                   $deliverie = UserSkipTimeSlot::join('delivery_slots','user_skip_time_slot.delivery_slot_id','=','delivery_slots.id')
                 // ->join('user_address','user_skip_time_slot.user_address_id','=','user_address.id')
                 ->select('delivery_slots.start_time','delivery_slots.end_time','delivery_slots.name','delivery_slots.id as slot_id')
                 ->where('user_skip_time_slot.skip_date',$dates->date)
@@ -343,7 +347,7 @@ class OrderController extends Controller {
                     $deliverie->address_type = $deliveries->address_type;
                     $deliverie->id = $deliveries->id;
     
-                $data['deliveries'] = $deliverie;
+                     $data['deliveries'] = $deliverie;
               
             }else{
                  $dates->deliveries = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
@@ -437,7 +441,7 @@ class OrderController extends Controller {
       $data['no_of_days'] = $no_of_days;
     })->toArray();
 }
-$data['getDatess'] = $dates;
+   $data['getDatess'] = $dates;
 
 // foreach($dates as $datesss){
 //     foreach($datesss as $f){
@@ -516,21 +520,23 @@ $data['getDatess'] = $dates;
         }
 
 
-        $date = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
-        //  $date = Carbon::now();
-       //   for ($i = 0; $i < $costs->no_days; $i++) {
-       //        $alldate = $date->addDay()->format('y-m-d');
-       //        array_push($dates, $alldate);
-       //   }
-    
-       //  $datess = array_unique($dates);
-               // dd($datess);
-       // $data['datee'] = $datess;
+        $startDate = Carbon::createFromFormat('Y-m-d', $subscription->start_date->start_date);
+        $endDate = Carbon::createFromFormat('Y-m-d', $subscription->start_date->end_date);
 
-       // $dates = '2023-02-21';
-       $dates = [];
-       for ($i = 0; $i < $costs->no_days; $i++) {
-           $datess = $date->addDay()->format('y-m-d');
+    //  $date = Carbon::now();
+   //   for ($i = 0; $i < $costs->no_days; $i++) {
+   //        $alldate = $date->addDay()->format('y-m-d');
+   //        array_push($dates, $alldate);
+   //   }
+
+   //  $datess = array_unique($dates);
+           // dd($datess);
+   // $data['datee'] = $datess;
+
+   // $dates = '2023-02-21';
+        $dates = [];
+        for($i = $startDate; $i <= $endDate; $i->modify('+1 day')){
+          $datess = $i->format("Y-m-d");
            $dates[] = DB::table('subscription_meal_plan_variant_default_meal')->select('date')->where('is_default','1')->where(['meal_plan_id'=>$plan_id])->where('date',$datess)->groupBy('date')->get()
            ->each(function($dates)use($id,$plan_id,$variant_id){
               $dates->dd = "gfgd";
@@ -655,7 +661,7 @@ $data['getDatess'] = $dates;
                $data['deliveries'] = $deliverie;
              
            }else{
-                $data['deliveries'] = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+            $dates->deliveries  = DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
            ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type')
            ->where('user_id',$id)
            ->where('day_selection_status','active')

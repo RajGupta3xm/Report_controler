@@ -18,6 +18,6 @@ class SubscriptionMealGroup extends Model
         ];
 
     public function meal_group(){
-        return $this->belongsTo(MealSchedules::class,'meal_schedule_id','id')->select(['id','name']);
+        return $this->belongsTo(MealSchedules::class,'meal_schedule_id','id')->select(['id','name','name_ar']);
     }
 }

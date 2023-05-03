@@ -134,11 +134,12 @@
                                                       <div class="form-group col-12">
                                                          <strong class="head_details">Dislikes</strong>
                                                       </div>
+
                                                       <div class="form-group col-6"> 
-                                                       @if(!empty($user_dislike))
-                                                         <input type="text" class="form-control"  <?php foreach($user_dislike as $user_dislikes){ ?> value="{{ $user_dislikes->pluck('name')->implode(',  ') }}"<?php } ?> readonly="true" name="name" id="name">
-                                                        @else
-                                                        <input type="text" class="form-control"  value="N/A" readonly="true" name="name" id="name">
+                                                      @if($notifications)
+                                                      @foreach($notifications as $user_dislikes)
+                                                         <input type="text" class="form-control" value="{{$user_dislikes['user_list']}}" readonly="true" name="name" id="name">
+                                                        @endforeach
                                                         @endif
                                                       </div> 
                                                    </div>
@@ -159,9 +160,9 @@
                                                          <strong class="head_details">Target Calories & Macro Nutrients</strong>
                                                       </div>
                                                       @php
-                                                      $userCalorieTargetsProtein = ($userCalorieTargets->protein_min + $userCalorieTargets->protein_max)/2;
-                                                      $userCalorieTargetsCarbs = ($userCalorieTargets->carbs_min + $userCalorieTargets->carbs_max)/2;
-                                                      $userCalorieTargetsFat = ($userCalorieTargets->fat_min + $userCalorieTargets->fat_max)/2;
+                                                      //$userCalorieTargetsProtein = ($userCalorieTargets->protein_min + $userCalorieTargets->protein_max)/2;
+                                                      //$userCalorieTargetsCarbs = ($userCalorieTargets->carbs_min + $userCalorieTargets->carbs_max)/2;
+                                                      //$userCalorieTargetsFat = ($userCalorieTargets->fat_min + $userCalorieTargets->fat_max)/2;
                                                       @endphp
                                                       <div class="form-group col-6">
                                                          <label for="">Calories</label>
@@ -169,15 +170,15 @@
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Protein</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsProtein) ? $userCalorieTargetsProtein:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->protein_min}} - {{$userCalorieTargets->protein_max}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Carbs</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsCarbs) ? $userCalorieTargetsCarbs:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->carbs_min}} - {{$userCalorieTargets->carbs_max}}" readonly="true" name="name" id="name">
                                                       </div>
                                                       <div class="form-group col-6">
                                                          <label for="">Fat</label>
-                                                         <input type="text" class="form-control"  value="{{!empty($userCalorieTargetsFat) ? $userCalorieTargetsFat:'--'}}" readonly="true" name="name" id="name">
+                                                         <input type="text" class="form-control"  value="{{$userCalorieTargets->fat_min}} - {{$userCalorieTargets->fat_max}}" readonly="true" name="name" id="name">
                                                       </div>
                                                    </div>
                                                 </div>
@@ -483,7 +484,7 @@ function sendPreviousMail(obj,id) {
                             if (checked == true) {
                                 var status = '1';
                             } else {
-                                var status = '0';
+                                var status = '2';
                             }
                             if (id) {
                                 $.ajax({

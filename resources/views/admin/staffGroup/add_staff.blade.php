@@ -588,24 +588,25 @@
             </div>
             <div class="form-group col-6 ">
                <label for="">Staff Name</label>
-               <input type="text" class="form-control "  name="name" id="namee" maxlength="20">
-               
+               <input type="text" class="form-control n1"  name="name" id="namee" maxlength="20">
+               <p class="text-danger text-small" id='errorShow1' ></p>
             </div> 
             <div class="form-group col-6" id="getstaffGroup">
                <label for="">Staff Group</label>
-               <select class="form-select form-control" name="group_id" aria-label="Default select example" id="nation_id">
+               <select class="form-select form-control modalId" name="group_id" aria-label="Default select example" id="nation_id" onchange="getGroupCategories(this);">
                   
                 </select>
             </div> 
             <div class="form-group col-6">
                <label for="">Staff Email</label>
-               <input type="text" class="form-control"  name="email" id="emaill">
+               <input type="text " class="form-control n2"  name="email" id="emaill">
+               <p class="text-danger text-small" id='errorShow2' ></p>
             </div> 
             <div class="form-group col-6">
                <label for="">Create Password</label>
                <input type="text" class="form-control" value="" name="password" id="name">
             </div> 
-            <div class="form-group col-12 Modules_check modules_modal_part_with_admin_access">
+            <div class="form-group col-12 Modules_check modules_modal_part_with_admin_access modules_part_with_admin_accesss">
                <div class="row">
                <div class="col-12 mb-3 d-flex align-items-center">
                  <div class="Modules_head">Modules: </div>
@@ -1123,6 +1124,35 @@
             });
 }
       </script>
+          <script>
+ function getGroupCategories(obj) {
+   // alert(count);
+   var allList =<?= \GuzzleHttp\json_encode($staff_group)?>;
+   var driverId =$('.modalId').find('option:selected').val();
+            $(allList).each(function (a, staff_group) {
+               if (staff_group.id == driverId) {
+                  var drivername  = staff_group.name;
+                  if(drivername == 'Drivers' || drivername == 'Driver' ){
+                     $('#groupDriver').val(staff_group.name)
+                     $('.modules_part_with_admin_accesss').addClass('disable_all');  
+                     var x = document.getElementsByClassName("checkbox");
+                     var i;
+                      for (i = 0; i < x.length; i++) {
+                       x[i].disabled = true;
+                     }
+                  }else{
+                     $('#groupDriver').val('')
+                     $('.modules_part_with_admin_accesss').removeClass('disable_all'); 
+                     var x = document.getElementsByClassName("checkbox");
+                     var i;
+                      for (i = 0; i < x.length; i++) {
+                       x[i].disabled = false;
+                     }
+                  }
+                } 
+            });
+}
+      </script>
  @endsection
 
       
@@ -1197,7 +1227,26 @@
  <script>
     
 function sendReply(obj) {
+$('.n1').each(function () {
+   //   var message = $(this).attr('title');
+    if($(this).val() == '' || $(this).val() == 0) {                
+         //   alert(message);
+         $('#errorShow1').text("This field is required");
+          flag = false;
+       }else {
 
+      }
+ });
+ $('.n2').each(function () {
+   //   var message = $(this).attr('title');
+    if($(this).val() == '' || $(this).val() == 0) {                
+         //   alert(message);
+         $('#errorShow2').text("This field is required");
+          flag = false;
+       }else {
+
+      }
+ });
 var flag = true;
 let  formData = new FormData($("#queryForms")[0]);
 formData.append('_token', "{{ csrf_token() }}");
@@ -1214,6 +1263,7 @@ if (flag) {
         contentType: false,
         cache: false,
         success: function(data) {
+        
             swal({
                 title: "Details Updated!",
                 text: data.message,

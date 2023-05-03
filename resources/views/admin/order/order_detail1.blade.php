@@ -174,7 +174,7 @@
                                           <div class="col-12">
                                              <div class="row p-4">
                                                 <div class="col-12 mb-2">
-                                                   <strong class="head_details">Current Plan</strong>
+                                                   <strong class="head_details">Previous Plan</strong>
                                                 </div>
                                                 <div class="col-12 mb-5">
                                                    <div class="row">
@@ -256,14 +256,18 @@
                                                                   </div>
                                                                </div>
                                                                <div class="col-6">
-                                                                  <div class="row">
+                                                               @foreach($getDatess as $k=>$datte)
+                                                                  @foreach($datte as $datt)
+                                                                  <div class="row date_listt" id='date_listt_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                      <div class="col-auto">
-                                                                        <span>Slot :fdfsf</span>
+                                                                        <span>Slot : {{$datt->deliveries['start_time']}}</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">dvf</a>
+                                                                        <a href="javscript:;">{{$datt->deliveries['end_time']}}</a>
                                                                      </div>
                                                                   </div>
+                                                                  @endforeach
+                                                                  @endforeach
                                                                </div>
                                                             </div>
                                                          </div>
@@ -460,8 +464,6 @@
                                                                         </div>
                                                                      </div>
                                                                      @endforeach
-                                                                    
-
                                                                   </div>
                                                                </div>
                                                             </div>
@@ -492,6 +494,12 @@
       <script src="assets/js/main.js"></script>
       <script>
  function activeDate(obj,k) {
+   $('.date_listtt').css('display','none');
+   $('#date_listtt_'+k).css('display','block');
+
+   $('.date_listt').css('display','none');
+   $('#date_listt_'+k).css('display','block');
+
    $('.date_list').css('display','none');
    $('#date_list_'+k).css('display','block');
    $('.date_name').removeClass('active');

@@ -18,7 +18,6 @@
                     </nav>
                     <div class="tab-content mt-4" id="nav-tabContent">
                         @foreach($dates as $key=> $date)
-                      
                         <div class="tab-pane fade @if($key==0)active show @endif" id="nav-home{{$key}}" role="tabpanel" aria-labelledby="nav-home-tab">
                             <div class="row meal_innerpart justify-content-center">
                                 <div class="col-12 text-center">
@@ -54,9 +53,8 @@
                                                                     $day = \Carbon\Carbon::parse($date)->format('l');
                                                                         $schedule=\App\Models\MealSchedules::where('id',$group)->first();
                                                                         $meals_id=\App\Models\MealGroupSchedule::where('meal_schedule_id',$schedule->id)->pluck('meal_id')->toArray();
-                                                                        $meals=\App\Models\MealDietPlan::with('meal_items')->whereIn('meal_id',$meals_id)->where('diet_plan_type_id',$value->id)->get();
-                                                                      
-                                                                       
+                                                                        $meals=\App\Models\MealDietPlan::whereIn('meal_id',$meals_id)->where('diet_plan_type_id',$value->id)->pluck('meal_id')->toArray();
+                                                                        $meals=\App\Models\MealWeekDay::whereIn('meal_id',$meals)->where('week_days_id',strtolower($day))->orWhere('week_days_id','=',$date)->get();
                                                                 @endphp
                                                                 <div class="tab-pane fade @if($key3==0)active show @endif" id="home{{$key}}{{$key2}}{{$schedule->id}}" role="tabpanel" aria-labelledby="home-tab{{$key}}{{$key2}}{{$schedule->id}}">
                                                                     <div class="row">

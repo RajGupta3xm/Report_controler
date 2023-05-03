@@ -244,26 +244,28 @@
                                                             <h3>Deliveries :</h3>
                                                             <div class="row">
                                                                <div class="col-6 mb-1">
-                                                                  <div class="row">
+                                                               @foreach($getDatess as $k=>$datte)
+                                                                     @foreach($datte as $datt)
+                                                                     <div class="row date_listtt" id='date_listtt_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                      <div class="col-auto">
                                                                         <span>Location :</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                  
-                                                                        <a href="javscript:;">,fd Vrindavan Umedshram Rd, Sv Rd, Borivli(w)</a>
-                                        
+                                                                        <a href="javscript:;"> {{$datt->deliveries['address_type']}}</a>
                                                                      </div>
                                                                   </div>
+                                                                  @endforeach
+                                                                  @endforeach
                                                                </div>
                                                                <div class="col-6">
                                                                @foreach($getDatess as $k=>$datte)
                                                                   @foreach($datte as $datt)
                                                                   <div class="row date_listt" id='date_listt_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                      <div class="col-auto">
-                                                                        <span>Slot : {{$datt->deliveries->start_time}}</span>
+                                                                        <span>Slot : {{$datt->deliveries['start_time']}}</span>
                                                                      </div>
                                                                      <div class="col">
-                                                                        <a href="javscript:;">{{$datt->deliveries->end_time}}</a>
+                                                                        <a href="javscript:;">{{$datt->deliveries['end_time']}}</a>
                                                                      </div>
                                                                   </div>
                                                                   @endforeach
@@ -277,7 +279,7 @@
                                                          @foreach($getDatess as $k=>$datte)
                                                          @foreach($datte as $datt)
                                                          @if($k==0)
-                                                         <div ><a class="Plan_datee date_name active " onclick="activeDate(this,<?=$k?>);"  href="javscript:;"> {{\Carbon\Carbon::parse($datt->date)->format('d M')}}</a></div>
+                                                         <div ><a class="Plan_datee date_name active" onclick="activeDate(this,<?=$k?>);"  href="javscript:;"> {{\Carbon\Carbon::parse($datt->date)->format('d M')}}</a></div>
                                                          @else
                                                             <div><a class="Plan_datee  date_name " onclick="activeDate(this,<?=$k?>);" href="javscript:;">{{\Carbon\Carbon::parse($datt->date)->format('d M')}} </a></div>
                                                             @endif
@@ -289,7 +291,7 @@
                                                          <div class="row">
                                                          @foreach($getDatess as $k=>$datte)
                                                           @foreach($datte as $datt)
-                                                            <div class="col-12 current_plan_tabbing date_list" id='date_list_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
+                                                            <div class="col-12 current_plan_tabbing date_list " id='date_list_<?=$k?>' <?php if($k!=0)  { ?> style="display:none" <?php }?>>
                                                                <nav>
                                                                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                                                     @foreach($datt->category as $y=>$categories)
@@ -496,6 +498,9 @@
       <script src="assets/js/main.js"></script>
       <script>
  function activeDate(obj,k) {
+   $('.date_listtt').css('display','none');
+   $('#date_listtt_'+k).css('display','block');
+
    $('.date_listt').css('display','none');
    $('#date_listt_'+k).css('display','block');
 

@@ -277,6 +277,30 @@ public function get_staff_member_data(Request $request){
 }
 
 public function update_member(Request $request, $id=null){
+    $groupIdd =  StaffGroup::where('id',$request->input('group_id'))->first();
+    if($groupIdd->name == 'Driver' || $groupIdd->name == 'Drivers'){
+        $data=[
+           "name" => $request->input('name'),
+           "group_id" => $request->input('group_id'),
+           "email" => $request->input('email'),
+           "group_id" => $request->input('group_id'),
+           'password' => \Hash::make($request->input('password')),
+           "user_mgmt" => '4',
+           "order_mgmt" => '4',
+           "ingredient_mgmt" => '4',
+           "fitness_goal_mgmt" => '4',
+           "diet_plan_mgmt" => '4',
+           "meal_mgmt" => '4',
+           "meal_plan_mgmt" => '4',
+           "fleet_mgmt" => '4',
+           "promo_code_mgmt" => '4',
+           "gift_card_mgmt" => '4',
+           "notification_mgmt" => '4',
+           "refer_earn_mgmt" => '4',
+           "report_mgmt" => '4',
+           "content_mgmt" => '4',
+       ];
+   }else{
     if($request->input('check11') == ''){
          $data=[
             "name" => $request->input('name'),
@@ -323,6 +347,7 @@ public function update_member(Request $request, $id=null){
           
           ];
     }
+}
     //   if(!empty($request->image3)){
     //      $filename = $request->image3->getClientOriginalName();
     //      $imageName = time().'.'.$filename;

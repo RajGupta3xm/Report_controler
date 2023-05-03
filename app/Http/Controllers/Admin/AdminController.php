@@ -84,7 +84,17 @@ class AdminController extends Controller {
              $data['pausedUser'] = Subscription::where('delivery_status','paused')->count();
              $data['expiredUser'] = Subscription::where('delivery_status','terminted')->count();
              $data['inactiveUser'] = User::where('status','0')->count();
-              $data['totalOrder'] = Order::where('payment_status','paid')->where('plan_status','plan_active')->count();
+            //   $data['totalOrder'] = Order::where('plan_status','plan_active')->count();
+            $data['totalOrder'] = Subscription::join('users','subscriptions.user_id','=','users.id')
+              ->join('orders','subscriptions.user_id','=','orders.user_id')
+              ->join('subscription_plans','subscriptions.plan_id','=','subscription_plans.id')
+              ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
+              ->select('users.id','users.name as user_name','users.mobile','orders.id as order_id','subscriptions.start_date','subscription_plans.name','subscriptions_meal_plans_variants.option1')
+              ->where('subscriptions.delivery_status','active')
+              ->where('orders.plan_status','plan_active')
+              ->where('subscriptions.plan_status','plan_active')
+              ->where('subscriptions.delivery_status','active')
+              ->count();
               $userList = [];
 
 
