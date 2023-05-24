@@ -76,7 +76,7 @@
                              </div> 
                              <div class="form-group mb-0 col-4 description_box ">
                                  <label for="">Gift Card Amount :</label>
-                                 <input type="text" class="form-control" value="" name="gift_card_amount" id="">
+                                 <input type="text" class="form-control validate" value="" name="gift_card_amount" id="">
                                  <p class="text-danger text-small" id="gift_card_amountError"></p>
                               </div>
                               <!-- <div class="col form-group position-relative percentage_icons mb-0">
@@ -325,6 +325,7 @@
 
     <script>
             function validate(obj) {
+             
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');

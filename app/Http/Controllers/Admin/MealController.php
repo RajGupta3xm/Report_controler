@@ -1018,7 +1018,7 @@ public function edit_meal(Request $request, $id=null){
         ->select('meal_ingredient_list.id','meal_ingredient_list.quantity','dislike_units.unit','dislike_items.name')
         ->where('meal_ingredient_list.meal_id',$id)->get();
 
-         $data['mealDepartment'] = MealDepartment::select('id','department_id')->where('meal_id',$id)->get();
+          $data['mealDepartment'] = MealDepartment::select('id','department_id')->where('meal_id',$id)->get();
            $data['mealLabel'] = MealLabel::select('*')->where('meal_id',$id)->first();
     if($data){
         return view('admin.Meal.edit_meal')->with($data);

@@ -43,5 +43,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('query_count', $queryCount);
             }
         });
+
+       
     }
 }

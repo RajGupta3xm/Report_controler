@@ -204,18 +204,25 @@
                                     <div id="DefaultSelection">
 
                                         @php
-                                        $dates=[];
-                                        $meal_groups=[];
+                                        //$dates=[];
+                                       // $meal_groups=[];
 
-                                        foreach ($edit_mealPlan->meal_plan_variant_default as $key=> $value){
+                                       // foreach ($edit_mealPlan->meal_plan_variant_default as $key=> $value){
 
-                                            if(!in_array($value->date, $dates)){
-                                                $dates[$key]=$value->date;
+                                            //if(!in_array($value->date, $dates)){
+                                                //$dates[$key]=$value->date;
+                                            //}
+                                            //$dates[]=$value->date;
+                                            //$meal_groups[]=$value->meal_schedule_id;
+                                        //}
+                                        //$dates = array_unique($dates);
+                                        
+                                        $dates = [];
+                                         $date = now();             
+                                            //        $request->no_of_days
+                                           for ($i = 0; $i < 28; $i++) {
+                                              $dates[] = $date->addDay()->format('y-m-d');
                                             }
-                                            $dates[]=$value->date;
-                                            $meal_groups[]=$value->meal_schedule_id;
-                                        }
-                                        $dates = array_unique($dates);
 
                                         @endphp
                                         <div class="col-12 comman_table_design mb-4 New_tabledesign">

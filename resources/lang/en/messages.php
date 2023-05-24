@@ -102,6 +102,7 @@ return [
 	'custom_calorie'=>'Your custom calorie ',
 	'repeat_plan'=>'Your plan repeat successfully',
 	'unskip_delivery'=>'Your delivery unskip successfully',
+	'date_update_ar'=>'تم تحديث تاريخ الخطة بنجاح',
 	'date_update'=>'Plan date update successfully',
 	'update_diet_plan'=>'Diet plan update successfully',
 	'status_update'=>'address select successfully',

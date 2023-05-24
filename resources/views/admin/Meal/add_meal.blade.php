@@ -31,22 +31,22 @@
                                  <div class="row">
                                     <div class="form-group col-6">
                                        <label for=""> Title (English) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name" id="name"   maxlength ="20">
+                                       <input type="text" class="form-control validate" value="" name="name" id="name"   maxlength ="40">
                                        <p class="text-danger text-small" id="nameError"></p>
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
-                                       <input type="text" class="form-control validate" value="" name="side_dish" id="name"  maxlength ="20">
+                                       <input type="text" class="form-control validate" value="" name="side_dish" id="name"  maxlength ="40">
                                        <!-- <p class="text-danger text-small" id="side_dishError"></p> -->
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
-                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name"  maxlength ="20">
+                                       <input type="text" class="form-control validate" value="" name="name_ar" id="name"  maxlength ="40">
                                        <p class="text-danger text-small" id="name_arError"></p>
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
-                                       <input type="text" class="form-control validate" value="" name="side_dish_ar" id="name"   maxlength ="20">
+                                       <input type="text" class="form-control validate" value="" name="side_dish_ar" id="name"   maxlength ="40">
                                        <!-- <p class="text-danger text-small" id="side_dish_arError"></p> -->
                                     </div>
                                     <div class="form-group col-12 textarea_height">

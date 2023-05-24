@@ -163,6 +163,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+       
+        
      
         /*
          * Package Service Providers...

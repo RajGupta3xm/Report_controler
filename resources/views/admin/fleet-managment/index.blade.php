@@ -1,7 +1,5 @@
 @extends('admin.layout.master')
-
 @section('content')
-
     <div class="admin_main">
         <div class="admin_main_inner">
             <div class="admin_panel_data height_adjust">
@@ -189,6 +187,7 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script> -->
 <script>
       $(document).ready(function(){
  
@@ -205,14 +204,13 @@
  });
 })
     </script>
-
 <script>
     $('.google').on('change',function(e){
     var id2 = document.getElementById('search_box').value
 alert(id2);
  if(id2){
+
     $.ajax({
- 
  // Our sample url to make request 
 //  url: 
 // 'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBfnznJ2gE8vjoNP6f3pYzeRxzd-Ha5Yo8&input='+id2,
@@ -221,9 +219,16 @@ url:'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBMN2
 
  // Type of Request
  type: "GET",
+ headers: {
+             "Access-Control-Allow-Headers" : "Content-Type",
+              "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+             "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH"
+        },   
  // Function to call when to
  // request is ok 
  success: function (data) {
+    console.log(JSON.stringify(data));
     $.each(data.predictions, function (key, value) {
         $("#selUser").append($("<option></option>")
                     .attr("value",JSON.stringify(value))

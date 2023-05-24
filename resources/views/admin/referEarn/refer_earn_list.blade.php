@@ -92,14 +92,15 @@
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (En) :</label>
-                                             <textarea class="form-control text-start validatee" name="how_it_work_en" id="" >{{$refer_id->how_it_work_en}}
+                                             <textarea class="form-control text-start n1" name="how_it_work_en" id="textareacheck"  >{{$refer_id->how_it_work_en}}
                                              </textarea>  
-                                             <p class="text-danger text-small" id="how_it_work_enError"></p>
+                                             <p class="text-danger text-small" id="errorShow1"></p>
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height"> 
                                              <label for="">How it Works (Ar) :</label>
-                                             <textarea class="form-control text-start" name="how_it_work_ar" id="" >{{$refer_id->how_it_work_ar}}
+                                             <textarea class="form-control text-start" name="how_it_work_ar" id="textareacheck1" >{{$refer_id->how_it_work_ar}}
                                              </textarea>  
+                                             <p class="text-danger text-small" id="errorShow2"></p>
                                           </div>
                                        </div>
                                     </div>
@@ -139,13 +140,15 @@
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height mt-4 pt-1"> 
                                              <label for="">Message body on sharing (En) :</label>
-                                             <textarea class="form-control text-start" name="message_body_en" id="" >{{$refer_id->message_body_en}}
+                                             <textarea class="form-control text-start" name="message_body_en" id="textareacheck3" >{{$refer_id->message_body_en}}
                                              </textarea>  
+                                             <p class="text-danger text-small" id="errorShow3"></p>
                                           </div>
                                           <div class="form-group mb-4 col-12 textarea_height "> 
                                              <label for="">Message body on sharing (Ar) :</label>
-                                             <textarea class="form-control text-start" name="message_body_ar" id="" >{{$refer_id->message_body_ar}}
+                                             <textarea class="form-control text-start" name="message_body_ar" id="textareacheck4" >{{$refer_id->message_body_ar}}
                                              </textarea>  
+                                             <p class="text-danger text-small" id="errorShow4"></p>
                                           </div>
                                        </div>
                                     </div>
@@ -157,7 +160,8 @@
                                        <button type="button" class="comman_btn" onclick="validate(this);">Save & Apply</button>
                                     </div>
                                     <div class="col-6">
-                                       <input type="date" name="start_date" class="form-control w-20">
+                                       <input type="date"  name="start_date" class="form-control w-20 validatee">
+                                       <p class="text-danger text-small" id="start_dateError"></p>
                                     </div>
                                  </div>
                               </div>
@@ -508,6 +512,27 @@ if (flag) {
 </script>
 <script>
             function validate(obj) {
+            if($("#textareacheck").val().trim().length < 1)
+               {
+                document.getElementById("errorShow1").innerHTML="This field is required";
+                return; 
+                }
+                if($("#textareacheck1").val().trim().length < 1)
+               {
+                document.getElementById("errorShow2").innerHTML="This field is required";
+                return; 
+                }
+                if($("#textareacheck3").val().trim().length < 1)
+               {
+                document.getElementById("errorShow3").innerHTML="This field is required";
+                return; 
+                }
+                if($("#textareacheck4").val().trim().length < 1)
+               {
+                document.getElementById("errorShow4").innerHTML="This field is required";
+                return; 
+                }
+  
             $(".text-danger").html('');
             var flag = true;
             var formData = $("#addForm").find(".validatee").not(':input[type=button]');

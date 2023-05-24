@@ -30,4 +30,7 @@ class PromoCode extends Model
     public function promoCodeUsed(){
         return $this->belongsTo(UserUsedPromoCode::class,'id','promocode_id');
     }
+    public function promoCodeDietPlan(){
+        return $this->belongsTo(PromoCodeDietPlan::class,'id','promo_code_id')->with('plan');
+    }
 }

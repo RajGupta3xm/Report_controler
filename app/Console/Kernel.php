@@ -224,11 +224,28 @@ class Kernel extends ConsoleKernel
         })->everyMinute();
 
         $schedule->call(function () {
-            $switch_plan =  Subscription::select('id','user_id','plan_id','variant_id','start_date','end_date','pause_date','resume_date','switch_plan_start_date','switch_plan_plan_id','switch_plan_variant_id')->where('delivery_status','active')->where('switch_plan_start_date',date('Y-m-d'))->get();
-            foreach($switch_plan as $switch_plans){
+            $switch_plan =  Subscription::select('*')->where('delivery_status','active')->where('switch_plan_start_date',date('Y-m-d'))->get();
+             foreach($switch_plan as $switch_plans){
                  if(date('Y-m-d') == \Carbon\Carbon::parse($switch_plans->switch_plan_start_date)->format('Y-m-d'))
                  {
-                    Subscription::where('switch_plan_start_date',\Carbon\Carbon::parse($switch_plans->switch_plan_start_date))->update(['plan_id'=>$switch_plans->switch_plan_plan_id,'variant_id'=>$switch_plans->switch_plan_variant_id]);
+                    Subscription::create([
+                         'user_id' => $switch_plans->user_id,
+                         'plan_id' => $switch_plans->plan_id,
+                         'variant_id' => $switch_plans->variant_id,
+                         'start_date' => $switch_plans->start_date,
+                         'end_date' => $switch_plans->switch_plan_start_date,
+                         'is_weekend' => $switch_plans->is_weekend,
+                         'price' => $switch_plans->price,
+                         'total_amount' => $switch_plans->total_amount,
+                         'pause_date' => $switch_plans->pause_date,
+                         'resume_date' => $switch_plans->resume_date,
+                         'no_of_days_pause_plan' => $switch_plans->no_of_days_pause_plan,
+                         'no_of_days_resume_plan' => $switch_plans->no_of_days_resume_plan,
+                         'delivery_status' => 'terminted',
+                         'plan_status' => 'plan_inactive',
+                      
+                    ]);
+                    Subscription::where('user_id',$switch_plans->user_id)->where('switch_plan_start_date',\Carbon\Carbon::parse($switch_plans->switch_plan_start_date))->update(['plan_id'=>$switch_plans->switch_plan_plan_id,'start_date'=>$switch_plans->switch_plan_start_date,'variant_id'=>$switch_plans->switch_plan_variant_id,'switch_plan_plan_id'=>null,'switch_plan_variant_id'=>null,'switch_plan_start_date'=>null]);
                     UserProfile::where('user_id',$switch_plans->user_id)->update(['subscription_id'=>$switch_plans->switch_plan_plan_id,'variant_id'=>$switch_plans->switch_plan_variant_id]);
                  }
             }

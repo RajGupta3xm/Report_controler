@@ -37,7 +37,7 @@
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
                                        <input type="text" class="form-control validate" value="{{!empty($meal) ? $meal->side_dish : '--'}}" name="side_dish" id="name"  maxlength ="20">
-                                       <!-- <p class="text-danger text-small" id="side_dishError"></p> -->
+                                       <p class="text-danger text-small" id="side_dishError"></p>
                                     </div>
                                     <div class="form-group col-6">
                                        <label for=""> Title (Arabic) :</label>
@@ -47,17 +47,17 @@
                                     <div class="form-group col-6">
                                        <label for=""> Side Dish :</label>
                                        <input type="text" class="form-control validate" value="{{!empty($meal) ? $meal->side_dish_ar : '--'}}" name="side_dish_ar" id="name"   maxlength ="20">
-                                       <!-- <p class="text-danger text-small" id="side_dish_arError"></p> -->
+                                       <p class="text-danger text-small" id="side_dish_arError"></p>
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (English) :</label>
                                        <textarea class="form-control validate" name="description" maxlength ="100" >{{!empty($meal) ? $meal->description : '--'}}</textarea>
-                                       <!-- <p class="text-danger text-small" id="descriptionError"></p> -->
+                                       <p class="text-danger text-small" id="descriptionError"></p>
                                     </div>
                                     <div class="form-group col-12 textarea_height">
                                        <label for="">Method of Cooking (Arabic) :</label>
                                        <textarea class="form-control validate" name="description_ar" maxlength ="100" >{{!empty($meal) ? $meal->description_ar : '--'}}</textarea>
-                                       <!-- <p class="text-danger text-small" id="description_arError"></p> -->
+                                       <p class="text-danger text-small" id="description_arError"></p>
                                     </div>
                                     <div class="form-group col-12 uploadimg_box"> <span>Media :</span>
                                         <input type="file" id="uploadimg" class=" dropify" name="image" data-default-file="{{$meal->image}}">
@@ -110,33 +110,30 @@
                                             $meal_schedule=\App\Models\MealSchedules::select('id','name')->orderBy('id','desc')->get();
                                          
                                             @endphp
-                                             <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="meal_schedule_id[]"> 
+                                             <select class="w-100 multiple-select-custom-field required" data-placeholder="Select" multiple name="meal_schedule_id[]"> 
                                              @foreach($meal_schedule as $meal_schedules)
                                                 <option value="{{$meal_schedules->id}}" @foreach($meal_group_schedule as $meal_group_schedules) @if ($meal_group_schedules->name == $meal_schedules->name ) selected @endif   @endforeach>{{$meal_schedules->name}}</option>
                                                 @endforeach
                                              </select>
+                                             <p class="text-danger text-small" id='errorShow' ></p>
                                           </div>
                                           <div class="form-group col-12">
                                              <label for="">Tags : Date format: dd-mm-YY</label>
                                              @php 
-                                           
+                                           $meal_id=[];
                                            $meal_day=\App\Models\MealWeekDay::select('id','meal_id','week_days_id')->get();
+                                           foreach($meal_day as $meal_days) {
+
+                                                      array_push($meal_id,$meal_days->id);
                                          
-                                           @endphp
-                                           @php 
-                                           $meal_id = [];
-                                           foreach($mealWeekDay as $mealWeekDays) {
-                                                      array_push($meal_id,$mealWeekDays->id);
-                                         
-                                         
+                                                      $cate= $meal_id;
                                               }
-                                         
-                                              $cate= $meal_id;
                                            @endphp
+                                           
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="week_days_id[]">
-                                             @foreach($meal_day as $k=>$meal_days)
+                                             @foreach($mealWeekDay as $k=>$mealWeekDays)
   
-                                                <option value="{{$meal_days->week_days_id}}" {{in_array($meal_days->id,$cate)?"selected" :"" }}>{{ucwords($meal_days->week_days_id)}} </option>
+                                                <option value="{{$mealWeekDays->week_days_id}}" {{in_array($mealWeekDays->id,$cate)?"selected" :"" }}>{{ucwords($mealWeekDays->week_days_id)}} </option>
                                                 @endforeach
                                              </select>
                                           </div>
@@ -157,12 +154,12 @@
                                              <label for="">Department :</label>
                                              @php 
                                            
-                                           $department=\App\Models\MealDepartment::select('id','department_id')->get();
+                                           $department=\App\Models\MealAllocationDepartment::select('id','name')->get();
                                         
                                            @endphp
                                              <select class="w-100 multiple-select-custom-field" data-placeholder="Select" multiple name="department_id[]"> 
                                              @foreach($department as $departments)
-                                                <option value="{{$departments->department_id}}"  @foreach($mealDepartment as $mealDepartments) @if ($mealDepartments->id == $departments->id ) selected @endif   @endforeach>{{$departments->department_id}}</option>
+                                                <option value="{{$departments->id}}"  @foreach($mealDepartment as $mealDepartments) @if ($mealDepartments->department_id == $departments->id ) selected @endif   @endforeach>{{$departments->name}}</option>
                                                 @endforeach
                                              </select>
                                           </div>
@@ -609,6 +606,16 @@ function getSubcategory(obj,count) {
             var flag = true;
             var formData = $("#addForm").find(".validate:input").not(':input[type=button]');
             var formDatas = $("#addForm").find(".validatee:input").not(':input[type=button]');
+            $('select.required').each(function () {
+      //   var message = $(this).attr('title');
+        if($(this).val() == '' || $(this).val() == 0) {                
+            //   alert(message);
+              $('#errorShow').text("This field is required");
+              flag = false;
+            }else {
+
+               }
+        });
             $(formData).each(function () {
                 var element = $(this);
                 var val = element.val();

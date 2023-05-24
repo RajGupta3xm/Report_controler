@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 /*
   |--------------------------------------------------------------------------
   | Web Routes
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
   | contains the "web" middleware group. Now create something great!
   |
  */
+
 
 /* For run migrate on server */
 Route::get('/dump', function () {
@@ -395,6 +396,8 @@ Route::post('/search_packing_list', 'Admin\ReportController@search_packing_list'
 Route::any('/upcomingMealCount', 'Admin\ReportController@upcomingMealCount');
 Route::any('/upcomingProcurementMealCount', 'Admin\ReportController@upcomingProcurementMealCount');
 Route::get('/download-pdf', 'Admin\ReportController@downloadPDF')->name('download-pdf');
+Route::get('/mealCount/print', 'Admin\ReportController@print_meal_count')->name('mealCount.print');
+Route::get('/procurement/print', 'Admin\ReportController@print_procurement')->name('procurement.print');
 /*******End Report Management */
 
 

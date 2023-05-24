@@ -124,7 +124,7 @@
                                                    <span class="selected_date">{{\Carbon\Carbon::parse($mealCountCurrentDate)->format('d/m/Y')}}</span>
                                                 </div>
                                                 <div class="col-auto d-flex">
-                                                   <a href="javscript:;" class="comman_btn yellow-btn me-2">Print</a>
+                                                <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printMealCount()">print</a>
                                                    <form class="form-design" method="POST"   enctype="multipart/form-data" action="{{url('admin/upcomingMealCount')}}">
                                                      @csrf
                                                      <div class="form-group mb-0 position-relative only_calender">
@@ -276,7 +276,7 @@
                                                    <span class="selected_date">{{\Carbon\Carbon::parse($fourtyHourDates)->format('d/m/Y')}}</span>
                                                 </div>
                                                 <div class="col-auto d-flex">
-                                                <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printMealCountList()">print</a> 
+                                                <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printProcurement()">print</a>
                                                    <form class="form-design" method="POST"   enctype="multipart/form-data" action="{{url('admin/upcomingProcurementMealCount')}}">
                                                      @csrf
                                                      <div class="form-group mb-0 position-relative only_calender">
@@ -446,6 +446,21 @@
       <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
       <script src="{{asset('assets/vendor/owl/owl.carousel.min.js')}}"></script>
       <script src="{{asset('assets/js/main.js')}}"></script>
+      
+      <script>
+    function printMealCount() {
+        var printWindow = window.open('{{ route("mealCount.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
+<script>
+    function printProcurement() {
+        var printWindow = window.open('{{ route("procurement.print") }}', 'PrintWindow', 'height=500,width=800');
+        printWindow.print();
+    }
+
+</script>
       <script>
 
          var select = document.getElementById('form1');

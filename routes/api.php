@@ -39,6 +39,7 @@ Route::get('/authfail', 'Controller@authfail');
 Route::post('/helpSupport','Auth\ApiController@helpSupport');
 Route::get('/aboutUs','Auth\ApiController@aboutUs');
 Route::get('/privacyPolicy','Auth\ApiController@privacyPolicy');
+Route::get('/privacyPolicyWeb','Auth\ApiController@privacyPolicyWeb');
 Route::get('/termsConditions','Auth\ApiController@termsConditions');
 Route::get('/onboardingScreen','Auth\ApiController@onboardingScreen');
 
@@ -86,7 +87,7 @@ Route::group(['middleware' => 'auth:api','namespace' => 'Auth'], function(){
     Route::get('cities_listing', 'ApiController@cities_listing');
     Route::post('select_delivery_location', 'ApiController@select_delivery_location');
     Route::post('resume_meal_plan', 'ApiController@resume_meal_plan');
-    Route::get('meal_plan_listing/{plan_types}', 'ApiController@meal_plan_listing');
+    Route::get('meal_plan_listing/{plan_types}/{plan_id}/{variant_id}', 'ApiController@meal_plan_listing');
     Route::post('sample_daily_meals', 'ApiController@sample_daily_meals'); 
     Route::post('balance_sample_daily_meals', 'ApiController@balance_sample_daily_meals'); 
     Route::any('updateBasicInfo', 'ApiController@updateBasicInfo'); 

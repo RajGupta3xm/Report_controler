@@ -821,4 +821,134 @@ public function downloadPDF()
     return $pdf->download('document.pdf');
 }
 
+public function print_meal_count()
+{
+    // retrieve the user data that you want to print
+    $mealCountCurrentDate = date('Y-m-d');
+
+           $countUserCalorieMedium = UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+              ->where('calorie_recommend.recommended','1500')
+             ->count();
+             $countUserCaloriexs= UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+             ->where('calorie_recommend.recommended','1000')
+            ->count();
+            $countUserCalorieS= UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+            ->where('calorie_recommend.recommended','1200')
+           ->count();
+           $countUserCaloriel= UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+           ->where('calorie_recommend.recommended','1800')
+          ->count();
+          $countUserCaloriexl= UserCaloriTarget::join('calorie_recommend','user_calori_targets.custom_result_id','=','calorie_recommend.id')
+          ->where('calorie_recommend.recommended','2000')
+         ->count();
+
+        $getSubscription = Meal::join('subscription_meal_plan_variant_default_meal','meals.id','=','subscription_meal_plan_variant_default_meal.item_id')
+        ->select('meals.id as meal_id','meals.name')
+        ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+        // ->where('subscription_meal_plan_variant_default_meal.meal_plan_id',$getSubscriptionDetail->plan_id)
+        ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+        ->groupBy(['meal_id', 'name'])
+        ->get()->each(function($getSubscription)use($mealCountCurrentDate){
+          $getSubscription->medium = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+          ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+          ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+          ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+          ->where('meal_macro_nutrients.size_pcs','m')
+          ->where('meal_macro_nutrients.user_calorie','1500')
+          ->count();
+          $getSubscription->xs = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+          ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+          ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+          ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+          ->where('meal_macro_nutrients.size_pcs','xs')
+          ->where('meal_macro_nutrients.user_calorie','1000')
+          ->count();
+          $getSubscription->s = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+          ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+          ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+          ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+          ->where('meal_macro_nutrients.size_pcs','s')
+          ->where('meal_macro_nutrients.user_calorie','1200')
+          ->count();
+          $getSubscription->l = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+          ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+          ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+          ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+          ->where('meal_macro_nutrients.size_pcs','l')
+          ->where('meal_macro_nutrients.user_calorie','1800')
+          ->count();
+          $getSubscription->xl = MealMacroNutrients::join('subscription_meal_plan_variant_default_meal','meal_macro_nutrients.meal_id','=','subscription_meal_plan_variant_default_meal.item_id')
+          ->whereDate('subscription_meal_plan_variant_default_meal.date','=', $mealCountCurrentDate)
+          ->where('meal_macro_nutrients.meal_id',$getSubscription->meal_id)
+          ->where('subscription_meal_plan_variant_default_meal.is_default','1')
+          ->where('meal_macro_nutrients.size_pcs','xl')
+          ->where('meal_macro_nutrients.user_calorie','2000')
+          ->count();
+             $getSubscription->add =  $getSubscription->medium+$getSubscription->s+$getSubscription->xs+$getSubscription->l+$getSubscription->xl;
+
+
+           })
+      ->each(function($getSubscription){
+         $getSubscription->dietPlan = DietPlanType::join('meal_diet_plan','diet_plan_types.id','=','meal_diet_plan.diet_plan_type_id')
+        ->select('diet_plan_types.name','diet_plan_types.id as diet_plan_id')
+        ->where('meal_diet_plan.meal_id',$getSubscription->meal_id)
+        ->first();
+      })
+      ->each(function($getSubscription){
+       $getSubscription->MealSchedule = MealSchedules::join('meal_group_schedule','meal_schedules.id','=','meal_group_schedule.meal_schedule_id')
+       ->select('meal_schedules.name','meal_schedules.id as meal_schedule_id')
+       ->where('meal_group_schedule.meal_id',$getSubscription->meal_id)
+       ->first();
+      })
+      ->each(function($getSubscription){
+         $getSubscription->department = MealAllocationDepartment::join('meal_department','meal_allocation_department.id','=','meal_department.department_id')
+         ->select('meal_allocation_department.name','meal_allocation_department.id as department_id')
+         ->where('meal_department.meal_id',$getSubscription->meal_id)
+         ->first();
+      });
+
+    $data['countUserCaloriexl'] = $countUserCaloriexl;
+    $data['countUserCaloriexs'] = $countUserCaloriexs;
+    $data['countUserCaloriel'] = $countUserCaloriel;
+    $data['countUserCalorieS'] = $countUserCalorieS;
+    $data['countUserCalorieMedium'] = $countUserCalorieMedium;
+    $data['getSubscription'] = $getSubscription;
+     $data['mealCountCurrentDate'] = $mealCountCurrentDate;
+  
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.report.print_mealCount')->with($data);
+}
+
+public function print_procurement()
+{
+    // retrieve the user data that you want to print
+    $procurementCurrentDate = date('Y-m-d');
+    // $fourtyHourDate = \Carbon\Carbon::parse($current_date)->format('Y-m-d');
+   $procurement = DislikeItem::with('units','categorys')
+   ->where('status','active')->get()
+  ->each(function($procurement)use($procurementCurrentDate){
+    $procurement->itemProcurement = MealIngredientList::join('meal_week_days','meal_ingredient_list.meal_id','=','meal_week_days.meal_id')
+    ->selectRaw('SUM(meal_ingredient_list.quantity) AS qtyTotal')
+     ->where('meal_ingredient_list.item_id',$procurement->id)
+      ->where('meal_week_days.week_days_id',$procurementCurrentDate)
+      ->get();
+
+  })->each(function($procurement)use($procurementCurrentDate){
+      $procurement->getDepartment = MealDepartment::join('meal_week_days','meal_department.meal_id','=','meal_week_days.meal_id')
+      ->join('meal_allocation_department','meal_department.department_id','=','meal_allocation_department.id')
+      ->select('meal_allocation_department.name','meal_allocation_department.id')
+      ->where('meal_week_days.week_days_id',$procurementCurrentDate)
+      ->get();
+  });
+
+
+       $data['procurements'] = $procurement;
+     $data['fourtyHourDates'] = $procurementCurrentDate;
+  
+    
+    // return a view that displays the user data in a printable format
+    return view('admin.report.print_procurement')->with($data);
+}
+
 }

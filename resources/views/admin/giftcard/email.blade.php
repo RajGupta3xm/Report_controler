@@ -1,26 +1,4 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/x-icon" href="{{asset('assets/images/favicon.png')}}">
-        <title>Diet-on</title> 
-    </head>
-    <body>
-        <p>Hello {{$name}},</p>
-        
-        <p> {{$query}}</p>
-        <hr>
-        <p>Your Voucher Code {{$voucher_code}}</p>
-        <br>
-        <p>Your Voucher pin {{$voucher_pin}}</p>
-        <br>
-        <p>Regards</p>
-        <p>Team Diet-on</p>
-    </body>
-</html> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +23,7 @@
                               <table width="100%" style="margin: 0 auto; border: 0; border-spacing: 0;">
                                  <tr>
                                     <td style="text-align: center;padding-bottom: 20px;">
-                                       <img style="display: inline-block; max-width: 134px;" src="{{asset('assets/img/logo.png')}}" alt="Diet On">
+                                       <img style="display: inline-block; max-width: 134px;" src="{{$imagePath}}" alt="Diet On">
                                     </td>
                                  </tr>
                                  <tr>
@@ -65,7 +43,7 @@
                                           <tr>
                                              <td style="background-color: #fff; display: inline-block; height: 80px;
                                                 line-height: 92px; width: 110px; text-align: center; border-radius: 10px;">
-                                                <img style="display: inline-block; max-width: 70px;" src="img/logo.png" alt="Diet On">
+                                                <img style="display: inline-block; max-width: 70px;" src="{{$imagePath}}" alt="Diet On">
                                              </td>
                                           </tr>
                                        </table>
@@ -110,7 +88,7 @@
                                                 </table>
                                              </td>
                                           </tr>
-                                          <tr>
+                                          <!-- <tr>
                                              <td>
                                                 <table width="100%" style="margin: 0 auto; border: 0; border-spacing: 0;">
                                                    <tr>
@@ -120,7 +98,7 @@
                                                    </tr>
                                                 </table>
                                              </td>
-                                          </tr>
+                                          </tr> -->
                                        </table>
                                     </td>
                                  </tr>

@@ -58,11 +58,18 @@ class PromoController extends Controller {
                    ->get();
               });
             //    $plan_variants = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')->orderBy('id','asc')->get();
-              $promoCode = PromoCode::withcount('promoCodeUsed')->orderBy('id','asc')->get();
+                    $promoCode = PromoCode::withcount('promoCodeUsed')->with('promoCodeDietPlan')->orderBy('id','desc')->get()
+                  ->each(function($promoCode){
+                    if(!empty($promoCode->discount)){
+                      $promoCode->totalValue = $promoCode->promo_code_used_count * $promoCode->discount ;
+                    }else{
+                        $promoCode->totalValue = $promoCode->promo_code_used_count * $promoCode->price ;
+                    }
+                });
             //   $codeUsed = PromoCode::withcount('promoCodeUsed')->get();
             
             // $data['dietplan'] = $dietplan;
-            $data['promoCode'] = $promoCode;
+             $data['promoCode'] = $promoCode;
             $data['plan'] = $plan;
             return view('admin.promoCode.promo_list')->with($data);
         }
@@ -91,7 +98,7 @@ class PromoController extends Controller {
              $return = $request->image->move(
              base_path() . '/public/uploads/promo_image/', $imageName);
          }else{
-             $return = $request->banner_image->move(
+             $return = $request->image->move(
              base_path() . '/../public/uploads/promo_image/', $imageName);
          }
          $url = url('/uploads/promo_image/');
@@ -172,18 +179,25 @@ public function filter_list(Request $request) {
     $start_date = date('Y-m-d 00:00:00', strtotime($request->input('start_date')));
     $end_date = date('Y-m-d 23:59:59', strtotime($request->input('end_date')));
     if ($request->input('start_date') && $request->input('end_date')) {
+        $plan = SubscriptionPlan::select('id','name')->orderBy('id','DESC')
+        ->get()->each(function($plan){
+             $plan->variant = SubscriptionMealPlanVariant::select('id','meal_plan_id','variant_name')
+             ->where('meal_plan_id',$plan->id)
+             ->orderBy('id','DESC')
+             ->get();
+        });
         $promoCode = PromoCode::withcount('promoCodeUsed')->where('status', '<>', 99)
-                ->whereBetween('created_at', [$start_date, $end_date])
+            ->where('start_date','>=',$start_date)
+            ->where('end_date','<=', $end_date)
                 ->orderBy('id', 'DESC')
                 ->get();
-        $dietplan = SubscriptionPlan::select('id','name')->orderBy('id','asc')->get();
-    } else {
-        $users = PromoCode::where('status', '<>', 99)->orderBy('id', 'DESC')->get();
-    }
+      
+    } 
     $data['start_date'] = $request->input('start_date');
     $data['end_date'] = $request->input('end_date');
     $data['promoCode'] = $promoCode;
-    $data['dietplan'] = $dietplan;
+    $data['plan'] = $plan;
+
     return view('admin.promoCode.promo_list')->with($data);
 }
 

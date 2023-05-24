@@ -16,7 +16,7 @@ class GiftCardController extends Controller
         if (!Auth::guard('admin')->check()) {
             return redirect()->intended('admin/login');
         } else {
-             $giftCard = GiftCard::select('*')->orderBy('id','asc')->get();
+             $giftCard = GiftCard::select('*')->orderBy('id','desc')->get();
             $data['giftCards'] = $giftCard;
             // $data['reply'] = $query_reply;
              return view('admin.giftcard.gift-card-detail')->with($data);

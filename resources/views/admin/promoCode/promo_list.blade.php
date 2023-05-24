@@ -58,7 +58,7 @@
                              </div> 
                               <div class="form-group col-3">
                                  <label for="">Valid From</label>
-                                 <input type="datetime-local" class="form-control validate" name="valid_from">
+                                 <input type="datetime-local" id="dateInput" class="form-control validate" name="valid_from" >
                                  <p class="text-danger text-small" id="valid_fromError"></p>
                               </div>
                               <div class="form-group col-3">
@@ -79,15 +79,15 @@
                                           <div class="accordion" id="accordionExample">
                                           @foreach($plan as $key=>$plans)
                                              <div class="accordion-item mt-2">
-                                               <h2 class="accordion-header" id="headingOne">
-                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                               <h2 class="accordion-header" id="headingOne_<?=$key?>">
+                                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne_<?=$key?>" aria-expanded="true" aria-controls="collapseOne_<?=$key?>">
                                                     <div class="form-group d-flex align-items-center mb-0">
                                                        <input type="checkbox" id="q{{$key}}" name="plan_id[{{$plans->id}}]">
                                                        <label class="mb-0 ms-2" for="q{{$key}}">{{$plans->name}}</label>
                                                     </div>
                                                  </button>
                                                </h2>
-                                               <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                               <div id="collapseOne_<?=$key?>" class="accordion-collapse collapse " aria-labelledby="headingOne_<?=$key?>" data-bs-parent="#accordionExample">
                                                  <div class="accordion-body">
                                                  @foreach($plans->variant as $k=>$variants)
                                                    <div class="form-group d-flex align-items-center mb-1">
@@ -99,60 +99,7 @@
                                                </div>
                                              </div>
                                              @endforeach  
-                                             <!-- <div class="accordion-item mt-2">
-                                                <h2 class="accordion-header" id="headingTwo">
-                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                   <div class="form-group d-flex align-items-center mb-0">
-                                                      <input type="checkbox" id="12" name="12">
-                                                      <label class="mb-0 ms-2" for="12">Breakfast PLAN</label>
-                                                   </div>
-                                                  </button>
-                                                </h2>
-                                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample"> 
-                                                   <div class="accordion-body">
-                                                      <div class="form-group d-flex align-items-center mb-1">
-                                                         <input type="checkbox" id="Breakfast1" name="Breakfast1">
-                                                         <label class="mb-0 ms-2" for="Breakfast1">variant 1</label>
-                                                      </div>
-                                                   </div> 
-                                                </div>
-                                             </div> -->
-                                             <!-- <div class="accordion-item mt-2">
-                                                <h2 class="accordion-header" id="headingthree">
-                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsethree" aria-expanded="false" aria-controls="collapsethree">
-                                                   <div class="form-group d-flex align-items-center mb-0">
-                                                      <input type="checkbox" id="13" name="13">
-                                                      <label class="mb-0 ms-2" for="13">Lunch Plan</label>
-                                                   </div>
-                                                  </button>
-                                                </h2>
-                                                <div id="collapsethree" class="accordion-collapse collapse" aria-labelledby="headingthree" data-bs-parent="#accordionExample"> 
-                                                   <div class="accordion-body">
-                                                      <div class="form-group d-flex align-items-center mb-1">
-                                                         <input type="checkbox" id="Lunch1" name="Lunch1">
-                                                         <label class="mb-0 ms-2" for="Lunch1">variant 1</label>
-                                                      </div>
-                                                   </div> 
-                                                </div>
-                                             </div> -->
-                                             <!-- <div class="accordion-item mt-2">
-                                                <h2 class="accordion-header" id="headingfour">
-                                                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefour" aria-expanded="false" aria-controls="collapsefour">
-                                                   <div class="form-group d-flex align-items-center mb-0">
-                                                      <input type="checkbox" id="14" name="14">
-                                                      <label class="mb-0 ms-2" for="14">Dinner PLAN</label>
-                                                   </div>
-                                                  </button>
-                                                </h2>
-                                                <div id="collapsefour" class="accordion-collapse collapse" aria-labelledby="headingfour" data-bs-parent="#accordionExample"> 
-                                                   <div class="accordion-body">
-                                                      <div class="form-group d-flex align-items-center mb-1">
-                                                         <input type="checkbox" id="Dinner1" name="Dinner1">
-                                                         <label class="mb-0 ms-2" for="Dinner1">variant 1</label>
-                                                      </div>
-                                                   </div> 
-                                                </div>
-                                             </div> -->
+
                                            </div>
                                        </div>
                                     </div>
@@ -263,6 +210,7 @@
                               </div>
                               <div class="col-4 d-flex align-items-center">
                               <a href="javscript:;"  class="comman_btn yellow-btn me-0" onclick="printPromoList()">print</a> 
+                              <a href="<?= url('admin/promo-code-management') ?>" class="comman_btn me-2">Reset</a>
                                  <!-- <form class="form-design" action="">
                                     <div class="form-group mb-0 position-relative icons_set">
                                        <input type="text" class="form-control" placeholder="Search" name="name" id="name">
@@ -291,17 +239,18 @@
                                     <table class="table mb-0" id="example1">
                                        <thead>
                                          <tr>
-                                           <th>
+                                           <!-- <th>
                                              <form class="table_btns d-flex align-items-center justify-content-center"> 
                                                 <div class="check_radio">
                                                    <input type="checkbox" name="table1" id="table1" class="d-none">
                                                    <label for="table1"></label>
                                                 </div>
                                              </form>
-                                          </th>
+                                          </th> -->
                                           <th>Promo Code</th>
                                           <th>Image</th>
                                           <th>Discount %</th>
+                                          <th>Price</th>
                                           <th>Meal Plan</th>
                                           <th>Valid From</th> 
                                           <th>Valid Till</th>
@@ -321,6 +270,7 @@
                                        </thead>
                                        <tbody>
                                         @foreach($promoCode as $promoCodes)
+                                     
                                          <tr>
                                            <!-- <td>
                                              <form class="table_btns d-flex align-items-center justify-content-center"> 
@@ -330,10 +280,12 @@
                                                 </div>
                                              </form>
                                            </td> -->
+                                           
                                            <td>{{$promoCodes->name ?? 'N/A'}}</td>
                                            <td><img class="table_img" src="{{$promoCodes->image?$promoCodes->image:asset('assets/img/bg-img.jpg')}}" alt=""></td>
                                            <td>{{$promoCodes->discount ?? 'N/A'}}</td>
-                                           <td>Low Carb</td>
+                                           <td>{{$promoCodes->price ?? 'N/A'}}</td>
+                                           <td>{{$promoCodes->promoCodeDietPlan['plan']['name']}}</td>
                                            <td> 
                                              {{date('d/m/Y', strtotime($promoCodes->start_date))}}
                                              <br>
@@ -347,7 +299,7 @@
                                       
                                            <td>{{$promoCodes->promo_code_used_count}}</td>
                                       
-                                           <td>2323</td>
+                                           <td>{{$promoCodes->totalValue}}</td>
                                            @if(Session::get('admin_logged_in')['type']=='0')
                                            <td>
                                            <div class="mytoggle">
@@ -376,6 +328,7 @@
                                            @endif
                                          </tr> 
                                          @endforeach
+                                    
                                        </tbody>
                                      </table>
                                  </div>
@@ -389,12 +342,20 @@
          </div>
       </div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="assets/vendor/jquery.min.js"></script>
       <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
       <script src="assets/vendor/owl/owl.carousel.min.js"></script>  
       <script src="{{asset('assets/js/comboTreePlugin.js')}}" type="text/javascript"></script> 
       <script src="assets/js/main.js"></script>
+      <script>
+ var today = new Date().toISOString().slice(0, 16);
+document.getElementsByName("valid_from")[0].min = today;
+     </script>
+     <script>
+ var today = new Date().toISOString().slice(0, 16);
+document.getElementsByName("valid_till")[0].min = today;
+     </script>
       <script>
          $('.open_select').click(function(e) {
              $('.custom_dropdown').toggleClass('show');
@@ -412,6 +373,7 @@
 
 
      </script> 
+   
        <!-- multiple Checkbox slider  -->
        <script type="text/javascript">
 var subcategory =<?= \GuzzleHttp\json_encode($plan)?>;
