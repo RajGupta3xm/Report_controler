@@ -50,9 +50,11 @@ class ReportController extends Controller
               ->orwhere('staff_group.name','=','drivers')
               ->get();
               $data['area'] = FleetArea::select('id','area')->where('status','active')->get();
+             
 
-
-               $currentDate = date('Y-m-d');
+              //  dd($data);
+               
+              $currentDate  = date('Y-m-d');
                $datess = Carbon::createFromFormat('Y-m-d',$currentDate);
                 $day = strtolower($datess->format('l'));
                if($day == 'monday'){
@@ -296,7 +298,7 @@ class ReportController extends Controller
         }
     }
     public function search_packing_list(Request $request){
-    //    $allData=$request->all();
+   
         $user_name = $request->user_name;
          $user_id = $request->user_id;
         $diet_plan_id = $request->diet_plan_id;
@@ -304,34 +306,59 @@ class ReportController extends Controller
           $planDate = $request->planDate;
             $timeSlot = $request->timeSlot;
             $selectArea = $request->selectArea;
+            $driver = $request->driver;
            
-        if($user_id || $userNumber || $timeSlot || $selectArea || $planDate || $diet_plan_id){
+    
+          $condition = [];
+
+          if($user_id) {
+            $condition['users.id'] = $user_id;
+          }
+
+          if ($user_name) {
+            $condition[] = ['users.name', 'like', '%' . $user_name . '%'];
+        }
+          
+        if ($diet_plan_id && $diet_plan_id !== 'Select Plan Type') {
+          $condition['subscriptions_meal_plans_variants.diet_plan_id'] = $diet_plan_id;
+        }
+
+          if ($userNumber) {
+            $condition[] = ['users.mobile', 'like', '%' . $userNumber . '%'];
+        }
+          if($selectArea && $selectArea !== 'Select Area'){
+            $condition['user_address.area'] = $selectArea;
+          }
+          if ($planDate) {
+           $condition['subscriptions.switch_plan_start_date'] = $planDate;
+        }
+           if($timeSlot && $timeSlot !== 'Select Time Slot'){
+           $condition['user_address.delivery_slot_id'] = $timeSlot;
+           }
+           
+
              $getDetail = UserProfile::join('users','user_profile.user_id','=','users.id')
           ->join('user_address','user_profile.user_id','=','user_address.user_id')
-          ->join('subscriptions','user_profile.subscription_id','=','subscriptions.plan_id')
-          ->join('subscriptions_meal_plans_variants','user_profile.subscription_id','=','subscriptions_meal_plans_variants.meal_plan_id')
+          ->join('subscriptions','user_profile.user_id','=','subscriptions.user_id')
+          ->join('subscriptions_meal_plans_variants','subscriptions.variant_id','=','subscriptions_meal_plans_variants.id')
           ->join('user_calori_targets','user_profile.user_id','=','user_calori_targets.user_id')
-            ->select('users.name','users.image','users.id as user_id','users.mobile','users.id','user_profile.subscription_id','user_address.area','user_address.delivery_slot_id','user_calori_targets.custom_result_id')
+            ->select ('users.name','users.image','users.id as user_id','users.mobile','users.id','user_profile.subscription_id','user_address.area','user_address.delivery_slot_id','user_calori_targets.custom_result_id','subscriptions.switch_plan_start_date','subscriptions.end_date')
             ->where('users.status','1')
-            ->where(function($query) use ($userNumber,$user_id,$timeSlot,$selectArea,$planDate,$diet_plan_id){
-              $query->where('users.mobile',$userNumber)
-                     ->orwhere('user_address.delivery_slot_id',$timeSlot)
-                     ->orWhere('user_address.area',$selectArea)
-                     ->orWhere('subscriptions.start_date',$planDate)
-                     ->orWhere('subscriptions_meal_plans_variants.diet_plan_id',$diet_plan_id)
-                     ->orWhere('users.id', $user_id);
-            })
-           
+            ->where($condition)
             ->get()
+
+         
             ->each(function($getDetail){
                 $getDetail->delieverySlot = DeliverySlot::select('name','start_time','end_time')
                 ->where('id',$getDetail->delivery_slot_id)
                 ->first();
             })
+
             ->each(function($getDetail){
               $getDetail->getCalorie = CalorieRecommend::select('recommended')->where('id',$getDetail->custom_result_id)
               ->first();
             })
+
             ->each(function($getDetail){
                $getDetail->getMeal = SubscriptionMealVariantDefaultMeal::join('meals','subscription_meal_plan_variant_default_meal.item_id','=','meals.id')
                ->join('meal_macro_nutrients','subscription_meal_plan_variant_default_meal.item_id','=','meal_macro_nutrients.meal_id')
@@ -340,52 +367,38 @@ class ReportController extends Controller
                ->where('subscription_meal_plan_variant_default_meal.is_default','1')
                ->get();
             });
+           
+        //   dd($getDetail);
           
-          }
-          if(!empty($user_name)){
-            $getDetail = UserProfile::join('users','user_profile.user_id','=','users.id')
-         ->join('user_address','user_profile.user_id','=','user_address.user_id')
-         ->join('user_calori_targets','user_profile.user_id','=','user_calori_targets.user_id')
-           ->select('users.name','users.image','users.id as user_id','users.mobile','users.id','user_profile.subscription_id','user_address.area','user_address.delivery_slot_id','user_calori_targets.custom_result_id')
-           ->where('users.status','1')
-           ->Where('users.name', 'LIKE', '%' . $user_name . '%')
-           ->get()
-           ->each(function($getDetail){
-               $getDetail->delieverySlot = DeliverySlot::select('name','start_time','end_time')
-               ->where('id',$getDetail->delivery_slot_id)
-               ->first();
-           })
-           ->each(function($getDetail){
-             $getDetail->getCalorie = CalorieRecommend::select('recommended')->where('id',$getDetail->custom_result_id)
-             ->first();
-           })
-           ->each(function($getDetail){
-              $getDetail->getMeal = SubscriptionMealVariantDefaultMeal::join('meals','subscription_meal_plan_variant_default_meal.item_id','=','meals.id')
-              ->join('meal_macro_nutrients','subscription_meal_plan_variant_default_meal.item_id','=','meal_macro_nutrients.meal_id')
-              ->select('meals.name','meal_macro_nutrients.size_pcs','meal_macro_nutrients.meal_calorie','meal_macro_nutrients.protein','meal_macro_nutrients.carbs','meal_macro_nutrients.fat')
-              ->where('subscription_meal_plan_variant_default_meal.meal_plan_id',$getDetail->subscription_id)
-              ->where('subscription_meal_plan_variant_default_meal.is_default','1')
-              ->get();
-           });
+          
          
-         }
   
         $calorieAddition[] ='0';
         $proteinAddition[] ='0';
         $carbsAddition[] ='0';
         $fatAddition[] ='0';
+        $calories[]='0';
+        $proteins[]='0';
+        $carbss[]='0';
+        $fats[]='0';
+      
        foreach($getDetail as $key=>$calories){
           foreach($calories->getMeal as $group){
              $calorieAddition[] = $group['meal_calorie'];
               $proteinAddition[] = $group['protein'];
               $carbsAddition[] = $group['carbs'];
                $fatAddition[] = $group['fat'];
+               
             }
            $calories = array_sum($calorieAddition);
           $proteins = array_sum($proteinAddition);
           $carbss = array_sum($carbsAddition);
          $fats = array_sum($fatAddition);
+         
       }
+    
+      
+
       $returnHTML = view('admin.report.packing_list',compact('getDetail','calories','proteins','carbss','fats'))->render();
       return response()->json(['html' => $returnHTML]);
         
@@ -395,10 +408,20 @@ class ReportController extends Controller
 public function upcomingMealCount(Request $request) {
   if (!Auth::guard('admin')->check()) {
       return redirect()->intended('admin/login');
-  } else {
+      } else {
+        $selectDate = $request->date;
+
+      $condition = [];
+      if ($selectDate)
+      {
+        $condition['subscriptions.switch_plan_start_date'] = $selectDate;
+      }
+
+//  dd($condition);
+//  dd($selectDate);
     $data['dietPlanType'] = DietPlanType::select('id','name')->get();
     $data['timeSlot'] = DeliverySlot::select('id','name','start_time','end_time')->get();
-      $data['driver'] = StaffMembers::join('staff_group','staff_members.group_id','=','staff_group.id')
+      $data['driver'] = StaffMembers::join('staff_group','staff_members.id','=','staff_group.id')
     ->select('staff_members.id','staff_members.name')
     ->where('staff_group.name','=','driver')
     ->orwhere('staff_group.name','=','drivers')
@@ -406,8 +429,8 @@ public function upcomingMealCount(Request $request) {
     $data['area'] = FleetArea::select('id','area')->where('status','active')->get();
 
 
-     $currentDate = date('Y-m-d');
-     $datess = Carbon::createFromFormat('Y-m-d',$currentDate);
+    
+     $datess = Carbon::createFromFormat('Y-m-d',$selectDate);
       $day = strtolower($datess->format('l'));
      if($day == 'monday'){
          $var = "1";
@@ -425,31 +448,57 @@ public function upcomingMealCount(Request $request) {
         $var = '7';
     }
 
-     $activeUser = Subscription::
-       where('subscriptions.start_date', '<=', $currentDate)
-     ->where('subscriptions.end_date', '>=', $currentDate)
+    // $activeUser1 = Subscription::whereRaw("DATE_FORMAT(subscriptions.switch_plan_start_date, '%Y-%m-%d') = ?", ['2023-05-24'])->get();
+    // dd($activeUser1);
+    $activeUser = Subscription::
+       where('subscriptions.start_date', '<=', $selectDate)
+     ->where('subscriptions.end_date', '>=', $selectDate)
      ->where('subscriptions.delivery_status', '=', 'active')
      ->where('subscriptions.plan_status', '=', 'plan_active')
      ->select('subscriptions.user_id')
-     ->get()->each(function($activeUser){
+     ->whereRaw("DATE_FORMAT(subscriptions.switch_plan_start_date, '%Y-%m-%d') = ?", [$selectDate])
+     ->get()
+     ->each(function($activeUser){
       $activeUser->userDetail = UserProfile::join('users','user_profile.user_id','=','users.id')
     ->join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
     ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
     ->join('subscriptions_meal_plans_variants','user_profile.variant_id','=','subscriptions_meal_plans_variants.id')
     ->select('users.name as user_name','users.id as user_id','users.country_code','users.mobile','subscription_plans.name as plan_name','subscriptions_meal_plans_variants.variant_name','diet_plan_types.name as diet_plan')
-    ->where('user_profile.user_id',$activeUser->user_id )
-    ->orderBy('user_profile.user_id','DESC')
-     ->first();
-     })
-     ->each(function($activeUser){
-     $activeUser->orderDetail = FleetDriver::join('orders','fleet_driver.order_id','=','orders.id')
-     ->join('staff_members','fleet_driver.staff_member_id','=','staff_members.id')
-     ->where(['orders.plan_status'=>'plan_active','payment_status'=>'paid'])
-     ->where('orders.user_id',$activeUser->user_id)
-     ->select('fleet_driver.staff_member_id','orders.id as order_id','staff_members.name')
-     ->first();
+    ->where('user_profile.user_id',$activeUser->user_id)
+    //->where('$condition')
+   // ->whereRaw("DATE_FORMAT(subscriptions.switch_plan_start_date, '%Y-%m-%d') = ?", ['2023-05-24'])
 
-     })->each(function($activeUser)use($var){
+    
+     ->first();
+   
+    
+
+     })
+      // echo "<pre>";
+    //  dd($activeUser)
+    //  die();
+     ->each(function($activeUser){
+      $activeUser->orderDetail= Order::join('user_address','orders.address_id','=','user_address.id')
+      ->join('users','orders.user_id','=','users.id')
+      ->join('subscriptions','orders.user_id','=','subscriptions.user_id')
+      ->select('orders.id as order_id','orders.user_id','orders.status','user_address.area','user_address.street','users.name as user_name','subscriptions.plan_id','subscriptions.start_date','users.image')
+      ->where('subscriptions.delivery_status','active')
+      ->where('subscriptions.start_date',$activeUser->id)
+      ->where(['user_address.delivery_slot_id'=>$$activeUser->id,'user_address.status'=>'active'])
+      ->get();
+
+     });
+      // dd($activeUser)
+    //  $delivery_slot->address = Order::join('user_address','orders.address_id','=','user_address.id')
+    //  ->join('users','orders.user_id','=','users.id')
+    //  ->join('subscriptions','orders.user_id','=','subscriptions.user_id')
+    //  ->select('orders.id as order_id','orders.user_id','orders.status','user_address.area','user_address.street','users.name as user_name','subscriptions.plan_id','subscriptions.start_date','users.image')
+    //  ->where('subscriptions.delivery_status','active')
+    //  ->where('subscriptions.start_date',$date)
+    //  ->where(['user_address.delivery_slot_id'=>$delivery_slot->id,'user_address.status'=>'active'])
+    //  ->get()
+   
+     ->each(function($activeUser)use($var){
        $activeUser->deliveries= DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
       ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type','user_address.area')
       ->where('user_id',$activeUser->user_id)
@@ -478,13 +527,14 @@ public function upcomingMealCount(Request $request) {
       ->first();
 
      });
-       $data['activeUserCurrentDate'] = $currentDate;
+       $data['activeUserCurrentDate'] = $selectDate;
          $data['activeUser'] = $activeUser;
 
+          dd($activeUser);
 
 
            $procurementCurrentDate = date('Y-m-d');
-          // $fourtyHourDate = \Carbon\Carbon::parse($current_date)->format('Y-m-d');
+           $fourtyHourDate = \Carbon\Carbon::parse($selectDate)->format('Y-m-d');
          $procurement = DislikeItem::with('units','categorys')
          ->where('status','active')->get()
         ->each(function($procurement)use($procurementCurrentDate){
@@ -597,8 +647,7 @@ public function upcomingMealCount(Request $request) {
               $data['getSubscription'] = $getSubscription;
              $data['mealCountCurrentDate'] = $mealCountCurrentDate;
           
-               
-
+//dd($data);
    return view('admin.report.report_list')->with($data);
   }
 }
@@ -606,7 +655,8 @@ public function upcomingMealCount(Request $request) {
 public function upcomingProcurementMealCount(Request $request) {
   if (!Auth::guard('admin')->check()) {
       return redirect()->intended('admin/login');
-  } else {
+  } 
+  else {
     $data['dietPlanType'] = DietPlanType::select('id','name')->get();
     $data['timeSlot'] = DeliverySlot::select('id','name','start_time','end_time')->get();
       $data['driver'] = StaffMembers::join('staff_group','staff_members.group_id','=','staff_group.id')
@@ -615,6 +665,7 @@ public function upcomingProcurementMealCount(Request $request) {
     ->orwhere('staff_group.name','=','drivers')
     ->get();
     $data['area'] = FleetArea::select('id','area')->where('status','active')->get();
+    //dd($data);
 
 
      $currentDate = date('Y-m-d');
@@ -642,7 +693,9 @@ public function upcomingProcurementMealCount(Request $request) {
      ->where('subscriptions.delivery_status', '=', 'active')
      ->where('subscriptions.plan_status', '=', 'plan_active')
      ->select('subscriptions.user_id')
-     ->get()->each(function($activeUser){
+     ->get()
+
+     ->each(function($activeUser){
       $activeUser->userDetail = UserProfile::join('users','user_profile.user_id','=','users.id')
     ->join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
     ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
@@ -652,15 +705,21 @@ public function upcomingProcurementMealCount(Request $request) {
     ->orderBy('user_profile.user_id','DESC')
      ->first();
      })
-     ->each(function($activeUser){
-     $activeUser->orderDetail = FleetDriver::join('orders','fleet_driver.order_id','=','orders.id')
-     ->join('staff_members','fleet_driver.staff_member_id','=','staff_members.id')
-     ->where(['orders.plan_status'=>'plan_active','payment_status'=>'paid'])
-     ->where('orders.user_id',$activeUser->user_id)
-     ->select('fleet_driver.staff_member_id','orders.id as order_id','staff_members.name')
-     ->first();
 
-     })->each(function($activeUser)use($var){
+    //  ->each(function($activeUser){
+    //  $activeUser->orderDetail = FleetDriver::join('usersid','fleet_driver.id','=','usersid.id')
+    // //->join('orders','fleet_driver.order_id','=','orders.id')
+    // //  ->join('staff_members','fleet_driver.staff_member_id','=','staff_members.id')
+    //  //->where(['orders.plan_status'=>'plan_active','payment_status'=>'paid'])
+    //  //->where('orders.user_id',$activeUser->user_id)
+    //  ->select('staff_members.name')
+    //  ->first();
+
+     
+
+    //  })
+     
+     ->each(function($activeUser)use($var){
        $activeUser->deliveries= DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
       ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type','user_address.area')
       ->where('user_id',$activeUser->user_id)
@@ -691,8 +750,7 @@ public function upcomingProcurementMealCount(Request $request) {
      });
        $data['activeUserCurrentDate'] = $currentDate;
          $data['activeUser'] = $activeUser;
-
-
+         
 
            $procurementCurrentDate = $request->procurement_start_date;
           // $fourtyHourDate = \Carbon\Carbon::parse($current_date)->format('Y-m-d');
@@ -950,5 +1008,35 @@ public function print_procurement()
     // return a view that displays the user data in a printable format
     return view('admin.report.print_procurement')->with($data);
 }
+public function print_activeUser(){
+
+  $activeUserCurrentDate = date('Y-m-d');
+ // dd($ActiveUsersCurrentDate);
+  
+      $userDetail = UserProfile::join('users','user_profile.user_id','=','users.id')
+    ->join('diet_plan_types','user_profile.diet_plan_type_id','=','diet_plan_types.id')
+    ->join('subscription_plans','user_profile.subscription_id','=','subscription_plans.id')
+    ->join('subscriptions_meal_plans_variants','user_profile.variant_id','=','subscriptions_meal_plans_variants.id')
+    ->select('users.name as user_name','users.id as user_id','users.country_code','users.mobile','subscription_plans.name as plan_name','subscriptions_meal_plans_variants.variant_name','diet_plan_types.name as diet_plan')
+    ->first();
+  //dd($userDetail);
+ 
+ $deliveries= DeliverySlot::join('user_address','delivery_slots.id','=','user_address.delivery_slot_id')
+      ->select('delivery_slots.start_time','delivery_slots.end_time','user_address.id','delivery_slots.name','delivery_slots.id as slot_id','user_address.address_type','user_address.area')
+      
+      ->where('day_selection_status','active')
+      ->first();
+    // dd($deliveries);
+
+//     $driver = staff_members:: join('staff_members_driver','staff_members.id','=','staff_members.id')
+//     ->SELECT (`id`);
+// //      ->WHERE( 'id')
+//  ->first()
+ 
+ 
+
+
+}
+// dd($driver);
 
 }
